@@ -1,0 +1,97 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_160sdp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="@dimen/_24sdp"
+        android:fontFamily="@font/open_sans"
+        android:textStyle="bold"
+        android:textColor="@color/theme_green"
+        android:textSize="@dimen/_12ssp"
+        android:text="Choose a Gender"/>
+
+    <RadioGroup
+        android:id="@+id/gender_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_120sdp">
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+
+        <RadioButton
+            android:id="@+id/male"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:text="Male"
+            android:drawableEnd="@drawable/male"
+            android:paddingEnd="@dimen/_16sdp"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+
+        <RadioButton
+            android:id="@+id/female"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:text="Female"
+            android:drawableEnd="@drawable/female"
+            android:paddingEnd="@dimen/_16sdp"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:id="@+id/others"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:text="Others"
+            android:drawableEnd="@drawable/others"
+            android:paddingEnd="@dimen/_16sdp"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+    </RadioGroup>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:alpha=".2"
+        android:layout_height="1dp"/>
+
+</LinearLayout>

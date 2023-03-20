@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="@dimen/_20sdp"
+    app:cardCornerRadius="@dimen/_10sdp"
+    android:layout_height="@dimen/_300sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/free_group_channel_banner">
+
+        <TextView
+            android:layout_above="@id/sub_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:text="THIS CHANNEL IS FREE"/>
+
+        <TextView
+            android:layout_marginTop="@dimen/_2sdp"
+            android:id="@+id/sub_title"
+            android:layout_above="@id/group_channel_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please download the app now and purchase the "
+            android:textStyle="bold"
+            android:textSize="@dimen/_10ssp"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_above="@id/get_app_container"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LIVE MARKET SESSION"
+            android:ellipsize="end"
+            android:textColor="@color/theme_green"
+            android:textStyle="bold"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="@dimen/_22ssp"
+            android:id="@+id/group_channel_name"/>
+
+        <LinearLayout
+            android:id="@+id/get_app_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/get_on_google_play"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/get_on_google_play"/>
+
+            <ImageView
+                android:id="@+id/get_on_app_store"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/get_on_app_store"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

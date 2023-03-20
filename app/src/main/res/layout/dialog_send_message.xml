@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_50sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_marginVertical="@dimen/_14sdp"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        app:cardCornerRadius="@dimen/_12sdp"
+        app:cardBackgroundColor="@color/background"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:paddingHorizontal="@dimen/_2sdp"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/smile"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Message"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:paddingStart="@dimen/_8sdp"
+        android:fontFamily="@font/poppins"
+        android:textSize="@dimen/_10ssp"
+        android:background="@android:color/transparent"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:layout_marginVertical="@dimen/_18sdp"
+        android:layout_marginHorizontal="@dimen/_4sdp"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="match_parent"
+        android:src="@drawable/attach_doc"/>
+
+    <ImageView
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="match_parent"
+        android:src="@drawable/send_message"/>
+
+</LinearLayout>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:background="@color/theme_green"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/back2"
+                android:layout_marginStart="@dimen/_16sdp" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_centerHorizontal="true"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_90sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:background="@drawable/logo_circle"
+            android:src="@drawable/gtr_logo" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Mentor Name"
+            android:layout_below="@id/logo"
+            android:fontFamily="@font/open_sans"
+            android:textSize="@dimen/_15ssp"
+            android:textFontWeight="600"
+            android:textStyle="bold"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:id="@+id/tab_layout"
+            android:layout_below="@id/title"
+            android:layout_width="match_parent"
+            android:background="@color/background"
+            app:tabSelectedTextColor="@color/theme_green"
+            app:tabTextColor="@color/tab_grey"
+            app:tabIndicatorColor="@color/theme_green"
+            app:tabIndicatorFullWidth="false"
+            app:tabGravity="center"
+            app:tabTextAppearance="@style/tabTextAppearance"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Document" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Links"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Media"/>
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_below="@id/tab_layout"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tab_layout"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

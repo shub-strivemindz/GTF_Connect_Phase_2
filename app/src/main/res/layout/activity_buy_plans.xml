@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:background="@color/theme_green"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:paddingHorizontal="@dimen/_24sdp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/back_click"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/back2" />
+
+
+        <RelativeLayout
+            android:gravity="center_vertical"
+            android:layout_toEndOf="@id/back_click"
+            android:id="@+id/user_avatar"
+            android:layout_gravity="center_vertical"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_10sdp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="wrap_content"
+                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+                android:background="#fff"
+                android:src="@drawable/gtf_logo"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/user_avatar"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_marginStart="@dimen/_10sdp"
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textFontWeight="600"
+                android:text="Live Market Session"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                />
+
+            <TextView
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_below="@id/user_name"
+                android:id="@+id/user_subscribers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textFontWeight="400"
+                android:text="1,402,345"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_below="@id/user_name"
+                android:layout_toEndOf="@id/user_subscribers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textFontWeight="400"
+                android:text="subscribers"
+                android:textColor="@color/white"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose\n Your Plan"
+            android:gravity="center"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/theme_green"
+            android:textStyle="bold"
+            android:textSize="@dimen/_35ssp"
+            android:fontFamily="@font/open_sans"
+            android:id="@+id/title"
+            />
+
+        <LinearLayout
+            android:id="@+id/button_group1"
+            android:gravity="center"
+            android:layout_below="@id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/plan1"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_70sdp"
+            app:cardBackgroundColor="@color/theme_green"
+            app:cardCornerRadius="@dimen/_12sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <TextView
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/_12ssp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Buy Plan"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/plan2"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_70sdp"
+            app:cardBackgroundColor="@color/theme_green"
+            app:cardCornerRadius="@dimen/_12sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/_12ssp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Buy Plan"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center"
+            android:layout_below="@id/button_group1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_20sdp"
+            android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/plan3"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_70sdp"
+            app:cardBackgroundColor="@color/theme_green"
+            app:cardCornerRadius="@dimen/_12sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/_12ssp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Buy Plan"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/plan4"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_70sdp"
+            app:cardBackgroundColor="@color/theme_green"
+            app:cardCornerRadius="@dimen/_12sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/_12ssp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Buy Plan"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp">
+
+        <TextView
+            android:gravity="center"
+            android:layout_marginHorizontal="@dimen/_14sdp"
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:textSize="@dimen/_10ssp"
+            android:text="Amount to be paid"/>
+
+        <TextView
+            android:layout_below="@id/header"
+            android:layout_marginHorizontal="@dimen/_14sdp"
+            android:fontFamily="@font/montserrat"
+            android:id="@+id/plan_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/_10ssp"
+            android:text="$200"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_toStartOf="@id/buy_plan"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_24sdp"
+            app:cardBackgroundColor="@color/theme_green"
+            app:cardCornerRadius="@dimen/_8sdp">
+
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_13sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/cart"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/buy_plan"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_24sdp"
+            app:cardBackgroundColor="@color/theme_green"
+            app:cardCornerRadius="@dimen/_6sdp">
+
+            <TextView
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/_12ssp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Buy Plan"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>

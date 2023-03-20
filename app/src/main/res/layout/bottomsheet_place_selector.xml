@@ -1,0 +1,53 @@
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/_12sdp"
+    android:layout_marginHorizontal="@dimen/_16sdp"
+    android:layout_marginVertical="@dimen/_40sdp">
+
+    <LinearLayout
+        android:background="@drawable/main_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginHorizontal="@dimen/_18sdp"
+        android:orientation="horizontal">
+
+    <EditText
+        android:background="@android:color/transparent"
+        android:id="@+id/title"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="@dimen/_40sdp"
+        android:fontFamily="@font/poppins"
+        android:hint="Search Here....."
+        android:textColor="@color/theme_green"
+        android:textSize="@dimen/_12ssp"
+        />
+
+        <ImageView
+            android:id="@+id/close_icon"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/search"/>
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha=".3"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/place_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

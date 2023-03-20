@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/recent"
+    android:id="@+id/home_nav_graph">
+
+    <fragment
+        android:id="@+id/recent"
+        android:name="com.gtfconnect.ui.fragments.RecentFragment"
+        android:label="recent"
+        tools:layout="@layout/fragment_recent_view" />
+
+    <fragment
+        android:id="@+id/channel"
+        android:name="com.gtfconnect.ui.fragments.ChannelFragment"
+        tools:layout="@layout/fragment_channel_view"
+        android:label="channel"/>
+    <fragment
+        android:id="@+id/group"
+        android:name="com.gtfconnect.ui.fragments.GroupFragment"
+        android:label="group"
+        tools:layout="@layout/fragment_group_view" />
+
+    <fragment
+        android:id="@+id/mentor"
+        android:name="com.gtfconnect.ui.fragments.MentorFragment"
+        android:label="mentor"
+        tools:layout="@layout/fragment_mentor_view" />
+
+</navigation>

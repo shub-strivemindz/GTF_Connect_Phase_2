@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#2FB463</color>
+    <color name="purple_700">#2FB463</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="background_app">#F3F6FF</color>
+    <color name="text_color_1">#FFFFFF</color>
+    <color name="button_color">#2FB463</color>
+    <color name="text_color_white">#F3F6FF</color>
+    <color name="text_color_green">#2FB463</color>
+    <color name="view_line_green">#2FB463</color>
+    <color name="view_line_light">#12000000</color>
+    <color name="text_color_black">#80000000</color>
+    <color name="button_bg_white">#FFFFFFFF</color>
+
+    <color name="theme_green">#2FB463</color>
+
+    <color name="search_bar">#1C1C1E</color>
+    <color name="search_edit_text_color">#666666</color>
+    <color name="search_bar_tab_background">#fff</color>
+
+
+
+    <color name="chat_reply">#000</color>
+    <color name="icon_grey">#CCFFFFFF</color>
+
+    <color name="theme_light_blue">#F3F6FF</color>
+    <color name="background">#000000</color>
+    <color name="chat_background">#1C1C1E</color>
+    <color name="chat_background2">#1C1C1E</color>
+    <color name="tag_header">#2FB463</color>
+
+
+    <color name="text_view1">#666666</color>
+    <color name="text_view2">#80FFFFFF</color>
+    <color name="text_view3">#CCFFFFFF</color>
+    <color name="comment_title">#fff</color>
+
+    <color name="theme_grey">#DDDDDD</color>
+    <color name="theme_blue">#37A8DB</color>
+    <color name="theme_red">#EE1F18</color>
+    <color name="theme_light_shadow">#F4F4F4</color>
+    <color name="theme_dark_shadow">#F7F7F7</color>
+
+    <color name="card_blue">#007AFF</color>
+    <color name="card_yellow">#FD9700</color>
+    <color name="card_dark_blue">#5956D5</color>
+    <color name="card_light_blue">#37A8DB</color>
+    <color name="card_green">#2FB463</color>
+    <color name="card_pink">#FF2D57</color>
+
+    <color name="switch_grey">#8D8C8F</color>
+
+    <color name="insta_pink">#D01B88</color>
+    <color name="fb_blue">#007AFF</color>
+    <color name="loc_blue">#6241F8</color>
+    <color name="contact_orange">#FD9700</color>
+
+    <color name="notification_yellow">#FCC706</color>
+    <color name="tab_grey">#666666</color>
+
+    <color name="theme_dark">#1C1C1E</color>
+
+</resources>

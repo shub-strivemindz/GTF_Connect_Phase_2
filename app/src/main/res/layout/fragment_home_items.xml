@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/chat_item"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_height="@dimen/_60sdp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_59sdp"
+        android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginStart="@dimen/_16sdp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/avatar_container"
+            android:layout_centerVertical="true"
+            app:cardElevation="0dp"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            app:cardCornerRadius="@dimen/_100sdp">
+
+            <ImageView
+                android:id="@+id/user_avatar"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:scaleType="fitXY"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bot5" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".5"
+        android:weightSum="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Live Market Session"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            android:fontFamily="@font/open_sans"
+            android:gravity="bottom"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/trending_tag"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_width="@dimen/_13sdp"
+                android:layout_height="@dimen/_13sdp"
+                android:src="@drawable/crown"
+                android:visibility="gone"
+                android:gravity="top|start"
+                android:layout_marginEnd="@dimen/_10sdp"/>
+
+        <TextView
+            android:id="@+id/sub_title"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_width="match_parent"
+            android:textColor="@color/textDashboardMessageColor"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:fontFamily="@font/open_sans"
+            android:textSize="@dimen/_10ssp"
+            android:gravity="top|start"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".3"
+        android:weightSum="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Today 10:25AM"
+            android:layout_gravity="end"
+            android:textColor="@color/text_view1"
+            android:textSize="@dimen/_9ssp"
+            android:fontFamily="@font/open_sans"
+            android:gravity="bottom|end"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|end"
+            android:paddingTop="@dimen/_4sdp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/notification"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:background="@drawable/notification_circle"
+                android:gravity="center">
+
+        <TextView
+            android:id="@+id/notification_count"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="13242"
+            android:maxLines="1"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_8ssp"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/_65sdp"
+        android:alpha=".5"/>
+</RelativeLayout>

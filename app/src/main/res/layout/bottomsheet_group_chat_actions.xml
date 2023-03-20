@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:id="@+id/pin"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Pin"
+            android:textColor="@color/theme_green"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <TextView
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:id="@+id/quote"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Quote"
+            android:textColor="@color/theme_green"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+
+
+        <TextView
+            android:id="@+id/copy"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:text="Copy"
+            android:textColor="@color/theme_green"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <TextView
+            android:id="@+id/select"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Select"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:textColor="@color/theme_green"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <TextView
+            android:id="@+id/forward"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Forward"
+            android:textColor="@color/theme_green"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Enable Discussion"
+            android:textColor="@color/theme_green"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Remove"
+            android:textColor="@color/theme_red"
+            android:gravity="center"
+            android:id="@+id/remove"
+            android:textSize="@dimen/_13sdp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"/>
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:text="Cancel"
+            android:textColor="@color/white"
+            android:background="@color/theme_green"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:gravity="center"
+            android:textSize="@dimen/_13sdp"
+            android:textFontWeight="500"
+            android:fontFamily="@font/open_sans"/>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

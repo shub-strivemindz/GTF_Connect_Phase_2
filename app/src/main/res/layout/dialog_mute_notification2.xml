@@ -1,0 +1,240 @@
+<com.google.android.material.card.MaterialCardView
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_320sdp"
+    app:cardCornerRadius="@dimen/_14sdp"
+    android:layout_marginHorizontal="@dimen/_50sdp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="400"
+            android:textStyle="bold"
+            android:textColor="@color/theme_green"
+            android:textSize="@dimen/_12ssp"
+            android:text="Mute Notifications for"/>
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="400"
+                android:textSize="@dimen/_10ssp"
+                android:text="Forever"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="400"
+                android:textSize="@dimen/_10ssp"
+                android:text="For 15 min"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="400"
+                android:textSize="@dimen/_10ssp"
+                android:text="For 30 min"/>
+
+
+        </LinearLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="400"
+                android:textSize="@dimen/_10ssp"
+                android:text="For 1 hour"/>
+
+        </LinearLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="400"
+                android:textSize="@dimen/_10ssp"
+                android:text="For 24 hour"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="400"
+                android:textSize="@dimen/_10ssp"
+                android:text="For 1 week"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat"
+            android:textColor="@color/theme_green"
+            android:textFontWeight="400"
+            android:textSize="@dimen/_13ssp"
+            android:text="Cancel"/>
+
+        <TextView
+            android:gravity="center_vertical|end"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat"
+            android:textFontWeight="400"
+            android:textColor="@color/theme_green"
+            android:textSize="@dimen/_13ssp"
+            android:text="Mute"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

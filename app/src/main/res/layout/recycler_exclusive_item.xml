@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/chat_item"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_height="@dimen/_60sdp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_59sdp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_gravity="center_vertical"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginStart="@dimen/_16sdp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/avatar_container"
+                android:layout_centerVertical="true"
+                app:cardElevation="0dp"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                app:cardCornerRadius="@dimen/_100sdp">
+
+                <ImageView
+                    android:id="@+id/user_avatar"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
+                    android:scaleType="fitXY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/avatar_exclusive"
+                    android:background="@drawable/bot5" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                app:cardCornerRadius="@dimen/_120sdp"
+                app:cardElevation="0dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:layout_gravity="center"
+                    app:cardBackgroundColor="@color/theme_green"
+                    app:cardCornerRadius="@dimen/_100sdp">
+                    <ImageView
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/lock2"/>
+                </com.google.android.material.card.MaterialCardView>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:weightSum="2"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Live Market Session"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold"
+                android:fontFamily="@font/open_sans"
+                android:gravity="bottom"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        app:cardElevation="0dp"
+                        android:id="@+id/offer_tag_background"
+                        app:cardBackgroundColor="#33756AB8"
+                        android:layout_marginVertical="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_4sdp">
+
+                        <TextView
+                            android:layout_marginHorizontal="@dimen/_6sdp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/jost"
+                            android:textSize="@dimen/_10ssp"
+                            android:textStyle="bold"
+                            android:id="@+id/offer_tag"
+                            android:textColor="@color/exclusive_purple"
+                            android:text="@string/free_get_started"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/subscribers"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/theme_green"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:text="12k+ Subscribers"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:singleLine="true"
+                    android:fontFamily="@font/open_sans"
+                    android:textSize="@dimen/_10ssp"
+                    android:gravity="center_vertical"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/_65sdp"
+        android:alpha=".5"/>
+</RelativeLayout>

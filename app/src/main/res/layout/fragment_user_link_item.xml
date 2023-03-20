@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="@dimen/_6sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_45sdp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_marginHorizontal="@dimen/_14sdp"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/copy_link"
+            android:padding="@dimen/_5sdp"
+            android:background="@drawable/logo_circle"
+            android:backgroundTint="@color/theme_green"
+            app:tint="@color/white" />
+        
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gettogetherfinance.com"
+                android:textFontWeight="500"
+                android:textColor="@color/theme_green"
+                android:textSize="@dimen/_13ssp"
+                android:fontFamily="@font/montserrat"/>
+
+            <TextView
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_3sdp"
+                android:text="40 kb"
+                android:textColor="#99666666"
+                android:textSize="@dimen/_10ssp"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_width="@dimen/_13sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/dots"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_55sdp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:fontFamily="@font/montserrat"
+        android:textColor="#80666666"
+        android:textSize="@dimen/_10ssp"
+        android:text="https://play.google.com/store/apps/details?id=com.mxtech.live"
+        android:layout_marginEnd="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_26sdp"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_width="match_parent"
+        android:alpha=".2"
+        android:layout_height="@dimen/_1sdp"/>
+
+</LinearLayout>

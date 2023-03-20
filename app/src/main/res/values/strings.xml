@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">GTF Connect</string>
+    <string name="get_started">Get started</string>
+    <string name="welcome_to_gtf_connect">Welcome to GTF Connect</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password"><u>Forgot Password?</u></string>
+    <string name="don_t_have_an_account">Don’t have an account?</string>
+    <string name="register_now">Register Now</string>
+
+    <string name="forget_password"><u>Forget Password?</u></string>
+    <string name="resend_otp"><u>Resend OTP</u></string>
+    <string name="read_terms_conditions_and_privacy_policy">Read <u>terms conditions</u> and <u>privacy policy</u></string>
+    <string name="lorem_ipsum_is_simply_dummy_text_of_the_printing_and_typesetting_industry_lorem_ipsum_has_been_the_industry_s_standard_dummy_text_ever_since_the_1500s">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s|</string>
+    <string name="recent">Recent</string>
+    <string name="channel">Channel</string>
+    <string name="group">Group</string>
+    <string name="mentor">Mentor</string>
+    <string name="register">Register</string>
+    <string name="for_1_week">For 1 week</string>
+    <string name="for_24_hour">For 24 hour</string>
+    <string name="for_1_hour">For 1 hour</string>
+    <string name="for_30_min">For 30 min</string>
+    <string name="for_15_min">For 15 min</string>
+    <string name="forever">Forever</string>
+    <string name="mute_notifications_for">Mute Notifications for</string>
+    <string name="delete_channel">Delete Channel</string>
+    <string name="groups">Groups</string>
+    <string name="gtf_connect_v0_1">GTF Connect v0.1</string>
+    <string name="confirm_password">Confirm Password*</string>
+    <string name="reply">Reply</string>
+    <string name="state">State*</string>
+    <string name="country">Country*</string>
+    <string name="gst_number">GST Number</string>
+    <string name="billing_name">Billing Name</string>
+    <string name="additional_info">Additional Info</string>
+    <string name="gtf_finance">GTF Finance*</string>
+
+
+
+    <string name="trending"><i>Trending </i></string>
+    <string name="best_seller"><i>Bestseller </i></string>
+    <string name="free_get_started"><i>Free! Get Started </i></string>
+</resources>

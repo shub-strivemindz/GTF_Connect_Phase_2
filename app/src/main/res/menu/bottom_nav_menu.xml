@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/recent_menu"
+        android:enabled="true"
+        android:icon="@drawable/home"
+        android:title="@string/recent"/>
+    <item
+        android:id="@+id/channel_menu"
+        android:enabled="true"
+        android:icon="@drawable/channel"
+        android:title="@string/channel"/>
+
+    <item
+        android:id="@+id/group_menu"
+        android:enabled="true"
+        android:icon="@drawable/group"
+        android:title="@string/group"/>
+
+    <item
+        android:id="@+id/mentor_menu"
+        android:enabled="true"
+        android:icon="@drawable/mentor"
+        android:title="@string/mentor"/>
+</menu>

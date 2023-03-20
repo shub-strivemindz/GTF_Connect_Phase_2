@@ -1,0 +1,153 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_280sdp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="@dimen/_24sdp"
+        android:fontFamily="@font/open_sans"
+        android:textStyle="bold"
+        android:textColor="@color/theme_green"
+        android:textSize="@dimen/_12ssp"
+        android:text="Choose a user"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp">
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:text="Richards"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:text="Darlene Robinson"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:text="Ronald Richards"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:text="Raphael (Admin)"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:text="Christine Watson"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:orientation="horizontal">
+        
+        <ImageView
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:src="@drawable/sound"
+            android:layout_marginStart="@dimen/_32sdp"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/poppins500"
+            android:textColor="@color/theme_green"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:gravity="center_vertical"
+            android:text="Unmute"/>
+        
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:alpha=".2"
+        android:layout_height="1dp"/>
+
+</LinearLayout>

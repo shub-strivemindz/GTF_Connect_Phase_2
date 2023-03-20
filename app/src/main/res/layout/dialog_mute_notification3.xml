@@ -1,0 +1,132 @@
+<LinearLayout
+
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_280sdp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="400"
+            android:textStyle="bold"
+            android:textColor="@color/theme_green"
+            android:textSize="@dimen/_12ssp"
+            android:text="Mute Notifications for"/>
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RelativeLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_240sdp">
+
+            <RadioButton
+                android:id="@+id/option1"
+                android:buttonTint="@color/theme_green"
+                android:textColor="@color/tab_grey"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:text="Forever"/>
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_below="@id/option1"
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/option1"
+            android:id="@+id/option2"
+            android:layout_width="wrap_content"
+            android:buttonTint="@color/theme_green"
+            android:textColor="@color/tab_grey"
+            android:layout_height="wrap_content"
+            android:text="For 1 Hour"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_below="@id/option2"
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+            <RadioButton
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/option2"
+                android:id="@+id/option3"
+                android:buttonTint="@color/theme_green"
+                android:textColor="@color/tab_grey"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:text="For 2 hour"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_below="@id/option3"
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+            <RadioButton
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/option3"
+                android:id="@+id/option4"
+                android:layout_width="wrap_content"
+                android:buttonTint="@color/theme_green"
+                android:textColor="@color/tab_grey"
+                android:layout_height="@dimen/_40sdp"
+                android:text="For 24 hour"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_below="@id/option4"
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+            <RadioButton
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/option4"
+                android:buttonTint="@color/theme_green"
+                android:textColor="@color/tab_grey"
+                android:id="@+id/option5"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:text="For week"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_below="@id/option5"
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+            <RadioButton
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/option5"
+                android:id="@+id/option6"
+                android:layout_width="wrap_content"
+                android:buttonTint="@color/theme_green"
+                android:textColor="@color/tab_grey"
+                android:layout_height="@dimen/_40sdp"
+                android:text="For month"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:background="@android:color/transparent"
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:background="@android:color/transparent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
+
+            <RelativeLayout
+                app:layout_collapseMode="pin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/header_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_110sdp">
+
+                    <ImageView
+                        android:id="@+id/background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/background2"/>
+
+                    <RelativeLayout
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:gravity="center_vertical">
+
+                        <RelativeLayout
+                            android:id="@+id/user_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <RelativeLayout
+                                android:id="@+id/user_avatar"
+                                android:layout_gravity="center_vertical"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    app:cardElevation="0dp"
+                                    android:layout_width="@dimen/_50sdp"
+                                    android:layout_height="@dimen/_50sdp"
+                                    app:cardCornerRadius="@dimen/_100sdp">
+
+                                    <ImageView
+                                        android:layout_alignParentTop="true"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:background="@drawable/bot2"
+                                        android:src="@drawable/avatar_circle3"/>
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <ImageView
+                                    android:layout_marginBottom="@dimen/_3sdp"
+                                    android:layout_width="@dimen/_10sdp"
+                                    android:layout_height="@dimen/_10sdp"
+                                    android:background="@drawable/avatar_circle2"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_alignParentEnd="true"/>
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_toEndOf="@id/user_avatar"
+                                android:gravity="center_vertical">
+                                <TextView
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:id="@+id/user_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="Lisa Harper"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_12sdp"
+                                    />
+
+                                <TextView
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:layout_below="@id/user_name"
+                                    android:id="@+id/user_mail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="lisa@gmail.com"
+                                    android:textColor="@color/white"/>
+
+                            </RelativeLayout>
+
+                        </RelativeLayout>
+
+                        <ImageView
+                            android:id="@+id/mute_notifications"
+                            android:layout_width="@dimen/_19sdp"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/notification"
+                            android:layout_alignParentEnd="true"/>
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/search_bar_card"
+                    app:cardElevation="0dp"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_70sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    app:cardBackgroundColor="@color/search_bar"
+                    app:cardCornerRadius="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_40sdp">
+
+                            <EditText
+                                android:inputType="text"
+                                android:ems="1"
+                                android:maxEms="1"
+                                android:maxLines="1"
+                                android:textColor="@color/search_edit_text_color"
+                                android:id="@+id/search"
+                                android:layout_alignParentStart="true"
+                                android:hint="Search..."
+                                android:layout_toStartOf="@id/search_icon"
+                                android:layout_width="match_parent"
+                                android:textColorHint="@color/text_view1"
+                                android:layout_height="match_parent"
+                                android:paddingStart="@dimen/_15sdp"
+                                android:paddingEnd="@dimen/_12sdp"
+                                android:gravity="center_vertical"
+                                android:layout_gravity="center_vertical"
+                                android:fontFamily="@font/inter"
+                                android:textSize="@dimen/_12ssp"
+                                android:background="@android:color/transparent"
+                                android:includeFontPadding="false"/>
+
+                            <ImageView
+                                android:id="@+id/search_icon"
+                                android:layout_alignParentEnd="true"
+                                android:layout_width="@dimen/_14sdp"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/search"
+                                android:layout_marginEnd="@dimen/_12sdp"/>
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:elevation="@dimen/_5sdp"
+                            android:visibility="gone"
+                            android:id="@+id/search_bar_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"/>
+
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/search_bar_tab_layout"
+                                android:layout_width="@dimen/_180sdp"
+                                app:tabBackground="@color/search_bar_tab_background"
+                                app:tabSelectedTextColor="@color/theme_green"
+                                app:tabTextColor="@color/tab_grey"
+                                app:tabIndicatorColor="@color/theme_green"
+                                app:tabIndicatorFullWidth="false"
+                                android:layout_gravity="start"
+                                app:tabPaddingStart="0dp"
+                                app:tabPaddingEnd="0dp"
+                                app:tabTextAppearance="@style/tabTextAppearance"
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.tabs.TabItem
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Group" />
+
+                                <com.google.android.material.tabs.TabItem
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Channel"/>
+
+                                <com.google.android.material.tabs.TabItem
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Mentor"/>
+
+                            </com.google.android.material.tabs.TabLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_360sdp">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <RelativeLayout
+                    app:layout_collapseMode="pin"
+                    android:layout_below="@id/header_container"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_48sdp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins500"
+                        android:text="Recent"
+                        android:textSize="@dimen/_12ssp"/>
+
+                    <TextView
+                        android:fontFamily="@font/poppins"
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/_12ssp"
+                        android:text="4 Unread"/>
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+    <fragment
+        android:layout_below="@id/header_container"
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tab_layout"
+        tools:ignore="FragmentTagUsage"
+        app:defaultNavHost="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:navGraph="@navigation/home_nav_graph" />
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:id="@+id/tab_layout"
+        app:tabIndicatorFullWidth="false"
+        app:tabTextAppearance="@style/tabTextAppearance"
+        app:tabIndicator="@drawable/tab_indicator"
+        android:paddingBottom="@dimen/_8sdp"
+        android:layout_height="@dimen/_60sdp" >
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/home"
+            android:text="Recent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/channel"
+            android:text="Channel"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/group"
+            android:text="@string/group"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/mentor"
+            android:text="Mentor"/>
+
+    </com.google.android.material.tabs.TabLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

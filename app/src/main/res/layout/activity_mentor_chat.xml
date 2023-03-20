@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:background="@color/theme_green"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:paddingHorizontal="@dimen/_24sdp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/back_click"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/back2" />
+
+        <RelativeLayout
+            android:id="@+id/member_title"
+            android:layout_toEndOf="@id/back_click"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/avatar_container"
+                android:layout_centerVertical="true"
+                app:cardElevation="0dp"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                app:cardCornerRadius="@dimen/_100sdp">
+
+                <ImageView
+                    android:id="@+id/user_avatar"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
+                    android:scaleType="fitXY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bot5" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/avatar_container"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:textFontWeight="600"
+                    android:text="Mentor"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_11ssp"
+                    />
+
+                <TextView
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_below="@id/user_name"
+                    android:id="@+id/user_subscribers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:textSize="@dimen/_10ssp"
+                    android:textFontWeight="400"
+                    android:text="Typing..."
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_below="@id/user_name"
+                    android:layout_toEndOf="@id/user_subscribers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:textFontWeight="400"
+                    android:textSize="@dimen/_10ssp"
+                    android:text="subscribers"
+                    android:textColor="@color/white"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/pin"
+            android:gravity="center"
+            android:layout_alignParentEnd="true"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/pin_image"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/pinned"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:backgroundTint="@color/card_yellow"
+                    android:background="@drawable/notification_circle"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="22"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_8ssp"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mentor_chat_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            app:cardElevation="0dp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:cardBackgroundColor="#1A666666"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_marginHorizontal="@dimen/_4sdp"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/smile"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Message"
+                android:layout_marginStart="@dimen/_24sdp"
+                android:paddingStart="@dimen/_8sdp"
+                android:fontFamily="@font/poppins"
+                android:textSize="@dimen/_10ssp"
+                android:background="@android:color/transparent"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageView
+            android:id="@+id/pin_attachment"
+            android:layout_marginVertical="@dimen/_17sdp"
+            android:layout_marginHorizontal="@dimen/_4sdp"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/attach_doc"/>
+
+        <ImageView
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/send_message"/>
+
+    </LinearLayout>
+
+</LinearLayout>

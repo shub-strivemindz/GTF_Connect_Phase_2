@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:background="@color/theme_green"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:paddingHorizontal="@dimen/_24sdp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/back_click"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/back2" />
+
+
+        <RelativeLayout
+            android:gravity="center_vertical"
+            android:layout_toEndOf="@id/back_click"
+            android:id="@+id/user_avatar"
+            android:layout_gravity="center_vertical"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_10sdp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="wrap_content"
+                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+                android:background="#fff"
+                android:src="@drawable/gtf_logo"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/user_avatar"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_marginStart="@dimen/_10sdp"
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textFontWeight="600"
+                android:text="Live Market Session"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                />
+
+            <TextView
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_below="@id/user_name"
+                android:id="@+id/user_subscribers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textFontWeight="400"
+                android:text="1,402,345"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_below="@id/user_name"
+                android:layout_toEndOf="@id/user_subscribers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textFontWeight="400"
+                android:text="subscribers"
+                android:textColor="@color/white"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/blur_bg1"/>
+
+</LinearLayout>
