@@ -7,17 +7,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.R;
-import com.gtfconnect.databinding.FragmentHomeItemsBinding;
 import com.gtfconnect.databinding.RecyclerExclusiveItemBinding;
-import com.gtfconnect.ui.screenUI.groupModule.GroupProfileScreen;
-import com.gtfconnect.ui.screenUI.mentorModule.MentorChatScreen;
 import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
 
 public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAdapter.ViewHolder> {

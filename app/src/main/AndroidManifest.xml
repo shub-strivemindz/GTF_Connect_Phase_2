@@ -101,15 +101,14 @@
 
         <activity android:name=".ui.screenUI.channelModule.ChannelPinnedMessageScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelBlocklistScreen"/>
-        <activity android:name=".ui.screenUI.channelModule.ChannelProfileScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManagePermissionScreen"/>
 
 
         <activity android:name=".ui.screenUI.groupModule.GroupBlocklistScreen"/>
-        <activity android:name=".ui.screenUI.groupModule.GroupChatsScreen"/>
+        <activity android:name=".ui.screenUI.channelModule.ChannelChatsScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupManagePermissionScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupPinnedMessageScreen"/>
-        <activity android:name=".ui.screenUI.groupModule.GroupProfileScreen"/>
+        <activity android:name=".ui.screenUI.channelModule.ChannelProfileScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupEditProfileScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupCommentScreen"
             android:windowSoftInputMode="adjustResize"/>

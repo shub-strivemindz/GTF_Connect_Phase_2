@@ -1,7 +1,5 @@
 package com.gtfconnect.ui.adapters;
 
-import static com.gtfconnect.services.SocketService.socketInstance;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,13 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
 import com.gtfconnect.models.groupResponseModel.GroupResponseModel;
-import com.gtfconnect.ui.screenUI.groupModule.GroupChatsScreen;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
-
-import org.json.JSONObject;
-
-import io.socket.emitter.Emitter;
 
 public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.ViewHolder> {
 
@@ -69,7 +63,7 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, GroupChatsScreen.class);
+                Intent intent = new Intent(context, ChannelChatsScreen.class);
 
 
                 PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.getData().get(index).getGCMemberID());

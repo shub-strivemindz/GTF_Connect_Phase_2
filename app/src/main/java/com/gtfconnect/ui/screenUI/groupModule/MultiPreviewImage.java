@@ -14,7 +14,6 @@ import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.databinding.ActivityPreviewMediaBinding;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
 import com.gtfconnect.ui.adapters.ImagePreviewAdapter;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
 import com.gtfconnect.utilities.SnapOneItemView;
 
 import java.lang.reflect.Type;

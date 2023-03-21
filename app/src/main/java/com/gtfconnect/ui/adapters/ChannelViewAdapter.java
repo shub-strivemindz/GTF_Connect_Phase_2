@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
 import com.gtfconnect.models.channelResponseModel.ChannelResponseModel;
-import com.gtfconnect.ui.screenUI.groupModule.GroupChatsScreen;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
@@ -51,7 +51,7 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, GroupChatsScreen.class);
+                Intent intent = new Intent(context, ChannelChatsScreen.class);
 
 
                 PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.getData().get(index).getGCMemberID());

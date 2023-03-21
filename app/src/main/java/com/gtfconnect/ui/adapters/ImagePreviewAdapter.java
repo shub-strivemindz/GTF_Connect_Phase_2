@@ -2,7 +2,6 @@ package com.gtfconnect.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.medialibrary.VideoActivity;
 import com.gtfconnect.R;
-import com.gtfconnect.databinding.RecyclerImagePreviewItemBinding;
 import com.gtfconnect.databinding.RecyclerMediaPreviewBinding;
 import com.gtfconnect.interfaces.ImagePreviewListener;
-import com.gtfconnect.models.ImagePreviewModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
 import com.gtfconnect.utilities.Utils;
 
 import java.util.ArrayList;

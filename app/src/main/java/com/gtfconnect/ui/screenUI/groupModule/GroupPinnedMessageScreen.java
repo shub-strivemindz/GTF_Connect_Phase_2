@@ -28,6 +28,7 @@ import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.PinnedMessageListener;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupPinnedMessageAdapter;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
@@ -170,7 +171,7 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
 
     @Override
     public void gotoMessage(String groupChatId) {
-        Intent intent = new Intent(GroupPinnedMessageScreen.this,GroupChatsScreen.class);
+        Intent intent = new Intent(GroupPinnedMessageScreen.this, ChannelChatsScreen.class);
         intent.putExtra("searchPinMessage",true);
         intent.putExtra("groupChatId",groupChatId);
 
@@ -257,7 +258,7 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(GroupPinnedMessageScreen.this,GroupChatsScreen.class));
+        startActivity(new Intent(GroupPinnedMessageScreen.this, ChannelChatsScreen.class));
         finish();
     }
 }

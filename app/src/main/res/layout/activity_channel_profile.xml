@@ -209,11 +209,12 @@
             android:layout_width="match_parent"
             android:background="@color/background"
             app:tabSelectedTextColor="@color/theme_green"
-            app:tabTextColor="@color/tab_grey"
+            app:tabTextColor="@color/textSearchTextColor"
             app:tabIndicatorColor="@color/theme_green"
+            app:tabMode="auto"
             app:tabIndicatorFullWidth="false"
-            app:tabGravity="center"
-            app:tabTextAppearance="@style/tabTextAppearance"
+            app:tabGravity="fill"
+            app:tabTextAppearance="@style/profileTabTextAppearance"
             android:layout_height="wrap_content">
 
             <com.google.android.material.tabs.TabItem

@@ -71,6 +71,7 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.errorDialog.setVisibility(View.GONE);
 
         // Getting API data fetch
         //auth_rest = new Rest(this);            // for authentication ------------
@@ -128,7 +129,7 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
 
     private void validationLoginCheck()
     {
-
+        binding.errorDialog.setVisibility(View.GONE);
 
         String get_email = binding.emailId.getText().toString().trim();
         String get_password = binding.password.getText().toString().trim();
@@ -199,7 +200,7 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
 
     @Override
     public void onServerFailure(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        binding.errorDialog.setVisibility(View.VISIBLE);
         Log.d("Render Error :",message);
         rest.dismissProgressdialog();
     }

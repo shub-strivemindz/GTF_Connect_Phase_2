@@ -168,13 +168,24 @@
 
             </LinearLayout>
 
-                <LinearLayout
-                    android:visibility="gone"
+                <RelativeLayout
                     android:id="@+id/error_dialog"
-                    android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:orientation="horizontal">
+                    android:layout_height="@dimen/_30sdp"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="@dimen/_40sdp"
+                        android:layout_marginEnd="@dimen/_60sdp"
+                        android:alpha=".4"/>
+
+                    <LinearLayout
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
                     <ImageView
                         android:padding="@dimen/_2sdp"
@@ -188,11 +199,12 @@
                         android:layout_height="match_parent"
                         android:text="Oops! Wrong Password"
                         android:fontFamily="@font/poppins"
-                        android:textSize="@dimen/_8ssp"
+                        android:textSize="@dimen/_9ssp"
                         android:gravity="center"/>
 
+                    </LinearLayout>
 
-                </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

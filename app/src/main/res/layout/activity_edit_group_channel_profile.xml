@@ -47,10 +47,10 @@
 
                 <ImageView
                     android:id="@+id/edit_image"
-                    android:layout_gravity="center"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_width="@dimen/_26sdp"
+                    android:layout_height="@dimen/_26sdp"
                     android:layout_centerInParent="true"
+                    android:layout_gravity="center"
                     android:background="@drawable/edit_profile_pic" />
 
             </RelativeLayout>

@@ -76,11 +76,16 @@
     <color name="exclusive_purple">#756AB8</color>
     <color name="exclusive_purple_background">#33756AB8</color>
 
+    <color name="chatIconColor">#8497A7</color>
+
     <color name="textDashboardMessageColor">#8497A7</color>
     <color name="textCommentTitleColor">#F38600</color>
     <color name="textGreyDateColor">#666666</color>
     <color name="textForwardedDialogColor">#7A000000</color>
     <color name="textSearchTextColor">#66000000</color>
+    <color name="profileTextColor">#B3666666</color>
+
+    <color name="chatHeaderDateBackgroundColor">#05000000</color>
 
 
     <color name="card_light_grey">#F4F4F4</color>

@@ -16,22 +16,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.gtfconnect.R;
-import com.gtfconnect.databinding.ActivityChannelHomeBinding;
+import com.gtfconnect.databinding.ActivityChannelProfileBinding;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.DocumentAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.LinkAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.MediaAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.SettingAdapter;
 import com.gtfconnect.ui.screenUI.HomeScreen;
+import com.gtfconnect.ui.screenUI.groupModule.GroupEditProfileScreen;
 
 public class ChannelProfileScreen extends AppCompatActivity {
 
-    ActivityChannelHomeBinding binding;
+    ActivityChannelProfileBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityChannelHomeBinding.inflate(getLayoutInflater());
+        binding = ActivityChannelProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+        binding.editProfile.setOnClickListener(view -> startActivity(new Intent(ChannelProfileScreen.this, GroupEditProfileScreen.class)));
 
 
         binding.muteNotification.setOnClickListener(new View.OnClickListener() {

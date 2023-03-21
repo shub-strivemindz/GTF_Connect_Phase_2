@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,11 +21,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.medialibrary.VideoActivity;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
-import com.gtfconnect.databinding.RecyclerExclusiveItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
-import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
 import com.gtfconnect.utilities.Utils;
 
 import java.util.List;
@@ -73,12 +69,38 @@ public class GroupChannel_MediaAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
+        String fileType = Utils.checkFileType(mediaList.get(position).getMimeType());
+        String post_path = postBaseUrl + mediaList.get(position).getStoragePath() + mediaList.get(position).getFileName();
+
 
         if (mediaList.size() == 1){
             SingleMediaItemViewHolder holder1 = (SingleMediaItemViewHolder) holder;
 
-            String fileType = Utils.checkFileType(mediaList.get(position).getMimeType());
-            String post_path = postBaseUrl + mediaList.get(position).getStoragePath() + mediaList.get(position).getFileName();
+
+            holder1.binding.postMediaContainer.setOnClickListener(view -> {
+
+                Dialog previewDialog = new Dialog(context);
+                previewDialog.setContentView(R.layout.dialog_media_preview);
+
+                previewDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                previewDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                ImageView preview =(ImageView) previewDialog.findViewById(R.id.preview);
+                loadImageFile(post_path,preview);
+
+
+
+                ImageView close = (ImageView) previewDialog.findViewById(R.id.close);
+                ImageView download_media = (ImageView) previewDialog.findViewById(R.id.download_media);
+
+                close.setOnClickListener(view1 -> previewDialog.dismiss());
+                download_media.setOnClickListener(view1 -> {
+
+                });
+
+                previewDialog.show();
+            });
+
 
             Log.d("Entered_POst",postBaseUrl);
 
@@ -118,8 +140,15 @@ public class GroupChannel_MediaAdapter extends RecyclerView.Adapter<RecyclerView
 
             MultiMediaItemViewHolder holder1 = (MultiMediaItemViewHolder) holder;
 
-            String fileType = Utils.checkFileType(mediaList.get(position).getMimeType());
-            String post_path = postBaseUrl + mediaList.get(position).getStoragePath() + mediaList.get(position).getFileName();
+            holder1.binding.postMediaContainer.setOnClickListener(view -> {
+
+                Dialog previewDialog = new Dialog(context);
+                previewDialog.setContentView(R.layout.dialog_media_preview);
+
+                previewDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                previewDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                previewDialog.show();
+            });
 
             Log.d("Entered_POst",postBaseUrl);
 
@@ -161,14 +190,6 @@ public class GroupChannel_MediaAdapter extends RecyclerView.Adapter<RecyclerView
 
 
 
-
-    }
-
-
-
-
-
-    private void setAdapterData(SingleMediaItemViewHolder singleViewHolder,MultiMediaItemViewHolder multiViewHolder,int position){
 
     }
 

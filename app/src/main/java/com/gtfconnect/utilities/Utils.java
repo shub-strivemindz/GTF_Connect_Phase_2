@@ -80,6 +80,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class Utils {
 
@@ -754,7 +756,6 @@ public class Utils {
         try {
             //String dateString = "30/09/2014";
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
-
             Date date = sdf.parse(dateString);
 
             // ---------------------------------------------------------Can be Changed as per Condition : Subtracting 6 hours from time -----------------------
@@ -768,10 +769,11 @@ public class Utils {
             // --------------------------------------------------------------------------------------------------------------------------------------------
 
             msgDate = DateFormat.getDateInstance().format(calculatedTime);
-            Log.v("getDisplayableTime",String.valueOf(msgDate));
+            Log.v("getDisplayableDate",String.valueOf(msgDate));
 
 
             time = calculatedTime.getTime();
+            Log.v("getDisplayableTime",String.valueOf(time));
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -834,6 +836,100 @@ public class Utils {
         }
         return null;
     }
+
+
+    public static String getHeaderDate(String chatDate) {
+        String serverCurrentDate = "";
+        String currentDate = "";
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(chatDate);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMM, hh:mm aa"); //this format changeable
+            dateFormatter.setTimeZone(TimeZone.getDefault());
+            chatDate = dateFormatter.format(value);
+
+
+            //current date
+            String OurDate = chatDate;
+            String[] separated = OurDate.split(",");
+            serverCurrentDate = separated[0];
+            String ServerCurrentDate1 = separated[1];
+            currentDate = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
+            yesterdayDate();
+            if (currentDate.equalsIgnoreCase(serverCurrentDate)) {
+                chatDate = "Today";
+            } else if (serverCurrentDate.equalsIgnoreCase(yesterdayDate())) {
+                chatDate = "Yesterday";
+            }
+            else{
+                SimpleDateFormat format = new SimpleDateFormat("MMMM dd yyyy");
+                chatDate = format.format(value);
+            }
+        } catch (Exception e) {
+            chatDate = "00-00-0000 00:00";
+        }
+        return chatDate;
+    }
+
+    private static String yesterdayDate() {
+
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        String yesDate = dateFormat.format(cal.getTime());
+        return yesDate;
+    }
+
+    /*private static int compareDateTime(String dateTime)
+    {
+
+        Date systemDate = new Date();
+        Date systemTime = new Date();
+        Date chatDate= new Date();
+        Date chatTime= new Date();
+
+        Date todayDate = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+
+        String currentDate = dateFormatter.format(todayDate);
+        String currentTime = timeFormatter.format(todayDate);
+
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+
+        try {
+            // Setting System Date & Time
+            systemDate = dateFormatter.parse(currentDate);
+            systemTime  = dateFormatter.parse(currentTime);
+
+
+
+            // Setting Chat Date & Time
+            String currentDateTime = sdf.format(time);
+            chatDate = dateFormatter.parse(currentDateTime);
+        }
+        catch (Exception e){
+            Log.v("Exception ","on converting chat date");
+        }
+
+        if (systemDate.compareTo(chatDate) == 0){
+            // Current Date & Chat Date ======= Same
+            return 0;
+        } else if (systemDate.compareTo(chatDate) > 0) {
+            // Current Date is after Chat Date
+            return 1;
+        }
+        else{
+            // Current Date is before Chat Date
+            return 2;
+        }
+    }*/
+
 
     private static Date subtractHoursToTime(Date date,int hours)
     {

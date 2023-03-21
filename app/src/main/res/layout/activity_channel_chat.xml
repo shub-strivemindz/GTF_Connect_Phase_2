@@ -157,9 +157,9 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_below="@id/toolbar"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_16sdp"
+            android:layout_height="@dimen/_20sdp"
             app:cardCornerRadius="@dimen/_16sdp"
             android:alpha=".8"
             android:layout_centerHorizontal="true"
@@ -459,9 +459,9 @@
         <ImageView
             android:id="@+id/send_message"
             android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_width="@dimen/_16sdp"
+            android:layout_width="@dimen/_18sdp"
             android:layout_height="match_parent"
-            android:src="@drawable/send_message"/>
+            android:src="@drawable/microphone"/>
 
     </LinearLayout>
 

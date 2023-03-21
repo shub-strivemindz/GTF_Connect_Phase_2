@@ -1,11 +1,9 @@
-package com.gtfconnect.ui.screenUI.groupModule;
+package com.gtfconnect.ui.screenUI.channelModule;
 
-import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.Manifest;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -20,9 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -46,15 +42,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medialibrary.VideoActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -79,21 +72,18 @@ import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupCommentAdapter;
+import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
+import com.gtfconnect.ui.screenUI.groupModule.GroupPinnedMessageScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -108,7 +98,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class GroupChatsScreen extends AppCompatActivity implements ApiResponseListener, GroupChatListener, ImagePreviewListener {
+public class ChannelChatsScreen extends AppCompatActivity implements ApiResponseListener, GroupChatListener, ImagePreviewListener {
 
     ActivityChannelChatBinding binding;
 
@@ -176,7 +166,7 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
     private boolean isScrolling = false;
 
     private int subscribers = 0;
-    GroupChatAdapter groupViewAdapter;
+    ChannelChatAdapter groupViewAdapter;
 
     private boolean isListLoadedOnce = false;
 
@@ -226,6 +216,8 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
     // string variable is created for storing a file name
     private static String mFileName = null;
 
+
+    private boolean isUserTypingMessage = false;
 
     private int selectedImageUriIndex;
 
@@ -278,7 +270,7 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
         binding.memberTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(GroupChatsScreen.this, GroupProfileScreen.class));
+                startActivity(new Intent(ChannelChatsScreen.this, ChannelProfileScreen.class));
 
             }
         });
@@ -287,9 +279,9 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
 
 
             if (pinMessageCount == 0) {
-                Utils.showSnackMessage(GroupChatsScreen.this, binding.pin, "No Pinned Message Found!");
+                Utils.showSnackMessage(ChannelChatsScreen.this, binding.pin, "No Pinned Message Found!");
             } else {
-                Intent i = new Intent(GroupChatsScreen.this, GroupPinnedMessageScreen.class);
+                Intent i = new Intent(ChannelChatsScreen.this, GroupPinnedMessageScreen.class);
                 i.putExtra("post_base_url", postBaseUrl);
                 startActivity(i);
                 finish();
@@ -384,13 +376,21 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.send_message));
+
                 isUserTyping = true;
                 typeCount = charSequence.length();
 
-                if (typeCount == 0)
+                if (typeCount == 0) {
+                    binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+                    isUserTypingMessage = false;
                     endTypingListener();
-                else
+                }
+                else {
+                    isUserTypingMessage = true;
                     startTypingListener();
+                }
 
             }
 
@@ -401,20 +401,28 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
         });
 
         binding.sendMessage.setOnClickListener(view -> {
-            endTypingListener();
-            messageText = binding.type.getText().toString().trim();
 
-            if (isAnyFileAttached) {
-                if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                    callAttachmentApi();
+
+            if (isUserTypingMessage) {
+                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+                endTypingListener();
+                messageText = binding.type.getText().toString().trim();
+
+                if (isAnyFileAttached) {
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        callAttachmentApi();
+                    } else {
+                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                        isAnyFileAttached = false;
+                        isAttachmentSend = false;
+                    }
                 } else {
-                    Utils.showSnackMessage(this, binding.type, "Type Message !");
-                    binding.imagePreviewLayout.setVisibility(View.GONE);
-                    isAnyFileAttached = false;
-                    isAttachmentSend = false;
+                    validateSendMessage(messageText, binding.type);
                 }
-            } else {
-                validateSendMessage(messageText, binding.type);
+            }
+            else{
+                
             }
         });
 
@@ -445,7 +453,7 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
 
 
         binding.dummyUsers.setOnClickListener(view -> {
-            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(GroupChatsScreen.this);
+            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(ChannelChatsScreen.this);
             chat_options_dialog.setContentView(R.layout.bottomsheet_dummy_user_list);
 
             chat_options_dialog.show();
@@ -491,7 +499,7 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
 
     private void scrollToPosition(int position) {
         RecyclerView.SmoothScroller smoothScroller = new
-                LinearSmoothScroller(GroupChatsScreen.this) {
+                LinearSmoothScroller(ChannelChatsScreen.this) {
                     @Override
                     protected int getVerticalSnapPreference() {
                         return LinearSmoothScroller.SNAP_TO_START;
@@ -512,7 +520,7 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
 
 
         // Load Comments List Data -----
-        groupViewAdapter = new GroupChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
+        groupViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(groupViewAdapter);
@@ -1063,7 +1071,7 @@ public class GroupChatsScreen extends AppCompatActivity implements ApiResponseLi
                         responseModel = gson.fromJson(gsonObject, type);
 
                         if (responseData == null) {
-                            Utils.showSnackMessage(GroupChatsScreen.this, binding.getRoot(), "No Data Found");
+                            Utils.showSnackMessage(ChannelChatsScreen.this, binding.getRoot(), "No Data Found");
                             Log.d("authenticateUserAndFetchData -- ", "Error");
                             isDataAvailable = false;
                         } else if (responseModel.getData().getChatData().getRows() == null || responseModel.getData().getChatData().getRows().isEmpty()) {
