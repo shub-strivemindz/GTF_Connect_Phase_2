@@ -102,6 +102,7 @@
         <activity android:name=".ui.screenUI.channelModule.ChannelPinnedMessageScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelBlocklistScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManagePermissionScreen"/>
+        <activity android:name=".ui.screenUI.channelModule.ChannelManageReactionScreen"/>
 
 
         <activity android:name=".ui.screenUI.groupModule.GroupBlocklistScreen"/>

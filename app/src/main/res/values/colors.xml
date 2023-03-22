@@ -87,6 +87,8 @@
 
     <color name="chatHeaderDateBackgroundColor">#05000000</color>
 
+    <color name="radioButtonSelectedBackgroundColor">#1A2FB463</color>
+    <color name="radioButtonDefaultColor">#4D000000</color>
 
     <color name="card_light_grey">#F4F4F4</color>
 

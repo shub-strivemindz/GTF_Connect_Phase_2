@@ -42,14 +42,31 @@
 
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_centerHorizontal="true"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="@dimen/_90sdp"
             android:layout_height="@dimen/_90sdp"
+            android:id="@+id/logo_container"
             android:layout_marginTop="@dimen/_30sdp"
-            android:background="@drawable/logo_circle"
-            android:src="@drawable/gtr_logo" />
+            android:layout_centerHorizontal="true"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/background"
+            app:cardCornerRadius="@dimen/_180sdp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_70sdp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="@dimen/_180sdp">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/gtr_logo" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/title"
@@ -57,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="Live Market Session"
-            android:layout_below="@id/logo"
+            android:layout_below="@id/logo_container"
             android:fontFamily="@font/open_sans"
             android:textSize="@dimen/_15ssp"
             android:textFontWeight="600"
@@ -72,6 +89,7 @@
             android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/subscriber_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="123,123"

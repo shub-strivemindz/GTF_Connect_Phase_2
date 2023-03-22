@@ -79,6 +79,7 @@
             android:text="Send Messages"/>
 
         <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/send_message_switch"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:checked="false"
@@ -115,6 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:checked="false"
+            android:id="@+id/send_media_switch"
             android:layout_marginEnd="@dimen/_14sdp"
             app:track="@drawable/switch_track"
             android:thumb="@drawable/switch_thumb" />
@@ -148,6 +150,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:checked="false"
+            android:id="@+id/send_sticker_gif_switch"
             android:layout_marginEnd="@dimen/_14sdp"
             app:track="@drawable/switch_track"
             android:thumb="@drawable/switch_thumb" />
@@ -181,6 +184,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:checked="false"
+            android:id="@+id/send_embed_link_switch"
             android:layout_marginEnd="@dimen/_14sdp"
             app:track="@drawable/switch_track"
             android:thumb="@drawable/switch_thumb" />
@@ -213,6 +217,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:checked="false"
+            android:id="@+id/pin_message_switch"
             android:layout_marginEnd="@dimen/_14sdp"
             app:track="@drawable/switch_track"
             android:thumb="@drawable/switch_thumb" />
@@ -246,6 +251,7 @@
             android:layout_height="match_parent"
             android:checked="false"
             android:layout_marginEnd="@dimen/_14sdp"
+            android:id="@+id/sharing_content_switch"
             app:track="@drawable/switch_track"
             android:thumb="@drawable/switch_thumb" />
 
@@ -256,7 +262,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_marginVertical="@dimen/_20sdp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_320sdp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
 
@@ -267,8 +273,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_40sdp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -287,160 +292,140 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:checked="false"
+                    android:id="@+id/slow_mode_switch"
                     android:layout_marginEnd="@dimen/_14sdp"
                     app:track="@drawable/switch_track"
                     android:thumb="@drawable/switch_thumb" />
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:id="@+id/slow_mode_option_container"
+                android:orientation="vertical">
+
+                <RadioGroup
+                    android:id="@+id/slow_mode_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_200sdp">
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:alpha=".2"
                 android:layout_height="1dp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_24sdp" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:layout_width="0dp"
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/gap_10"
+                    android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat"
+                    android:layout_height="0dp"
+                    android:buttonTint="@color/radioButtonDefaultColor"
+                    android:text="After 10 sec"
+                    android:button="@drawable/radio_button_inset"
+                    android:paddingEnd="@dimen/_16sdp"
+                    android:textColor="@color/tab_grey"
+                    android:fontFamily="@font/poppins"
                     android:textFontWeight="400"
+                    android:paddingStart="@dimen/_12sdp"
                     android:textSize="@dimen/_10ssp"
-                    android:text="After 10 sec"/>
+                    />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:alpha=".2"
+                    android:layout_height="1dp"/>
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/gap_30"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:button="@drawable/radio_button_inset"
+                    android:layout_height="0dp"
+                    android:buttonTint="@color/radioButtonDefaultColor"
+                    android:text="After 30 sec"
+                    android:paddingEnd="@dimen/_16sdp"
+                    android:textColor="@color/tab_grey"
+                    android:fontFamily="@font/poppins"
+                    android:textFontWeight="400"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_10ssp"
+                    />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:alpha=".2"
+                    android:layout_height="1dp"/>
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/gap_1"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp"
+                    android:button="@drawable/radio_button_inset"
+                    android:buttonTint="@color/radioButtonDefaultColor"
+                    android:text="After 1 min"
+                    android:paddingEnd="@dimen/_16sdp"
+                    android:textColor="@color/tab_grey"
+                    android:fontFamily="@font/poppins"
+                    android:textFontWeight="400"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_10ssp"
+                    />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:alpha=".2"
+                android:layout_height="1dp"/>
+
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/gap_5"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:buttonTint="@color/radioButtonDefaultColor"
+                    android:layout_height="0dp"
+                    android:button="@drawable/radio_button_inset"
+                    android:text="After 5 min"
+                    android:paddingEnd="@dimen/_16sdp"
+                    android:textColor="@color/tab_grey"
+                    android:fontFamily="@font/poppins"
+                    android:textFontWeight="400"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_10ssp"
+                    />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:alpha=".2"
+                    android:layout_height="1dp"/>
+
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/gap_24"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp"
+                    android:button="@drawable/radio_button_inset"
+                    android:text="After 24 hours"
+                    android:buttonTint="@color/radioButtonDefaultColor"
+                    android:paddingEnd="@dimen/_16sdp"
+                    android:textColor="@color/tab_grey"
+                    android:fontFamily="@font/poppins"
+                    android:textFontWeight="400"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_10ssp"
+                    />
+
+                </RadioGroup>
 
             </LinearLayout>
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:alpha=".2"
-                android:layout_height="1dp"/>
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:alpha=".2"
+                    android:layout_height="1dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_24sdp" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat"
-                    android:textFontWeight="400"
-                    android:textSize="@dimen/_10ssp"
-                    android:text="After 30 sec"/>
-
-            </LinearLayout>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:alpha=".2"
-                android:layout_height="1dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_24sdp" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat"
-                    android:textFontWeight="400"
-                    android:textSize="@dimen/_10ssp"
-                    android:text="After 1 min"/>
-
-
-            </LinearLayout>
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:alpha=".2"
-                android:layout_height="1dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_24sdp" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat"
-                    android:textFontWeight="400"
-                    android:textSize="@dimen/_10ssp"
-                    android:text="After 5 min"/>
-
-            </LinearLayout>
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:alpha=".2"
-                android:layout_height="1dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_24sdp" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat"
-                    android:textFontWeight="400"
-                    android:textSize="@dimen/_10ssp"
-                    android:text="After 24 hour"/>
-
-            </LinearLayout>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:alpha=".2"
-                android:layout_height="1dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -448,10 +433,10 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginEnd="40dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_gravity="center"
+                    android:id="@+id/update_permission"
+                    android:layout_marginHorizontal="@dimen/_20sdp"
                     app:cardBackgroundColor="@color/theme_green"
                     app:cardCornerRadius="8dp">
 

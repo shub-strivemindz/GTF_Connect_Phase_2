@@ -155,6 +155,7 @@
                     android:text="Private Channel"/>
 
                 <TextView
+                    android:id="@+id/private_channel_switch_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
@@ -166,6 +167,7 @@
                     android:text="Off"/>
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/private_channel_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:checked="false"
@@ -258,6 +260,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
+                    android:id="@+id/discussion_switch_text"
                     android:gravity="center_vertical"
                     android:fontFamily="@font/montserrat"
                     android:textColor="@color/profileTextColor"
@@ -269,6 +272,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:checked="false"
+                    android:id="@+id/discussion_switch"
                     android:layout_marginEnd="@dimen/_14sdp"
                     app:track="@drawable/switch_track"
                     android:thumb="@drawable/switch_thumb" />
@@ -312,6 +316,7 @@
                 android:gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+
                 android:layout_height="match_parent"
                 android:textColor="@color/profileTextColor"
                 android:fontFamily="@font/montserrat"
@@ -324,6 +329,7 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/profileTextColor"
                 android:gravity="center_vertical"
+                android:id="@+id/manage_reaction_switch_text"
                 android:fontFamily="@font/montserrat"
                 android:textStyle="bold"
                 android:textSize="@dimen/_9ssp"
@@ -333,6 +339,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checked="false"
+                android:id="@+id/manage_reaction_switch"
                 android:layout_marginEnd="@dimen/_14sdp"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />
@@ -434,6 +441,7 @@
                 android:textColor="@color/profileTextColor"
                 android:textStyle="bold"
                 android:textSize="@dimen/_9ssp"
+                android:id="@+id/sign_message_switch_text"
                 android:text="Off"/>
 
             <androidx.appcompat.widget.SwitchCompat
@@ -441,6 +449,7 @@
                 android:layout_height="match_parent"
                 android:checked="false"
                 android:layout_marginEnd="@dimen/_14sdp"
+                android:id="@+id/sign_message_switch"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />
 
@@ -548,6 +557,7 @@
                     android:fontFamily="@font/montserrat"
                     android:textStyle="bold"
                     android:textColor="@color/profileTextColor"
+                    android:id="@+id/manipulate_view_switch_text"
                     android:textSize="@dimen/_9ssp"
                     android:text="Off"/>
 
@@ -555,6 +565,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:checked="false"
+                    android:id="@+id/manipulate_view_switch"
                     android:layout_marginEnd="@dimen/_14sdp"
                     app:track="@drawable/switch_track"
                     android:thumb="@drawable/switch_thumb" />
@@ -602,7 +613,7 @@
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="@color/profileTextColor"
-                android:text="Sign Messages"/>
+                android:text="View Chat History"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -612,6 +623,7 @@
                 android:fontFamily="@font/montserrat"
                 android:textStyle="bold"
                 android:textColor="@color/profileTextColor"
+                android:id="@+id/view_chat_history_switch_text"
                 android:textSize="@dimen/_9ssp"
                 android:text="Off"/>
 
@@ -619,6 +631,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checked="false"
+                android:id="@+id/view_chat_history_switch"
                 android:layout_marginEnd="@dimen/_14sdp"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />

@@ -47,6 +47,8 @@ public class ApiUrls {
 
     public static final String URL_UPLOAD_FILE = "uploadFile";
 
+    public static final String URL_GET_EMOJI_REACTION_LIST = "reactions";
+
     public static final String URL_GROUP_CHANNEL = "group_channels";
 
     public static final String URL_GROUP_CHANNEL_SUBSCRIPTION_PLAN = "subscription_plans/subscription";
@@ -56,6 +58,8 @@ public class ApiUrls {
     public static final String URL_GROUP_CHANNEL_UPDATE_PROFILE = "update";
 
     public static final String URL_GROUP_CHANNEL_UPDATE_PERMISSION = "permission/update";
+
+    public static final String URL_GROUP_CHANNEL_UPDATE_SETTINGS = "settings/update";
 
     public static final String URL_GROUP_CHANNEL_UPDATE_REACTION = "reaction/update";
 
