@@ -22,6 +22,8 @@ import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentGroupViewBinding;
 import com.gtfconnect.databinding.FragmentRecentViewBinding;
 import com.gtfconnect.models.groupResponseModel.GroupResponseModel;
+import com.gtfconnect.roomDB.AppDao;
+import com.gtfconnect.roomDB.AppDatabase;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.GroupViewAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -45,12 +47,16 @@ public class RecentFragment extends Fragment {
     Rest rest;
 
     private boolean isSearchClicked = false;
+    private AppDao appDao;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentRecentViewBinding.inflate(inflater, container, false);
         rest = new Rest(getContext(),false,false);
+
+
+        appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
 
         binding.searchView.setVisibility(View.GONE);
 

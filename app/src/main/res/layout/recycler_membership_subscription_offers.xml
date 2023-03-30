@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
@@ -237,7 +238,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginHorizontal="@dimen/_40sdp"
-        app:cardBackgroundColor="@color/membership_blue"
+        app:cardBackgroundColor="@color/theme_green"
         app:cardCornerRadius="@dimen/_6sdp">
 
         <TextView
@@ -256,7 +257,7 @@
         android:layout_height="@dimen/_40sdp"
         android:layout_marginHorizontal="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_14sdp"
-        app:cardBackgroundColor="@color/membership_red"
+        app:cardBackgroundColor="@color/theme_green"
         app:cardCornerRadius="@dimen/_6sdp">
 
         <TextView
@@ -278,7 +279,7 @@
         android:layout_marginHorizontal="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_14sdp"
         android:layout_marginBottom="@dimen/_18sdp"
-        app:cardBackgroundColor="@color/membership_yellow"
+        app:cardBackgroundColor="@color/theme_green"
         app:cardCornerRadius="@dimen/_6sdp">
 
         <TextView

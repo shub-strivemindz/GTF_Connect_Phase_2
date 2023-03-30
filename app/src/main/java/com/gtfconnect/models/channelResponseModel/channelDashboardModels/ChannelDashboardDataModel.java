@@ -1,172 +1,149 @@
-package com.gtfconnect.models.channelResponseModel;
+package com.gtfconnect.models.channelResponseModel.channelDashboardModels;
+
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.gtfconnect.models.groupResponseModel.GroupResponseModel;
 
 import java.util.List;
 
-public class ChannelResponseModel {
+public class ChannelDashboardDataModel {
 
-    @SerializedName("success")
+
+    @SerializedName("GCMemberID")
     @Expose
-    private Boolean success;
-    @SerializedName("data")
+    private String gCMemberID;
+    @SerializedName("GroupChannelID")
     @Expose
-    private List<ChannelResponseModel.Datum> data;
+    private Integer groupChannelID;
+    @SerializedName("UserID")
+    @Expose
+    private String userID;
+    @SerializedName("IsAdmin")
+    @Expose
+    private Integer isAdmin;
+    @SerializedName("CreatedBy")
+    @Expose
+    private String createdBy;
+    @SerializedName("CreatorID")
+    @Expose
+    private Integer creatorID;
+    @SerializedName("IsDummy")
+    @Expose
+    private Integer isDummy;
+    @SerializedName("unreadcount")
+    @Expose
+    private String unreadcount;
+    @SerializedName("Status")
+    @Expose
+    private String status;
+    @SerializedName("CreatedAt")
+    @Expose
+    private String createdAt;
+    @SerializedName("UpdatedAt")
+    @Expose
+    private String updatedAt;
+    @SerializedName("group")
+    @Expose
+    private Group group;
 
-    public Boolean getSuccess() {
-        return success;
+    public String getGCMemberID() {
+        return gCMemberID;
     }
 
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    public void setGCMemberID(String gCMemberID) {
+        this.gCMemberID = gCMemberID;
     }
 
-    public List<ChannelResponseModel.Datum> getData() {
-        return data;
+    public Integer getGroupChannelID() {
+        return groupChannelID;
     }
 
-    public void setData(List<ChannelResponseModel.Datum> data) {
-        this.data = data;
+    public void setGroupChannelID(Integer groupChannelID) {
+        this.groupChannelID = groupChannelID;
     }
 
-    public class Datum {
-
-        @SerializedName("GCMemberID")
-        @Expose
-        private String gCMemberID;
-        @SerializedName("GroupChannelID")
-        @Expose
-        private Integer groupChannelID;
-        @SerializedName("UserID")
-        @Expose
-        private String userID;
-        @SerializedName("IsAdmin")
-        @Expose
-        private Integer isAdmin;
-        @SerializedName("CreatedBy")
-        @Expose
-        private String createdBy;
-        @SerializedName("CreatorID")
-        @Expose
-        private Integer creatorID;
-        @SerializedName("IsDummy")
-        @Expose
-        private Integer isDummy;
-        @SerializedName("unreadcount")
-        @Expose
-        private String unreadcount;
-        @SerializedName("Status")
-        @Expose
-        private String status;
-        @SerializedName("CreatedAt")
-        @Expose
-        private String createdAt;
-        @SerializedName("UpdatedAt")
-        @Expose
-        private String updatedAt;
-        @SerializedName("group")
-        @Expose
-        private GroupResponseModel.Group group;
-
-        public String getGCMemberID() {
-            return gCMemberID;
-        }
-
-        public void setGCMemberID(String gCMemberID) {
-            this.gCMemberID = gCMemberID;
-        }
-
-        public Integer getGroupChannelID() {
-            return groupChannelID;
-        }
-
-        public void setGroupChannelID(Integer groupChannelID) {
-            this.groupChannelID = groupChannelID;
-        }
-
-        public String getUserID() {
-            return userID;
-        }
-
-        public void setUserID(String userID) {
-            this.userID = userID;
-        }
-
-        public Integer getIsAdmin() {
-            return isAdmin;
-        }
-
-        public void setIsAdmin(Integer isAdmin) {
-            this.isAdmin = isAdmin;
-        }
-
-        public String getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public Integer getCreatorID() {
-            return creatorID;
-        }
-
-        public void setCreatorID(Integer creatorID) {
-            this.creatorID = creatorID;
-        }
-
-        public Integer getIsDummy() {
-            return isDummy;
-        }
-
-        public void setIsDummy(Integer isDummy) {
-            this.isDummy = isDummy;
-        }
-
-        public String getUnreadcount() {
-            return unreadcount;
-        }
-
-        public void setUnreadcount(String unreadcount) {
-            this.unreadcount = unreadcount;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public GroupResponseModel.Group getGroup() {
-            return group;
-        }
-
-        public void setGroup(GroupResponseModel.Group group) {
-            this.group = group;
-        }
-
+    public String getUserID() {
+        return userID;
     }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public Integer getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Integer isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Integer getCreatorID() {
+        return creatorID;
+    }
+
+    public void setCreatorID(Integer creatorID) {
+        this.creatorID = creatorID;
+    }
+
+    public Integer getIsDummy() {
+        return isDummy;
+    }
+
+    public void setIsDummy(Integer isDummy) {
+        this.isDummy = isDummy;
+    }
+
+    public String getUnreadcount() {
+        return unreadcount;
+    }
+
+    public void setUnreadcount(String unreadcount) {
+        this.unreadcount = unreadcount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+
 
     public class Group {
 
@@ -187,19 +164,19 @@ public class ChannelResponseModel {
         private String accessType;
         @SerializedName("ProfileImage")
         @Expose
-        private Object profileImage;
+        private String profileImage;
         @SerializedName("PublicLink")
         @Expose
-        private Object publicLink;
+        private String publicLink;
         @SerializedName("PrivateLink")
         @Expose
-        private Object privateLink;
+        private String privateLink;
         @SerializedName("IsTrending")
         @Expose
         private Integer isTrending;
         @SerializedName("TrendingLabel")
         @Expose
-        private Object trendingLabel;
+        private String trendingLabel;
         @SerializedName("MemberCount")
         @Expose
         private String memberCount;
@@ -214,7 +191,7 @@ public class ChannelResponseModel {
         private String updatedAt;
         @SerializedName("message")
         @Expose
-        private List<GroupResponseModel.Message> message;
+        private List<Message> message;
 
         public Integer getGroupChannelID() {
             return groupChannelID;
@@ -256,27 +233,27 @@ public class ChannelResponseModel {
             this.accessType = accessType;
         }
 
-        public Object getProfileImage() {
+        public String getProfileImage() {
             return profileImage;
         }
 
-        public void setProfileImage(Object profileImage) {
+        public void setProfileImage(String profileImage) {
             this.profileImage = profileImage;
         }
 
-        public Object getPublicLink() {
+        public String getPublicLink() {
             return publicLink;
         }
 
-        public void setPublicLink(Object publicLink) {
+        public void setPublicLink(String publicLink) {
             this.publicLink = publicLink;
         }
 
-        public Object getPrivateLink() {
+        public String getPrivateLink() {
             return privateLink;
         }
 
-        public void setPrivateLink(Object privateLink) {
+        public void setPrivateLink(String privateLink) {
             this.privateLink = privateLink;
         }
 
@@ -288,11 +265,11 @@ public class ChannelResponseModel {
             this.isTrending = isTrending;
         }
 
-        public Object getTrendingLabel() {
+        public String getTrendingLabel() {
             return trendingLabel;
         }
 
-        public void setTrendingLabel(Object trendingLabel) {
+        public void setTrendingLabel(String trendingLabel) {
             this.trendingLabel = trendingLabel;
         }
 
@@ -328,16 +305,15 @@ public class ChannelResponseModel {
             this.updatedAt = updatedAt;
         }
 
-        public List<GroupResponseModel.Message> getMessage() {
+        public List<Message> getMessage() {
             return message;
         }
 
-        public void setMessage(List<GroupResponseModel.Message> message) {
+        public void setMessage(List<Message> message) {
             this.message = message;
         }
 
     }
-
     public class Message {
 
         @SerializedName("GroupChatID")
@@ -357,7 +333,7 @@ public class ChannelResponseModel {
         private String message;
         @SerializedName("GroupChatRefID")
         @Expose
-        private Object groupChatRefID;
+        private String groupChatRefID;
         @SerializedName("AllowDiscussion")
         @Expose
         private Integer allowDiscussion;
@@ -372,7 +348,7 @@ public class ChannelResponseModel {
         private Integer reactionsCount;
         @SerializedName("DummyUserID")
         @Expose
-        private Object dummyUserID;
+        private String dummyUserID;
         @SerializedName("IsRead")
         @Expose
         private Integer isRead;
@@ -382,6 +358,9 @@ public class ChannelResponseModel {
         @SerializedName("CommentCount")
         @Expose
         private Integer commentCount;
+        @SerializedName("ChatStatus")
+        @Expose
+        private Integer chatStatus;
         @SerializedName("CreatedAt")
         @Expose
         private String createdAt;
@@ -429,11 +408,11 @@ public class ChannelResponseModel {
             this.message = message;
         }
 
-        public Object getGroupChatRefID() {
+        public String getGroupChatRefID() {
             return groupChatRefID;
         }
 
-        public void setGroupChatRefID(Object groupChatRefID) {
+        public void setGroupChatRefID(String groupChatRefID) {
             this.groupChatRefID = groupChatRefID;
         }
 
@@ -469,11 +448,11 @@ public class ChannelResponseModel {
             this.reactionsCount = reactionsCount;
         }
 
-        public Object getDummyUserID() {
+        public String getDummyUserID() {
             return dummyUserID;
         }
 
-        public void setDummyUserID(Object dummyUserID) {
+        public void setDummyUserID(String dummyUserID) {
             this.dummyUserID = dummyUserID;
         }
 
@@ -501,6 +480,14 @@ public class ChannelResponseModel {
             this.commentCount = commentCount;
         }
 
+        public Integer getChatStatus() {
+            return chatStatus;
+        }
+
+        public void setChatStatus(Integer chatStatus) {
+            this.chatStatus = chatStatus;
+        }
+
         public String getCreatedAt() {
             return createdAt;
         }
@@ -518,5 +505,4 @@ public class ChannelResponseModel {
         }
 
     }
-
 }

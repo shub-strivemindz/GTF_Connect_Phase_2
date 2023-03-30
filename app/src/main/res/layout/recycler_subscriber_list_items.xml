@@ -3,17 +3,25 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background"
-    android:layout_height="@dimen/_75sdp"
+    android:layout_height="@dimen/_45sdp"
     android:orientation="horizontal">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:layout_marginStart="@dimen/_22sdp"
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        app:cardElevation="@dimen/_6sdp"
         android:layout_gravity="center_vertical"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
-        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-        android:background="#fff"
-        android:src="@drawable/bot2"/>
+        app:cardCornerRadius="@dimen/_150sdp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/profile_pic"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bot5"/>
+
+    </com.google.android.material.card.MaterialCardView>
 
 
     <TextView
@@ -21,11 +29,11 @@
         android:layout_height="match_parent"
         android:layout_weight=".7"
         android:layout_marginStart="@dimen/_14sdp"
+        android:id="@+id/title"
         android:text="John Harper"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="@dimen/_11ssp"
         android:textStyle="bold"
         android:fontFamily="@font/montserrat"
-        android:textFontWeight="600"
         android:gravity="center_vertical"/>
 
 
@@ -36,16 +44,16 @@
         android:layout_gravity="center_vertical"
         app:cardBackgroundColor="#5E2FB463"
         app:cardElevation="0dp"
-        app:cardCornerRadius="@dimen/_2sdp">
+        app:cardCornerRadius="@dimen/_4sdp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="Message"
         android:textColor="@color/theme_green"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/_8ssp"
         android:textFontWeight="600"
-        android:fontFamily="@font/open_sans"
+        android:fontFamily="@font/montserrat"
         android:gravity="center"
         android:layout_gravity="center"/>
 

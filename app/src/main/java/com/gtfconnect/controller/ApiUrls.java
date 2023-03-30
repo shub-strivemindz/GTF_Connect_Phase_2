@@ -61,8 +61,9 @@ public class ApiUrls {
 
     public static final String URL_GROUP_CHANNEL_UPDATE_SETTINGS = "settings/update";
 
-    public static final String URL_GROUP_CHANNEL_UPDATE_REACTION = "reaction/update";
+    public static final String URL_GROUP_CHANNEL_UPDATE_REACTION_LIST = "reaction/update";
 
+    public static final String URL_GROUP_CHANNEL_GET_SUBSCRIPTION_MEMBERS = "subscribers";
 
 
 }

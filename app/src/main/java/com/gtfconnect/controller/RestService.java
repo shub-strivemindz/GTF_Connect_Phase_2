@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.gtfconnect.models.CountryResponse;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -131,9 +132,8 @@ public interface RestService {
                                                              @Header("DeviceToken") String device_token);
 
     @FormUrlEncoded
-    @POST(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+"{endpoint}")
+    @PATCH(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ ApiUrls.URL_GROUP_CHANNEL_UPDATE_PROFILE)
     Observable<JsonElement> update_group_channel_profile(@Path("id") int id,
-                                                         @Path("endpoint") String endPoint,
                                                          @Header ("Authorization") String api_token,
                                                          @Header("DeviceType") String device_type,
                                                          @Header("DeviceToken") String device_token,
@@ -152,7 +152,6 @@ public interface RestService {
 
 
 
-
     @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ApiUrls.URL_GET_EMOJI_REACTION_LIST)
     Observable<JsonElement> get_group_channel_manage_reaction_list(@Path("id") int id,
                                                                      @Header ("Authorization") String api_token,
@@ -160,6 +159,17 @@ public interface RestService {
                                                                      @Header("DeviceToken") String device_token,
                                                                      @Query("page") int page,
                                                                      @Query("per_page") int per_page);
+
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ApiUrls.URL_GROUP_CHANNEL_GET_SUBSCRIPTION_MEMBERS)
+    Observable<JsonElement> get_group_channel_manage_subscriber_list(@Path("id") int id,
+                                                                   @Header ("Authorization") String api_token,
+                                                                   @Header("DeviceType") String device_type,
+                                                                   @Header("DeviceToken") String device_token,
+                                                                   @Query("page") int page,
+                                                                   @Query("per_page") int per_page);
 
 
 
@@ -171,6 +181,16 @@ public interface RestService {
                                                                      @Header("DeviceToken") String device_token,
                                                                      @FieldMap Map<String, Object> params);
 
+
+
+
+    @FormUrlEncoded
+    @PATCH(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ApiUrls.URL_GROUP_CHANNEL_UPDATE_REACTION_LIST)
+    Observable<JsonElement> update_group_channel_reaction_list(@Path("id") int id,
+                                                          @Header ("Authorization") String api_token,
+                                                          @Header("DeviceType") String device_type,
+                                                          @Header("DeviceToken") String device_token,
+                                                          @FieldMap Map<String, Object> params);
 
 
 

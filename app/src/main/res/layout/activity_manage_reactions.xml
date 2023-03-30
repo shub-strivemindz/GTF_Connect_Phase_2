@@ -38,9 +38,7 @@
         android:layout_height="1dp"
         android:alpha=".4"/>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+
 <com.google.android.material.card.MaterialCardView
     android:layout_marginVertical="@dimen/_20sdp"
     android:layout_width="match_parent"
@@ -83,7 +81,8 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
-                android:textFontWeight="400"
+                android:textColor="@color/profileTextColor"
+                android:textStyle="bold"
                 android:textSize="@dimen/_10ssp"
                 android:text="Manage Reactions"/>
 
@@ -94,7 +93,9 @@
                 android:gravity="center_vertical"
                 android:fontFamily="@font/montserrat"
                 android:textStyle="bold"
+                android:textColor="@color/profileTextColor"
                 android:id="@+id/reaction_switch_text"
+                android:textSize="@dimen/_10ssp"
                 android:text="On"/>
 
             <androidx.appcompat.widget.SwitchCompat
@@ -116,19 +117,21 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:id="@+id/reactions_recycler"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/_80sdp">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_gravity="center"
+                android:id="@+id/update_reaction"
+                android:layout_marginHorizontal="@dimen/_40sdp"
                 app:cardBackgroundColor="@color/theme_green"
                 app:cardCornerRadius="8dp">
 
@@ -140,12 +143,11 @@
                     android:fontFamily="@font/poppins500"
                     android:text="UPDATE"
                     android:includeFontPadding="false"/>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
 
-    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

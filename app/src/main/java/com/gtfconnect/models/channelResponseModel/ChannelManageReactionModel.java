@@ -141,6 +141,8 @@ public class ChannelManageReactionModel {
         @Expose
         private String gcReactionStatus;
 
+        private boolean isChecked = false;
+
         public Integer getReactionID() {
             return reactionID;
         }
@@ -181,6 +183,13 @@ public class ChannelManageReactionModel {
             this.gcReactionStatus = gcReactionStatus;
         }
 
+        public boolean isChecked() {
+            return isChecked;
+        }
+
+        public void setChecked(boolean checked) {
+            isChecked = checked;
+        }
     }
 }
 

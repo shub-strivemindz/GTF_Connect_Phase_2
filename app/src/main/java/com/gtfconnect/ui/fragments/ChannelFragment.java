@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
@@ -20,7 +22,10 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentChannelViewBinding;
-import com.gtfconnect.models.channelResponseModel.ChannelResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.roomDB.AppDao;
+import com.gtfconnect.roomDB.AppDatabase;
+import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.ui.adapters.ChannelViewAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -28,6 +33,7 @@ import com.gtfconnect.utilities.Utils;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 import io.socket.client.Ack;
 
@@ -40,7 +46,11 @@ public class ChannelFragment extends Fragment {
     private JSONObject jsonRawObject;
     private int userId;
 
-    Rest rest;
+
+    private AppDao appDao;
+
+    private DatabaseViewModel databaseViewModel;
+
 
     @Nullable
     @Override
@@ -48,12 +58,11 @@ public class ChannelFragment extends Fragment {
 
         binding = FragmentChannelViewBinding.inflate(inflater, container, false);
 
-        rest = new Rest(getContext(),false,false);
-
         userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
 
-        updateChannelDashboardSocket();
-        messageReceived();
+        init();
+
+
 
         // Todo : Unset count to real data
         //unreadMessageListener.getUnreadCount(0);
@@ -66,6 +75,37 @@ public class ChannelFragment extends Fragment {
 
         return binding.getRoot();
     }
+
+
+    private void init()
+    {
+        appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
+        loadLocalData();
+        messageReceived();
+    }
+
+
+    private void loadLocalData()
+    {
+        databaseViewModel.getChannelDashboardData().observe(requireActivity(), channelResponseModel -> {
+            if (channelResponseModel != null) {
+                if (channelResponseModel.getData() != null && !channelResponseModel.getData().isEmpty()) {
+
+                    responseModel = new ChannelResponseModel();
+
+                    responseModel.setData(channelResponseModel.getData());
+                    loadDataToAdapter();
+                } else {
+                    updateChannelDashboardSocket();
+                }
+            }
+        });
+    }
+
+
+
 
     private void updateChannelDashboardSocket()
     {
@@ -112,7 +152,10 @@ public class ChannelFragment extends Fragment {
                         } else {
                             Log.d("authenticateUserAndFetchData -- ", String.valueOf(responseData));
 
-                            getActivity().runOnUiThread(() -> loadDataToAdapter());
+                            getActivity().runOnUiThread(() -> {
+                                databaseViewModel.insertUser(responseModel);
+                                //loadLocalData();
+                            });
                         }
                     }
                 }
@@ -131,8 +174,6 @@ public class ChannelFragment extends Fragment {
     {
         Log.d("Group Data ----"," reposne -----"+responseModel);
 
-
-
         ChannelViewAdapter groupViewAdapter= new ChannelViewAdapter(getActivity(),responseModel);
         binding.channelViewList.setHasFixedSize(true);
         binding.channelViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -142,7 +183,7 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateChannelDashboardSocket();
+        //updateChannelDashboardSocket();
     }
 
 

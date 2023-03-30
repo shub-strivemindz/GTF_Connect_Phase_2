@@ -316,9 +316,68 @@ more then 1000 top most trading courses+ daily or weekly"
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
-        android:visibility="gone"
+        android:layout_marginStart="@dimen/_50sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
         app:cardBackgroundColor="@color/card_light_grey"
         app:cardCornerRadius="@dimen/_4sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/play"
+                app:tint="@color/audioPlayTint"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:id="@+id/play_recorded_audio"/>
+
+            <!--<com.example.audiowaveform.WaveformSeekBar
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:id="@+id/waveForm"/>-->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="00"
+                    android:id="@+id/start_time_counter"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/_9ssp"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="/01:30"
+                    android:id="@+id/total_time"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/_9ssp"
+                    android:textColor="@color/black"
+                    android:layout_marginEnd="@dimen/_10sdp"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/volume"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:id="@+id/volume_switch"/>
+
+
+
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

@@ -1,21 +1,30 @@
 package com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentUserSettingBinding;
 import com.gtfconnect.interfaces.ChannelSettingListener;
 import com.gtfconnect.models.GroupChannelProfileDetailModel;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelBlocklistScreen;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelManagePermissionScreen;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelProfileScreen;
+import com.shawnlin.numberpicker.NumberPicker;
 
 public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHolder> {
 
@@ -23,7 +32,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     GroupChannelProfileDetailModel profileDetailModel;
 
-    private int accessType = 0, discussion = 0, signMessage = 0,manipulateView = 0, viewChatHistory = 0;
+    private boolean isChannelDescriptionClicked = false;
+
+    private int accessType = 0, discussion = 0, signMessage = 0,manipulateView = 0,manipulateViewPercent=10, viewChatHistory = 0, manageReaction = 0;
+
 
     private ChannelSettingListener listener;
 
@@ -41,6 +53,20 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(SettingAdapter.ViewHolder holder, int position) {
+
+
+        holder.binding.channelDescription.setOnClickListener(view -> {
+            if(isChannelDescriptionClicked){
+                //This will shrink textview to 2 lines if it is expanded.
+                holder.binding.channelDescription.setMaxLines(6);
+                isChannelDescriptionClicked = false;
+            } else {
+                //This will expand the textview if it is of 2 lines
+                holder.binding.channelDescription.setMaxLines(Integer.MAX_VALUE);
+                isChannelDescriptionClicked = true;
+            }
+        });
+
 
 
         if(profileDetailModel.getData().getGcInfo() != null){
@@ -76,6 +102,44 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
             }
         }
 
+
+        if(profileDetailModel.getData().getGcSetting().getEnableReactions() != null){
+            if (profileDetailModel.getData().getGcSetting().getEnableReactions() == 0){
+                holder.binding.manageReactionSwitch.setChecked(false);
+                holder.binding.manageReactionSwitchText.setText("Off");
+                Log.d("Reaction_Status",profileDetailModel.getData().getGcSetting().getEnableReactions().toString());
+                manageReaction = 0;
+            }
+            else{
+                holder.binding.manageReactionSwitch.setChecked(true);
+                holder.binding.manageReactionSwitchText.setText("On");
+                Log.d("Reaction_Status",profileDetailModel.getData().getGcSetting().getEnableReactions().toString());
+                manageReaction = 1;
+            }
+        }
+
+        holder.binding.manageReaction.setOnClickListener(view -> {
+            if ((profileDetailModel.getData().getGcSetting().getEnableReactions() != null && profileDetailModel.getData().getGcSetting().getEnableReactions() == 1) || manageReaction == 1){
+                listener.callManageReactionsClass(1);
+            }
+        });
+
+        holder.binding.manageReactionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    manageReaction = 1;
+                    holder.binding.manageReactionSwitchText.setText("On");
+                    listener.callManageReactionsClass(profileDetailModel.getData().getGcSetting().getEnableReactions());
+                }
+                else{
+                    manageReaction = 0;
+                    holder.binding.manageReactionSwitchText.setText("Off");
+                }
+            }
+        });
+
+
         if(profileDetailModel.getData().getGcSetting().getSignedMsg() != null){
             if (profileDetailModel.getData().getGcSetting().getSignedMsg() == 1){
                 holder.binding.signMessageSwitch.setChecked(true);
@@ -89,16 +153,28 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
             }
         }
 
-        if(profileDetailModel.getData().getGcSetting().getManipulateViewsPercent() != null){
-            if (profileDetailModel.getData().getGcSetting().getManipulateViewsPercent() == 0){
-                holder.binding.manipulateViewSwitch.setChecked(false);
-                holder.binding.manipulateViewSwitchText.setText("On");
-                manipulateView = 0;
+        if (profileDetailModel.getData().getGcSetting().getEnableManipulateViews() != null){
+            if(profileDetailModel.getData().getGcSetting().getEnableManipulateViews() == 1) {
+
+                manipulateView = 1;
+
+                if (profileDetailModel.getData().getGcSetting().getManipulateViewsPercent() != null) {
+                    if (profileDetailModel.getData().getGcSetting().getManipulateViewsPercent() == 0) {
+                        holder.binding.manipulateViewSwitch.setChecked(false);
+                        holder.binding.manipulateViewSwitchText.setText("Off");
+
+                        manipulateViewPercent = 0;
+                    } else {
+                        holder.binding.manipulateViewSwitch.setChecked(true);
+                        holder.binding.manipulateViewSwitchText.setText("On");
+
+                        manipulateView = profileDetailModel.getData().getGcSetting().getManipulateViewsPercent();
+                    }
+                }
             }
             else{
-                holder.binding.manipulateViewSwitch.setChecked(true);
-                holder.binding.manipulateViewSwitchText.setText("On");
-                manipulateView = profileDetailModel.getData().getGcSetting().getManipulateViewsPercent();
+                manipulateView = 0;
+                manipulateViewPercent = 10;
             }
         }
 
@@ -174,18 +250,31 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
             }
         });
 
-        holder.binding.manageReactionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        holder.binding.manipulateViewContainer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
-                    holder.binding.manageReactionSwitchText.setText("On");
-                    listener.callManageReactionsClass();
-                }
-                else{
-                    holder.binding.manageReactionSwitchText.setText("Off");
+            public void onClick(View view) {
+                if (profileDetailModel.getData().getGcSetting().getEnableManipulateViews() == 1){
+                    showManipulateViewDialog();
                 }
             }
         });
+
+
+        holder.binding.manipulateViewSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    holder.binding.manipulateViewSwitchText.setText("On");
+                    showManipulateViewDialog();
+                }
+                else{
+                    holder.binding.manipulateViewSwitchText.setText("Off");
+                    listener.updateManipulateViewsStatus(0,10);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -208,6 +297,88 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
     public void updateData(GroupChannelProfileDetailModel profileDetailModel){
         this.profileDetailModel = profileDetailModel;
         notifyDataSetChanged();
+    }
+
+
+
+    private void showManipulateViewDialog(){
+        Dialog manipulate_view_dialog = new Dialog(context);
+
+        manipulate_view_dialog.setContentView(R.layout.dialog_manipulate_view);
+        manipulate_view_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        manipulate_view_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+        SwitchCompat viewSwitch = manipulate_view_dialog.findViewById(R.id.manipulate_view_switch);
+        viewSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!b)
+                {
+                    listener.updateManipulateViewsStatus(0,10);
+                    manipulate_view_dialog.dismiss();
+                }
+            }
+        });
+
+
+
+        NumberPicker numberPicker = (NumberPicker) manipulate_view_dialog.findViewById(R.id.manipulate_view_percent);
+        numberPicker.setMinValue(0);
+        numberPicker.setMaxValue(9);
+        numberPicker.setDisplayedValues(new String[]{"10","20","30","40","50","60","70","80","90","100"});
+        numberPicker.setValue((manipulateViewPercent/10)-1);
+
+
+        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                switch (newVal){
+                    case 0:
+                        manipulateViewPercent = 10;
+                        break;
+                    case 1:
+                        manipulateViewPercent = 20;
+                        break;
+                    case 2:
+                        manipulateViewPercent = 30;
+                        break;
+                    case 3:
+                        manipulateViewPercent = 40;
+                        break;
+                    case 4:
+                        manipulateViewPercent = 50;
+                        break;
+                    case 5:
+                        manipulateViewPercent = 60;
+                        break;
+                    case 6:
+                        manipulateViewPercent = 70;
+                        break;
+                    case 7:
+                        manipulateViewPercent = 80;
+                        break;
+                    case 8:
+                        manipulateViewPercent = 90;
+                        break;
+                    case 9:
+                    default:
+                        manipulateViewPercent = 100;
+                        break;
+                }
+            }
+        });
+
+        manipulate_view_dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                if (manipulateViewPercent != profileDetailModel.getData().getGcSetting().getManipulateViewsPercent()){
+                    listener.updateManipulateViewsStatus(1,manipulateViewPercent);
+                }
+            }
+        });
+
+        manipulate_view_dialog.show();
     }
 }
 

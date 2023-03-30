@@ -7,7 +7,7 @@ public interface ChannelSettingListener {
     void updateSignMessageStatus(int status);
     void updateDiscussionStatus(int status);
     void updateViewChatHistoryStatus(int status);
-    void updateManipulateViewsStatus(int status);
+    void updateManipulateViewsStatus(int status,int percent);
 
-    void callManageReactionsClass();
+    void callManageReactionsClass(int status);
 }

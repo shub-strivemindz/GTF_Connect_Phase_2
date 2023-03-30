@@ -5,9 +5,6 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -19,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
@@ -29,22 +25,28 @@ import com.gtfconnect.models.GroupChannelProfileDetailModel;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChannelManagePermissionScreen extends AppCompatActivity implements ApiResponseListener{
+public class ChannelManagePermissionScreen extends AppCompatActivity implements ApiResponseListener {
 
     ActivityManagePermissionBinding binding;
 
     GroupChannelProfileDetailModel detailModel;
 
-    private final int GC_PERMISSION_UPDATED_CODE = 1001;
+    private final int UPDATE_DATA = 201;
+
+    private final int GC_REFRESH_UPDATED_DATA_CODE = 1001;
+
+    private int requestType = 0;
 
     private Rest rest;
     private ApiResponseListener listener;
     private ConnectViewModel connectViewModel;
 
+    private int channelID;
+
+    private String api_token;
     private int slowModeTime = 0,
             sendMessage = 0,
             sendMedia = 0,
@@ -58,6 +60,10 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         binding = ActivityManagePermissionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+        channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
+        api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
         detailModel = new GroupChannelProfileDetailModel();
         Gson gson = new Gson();
@@ -92,10 +98,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             params.put("PinMessage",pinMessage);
             params.put("SlowMode",slowModeTime);
 
-
-        int channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
-        String api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
-        connectViewModel.update_groupChannel_permission_settings(channelID,api_token,"android","test",params);
+            requestType = UPDATE_DATA;
+            connectViewModel.update_groupChannel_permission_settings(channelID,api_token,"android","test",params);
         });
     }
 
@@ -149,11 +153,15 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
         });
 
         binding.sharingContentSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            Map<String,Object> params = new HashMap<>();
             if (b){
-                sharingContent = 1;
+                params.put("RestrictSharingContent",1);
+                Toast.makeText(this, String.valueOf(channelID), Toast.LENGTH_SHORT).show();
+                connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
             }
             else{
-                sharingContent = 0;
+                params.put("RestrictSharingContent",0);
+                connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
             }
         });
 
@@ -437,17 +445,26 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
 
     @Override
     public void onDataRender(JsonObject jsonObject) {
-        Toast.makeText(this, "Permissions Updated", Toast.LENGTH_SHORT).show();
-        setResult(GC_PERMISSION_UPDATED_CODE,new Intent());
-        finish();
+
+
+        if (requestType == UPDATE_DATA) {
+            Toast.makeText(this, "Permissions Updated", Toast.LENGTH_SHORT).show();
+
+            setResult(GC_REFRESH_UPDATED_DATA_CODE, new Intent());
+            finish();
+        }
         Log.d("json response : ",jsonObject.toString());
     }
 
     @Override
     public void onResponseRender(JsonObject jsonObject) {
-        Toast.makeText(this, "Permissions Updated", Toast.LENGTH_SHORT).show();
-        setResult(GC_PERMISSION_UPDATED_CODE,new Intent());
-        finish();
+
+        if (requestType == UPDATE_DATA) {
+            Toast.makeText(this, "Permissions Updated", Toast.LENGTH_SHORT).show();
+
+            setResult(GC_REFRESH_UPDATED_DATA_CODE, new Intent());
+            finish();
+        }
         Log.d("json response : ",jsonObject.toString());
 
     }
@@ -478,4 +495,4 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
     public void onOtherFailure(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-    }
+}

@@ -35,8 +35,8 @@ public class ConnectRepo {
 
 
 
-    public Observable<JsonElement> update_group_channel_profile(int id,String endPoint, String api_token,String device_type, String device_token, Map<String,Object> params) {
-        return restService.update_group_channel_profile(id, endPoint, api_token, device_type, device_token,params);
+    public Observable<JsonElement> update_group_channel_profile(int id, String api_token,String device_type, String device_token, Map<String,Object> params) {
+        return restService.update_group_channel_profile(id, api_token, device_type, device_token,params);
     }
 
 
@@ -51,10 +51,22 @@ public class ConnectRepo {
     }
 
 
+
+    public Observable<JsonElement> get_group_channel_manage_subscriber_list(int id, String api_token,String device_type, String device_token, int page,int per_page) {
+        return restService.get_group_channel_manage_subscriber_list(id, api_token, device_type, device_token,page,per_page);
+    }
+
+
     public Observable<JsonElement> update_group_channel_settings(int id, String api_token,String device_type, String device_token, Map<String,Object> params) {
         return restService.update_group_channel_settings(id, api_token, device_type, device_token,params);
     }
 
+
+
+
+    public Observable<JsonElement> update_group_channel_reaction_list(int id, String api_token,String device_type, String device_token, Map<String,Object> params) {
+        return restService.update_group_channel_reaction_list(id, api_token, device_type, device_token,params);
+    }
 
 
 

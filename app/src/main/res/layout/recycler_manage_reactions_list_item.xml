@@ -6,6 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/smile_selection"
         android:layout_weight="1"
         android:orientation="horizontal">
 
@@ -33,11 +34,12 @@
             android:text="Smile"/>
 
         <ImageView
-            android:id="@+id/emoji_selection"
+            android:visibility="gone"
+            android:id="@+id/emoji_checkbox"
             android:layout_gravity="center_vertical"
             android:layout_width="@dimen/_17sdp"
             android:layout_height="@dimen/_17sdp"
-            android:background="@drawable/checked"
+            android:src="@drawable/checked"
             android:layout_marginEnd="@dimen/_14sdp" />
 
     </LinearLayout>

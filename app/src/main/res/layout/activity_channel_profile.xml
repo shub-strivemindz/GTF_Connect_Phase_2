@@ -147,6 +147,8 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/_3sdp"
                         android:text="Copy Link"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_9ssp"
                         android:gravity="center"
                         android:textColor="@color/theme_green"/>
 
@@ -179,6 +181,8 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/_3sdp"
                         android:text="Leave"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_9ssp"
                         android:gravity="center"
                         android:textColor="@color/theme_green"/>
 
@@ -211,6 +215,9 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/_3sdp"
                         android:text="Mute"
+                        android:id="@+id/notificationText"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_9ssp"
                         android:gravity="center"
                         android:textColor="@color/theme_green"/>
 

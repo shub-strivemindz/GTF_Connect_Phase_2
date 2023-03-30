@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
-import com.gtfconnect.models.channelResponseModel.ChannelResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelDashboardModels.ChannelResponseModel;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
