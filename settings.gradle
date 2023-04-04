@@ -22,3 +22,4 @@ rootProject.name = "GTF Connect"
 include ':app'
 include ':MediaLibrary'
 include ':AudioWaveForm'
+include ':FlyingReactionAnim'

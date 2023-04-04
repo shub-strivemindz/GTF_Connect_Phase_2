@@ -78,12 +78,16 @@
 
     <color name="chatIconColor">#8497A7</color>
 
+    <color name="textGroupMessageColor">#445767</color>
     <color name="textDashboardMessageColor">#8497A7</color>
+
     <color name="textCommentTitleColor">#F38600</color>
     <color name="textGreyDateColor">#666666</color>
     <color name="textForwardedDialogColor">#7A000000</color>
     <color name="textSearchTextColor">#66000000</color>
     <color name="profileTextColor">#B3666666</color>
+
+    <color name="groupSentMessageView">#B3FFFFFF</color>
 
     <color name="audioPlayTint">#626262</color>
 

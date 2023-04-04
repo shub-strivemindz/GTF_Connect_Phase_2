@@ -29,6 +29,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
@@ -45,9 +47,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.flyingreactionanim.Directions;
+import com.example.flyingreactionanim.ZeroGravityAnimation;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -61,16 +64,21 @@ import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityChannelChatBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.AttachmentUploadListener;
-import com.gtfconnect.interfaces.GroupChatListener;
+import com.gtfconnect.interfaces.ChannelChatListener;
 import com.gtfconnect.interfaces.ImagePreviewListener;
+import com.gtfconnect.interfaces.SelectEmoteReaction;
 import com.gtfconnect.models.EmojiListModel;
 import com.gtfconnect.models.ImagePreviewModel;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.models.SendAttachmentResponseModel;
-import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+import com.gtfconnect.models.channelResponseModel.ChannelCommentResponseModel;
+import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
+import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.screenUI.groupModule.GroupPinnedMessageScreen;
@@ -98,7 +106,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class ChannelChatsScreen extends AppCompatActivity implements ApiResponseListener, GroupChatListener, ImagePreviewListener {
+public class ChannelChatsScreen extends AppCompatActivity implements ApiResponseListener, ChannelChatListener, ImagePreviewListener {
 
     ActivityChannelChatBinding binding;
 
@@ -141,14 +149,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private int localSavedChatCount = 0;
 
-    private GroupMessageReceivedModel receivedMessage;
+    private ChannelMessageReceivedModel receivedMessage;
 
     private boolean isScrollDownHighlighted = false;
 
     private boolean enableSearchScroll = false;
     private int typeCount = 0;
 
-    private GroupChatResponseModel responseModel;
+    private ChannelChatResponseModel responseModel;
 
     private boolean isMessageNotFound = true;
 
@@ -161,12 +169,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private int currentPage = 1;
 
     ArrayList<GroupMessageReceivedModel> receivedMessageList;
-    private ArrayList<GroupChatResponseModel.Row> list;
+    private List<ChannelRowListDataModel> list;
 
     private boolean isScrolling = false;
 
     private int subscribers = 0;
-    ChannelChatAdapter groupViewAdapter;
+    ChannelChatAdapter channelViewAdapter;
 
     private boolean isListLoadedOnce = false;
 
@@ -205,7 +213,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private int pinMessageCount = 0;
 
-    private GroupCommentResponseModel commentResponseModel;
+    private ChannelCommentResponseModel commentResponseModel;
 
     // creating a variable for media recorder object class.
     private MediaRecorder mRecorder;
@@ -221,6 +229,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private int selectedImageUriIndex;
 
+    private DatabaseViewModel databaseViewModel;
+
+    private int localDBDataSize = 0;
 
 
     @Override
@@ -355,7 +366,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     binding.loader.setVisibility(View.VISIBLE);
 
-                    updateGroupChatSocket(true);
+                    updateChannelChatSocket(true);
 
                 }
 
@@ -442,7 +453,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             loadSearchData = false;
             isDataAvailable = true;
 
-            rest.ShowDialogue();
+            //rest.ShowDialogue();
             searchMessageInList(groupChatId, false, false, false);
 
         }
@@ -454,12 +465,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }
 
 
-        binding.dummyUsers.setOnClickListener(view -> {
+    /*    binding.dummyUsers.setOnClickListener(view -> {
             BottomSheetDialog chat_options_dialog = new BottomSheetDialog(ChannelChatsScreen.this);
             chat_options_dialog.setContentView(R.layout.bottomsheet_dummy_user_list);
 
             chat_options_dialog.show();
-        });
+        });*/
 
 
         //binding.emoji.setOnClickListener(view -> Utils.showDialog(1,this,rootView,emojiListModel));
@@ -476,6 +487,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }*/
 
     public void init() {
+
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
         // Getting API data fetch
         rest = new Rest(this, false, false);
         listener = this;
@@ -496,11 +510,46 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
 
 
+        loadLocalData();
+    }
+
+
+    private void loadLocalData()
+    {
+        databaseViewModel.getChannelChannelData().observe(this, channelChatResponseModel -> {
+            if (channelChatResponseModel != null) {
+                if (channelChatResponseModel.getData() != null ) {
+
+                    Log.d("DataDB",""+channelChatResponseModel.getData().getChatData().getRows().size());
+                    localDBDataSize = channelChatResponseModel.getData().getChatData().getRows().size();
+
+                    responseModel = new ChannelChatResponseModel();
+                    responseModel.setData(channelChatResponseModel.getData());
+
+
+                    //for (int i = 0;i<responseModel.getData().)
+
+                    list = responseModel.getData().getChatData().getRows();
+
+
+                    //list.addAll(responseModel.getData().getChatData().getRows());
+                    loadDataToAdapter();
+
+                    updateChannelChatSocket(false);
+
+                } else {
+                    updateChannelChatSocket(false);
+                }
+            }
+            else{
+                updateChannelChatSocket(false);
+            }
+        });
     }
 
 
     private void scrollToPosition(int position) {
-        RecyclerView.SmoothScroller smoothScroller = new
+        /*RecyclerView.SmoothScroller smoothScroller = new
                 LinearSmoothScroller(ChannelChatsScreen.this) {
                     @Override
                     protected int getVerticalSnapPreference() {
@@ -510,10 +559,31 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
         smoothScroller.setTargetPosition(position);
-        mLayoutManager.startSmoothScroll(smoothScroller);
+        mLayoutManager.startSmoothScroll(smoothScroller);*/
 
-        /*binding.chats.smoothScrollBy(0,0);
-        mLayoutManager.scrollToPosition(0);*/
+        /*binding.chats.smoothScrollBy(0,0);*/
+
+
+        mLayoutManager.scrollToPosition(0);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isMessageQuoted){
+
+                    View getRoot=                   mLayoutManager.findViewByPosition(position);
+//                    View getRoot = channelViewAdapter.getSelectedView(position);
+
+                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                    anim.setDuration(1000); //You can manage the blinking time with this parameter
+                    anim.setStartOffset(20);
+                    //anim.setRepeatMode(Animation.REVERSE);
+                    anim.setRepeatCount(Animation.INFINITE);
+                    getRoot.startAnimation(anim);
+
+                }
+            }
+        },1000);
     }
 
     private void loadDataToAdapter() {
@@ -522,10 +592,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
         // Load Comments List Data -----
-        groupViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
+        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
-        binding.chats.setAdapter(groupViewAdapter);
+        binding.chats.setAdapter(channelViewAdapter);
 
         binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);
 
@@ -540,10 +610,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupChatResponseModel>() {
+        type = new TypeToken<ChannelChatResponseModel>() {
         }.getType();
 
-        responseModel = new GroupChatResponseModel();
+        responseModel = new ChannelChatResponseModel();
         list = new ArrayList<>();
 
         try {
@@ -555,8 +625,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             Log.d("Chat list params --", jsonRawObject.toString());
 
-            if (!isListLoadedOnce)
-                runOnUiThread(() -> rest.ShowDialogue());
+            //if (!isListLoadedOnce)
+                //runOnUiThread(() -> rest.ShowDialogue());
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
@@ -590,16 +660,16 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }
     }
 
-    private void updateGroupChatSocket(boolean isScrolling) {
+    private void updateChannelChatSocket(boolean isScrolling) {
         isListLoadedOnce = true;
 
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupChatResponseModel>() {
+        type = new TypeToken<ChannelChatResponseModel>() {
         }.getType();
 
-        responseModel = new GroupChatResponseModel();
+        responseModel = new ChannelChatResponseModel();
 
         try {
             jsonRawObject = new JSONObject();
@@ -610,8 +680,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             Log.d("Chat list params --", jsonRawObject.toString());
 
-            if (!isScrolling && !isListLoadedOnce)
-                runOnUiThread(() -> rest.ShowDialogue());
+            //if (!isScrolling && !isListLoadedOnce)
+               // runOnUiThread(() -> rest.ShowDialogue());
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
@@ -626,7 +696,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 responseModel = gson.fromJson(gsonObject, type);
 
-
                 if (responseData == null) {
                     Utils.showSnackMessage(this, binding.getRoot(), "No Data Found");
                     Log.d("authenticateUserAndFetchData -- ", "Error");
@@ -634,15 +703,24 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     runOnUiThread(() -> {
 
-                        subscribers = responseModel.getData().getSubscriptionCount();
+                        if(responseModel.getData().getSubscriptionCount() != null) {
+                            subscribers = responseModel.getData().getSubscriptionCount();
+                        }
+
+                        Log.d("SocketDB",responseData.toString());
+
                         binding.userSubscribers.setText(String.valueOf(subscribers));
 
                         binding.loader.setVisibility(View.GONE);
 
-                        list.addAll(responseModel.getData().getChatData().getRows());
+
+                        if(localDBDataSize != responseModel.getData().getChatData().getRows().size()) {
+                            databaseViewModel.insertChannelChat(responseModel);
+                        }
+                        //list.addAll(responseModel.getData().getChatData().getRows());
 
                         postBaseUrl = responseModel.getData().getBaseUrl();
-                        loadDataToAdapter();
+                        //loadDataToAdapter();
                     });
                 }
 
@@ -799,7 +877,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void messageReceivedListener() {
 
-        receivedMessage = new GroupMessageReceivedModel();
+        receivedMessage = new ChannelMessageReceivedModel();
 
         Gson gson = new Gson();
         Type type;
@@ -826,13 +904,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
 
-            GroupChatResponseModel.Row rowData = receivedMessage.getSaveMsg().getGetData();
+            ChannelRowListDataModel rowData = receivedMessage.getSaveMsg().getGetData();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         list.add(0, rowData);
-                        groupViewAdapter.updateList(list);
+                        channelViewAdapter.updateList(list);
                     } catch (Exception e) {
                         Log.d("Typing header exception --", e.toString());
                     }
@@ -847,7 +925,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Type type;
 
         Log.d("Like Listener :::: ", "Called");
-        type = new TypeToken<GroupChatResponseModel.Row>() {
+        type = new TypeToken<ChannelRowListDataModel>() {
         }.getType();
 
 
@@ -872,7 +950,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         JsonParser jsonParser = new JsonParser();
                         JsonObject gsonObject = (JsonObject) jsonParser.parse(response.toString());
 
-                        GroupChatResponseModel.Row like_response = gson.fromJson(gsonObject, type);
+                        ChannelRowListDataModel like_response = gson.fromJson(gsonObject, type);
                         Log.d("Like response from model", String.valueOf(like_response.getLike().get(0).getIsLike()));
 
 
@@ -891,18 +969,18 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                                                     if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
-                                                        groupViewAdapter.updateList(list);
+                                                        channelViewAdapter.updateList(list);
                                                         break;
                                                     } else {
                                                         list.get(i).getLike().get(0).setIsLike(1);
-                                                        groupViewAdapter.updateList(list);
+                                                        channelViewAdapter.updateList(list);
                                                         break;
                                                     }
                                                 } else {
                                                     list.get(i).getLike().add(0, like_response.getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    groupViewAdapter.updateList(list);
+                                                    channelViewAdapter.updateList(list);
                                                     break;
                                                 }
                                             }
@@ -924,7 +1002,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
     private void commentReceiver() {
-        commentResponseModel = new GroupCommentResponseModel();
+        commentResponseModel = new ChannelCommentResponseModel();
 
         Gson gson = new Gson();
         Type type;
@@ -1047,10 +1125,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             if (loadSearchData) {
                 Gson gson = new Gson();
                 Type type;
-                type = new TypeToken<GroupChatResponseModel>() {
+                type = new TypeToken<ChannelChatResponseModel>() {
                 }.getType();
 
-                responseModel = new GroupChatResponseModel();
+                responseModel = new ChannelChatResponseModel();
 
 
                 try {
@@ -1109,7 +1187,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.remove(searchedTillPosition);
-                                    groupViewAdapter.updateList(list);
+                                    channelViewAdapter.updateList(list);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1120,7 +1198,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    groupViewAdapter.updateList(list);
+                                    channelViewAdapter.updateList(list);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1133,11 +1211,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 public void run() {
                                     if (commentDeleteResponseModel.getCommentData() != null) {
                                         list.get(searchedTillPosition).setCommentData(commentDeleteResponseModel.getCommentData());
-                                        groupViewAdapter.updateList(list);
+                                        channelViewAdapter.updateList(list);
                                     }
                                     else {
                                         list.get(searchedTillPosition).setCommentCount(0);
-                                        groupViewAdapter.updateList(list);
+                                        channelViewAdapter.updateList(list);
                                     }
                                 }
                             });
@@ -1819,8 +1897,54 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     @Override
     public void likeAsEmote(int position, ImageView rootView)
     {
-        Utils.showDialog(position,this,rootView,emojiListModel);
+        Utils.showDialog(position, this, rootView, emojiListModel, new SelectEmoteReaction() {
+            @Override
+            public void selectEmoteReaction(int id, String emoji_code, String emoji_name) {
+
+
+
+                for (int i=0;i<15;i++) {
+                    playAnimation(Utils.textAsBitmap(ChannelChatsScreen.this,emoji_code));
+                }
+
+            }
+        });
     }
+
+
+
+
+
+
+    private void playAnimation(Bitmap resID)
+    {
+        ZeroGravityAnimation animation = new ZeroGravityAnimation();
+        animation.setCount(1);
+        animation.setScalingFactor(0.2f);
+        animation.setOriginationDirection(Directions.BOTTOM);
+        animation.setDestinationDirection(Directions.TOP);
+        animation.setImage(resID);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+                                           @Override
+                                           public void onAnimationStart(Animation animation) {
+
+                                           }
+                                           @Override
+                                           public void onAnimationEnd(Animation animation) {
+
+                                           }
+
+                                           @Override
+                                           public void onAnimationRepeat(Animation animation) {
+
+                                           }
+                                       }
+        );
+
+        ViewGroup container = findViewById(R.id.animation_holder);
+        animation.play(this,container);
+    }
+
 
     @Override
     public void deletePost(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
@@ -1871,7 +1995,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         searchedTillPosition = index;
 
 
-        rest.ShowDialogue();
+        //rest.ShowDialogue();
         searchMessageInList(groupChatId,false,false,false);
 
     }
@@ -1894,7 +2018,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     @Override
     public void onLoading() {
-        rest.ShowDialogue();
+        //rest.ShowDialogue();
     }
 
     @Override

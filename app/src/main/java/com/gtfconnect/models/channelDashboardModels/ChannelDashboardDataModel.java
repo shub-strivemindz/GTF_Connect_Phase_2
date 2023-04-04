@@ -1,18 +1,21 @@
-package com.gtfconnect.models.channelResponseModel.channelDashboardModels;
+package com.gtfconnect.models.channelDashboardModels;
 
+import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
+@Entity(tableName = "channel_dashboard_data")
 public class ChannelDashboardDataModel {
 
 
     @SerializedName("GCMemberID")
     @Expose
     private String gCMemberID;
+
+    @PrimaryKey
     @SerializedName("GroupChannelID")
     @Expose
     private Integer groupChannelID;

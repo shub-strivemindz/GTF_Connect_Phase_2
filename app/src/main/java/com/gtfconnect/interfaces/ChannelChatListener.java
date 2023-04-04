@@ -6,14 +6,20 @@ import android.widget.ImageView;
 
 public interface ChannelChatListener {
 
-    public void pinMessage(int gcMemberId,int GroupChannelId,int userId,int groupChatId);
+    void pinMessage(int gcMemberId,int GroupChannelId,int userId,int groupChatId);
 
-    public void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time);
+    void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time);
 
-    public void searchQuoteMessage(int index,String groupChatId);
+    void searchQuoteMessage(int index,String groupChatId);
 
-    public void likePost(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like);
+    void likePost(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like);
 
-    public void likeAsEmote(int position, ImageView chatView);
+    void likeAsEmote(int position, ImageView likeRootView);
+
+
+    void deletePost(int userID,int gcMemberId, int groupChatId, int groupChannelId );
+
+
+
 
 }

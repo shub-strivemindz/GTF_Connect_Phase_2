@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
@@ -23,7 +24,11 @@ import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentGroupViewBinding;
 import com.gtfconnect.interfaces.UnreadCountHeaderListener;
-import com.gtfconnect.models.groupResponseModel.GroupResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.roomDB.AppDao;
+import com.gtfconnect.roomDB.AppDatabase;
+import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.ui.adapters.GroupViewAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -47,6 +52,30 @@ public class GroupFragment extends Fragment {
     private UnreadCountHeaderListener unreadMessageListener;
     private Rest rest;
 
+    private AppDao appDao;
+
+    private DatabaseViewModel databaseViewModel;
+
+    private int localDBDataSize = 0;
+
+
+
+
+    public GroupFragment() {}
+
+
+    public static GroupFragment newInstance() {
+        GroupFragment fragment = new GroupFragment();
+
+        /*Bundle args = new Bundle();
+        args.putInt(ARG_COUNT, regionCount);
+        fragment.setArguments(args);*/
+        return fragment;
+    }
+
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,15 +84,50 @@ public class GroupFragment extends Fragment {
 
         rest = new Rest(getContext(),false,false);
 
+        init();
+
         // Todo : un comment when implemented all 4 tabs socket
         userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
         Log.d("USER ID ",String.valueOf(userId));
 
-        updateGroupDashboardSocket();
+        //updateGroupDashboardSocket();
         messageReceived();
 
         return binding.getRoot();
     }
+
+
+
+    private void init()
+    {
+        appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
+        loadLocalData();
+
+    }
+
+
+    private void loadLocalData()
+    {
+        databaseViewModel.getGroups().observe(requireActivity(), groupResponseModel -> {
+            if (groupResponseModel != null && !groupResponseModel.isEmpty()) {
+
+
+                localDBDataSize = groupResponseModel.size();
+
+                responseModel = new GroupResponseModel();
+                responseModel.setData(groupResponseModel);
+
+                loadDataToAdapter();
+
+                updateGroupDashboardSocket();
+            } else {
+                updateGroupDashboardSocket();
+            }
+        });
+    }
+
 
 
     private void updateGroupDashboardSocket()
@@ -122,7 +186,15 @@ public class GroupFragment extends Fragment {
                         } else {
                             Log.d("authenticateUserAndFetchData -- ", String.valueOf(responseData));
 
-                            getActivity().runOnUiThread(() -> loadDataToAdapter());
+                            getActivity().runOnUiThread(() -> {
+                                if (responseModel.getData() != null) {
+                                    if (localDBDataSize != responseModel.getData().size()) {
+                                        for (int i = 0; i < responseModel.getData().size(); i++) {
+                                            databaseViewModel.insertGroups(responseModel.getData().get(i));
+                                        }
+                                    }
+                                }
+                            });
                         }
                     }
                 }
@@ -148,14 +220,15 @@ public class GroupFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateGroupDashboardSocket();
+        loadLocalData();
+        //updateGroupDashboardSocket();
     }
 
 
     private void messageReceived() {
 
         socketInstance.on("messageReceived", args -> {
-            updateGroupDashboardSocket();
+            //updateGroupDashboardSocket();
         });
     }
 

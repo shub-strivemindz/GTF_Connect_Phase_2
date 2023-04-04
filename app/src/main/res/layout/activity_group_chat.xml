@@ -195,6 +195,7 @@
                 android:id="@+id/chats"
                 android:layout_height="0dp"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/_8sdp"
                 android:layout_weight="1"/>
 
         </LinearLayout>
@@ -427,24 +428,67 @@
                 app:cardBackgroundColor="@color/theme_light_blue"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/emoji"
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="@dimen/_16sdp"
-                    android:src="@drawable/smile"
-                    android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:layout_gravity="center_vertical"/>
-
-                <EditText
-                    android:id="@+id/type"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="Message"
-                    android:paddingStart="@dimen/_8sdp"
-                    android:layout_marginStart="@dimen/_24sdp"
-                    android:fontFamily="@font/poppins"
-                    android:textSize="@dimen/_10ssp"
-                    android:background="@android:color/transparent"/>
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/message_text_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/emoji"
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:src="@drawable/smile"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
+                            android:layout_gravity="center_vertical"/>
+
+                        <EditText
+                            android:id="@+id/type"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:hint="Message"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:fontFamily="@font/poppins"
+                            android:textSize="@dimen/_10ssp"
+                            android:background="@android:color/transparent"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/recording_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/mic"
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:src="@drawable/mic"
+                            app:tint="@color/theme_red"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
+                            android:layout_gravity="center_vertical"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:text="00:00"
+                            android:gravity="center_vertical"
+                            android:fontFamily="@font/poppins"
+                            android:textSize="@dimen/_10ssp"
+                            android:textColor="@color/textDashboardMessageColor" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -452,7 +496,7 @@
                 android:id="@+id/pin_attachment"
                 android:layout_marginVertical="@dimen/_17sdp"
                 android:layout_marginHorizontal="@dimen/_4sdp"
-                android:layout_width="@dimen/_16sdp"
+                android:layout_width="@dimen/_17sdp"
                 android:layout_height="match_parent"
                 android:src="@drawable/attach_doc"/>
 
@@ -462,34 +506,6 @@
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="match_parent"
                 android:src="@drawable/microphone"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/theme_green"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="JOIN"
-                    android:background="@color/theme_green"
-                    android:fontFamily="@font/poppins"
-                    android:textSize="@dimen/_15ssp"
-                    android:textColor="@color/white"
-                    android:gravity="center"/>
-
-            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

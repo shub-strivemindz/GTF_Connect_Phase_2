@@ -41,6 +41,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':MediaLibrary')
     implementation project(path: ':AudioWaveForm')
+    implementation project(path: ':FlyingReactionAnim')
 
     //implementation(path: ':StickyHeader')
 

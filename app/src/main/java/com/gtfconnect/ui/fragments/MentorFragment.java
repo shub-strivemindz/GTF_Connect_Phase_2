@@ -32,6 +32,22 @@ public class MentorFragment extends Fragment {
 
     private UnreadCountHeaderListener unreadMessageListener;
 
+
+    public MentorFragment() {}
+
+
+    public static MentorFragment newInstance() {
+        MentorFragment fragment = new MentorFragment();
+
+        /*Bundle args = new Bundle();
+        args.putInt(ARG_COUNT, regionCount);
+        fragment.setArguments(args);*/
+        return fragment;
+    }
+
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

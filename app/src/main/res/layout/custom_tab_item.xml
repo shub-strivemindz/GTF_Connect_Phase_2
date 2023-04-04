@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="@dimen/_36sdp"
+             android:layout_height="@dimen/_46sdp"
+    android:drawableTop="@drawable/home"
+    android:fontFamily="@font/inter"
+    android:textSize="@dimen/_10ssp"
+    android:drawablePadding="@dimen/_2ssp"
+    android:textColor="@color/textGroupMessageColor"
+    android:drawableTint="@color/textGroupMessageColor"
+    android:gravity="center"
+    android:text="Home"/>

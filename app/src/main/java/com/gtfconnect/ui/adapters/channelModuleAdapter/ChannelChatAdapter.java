@@ -23,10 +23,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChannelChatItemBinding;
+import com.gtfconnect.interfaces.ChannelChatListener;
 import com.gtfconnect.interfaces.GroupChatListener;
-import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
-import com.gtfconnect.ui.adapters.GroupChannel_MediaAdapter;
 import com.gtfconnect.ui.screenUI.groupModule.GroupCommentScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -34,13 +34,14 @@ import com.gtfconnect.utilities.Utils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.ViewHolder> {
 
-    private ArrayList<GroupChatResponseModel.Row> list;
+    private List<ChannelRowListDataModel> list;
     private Context context;
 
-    private GroupChatResponseModel.Row item;
+    private ChannelRowListDataModel item;
 
     private JSONObject jsonRawObject;
 
@@ -48,7 +49,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private boolean isDayTagShown = false;
 
-    private GroupChatListener groupChatListener;
+    private ChannelChatListener channelChatListener;
 
     private boolean isMessageClicked = false;
 
@@ -64,16 +65,16 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
 
-    public ChannelChatAdapter(Context context, ArrayList<GroupChatResponseModel.Row> list, String userID, String post_base_url, GroupChatListener groupChatListener) {
+    public ChannelChatAdapter(Context context, List<ChannelRowListDataModel> list, String userID, String post_base_url, ChannelChatListener channelChatListener) {
         this.list = list;
         this.context = context;
         this.userID = userID;
-        this.groupChatListener = groupChatListener;
+        this.channelChatListener = channelChatListener;
         this.post_base_url = post_base_url;
         ///this.commentCount = commentCount;
     }
 
-    public void updateList(ArrayList<GroupChatResponseModel.Row> list)
+    public void updateList(List<ChannelRowListDataModel> list)
     {
         this.list = list;
         notifyDataSetChanged();
@@ -96,8 +97,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             if (list.get(position).getUpdatedAt()!=null && !list.get(position).getUpdatedAt().isEmpty()){
                 if (Utils.getHeaderDate(list.get(position).getUpdatedAt()).equalsIgnoreCase("Today")){
 
-                    holder.binding.currentHeaderDate.setVisibility(View.VISIBLE);
-                    holder.binding.currentDate.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+                    /*holder.binding.currentHeaderDate.setVisibility(View.VISIBLE);
+                    holder.binding.currentDate.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));*/
                 }
 
             }
@@ -165,7 +166,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
-            GroupChannel_MediaAdapter mediaAdapter = new GroupChannel_MediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
+            ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
             holder.binding.mediaRecycler.setHasFixedSize(true);
             holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             holder.binding.mediaRecycler.setAdapter(mediaAdapter);
@@ -282,7 +283,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         holder.binding.quoteMsgContainer.setOnClickListener(view -> {
             if (list.get(position).getQuote() != null) {
-                groupChatListener.searchQuoteMessage(position,list.get(position).getQuote().getGroupChatID());
+                channelChatListener.searchQuoteMessage(position,list.get(position).getQuote().getGroupChatID());
             }
         });
 
@@ -329,7 +330,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });*/
 
         holder.binding.like.setOnLongClickListener(view -> {
-            groupChatListener.likeAsEmote(position,holder.binding.bottomsheetChatOption);
+            channelChatListener.likeAsEmote(position,holder.binding.likeIcon);
             return false;
         });
 
@@ -341,14 +342,14 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 {
                     if (list.get(position).getLike().get(0).getIsLike() == 0)
                     {
-                        groupChatListener.likePost(Integer.parseInt(userID),
+                        channelChatListener.likePost(Integer.parseInt(userID),
                                 list.get(position).getGroupChannelID(),
                                 list.get(position).getGCMemberID(),
                                 Integer.parseInt(list.get(position).getGroupChatID()),
                                 1);
                     }
                     else{
-                        groupChatListener.likePost(Integer.parseInt(userID),
+                        channelChatListener.likePost(Integer.parseInt(userID),
                                 list.get(position).getGroupChannelID(),
                                 list.get(position).getGCMemberID(),
                                 Integer.parseInt(list.get(position).getGroupChatID()),
@@ -356,7 +357,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                     }
                 }
                 else {
-                    groupChatListener.likePost(Integer.parseInt(userID),
+                    channelChatListener.likePost(Integer.parseInt(userID),
                             list.get(position).getGroupChannelID(),
                             list.get(position).getGCMemberID(),
                             Integer.parseInt(list.get(position).getGroupChatID()),
@@ -364,7 +365,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 }
             }
             else {
-                groupChatListener.likePost(Integer.parseInt(userID),
+                channelChatListener.likePost(Integer.parseInt(userID),
                         list.get(position).getGroupChannelID(),
                         list.get(position).getGCMemberID(),
                         Integer.parseInt(list.get(position).getGroupChatID()),
@@ -438,12 +439,12 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
             Integer groupChatId = Integer.parseInt(list.get(position).getGroupChatID());
-            groupChatListener.pinMessage(list.get(position).getGCMemberID(),list.get(position).getGroupChannelID(),list.get(position).getUserID(),groupChatId);
+            channelChatListener.pinMessage(list.get(position).getGCMemberID(),list.get(position).getGroupChannelID(),list.get(position).getUserID(),groupChatId);
         });
 
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
-            groupChatListener.sendQuotedMessage(holder.binding.getRoot(), list.get(position).getGroupChatID(), list.get(position).getMessage(), name, time);
+            channelChatListener.sendQuotedMessage(holder.binding.getRoot(), list.get(position).getGroupChatID(), list.get(position).getMessage(), name, time);
             chat_options_dialog.dismiss();
         });
 
@@ -477,7 +478,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             TextView cancel_post = delete_post_dialog.findViewById(R.id.cancel);
 
             delete_post.setOnClickListener(view1 -> {
-                groupChatListener.deletePost(Integer.parseInt(userID),list.get(position).getGCMemberID(),Integer.parseInt(list.get(position).getGroupChatID()),list.get(position).getGroupChannelID());
+                channelChatListener.deletePost(Integer.parseInt(userID),list.get(position).getGCMemberID(),Integer.parseInt(list.get(position).getGroupChatID()),list.get(position).getGroupChannelID());
                 delete_post_dialog.dismiss();
             });
 
@@ -500,6 +501,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     public int getItemCount() {
         return list.size();
     }
+
+
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 

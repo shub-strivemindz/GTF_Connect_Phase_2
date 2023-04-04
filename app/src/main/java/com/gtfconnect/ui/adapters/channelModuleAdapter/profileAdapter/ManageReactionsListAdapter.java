@@ -1,6 +1,7 @@
 package com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class ManageReactionsListAdapter extends RecyclerView.Adapter<ManageReact
 
         if (reactionModel.getData().getList()!=null) {
             holder.binding.emoji.setText(reactionModel.getData().getList().get(position).getEmojiCode());
+            Log.d("Emoji",reactionModel.getData().getList().get(position).getEmojiCode());
             holder.binding.emojiTitle.setText(reactionModel.getData().getList().get(position).getName());
 
             if (reactionModel.getData().getList().get(position).getGcReactionStatus().equalsIgnoreCase("Active")) {

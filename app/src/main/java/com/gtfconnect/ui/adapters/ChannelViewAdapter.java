@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
-import com.gtfconnect.models.channelResponseModel.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -38,11 +38,21 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
 
         holder.binding.title.setText(responseModel.getData().get(index).getGroup().getName());
 
-        if (responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage() != null)
-            holder.binding.subTitle.setText(responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage());
+        if (responseModel.getData().get(index).getGroup().getMessage() != null && !responseModel.getData().get(index).getGroup().getMessage().isEmpty()) {
+            if (responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage() != null)
+                holder.binding.subTitle.setText(responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage());
 
-        holder.binding.time.setText(Utils.getDisplayableTime(responseModel.getData().get(index).getGroup().getMessage().get(0).getCreatedAt()));
 
+            holder.binding.time.setText(Utils.getDisplayableTime(responseModel.getData().get(index).getGroup().getMessage().get(0).getCreatedAt()));
+        }
+
+
+
+
+
+        if (responseModel.getData().get(index).getUnreadcount() != null && !responseModel.getData().get(index).getUnreadcount().isEmpty()){
+            holder.binding.notificationCount.setText(responseModel.getData().get(index).getUnreadcount());
+        }
 
 
         //Todo : Add Glide to fetch profile image when provide base url

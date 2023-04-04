@@ -2,6 +2,8 @@ package com.gtfconnect.models.channelResponseModel;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
+import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
 
 public class ChannelMessageReceivedModel {
 
@@ -25,7 +27,7 @@ public class ChannelMessageReceivedModel {
             private String baseUrl;
             @SerializedName("getData")
             @Expose
-            private ChannelChatResponseModel.Row getData;
+            private ChannelRowListDataModel getData;
 
             public String getBaseUrl() {
                 return baseUrl;
@@ -35,21 +37,13 @@ public class ChannelMessageReceivedModel {
                 this.baseUrl = baseUrl;
             }
 
-            public ChannelChatResponseModel.Row getGetData() {
+            public ChannelRowListDataModel getGetData() {
                 return getData;
             }
 
-            public void setGetData(ChannelChatResponseModel.Row getData) {
+            public void setGetData(ChannelRowListDataModel getData) {
                 this.getData = getData;
             }
 
         }
     }
-
-
-
-
-
-
-
-

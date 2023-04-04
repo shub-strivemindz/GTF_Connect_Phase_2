@@ -16,7 +16,7 @@ public interface GroupChatListener {
 
     public void likePost(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like);
 
-    public void likeAsEmote(int position, ImageView chatView);
+    public void likeAsEmote(int position, ImageView likeRootView);
 
 
     public void deletePost(int userID,int gcMemberId, int groupChatId, int groupChannelId );

@@ -6,21 +6,56 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.gtfconnect.models.channelResponseModel.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
+import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 
 import java.util.List;
 
 @Dao
 public interface AppDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertChannelDashboardData(ChannelResponseModel channelResponseModel);
+    // -------------------------------------------------------------------- Channel Dashboard Response Data -----------------------------------------------------
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertChannelDashboardData(ChannelDashboardDataModel channelResponseModel);
 
     @Query("delete from channel_dashboard_data")
-    void delete();
+    void delete_channel_dashboard_data();
 
     @Query("select * from  channel_dashboard_data")
-    LiveData<ChannelResponseModel> getDashboardChannelData();
+    LiveData<List<ChannelDashboardDataModel>> getDashboardChannelData();
+
+
+
+    // -------------------------------------------------------------------- Channel Chat Response Data -----------------------------------------------------
+
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertChannelChatData(ChannelChatResponseModel channelChatResponseModel);
+
+    @Query("delete from channel_chat_data")
+    void delete_channel_chat_data();
+
+    @Query("select * from  channel_chat_data")
+    LiveData<ChannelChatResponseModel> getChannelChatData();
+
+
+
+
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertGroupDashboardData(GroupDashboardDataModel groupResponseModel);
+
+    @Query("delete from group_dashboard_data")
+    void delete_group_dashboard_data();
+
+    @Query("select * from  group_dashboard_data")
+    LiveData<List<GroupDashboardDataModel>> getGroupDashboardData();
+
+
 
     /*@Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRoom(RoomResult roomResult);*/

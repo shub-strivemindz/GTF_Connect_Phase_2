@@ -2,6 +2,8 @@ package com.gtfconnect.models.channelResponseModel;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 
 
 public class ChannelCommentResponseModel {
@@ -37,13 +39,13 @@ public class ChannelCommentResponseModel {
         private Object comment;
         @SerializedName("chatDetail")
         @Expose
-        private ChannelChatResponseModel.Row chatDetail;
+        private ChannelRowListDataModel chatDetail;
 
-        public ChannelChatResponseModel.Row getChatDetail() {
+        public ChannelRowListDataModel getChatDetail() {
             return chatDetail;
         }
 
-        public void setChatDetail(ChannelChatResponseModel.Row chatDetail) {
+        public void setChatDetail(ChannelRowListDataModel chatDetail) {
             this.chatDetail = chatDetail;
         }
 

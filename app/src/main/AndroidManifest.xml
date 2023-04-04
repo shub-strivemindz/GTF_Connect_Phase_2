@@ -114,6 +114,7 @@
         <activity android:name=".ui.screenUI.groupModule.GroupEditProfileScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupCommentScreen"
             android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".ui.screenUI.groupModule.GroupChatScreen"/>
 
         <activity android:name=".ui.screenUI.mentorModule.MentorChatScreen"/>
 

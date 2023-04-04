@@ -1,4 +1,4 @@
-package com.gtfconnect.models.channelResponseModel.channelDashboardModels;
+package com.gtfconnect.models.channelDashboardModels;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,19 +8,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-@Entity(tableName = "channel_dashboard_data")
+
 public class ChannelResponseModel {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     @SerializedName("success")
     @Expose

@@ -112,8 +112,15 @@
 
 
     </RelativeLayout>
+    
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tab_layout"
+        android:layout_below="@id/toolbar"
+        android:id="@+id/dashboardViewPager"/>
 
-    <fragment
+    <!--<fragment
         android:layout_below="@id/toolbar"
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -123,7 +130,7 @@
         app:defaultNavHost="true"
         android:layout_above="@id/tab_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:navGraph="@navigation/home_nav_graph" />
+        app:navGraph="@navigation/home_nav_graph" />-->
     <!--  -->
 
 
@@ -134,36 +141,10 @@
         android:id="@+id/tab_layout"
         app:tabIndicatorFullWidth="false"
         android:elevation="@dimen/_8sdp"
-        app:tabTextAppearance="@style/tabTextAppearance"
+        app:tabIndicatorGravity="bottom"
         app:tabIndicator="@drawable/tab_indicator"
         android:paddingBottom="@dimen/_8sdp"
-        android:layout_height="@dimen/_60sdp" >
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/home"
-            android:text="Recent"/>
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/channel"
-            android:text="Channel"/>
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/group"
-            android:text="@string/group"/>
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/mentor"
-            android:text="Mentor"/>
-
-    </com.google.android.material.tabs.TabLayout>
+        android:layout_height="@dimen/_60sdp" />
 
     <RelativeLayout
         android:elevation="@dimen/_12sdp"

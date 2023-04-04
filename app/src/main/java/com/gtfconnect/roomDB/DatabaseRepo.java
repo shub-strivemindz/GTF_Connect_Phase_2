@@ -2,11 +2,15 @@ package com.gtfconnect.roomDB;
 
 import android.app.Application;
 
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.gtfconnect.models.channelResponseModel.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
+import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 
 public class DatabaseRepo {
@@ -18,19 +22,58 @@ public class DatabaseRepo {
         appDao = appDatabase.appDao();
     }
 
-    public void insertUser(ChannelResponseModel channelDashboardData) {
+    // ================================================================ Channel Data =====================================================================
+
+    public void insertChannelDashboardData(ChannelDashboardDataModel channelDashboardData) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                appDao.delete();
+                appDao.delete_channel_dashboard_data();
                 appDao.insertChannelDashboardData(channelDashboardData);
 
             }
         });
     }
 
-
-    public LiveData<ChannelResponseModel> getChannelDashboardData() {
+    public LiveData<List<ChannelDashboardDataModel>> getChannelDashboardData() {
         return appDao.getDashboardChannelData();
+    }
+
+
+
+
+    public void insertChannelChatData(ChannelChatResponseModel channelDashboardData) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                appDao.delete_channel_chat_data();
+                appDao.insertChannelChatData(channelDashboardData);
+
+            }
+        });
+    }
+
+    public LiveData<ChannelChatResponseModel> getChannelChatData() {
+        return appDao.getChannelChatData();
+    }
+
+
+
+
+    // ================================================================ Group Data =====================================================================
+
+    public void insertGroupDashboardData(GroupDashboardDataModel groupDashboardData) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                appDao.delete_group_dashboard_data();
+                appDao.insertGroupDashboardData(groupDashboardData);
+
+            }
+        });
+    }
+
+    public LiveData<List<GroupDashboardDataModel>> getGroupDashboardData() {
+        return appDao.getGroupDashboardData();
     }
 }

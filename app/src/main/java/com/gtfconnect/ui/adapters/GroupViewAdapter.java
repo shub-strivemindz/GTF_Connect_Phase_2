@@ -11,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
-import com.gtfconnect.models.groupResponseModel.GroupResponseModel;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
+import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.ui.screenUI.groupModule.GroupChatScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
@@ -63,7 +63,7 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, ChannelChatsScreen.class);
+                Intent intent = new Intent(context, GroupChatScreen.class);
 
 
                 PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.getData().get(index).getGCMemberID());

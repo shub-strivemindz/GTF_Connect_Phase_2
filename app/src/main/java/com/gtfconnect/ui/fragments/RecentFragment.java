@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
@@ -21,9 +22,10 @@ import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentGroupViewBinding;
 import com.gtfconnect.databinding.FragmentRecentViewBinding;
-import com.gtfconnect.models.groupResponseModel.GroupResponseModel;
+import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.AppDao;
 import com.gtfconnect.roomDB.AppDatabase;
+import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.GroupViewAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -49,6 +51,43 @@ public class RecentFragment extends Fragment {
     private boolean isSearchClicked = false;
     private AppDao appDao;
 
+    private DatabaseViewModel databaseViewModel;
+
+    private int localDBDataSize = 0;
+
+
+
+
+    public RecentFragment() {}
+
+
+    public static RecentFragment newInstance() {
+        RecentFragment fragment = new RecentFragment();
+
+        /*Bundle args = new Bundle();
+        args.putInt(ARG_COUNT, regionCount);
+        fragment.setArguments(args);*/
+        return fragment;
+    }
+
+
+  /*  @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        *//*if (getArguments() != null) {
+            viewCount = getArguments().getInt(ARG_COUNT);
+        }*//*
+    }
+*/
+
+
+
+
+
+
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,7 +95,7 @@ public class RecentFragment extends Fragment {
         rest = new Rest(getContext(),false,false);
 
 
-        appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
+        init();
 
         binding.searchView.setVisibility(View.GONE);
 
@@ -84,11 +123,45 @@ public class RecentFragment extends Fragment {
         userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
         Log.d("USER ID ",String.valueOf(userId));
 
-        updateGroupDashboardSocket();
         messageReceived();
 
         return binding.getRoot();
     }
+
+
+
+    private void init()
+    {
+        appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
+        loadLocalData();
+
+    }
+
+
+    private void loadLocalData()
+    {
+        databaseViewModel.getGroups().observe(requireActivity(), groupResponseModel -> {
+            if (groupResponseModel != null && !groupResponseModel.isEmpty()) {
+
+
+                localDBDataSize = groupResponseModel.size();
+
+                responseModel = new GroupResponseModel();
+                responseModel.setData(groupResponseModel);
+
+                loadDataToAdapter();
+
+                updateGroupDashboardSocket();
+            } else {
+                updateGroupDashboardSocket();
+            }
+        });
+    }
+
+
+
 
 
     private void updateGroupDashboardSocket()
@@ -142,7 +215,15 @@ public class RecentFragment extends Fragment {
                         } else {
                             Log.d("authenticateUserAndFetchData -- ", String.valueOf(responseData));
 
-                            getActivity().runOnUiThread(() -> loadDataToAdapter());
+                            getActivity().runOnUiThread(() -> {
+                                if (responseModel.getData() != null) {
+                                    if (localDBDataSize != responseModel.getData().size()) {
+                                        for (int i = 0; i < responseModel.getData().size(); i++) {
+                                            databaseViewModel.insertGroups(responseModel.getData().get(i));
+                                        }
+                                    }
+                                }
+                            });
                         }
                     }
                 }
@@ -168,14 +249,15 @@ public class RecentFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateGroupDashboardSocket();
+        loadLocalData();
+        //updateGroupDashboardSocket();
     }
 
 
     private void messageReceived() {
 
         socketInstance.on("messageReceived", args -> {
-            updateGroupDashboardSocket();
+            //updateGroupDashboardSocket();
         });
     }
 

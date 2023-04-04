@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -20,9 +19,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentChannelViewBinding;
-import com.gtfconnect.models.channelResponseModel.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
+import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
 import com.gtfconnect.roomDB.AppDao;
 import com.gtfconnect.roomDB.AppDatabase;
 import com.gtfconnect.roomDB.DatabaseViewModel;
@@ -33,7 +32,6 @@ import com.gtfconnect.utilities.Utils;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 import io.socket.client.Ack;
 
@@ -51,6 +49,24 @@ public class ChannelFragment extends Fragment {
 
     private DatabaseViewModel databaseViewModel;
 
+    private int localDBDataSize = 0;
+
+
+
+    public ChannelFragment() {}
+
+
+    public static ChannelFragment newInstance() {
+        ChannelFragment fragment = new ChannelFragment();
+
+        /*Bundle args = new Bundle();
+        args.putInt(ARG_COUNT, regionCount);
+        fragment.setArguments(args);*/
+        return fragment;
+    }
+
+
+
 
     @Nullable
     @Override
@@ -62,7 +78,7 @@ public class ChannelFragment extends Fragment {
 
         init();
 
-
+        messageReceived();
 
         // Todo : Unset count to real data
         //unreadMessageListener.getUnreadCount(0);
@@ -83,24 +99,27 @@ public class ChannelFragment extends Fragment {
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
         loadLocalData();
-        messageReceived();
+
     }
 
 
     private void loadLocalData()
     {
-        databaseViewModel.getChannelDashboardData().observe(requireActivity(), channelResponseModel -> {
-            if (channelResponseModel != null) {
-                if (channelResponseModel.getData() != null && !channelResponseModel.getData().isEmpty()) {
+        databaseViewModel.getChannels().observe(requireActivity(), channelResponseModel -> {
+            if (channelResponseModel != null && !channelResponseModel.isEmpty()) {
+
+
+                    localDBDataSize = channelResponseModel.size();
 
                     responseModel = new ChannelResponseModel();
+                    responseModel.setData(channelResponseModel);
 
-                    responseModel.setData(channelResponseModel.getData());
                     loadDataToAdapter();
+
+                    updateChannelDashboardSocket();
                 } else {
                     updateChannelDashboardSocket();
                 }
-            }
         });
     }
 
@@ -153,8 +172,13 @@ public class ChannelFragment extends Fragment {
                             Log.d("authenticateUserAndFetchData -- ", String.valueOf(responseData));
 
                             getActivity().runOnUiThread(() -> {
-                                databaseViewModel.insertUser(responseModel);
-                                //loadLocalData();
+                                if (responseModel.getData() != null) {
+                                    if (localDBDataSize != responseModel.getData().size()) {
+                                        for (int i = 0; i < responseModel.getData().size(); i++) {
+                                            databaseViewModel.insertChannels(responseModel.getData().get(i));
+                                        }
+                                    }
+                                }
                             });
                         }
                     }
@@ -183,6 +207,7 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadLocalData();
         //updateChannelDashboardSocket();
     }
 
@@ -190,7 +215,7 @@ public class ChannelFragment extends Fragment {
     private void messageReceived() {
 
         socketInstance.on("messageReceived", args -> {
-            updateChannelDashboardSocket();
+            //updateChannelDashboardSocket();
         });
     }
     @Override

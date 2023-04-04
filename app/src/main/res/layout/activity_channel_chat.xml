@@ -408,13 +408,6 @@
         android:layout_height="@dimen/_50sdp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
-            android:src="@drawable/re"
-            android:id="@+id/dummy_users"
-            android:layout_marginStart="@dimen/_6sdp"
-            android:layout_gravity="center_vertical"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
@@ -561,4 +554,20 @@
             android:id="@+id/mini_image_preview_recycler"/>
 
     </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/animation_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:gravity="center"
+        android:textSize="@dimen/_16sdp"
+        android:textColor="@color/white"
+        android:layout_centerInParent="true"
+        android:id="@+id/dummy_emoji_container"/>
 </RelativeLayout>

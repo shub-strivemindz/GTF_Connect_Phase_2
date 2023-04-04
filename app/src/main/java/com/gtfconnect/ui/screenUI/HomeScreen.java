@@ -4,17 +4,24 @@ import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -24,6 +31,7 @@ import androidx.navigation.Navigation;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.gtfconnect.R;
@@ -36,12 +44,15 @@ import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.UnreadCountHeaderListener;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.services.SocketService;
+import com.gtfconnect.ui.adapters.DashboardPagerAdapter;
 import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.ui.screenUI.userProfileModule.UserProfileScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.AuthViewModel;
 import com.gtfconnect.viewModels.ConnectViewModel;
+
+import org.w3c.dom.Text;
 
 import io.socket.client.Socket;
 
@@ -67,6 +78,8 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
     private ConnectViewModel connectViewModel;
 
+    private String[] tab_name_list =  {"Home","Channel","Group","Mentor"};
+    private int[] tab_icon_list = {R.drawable.home,R.drawable.channel,R.drawable.group,R.drawable.mentor};
 
     private Rest rest;
     private ApiResponseListener listener;
@@ -81,6 +94,20 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
         init();
 
+        binding.dashboardViewPager.setUserInputEnabled(false);
+        binding.dashboardViewPager.setAdapter(createBottomSheetAdapter());
+        new TabLayoutMediator(binding.tabLayout, binding.dashboardViewPager,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        //tab.setText(approvalStatus[position]);
+                        TextView tabItem = (TextView) LayoutInflater.from(HomeScreen.this).inflate(R.layout.custom_tab_item, null);
+                        tabItem.setText(tab_name_list[position]);
+                        tabItem.setCompoundDrawablesWithIntrinsicBounds(0, tab_icon_list[position], 0, 0);
+                        tab.setCustomView(tabItem);
+                    }
+                }).attach();
+
+
         PreferenceConnector.writeBoolean(this,PreferenceConnector.IS_USER_LOGGED,true);
 
 
@@ -92,7 +119,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         //-------------------------------------------------------------   ----------------------------------------------------------------
 
 
-        setBottomNavigation();
+        //setBottomNavigation();
 
         // profileResponse= new ProfileResponse();
 
@@ -196,44 +223,44 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         connectViewModel.getUserProfile(PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
 
 
-
-
     }
 
+
+
+    private DashboardPagerAdapter createBottomSheetAdapter() {
+        setBottomNavigation();
+        DashboardPagerAdapter adapter = new DashboardPagerAdapter(this,4);
+        return adapter;
+    }
+
+
+
+
+
+
+
+
+
     private void setBottomNavigation() {
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        NavOptions navOptions = new NavOptions.Builder()
-                .setLaunchSingleTop(true)
-                .setPopUpTo(navController.getGraph().getStartDestination(), false)
-                .build();
 
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0:
-                       // binding.listHeader.setText("Recent");
-                        navController.navigate(R.id.recent, null, navOptions);
-                        break;
-                    case 1:
-                        //binding.listHeader.setText("Channel");
-                        navController.navigate(R.id.channel, null, navOptions);
-                        break;
-                    case 2:
-                        //binding.listHeader.setText("Group");
-                        navController.navigate(R.id.group, null, navOptions);
-                        break;
-                    case 3:
-                        //binding.listHeader.setText("Mentor");
-                        navController.navigate(R.id.mentor, null, navOptions);
-                        break;
-                }
+                TextView tabItem = (TextView) tab.getCustomView();
+
+                tabItem.setTextColor(getResources().getColor(R.color.theme_green));
+                tabItem.getCompoundDrawables()[1].setTint(getResources().getColor(R.color.theme_green));
+                tab.setCustomView(tabItem);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                TextView tabItem = (TextView) tab.getCustomView();
+
+                tabItem.setTextColor(getResources().getColor(R.color.textGroupMessageColor));
+                tabItem.getCompoundDrawables()[1].setTint(getResources().getColor(R.color.textGroupMessageColor));
+                //setTabTextViewDrawableColor(tabItem,getResources().getColor(R.color.textGroupMessageColor));
+                tab.setCustomView(tabItem);
             }
 
             @Override
@@ -242,6 +269,17 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
             }
         });
     }
+
+
+    private void setTabTextViewDrawableColor(TextView textView, int color) {
+        for (Drawable drawable : textView.getCompoundDrawables()) {
+            if (drawable != null) {
+                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(textView.getContext(), color), PorterDuff.Mode.SRC_IN));
+            }
+        }
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -332,7 +370,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
     {
         if (socketInstance ==null || !socketInstance.connected())
         {
-            rest.ShowDialogue();
+            //rest.ShowDialogue();
 
             SocketService instance = (SocketService) getApplication();
             mSocket = instance.getSocketInstance();
@@ -363,7 +401,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
     @Override
     public void onLoading() {
-        rest.ShowDialogue();
+       // rest.ShowDialogue();
     }
 
     @Override

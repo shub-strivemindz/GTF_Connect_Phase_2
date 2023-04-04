@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
@@ -27,8 +28,10 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,15 +55,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.gtfconnect.R;
+import com.gtfconnect.interfaces.ChannelChatListener;
 import com.gtfconnect.interfaces.ImageAttachmentListener;
 import com.gtfconnect.interfaces.SelectCityListener;
 import com.gtfconnect.interfaces.SelectCountryListener;
+import com.gtfconnect.interfaces.SelectEmoteReaction;
 import com.gtfconnect.interfaces.SelectStateListener;
 import com.gtfconnect.models.CityData;
 import com.gtfconnect.models.CountryData;
 import com.gtfconnect.models.EmojiListModel;
 import com.gtfconnect.models.StateData;
 import com.gtfconnect.services.InternetService;
+import com.gtfconnect.ui.adapters.EmojiReactionListAdapter;
+import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.authModuleAdapter.CityListAdapter;
 import com.gtfconnect.ui.adapters.authModuleAdapter.CountryListAdapter;
@@ -406,7 +413,27 @@ public class Utils {
     }
 
 
-    public static PopupWindow showDialog(int position, Context context, ImageView chatView, EmojiListModel emojiListModel) { //, EditUserDialogListener editUserDialogListener
+
+    public static Bitmap textAsBitmap(Context context,String text) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(280);
+        paint.setColor(context.getColor(R.color.white));
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.5f); // round
+        int height = (int) (baseline + paint.descent() + 0.5f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return image;
+    }
+
+
+
+
+
+    // ======================================================= Can be used to for slide pop up from side edges of view ============================
+    public static PopupWindow showDialog(int position, Context context, ImageView chatView, EmojiListModel emojiListModel, SelectEmoteReaction listener) { //, EditUserDialogListener editUserDialogListener
         try {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.popup_window, null);
@@ -414,10 +441,10 @@ public class Utils {
             popupWindow.setAnimationStyle(R.style.my_popup_style);
             popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(true);
-            popupWindow.update(0, 0, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            popupWindow.update(0, 0, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             int[] location = new int[2];
             chatView.getLocationOnScreen(location);
-            popupWindow.showAtLocation(chatView, Gravity.NO_GRAVITY, location[0] - 60, location[1] - 80);
+            popupWindow.showAtLocation(chatView, Gravity.NO_GRAVITY, location[0], location[1] - 160);
 
             View container = (View) popupWindow.getContentView().getParent();
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -426,39 +453,18 @@ public class Utils {
             p.dimAmount = 0.3f;
             wm.updateViewLayout(container, p);
 
+            RecyclerView reactionRecycler = layout.findViewById(R.id.reaction_recycler);
 
-            TextView emoji1 = layout.findViewById(R.id.emoji1);
-            TextView emoji2 = layout.findViewById(R.id.emoji2);
-            TextView emoji3 = layout.findViewById(R.id.emoji3);
-            TextView emoji4 = layout.findViewById(R.id.emoji4);
-            TextView emoji5 = layout.findViewById(R.id.emoji5);
+            EmojiReactionListAdapter emojiReactionListAdapter = new EmojiReactionListAdapter(context);
+            reactionRecycler.setHasFixedSize(true);
+            reactionRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            reactionRecycler.setAdapter(emojiReactionListAdapter);
 
-            String unicode = "";
-            if (emojiListModel.getData()!=null && !emojiListModel.getData().isEmpty())
-            {
-                unicode = emojiListModel.getData().get(0).getEmojiCode();
-                setEmoji(unicode,emoji1);
+            emojiReactionListAdapter.setOnRecyclerViewItemClickListener((id, emoji_code,emoji_name) -> {
+                listener.selectEmoteReaction(id,emoji_code,emoji_name);
+                popupWindow.dismiss();
+            });
 
-                if (emojiListModel.getData().get(1) != null)
-                {
-                    unicode = emojiListModel.getData().get(1).getEmojiCode();
-                    setEmoji(unicode,emoji2);
-                } else if (emojiListModel.getData().get(2) != null)
-                {
-                    unicode = emojiListModel.getData().get(2).getEmojiCode();
-                    setEmoji(unicode,emoji3);
-                }
-                else if (emojiListModel.getData().get(3) != null)
-                {
-                    unicode = emojiListModel.getData().get(3).getEmojiCode();
-                    setEmoji(unicode,emoji4);
-                }
-                else if (emojiListModel.getData().get(4) != null)
-                {
-                    unicode = emojiListModel.getData().get(4).getEmojiCode();
-                    setEmoji(unicode,emoji5);
-                }
-            }
 
             return popupWindow;
         } catch (Exception e) {
@@ -466,6 +472,48 @@ public class Utils {
             return null;
         }
     }
+
+
+
+/*    public static PopupWindow showDialog(int position, Activity context, ImageView chatView, EmojiListModel emojiListModel){
+
+        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // inflate the custom popup layout
+        View inflatedView = layoutInflater.inflate(R.layout.popup_window, null,false);
+        // find the ListView in the popup layout
+        //ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
+
+        //LinearLayout headerView = (LinearLayout)inflatedView.findViewById(R.id.headerLayout);
+        // get device size
+        Display display = context.getWindowManager().getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+//        mDeviceHeight = size.y;
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
+
+        // fill the data to the list items
+        //setSimpleList(listView);
+
+
+        // set height depends on the device size
+        PopupWindow popWindow = new PopupWindow(inflatedView, width,height-50, true );
+        // set a background drawable with rounders corners
+        //popWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.popup_bg));
+
+        popWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+        popWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popWindow.setAnimationStyle(R.style.my_popup_style);
+
+        // show the popup at bottom of the screen and set some margin at bottom ie,
+        popWindow.showAtLocation(chatView, Gravity.BOTTOM, 0,100);
+
+        return popWindow;
+    }*/
 
 
     public static void setEmoji(String unicode,TextView view)
