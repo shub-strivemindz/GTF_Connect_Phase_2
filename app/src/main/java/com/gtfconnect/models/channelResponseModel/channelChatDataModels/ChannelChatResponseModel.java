@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-@Entity(tableName = "channel_chat_data")
+
 public class ChannelChatResponseModel {
 
     @PrimaryKey(autoGenerate = true)

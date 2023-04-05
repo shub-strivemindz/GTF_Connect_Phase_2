@@ -33,14 +33,42 @@ public interface AppDao {
     // -------------------------------------------------------------------- Channel Chat Response Data -----------------------------------------------------
 
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+ /*   @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertChannelChatData(ChannelChatResponseModel channelChatResponseModel);
 
     @Query("delete from channel_chat_data")
     void delete_channel_chat_data();
 
     @Query("select * from  channel_chat_data")
-    LiveData<ChannelChatResponseModel> getChannelChatData();
+    LiveData<ChannelChatResponseModel> getChannelChatData();*/
+
+
+
+
+   /* @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertChannelChatRowData(ChannelChatResponseModel channelChatResponseModel);
+
+    @Query("delete from channel_chat_data")
+    void delete_channel_chat_row_data();
+
+    @Query("select * from  channel_chat_data")
+    LiveData<ChannelChatResponseModel> getChannelChatRowData();
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
 
 
 

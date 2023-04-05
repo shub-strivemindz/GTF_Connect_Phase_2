@@ -15,7 +15,7 @@ import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 
-@Database(entities = {ChannelDashboardDataModel.class, ChannelChatResponseModel.class, GroupDashboardDataModel.class}, version = 6)
+@Database(entities = {ChannelDashboardDataModel.class, GroupDashboardDataModel.class}, version = 7)
 @TypeConverters({Convertors.class})
 
 public abstract class AppDatabase extends RoomDatabase {

@@ -796,6 +796,34 @@ public class Utils {
     }
 
 
+    public static String getTime(String dateString){
+
+        String datetime = null;
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+
+        SimpleDateFormat d = new SimpleDateFormat("HH:mm a");
+        try {
+
+            Date convertedDate = inputFormat.parse(dateString);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(convertedDate);
+            cal.add(Calendar.HOUR, 7);
+            cal.add(Calendar.MINUTE,30);
+            Date calculatedTime = cal.getTime();
+
+
+
+            datetime = d.format(calculatedTime);
+
+        } catch (ParseException e) {
+
+        }
+        return datetime;
+
+    }
+
+
     public static String getDisplayableTime(String dateString) {
 
         long time = 0;
@@ -887,6 +915,7 @@ public class Utils {
 
 
     public static String getHeaderDate(String chatDate) {
+        String tempChatDate = chatDate;
         String serverCurrentDate = "";
         String currentDate = "";
 
@@ -908,7 +937,7 @@ public class Utils {
             currentDate = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
             yesterdayDate();
             if (currentDate.equalsIgnoreCase(serverCurrentDate)) {
-                chatDate = "Today";
+                chatDate = getTime(tempChatDate);
             } else if (serverCurrentDate.equalsIgnoreCase(yesterdayDate())) {
                 chatDate = "Yesterday";
             }
@@ -996,7 +1025,6 @@ public class Utils {
 
             if (showSoftKeyboard){
 
-                //((InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.SHOW_IMPLICIT);
 

@@ -49,6 +49,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.audiorecorder.OnBasketAnimationEnd;
+import com.example.audiorecorder.OnRecordClickListener;
+import com.example.audiorecorder.OnRecordListener;
 import com.example.flyingreactionanim.Directions;
 import com.example.flyingreactionanim.ZeroGravityAnimation;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -262,14 +265,20 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         //updateGroupChatSocket(false);
 
+
+
         //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
         userTypingListener();
         messageReceivedListener();
         updateLikeListener();
         deletePostListener();
         commentReceiver();
+
         //deleteCommentListener();
         //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
+
+
+
 
 
         // Navigate for Member Chat
@@ -336,6 +345,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         });
 
 
+
+
+
         binding.chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -383,13 +395,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.send_message));
+                binding.sendMessage.setVisibility(View.VISIBLE);
+                binding.recordButton.setVisibility(View.GONE);
 
                 isUserTyping = true;
                 typeCount = charSequence.length();
 
                 if (typeCount == 0) {
-                    binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+
+                    binding.sendMessage.setVisibility(View.GONE);
+                    binding.recordButton.setVisibility(View.VISIBLE);
                     isUserTypingMessage = false;
                     endTypingListener();
                 }
@@ -410,7 +425,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
             if (isUserTypingMessage) {
-                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+
+                binding.sendMessage.setVisibility(View.GONE);
+                binding.recordButton.setVisibility(View.VISIBLE);
+
                 endTypingListener();
                 messageText = binding.type.getText().toString().trim();
 
@@ -467,6 +485,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
         //binding.emoji.setOnClickListener(view -> Utils.showDialog(1,this,rootView,emojiListModel));
+        sendMessageAndAudioRecorderEvents();
     }
 
 
@@ -478,6 +497,119 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         outState.putInt("currentPage",currentPage);
 
     }*/
+
+
+
+
+
+
+
+    private void sendMessageAndAudioRecorderEvents() {
+
+
+        binding.recordButton.setRecordView(binding.recordView);
+        binding.recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                Log.d("RecordView", "Basket Animation Finished");
+                binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);
+            }
+        });
+
+        binding.recordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                //Start Recording..
+
+                binding.footerSearchContainer.setVisibility(View.GONE);
+                binding.recordView.setVisibility(View.VISIBLE);
+
+                Log.d("RecordView", "onStart");
+            }
+
+            @Override
+            public void onCancel() {
+                //On Swipe To Cancel
+                Log.d("RecordView", "onCancel");
+                /*binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);*/
+            }
+
+            @Override
+            public void onFinish(long recordTime, boolean limitReached) {
+                //Stop Recording..
+                //limitReached to determine if the Record was finished when time limit reached.
+                //String time = getHumanTimeText(recordTime);
+                Log.d("RecordView", "onFinish");
+               /* binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);*/
+
+                // Log.d("RecordTime", time);
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                //When the record time is less than One Second
+                Log.d("RecordView", "onLessThanSecond");
+                binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onLock() {
+                //When Lock gets activated
+                Log.d("RecordView", "onLock");
+            }
+
+        });
+
+
+       // binding.recordButton.setListenForRecord(false);
+
+        //ListenForRecord must be false ,otherwise onClick will not be called
+        /*binding.recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(MainActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                Log.d("RecordButton", "RECORD BUTTON CLICKED");
+            }
+        });
+
+        binding.recordView.setLockEnabled(true);
+        binding.recordView.setRecordLockImageView(findViewById(R.id.record_lock));*/
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void init() {
         // Getting API data fetch

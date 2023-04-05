@@ -267,7 +267,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
 
-        //updateGroupChatSocket(false);
+        updateChannelChatSocket(false);
 
         //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
         userTypingListener();
@@ -488,7 +488,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     public void init() {
 
-        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+        //databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
         // Getting API data fetch
         rest = new Rest(this, false, false);
@@ -510,11 +510,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
 
 
-        loadLocalData();
+        //loadLocalData();
     }
 
 
-    private void loadLocalData()
+   /* private void loadLocalData()
     {
         databaseViewModel.getChannelChannelData().observe(this, channelChatResponseModel -> {
             if (channelChatResponseModel != null) {
@@ -545,7 +545,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 updateChannelChatSocket(false);
             }
         });
-    }
+    }*/
 
 
     private void scrollToPosition(int position) {
@@ -564,14 +564,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         /*binding.chats.smoothScrollBy(0,0);*/
 
 
-        mLayoutManager.scrollToPosition(0);
+        mLayoutManager.scrollToPosition(position);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (isMessageQuoted){
 
-                    View getRoot=                   mLayoutManager.findViewByPosition(position);
+                    View getRoot = mLayoutManager.findViewByPosition(position);
 //                    View getRoot = channelViewAdapter.getSelectedView(position);
 
                     Animation anim = new AlphaAnimation(0.0f, 1.0f);
@@ -714,10 +714,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         binding.loader.setVisibility(View.GONE);
 
 
-                        if(localDBDataSize != responseModel.getData().getChatData().getRows().size()) {
+                        /*if(localDBDataSize != responseModel.getData().getChatData().getRows().size()) {
                             databaseViewModel.insertChannelChat(responseModel);
-                        }
-                        //list.addAll(responseModel.getData().getChatData().getRows());
+                        }*/
+
+
+                        list.addAll(responseModel.getData().getChatData().getRows());
 
                         postBaseUrl = responseModel.getData().getBaseUrl();
                         //loadDataToAdapter();
@@ -882,7 +884,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupMessageReceivedModel>() {
+        type = new TypeToken<ChannelMessageReceivedModel>() {
         }.getType();
 
 
@@ -1007,7 +1009,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupCommentResponseModel>() {
+        type = new TypeToken<ChannelCommentResponseModel>() {
         }.getType();
 
 
@@ -1980,9 +1982,29 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
+    public void commentMessage(int position, int userID, int gcMemberId, int groupChatId, int groupChannelId) {
+        Log.d("Index_Position",""+position);
+
+        //mLayoutManager.findViewByPosition(position);
+
+        binding.type.requestFocus();
+        Utils.softKeyboard(this,true,binding.type);
+
+
+       /* new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scrollToPosition(position);
+            }
+        },300);*/
+
+    }
+
+    @Override
     public void imagePreviewListener(int index,ArrayList<ImagePreviewModel> uriList) {
         selectedImageUriIndex = index;
         binding.imagePreview.setImageURI(uriList.get(index).getUri());
+
     }
 
     @Override
@@ -2063,6 +2085,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void previewImage()
     {
+        binding.pinAttachment.setVisibility(View.GONE);
+        binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.send_message));
 
         ImageMiniPreviewAdapter imageMiniPreviewAdapter= new ImageMiniPreviewAdapter(this,multipleImageUri,this);
         binding.miniImagePreviewRecycler.setHasFixedSize(true);
@@ -2088,6 +2112,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 Toast.makeText(this, "You haven't picked any image", Toast.LENGTH_LONG).show();
                 imageMiniPreviewAdapter.updateList(multipleImageUri,0);
                 binding.imagePreviewLayout.setVisibility(View.GONE);
+
+                binding.pinAttachment.setVisibility(View.VISIBLE);
+                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+
                 isAnyFileAttached = false;
             }
             else {
@@ -2158,6 +2186,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             chatViewModel.getPinnedMessages(param);
         }
         else if (requestType == REQUEST_UPLOAD_FILE) {
+
+
+
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+            binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+
             Log.d("UPLOAD IMAGE",jsonObject.toString());
 
             SendAttachmentResponseModel sendAttachmentResponseModel = new SendAttachmentResponseModel();

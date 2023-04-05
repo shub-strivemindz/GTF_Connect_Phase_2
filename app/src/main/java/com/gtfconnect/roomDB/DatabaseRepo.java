@@ -42,7 +42,7 @@ public class DatabaseRepo {
 
 
 
-    public void insertChannelChatData(ChannelChatResponseModel channelDashboardData) {
+    /*public void insertChannelChatData(ChannelChatResponseModel channelDashboardData) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -55,7 +55,7 @@ public class DatabaseRepo {
 
     public LiveData<ChannelChatResponseModel> getChannelChatData() {
         return appDao.getChannelChatData();
-    }
+    }*/
 
 
 

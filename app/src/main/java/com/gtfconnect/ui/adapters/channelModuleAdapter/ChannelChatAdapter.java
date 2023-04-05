@@ -53,6 +53,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private boolean isMessageClicked = false;
 
+    private int messageUserID = 0;
+
+
     String userName = "";
     String message = "";
     String time = "";
@@ -128,6 +131,37 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
         }
 
+        // Todo :
+
+        if (list.get(position) != null) {
+            if (list.get(position).getUser() != null) {
+                if (list.get(position).getUser().getUserID() != null) {
+                    messageUserID = Integer.parseInt(list.get(position).getUser().getUserID());
+
+
+                    if (position + 1 < list.size()) {
+                        if (list.get(position + 1) != null) {
+                            if (list.get(position + 1).getUser() != null) {
+                                if (list.get(position + 1).getUser().getUserID() != null) {
+                                    int nextUserID = Integer.parseInt(list.get(position + 1).getUser().getUserID());
+                                    if (messageUserID == nextUserID) {
+                                        holder.binding.userIcon.setVisibility(View.GONE);
+                                        holder.binding.userName.setVisibility(View.GONE);
+                                    } else {
+                                        holder.binding.userIcon.setVisibility(View.VISIBLE);
+                                        holder.binding.userName.setVisibility(View.VISIBLE);
+                                        messageUserID = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+
         if (list.get(position).getGroupChatRefID() != null) {
             holder.binding.quoteContainer.setVisibility(View.VISIBLE);
             holder.binding.headerDivider.setVisibility(View.GONE);
@@ -152,7 +186,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                 holder.binding.oldMsgUser.setText(username);
 
-                holder.binding.oldMsgTime.setText(Utils.getDisplayableTime(list.get(position).getQuote().getUpdatedAt()));
+                holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
 
 
                 holder.binding.newMessage.setText(list.get(position).getMessage());
@@ -166,12 +200,16 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
+            holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+
             ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
             holder.binding.mediaRecycler.setHasFixedSize(true);
             holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             holder.binding.mediaRecycler.setAdapter(mediaAdapter);
 
             //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+        }else{
+            holder.binding.mediaRecycler.setVisibility(View.GONE);
         }
 
        /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
@@ -198,8 +236,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
 
         if (list.get(position).getCreatedAt() != null) {
-            time = Utils.getDisplayableTime(list.get(position).getUpdatedAt());
-            holder.binding.time.setText(Utils.getDisplayableTime(list.get(position).getUpdatedAt()));
+            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
+            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time.setText("XX/XX/XXXX");
         }
@@ -269,6 +307,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
         });
 
+
       /*  holder.binding.viewComment.setOnClickListener(view -> {
 
             Intent intent = new Intent(context, GroupCommentScreen.class);
@@ -287,16 +326,30 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
         });
 
+        holder.binding.commentContainer.setOnClickListener(view -> {
+
+            Intent intent = new Intent(context, GroupCommentScreen.class);
+            intent.putExtra("replyOnComment", false);
+            intent.putExtra("userDetail", data);
+            intent.putExtra("userID", userID);
+            context.startActivity(intent);
+
+        });
 
 
         // Reply into the Chat
         holder.binding.comment.setOnClickListener(view -> {
 
-            Intent intent = new Intent(context, GroupCommentScreen.class);
+            channelChatListener.commentMessage(position,Integer.parseInt(userID),
+                    list.get(position).getGroupChannelID(),
+                    list.get(position).getGCMemberID(),
+                    Integer.parseInt(list.get(position).getGroupChatID()));
+
+           /* Intent intent = new Intent(context, GroupCommentScreen.class);
             intent.putExtra("replyOnComment", true);
             intent.putExtra("userDetail", data);
             intent.putExtra("userID", userID);
-            context.startActivity(intent);
+            context.startActivity(intent);*/
                 /*InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
         });
@@ -395,7 +448,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
             forward_dialog.setContentView(R.layout.dialog_forward_message);
             forward_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            forward_dialog.setCancelable(false);
             forward_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 

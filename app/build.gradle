@@ -42,6 +42,7 @@ dependencies {
     implementation project(path: ':MediaLibrary')
     implementation project(path: ':AudioWaveForm')
     implementation project(path: ':FlyingReactionAnim')
+    implementation project(path: ':AudioRecorder')
 
     //implementation(path: ':StickyHeader')
 

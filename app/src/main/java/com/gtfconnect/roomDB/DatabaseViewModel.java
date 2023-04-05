@@ -33,13 +33,13 @@ public class DatabaseViewModel extends AndroidViewModel {
     }
 
 
-    public void insertChannelChat(ChannelChatResponseModel result) {
+    /*public void insertChannelChat(ChannelChatResponseModel result) {
         repo.insertChannelChatData(result);
     }
 
     public LiveData<ChannelChatResponseModel> getChannelChannelData() {
         return repo.getChannelChatData();
-    }
+    }*/
 
 
     public void insertGroups(GroupDashboardDataModel result) {

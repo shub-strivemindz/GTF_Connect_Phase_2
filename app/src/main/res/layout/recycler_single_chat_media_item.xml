@@ -1,6 +1,6 @@
 <RelativeLayout android:id="@+id/post_image_container"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_240sdp"
+    android:layout_height="@dimen/_280sdp"
     android:layout_marginEnd="@dimen/_16sdp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -47,17 +47,33 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/doc_name"
+        <LinearLayout
+            android:id="@+id/doc_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
             android:layout_gravity="bottom"
-            android:background="#33000000"
-            android:text=".trsdgt.125412541.gtf.Doucment.pdf"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="@dimen/_10ssp"/>
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/pdf_image"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/doc_name"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:background="#33000000"
+                android:text=".trsdgt.125412541.gtf.Doucment.pdf"
+                android:textColor="@color/white"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:gravity="center"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/_10ssp"/>
+
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

@@ -20,6 +20,6 @@ public interface ChannelChatListener {
     void deletePost(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
 
-
+    void commentMessage(int position, int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
 }

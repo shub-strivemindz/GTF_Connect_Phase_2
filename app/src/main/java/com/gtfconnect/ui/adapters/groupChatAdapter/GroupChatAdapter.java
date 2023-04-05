@@ -63,6 +63,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
     String post_base_url= "";
 
+    private int messageUserID;
     static int likeCounter;
 
 //    private int commentCount;
@@ -165,7 +166,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                         String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                         holder.binding.oldMsgUser1.setText(username);
 
-                        holder.binding.oldMsgTime1.setText(Utils.getDisplayableTime(list.get(position).getQuote().getUpdatedAt()));
+                        holder.binding.oldMsgTime1.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
 
 
                         holder.binding.newMessage1.setText(list.get(position).getMessage());
@@ -209,6 +210,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.binding.postImageContainer.setVisibility(View.GONE);
         }*/
 
+
+
+
+
                 if (list.get(position).getMessage() != null) {
                     message = list.get(position).getMessage();
                     holder.binding.message1.setText(list.get(position).getMessage());
@@ -218,8 +223,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 }
 
                 if (list.get(position).getCreatedAt() != null) {
-                    time = Utils.getDisplayableTime(list.get(position).getUpdatedAt());
-                    holder.binding.time.setText(Utils.getDisplayableTime(list.get(position).getUpdatedAt()));
+                    time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
+                    holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
                 } else {
                     holder.binding.time.setText("XX/XX/XXXX");
                 }
@@ -323,14 +328,13 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         */
 
         // Bottom-sheet for chat options --
-        holder.binding.receivedMessageContainer.setOnLongClickListener(view -> {
-            loadBottomSheet(holder,position);
-            return true;
-        });
+
 
         holder.binding.sentMessageContainer.setOnLongClickListener(view -> {
+            Log.d("Not going ","why2");
             loadBottomSheet(holder,position);
-            return true;
+
+            return false;
         });
 
                 // Bottom-sheet for image options --
@@ -464,7 +468,11 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
             }
         }*/
-
+                holder.binding.receivedMessageContainer.setOnLongClickListener(view -> {
+                    Log.d("Not going ","why");
+                    loadBottomSheet(holder,position);
+                    return false;
+                });
 
 
                 Gson gson = new Gson();
@@ -514,7 +522,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                         String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                         holder.binding.oldMsgUser.setText(username);
 
-                        holder.binding.oldMsgTime.setText(Utils.getDisplayableTime(list.get(position).getQuote().getUpdatedAt()));
+                        holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
 
 
                         holder.binding.newMessage.setText(list.get(position).getMessage());
@@ -526,6 +534,41 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     holder.binding.quoteContainer.setVisibility(View.GONE);
                     holder.binding.quoteDivider.setVisibility(View.GONE);
                 }
+
+
+
+                    if (list.get(position) != null) {
+                        if (list.get(position).getUser() != null) {
+                            if (list.get(position).getUser().getUserID() != null) {
+                                messageUserID = Integer.parseInt(list.get(position).getUser().getUserID());
+
+
+                                if (position + 1 < list.size()) {
+                                    if (list.get(position + 1) != null) {
+                                        if (list.get(position + 1).getUser() != null) {
+                                            if (list.get(position + 1).getUser().getUserID() != null) {
+                                                int nextUserID = Integer.parseInt(list.get(position + 1).getUser().getUserID());
+                                                if (messageUserID == nextUserID) {
+                                                    /*holder.binding.highWhiteSpacer.setVisibility(View.GONE);
+                                                    holder.binding.lowWhiteSpacer.setVisibility(View.VISIBLE);*/
+                                                    holder.binding.userContainer.setVisibility(View.GONE);
+                                                } else {
+                                                    /*holder.binding.highWhiteSpacer.setVisibility(View.VISIBLE);
+                                                    holder.binding.lowWhiteSpacer.setVisibility(View.GONE);*/
+                                                    holder.binding.userContainer.setVisibility(View.VISIBLE);
+                                                    messageUserID = 0;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+
+
 
                 if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
@@ -568,8 +611,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 }
 
                 if (list.get(position).getCreatedAt() != null) {
-                    time = Utils.getDisplayableTime(list.get(position).getUpdatedAt());
-                    holder.binding.time.setText(Utils.getDisplayableTime(list.get(position).getUpdatedAt()));
+                    time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
+                    holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
                 } else {
                     holder.binding.time.setText("XX/XX/XXXX");
                 }
