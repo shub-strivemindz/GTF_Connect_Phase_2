@@ -1,5 +1,6 @@
 package com.gtfconnect.ui.screenUI.channelModule;
 
+import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
@@ -7,6 +8,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -34,6 +37,7 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,14 +48,21 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.audiorecorder.OnBasketAnimationEnd;
+import com.example.audiorecorder.OnRecordListener;
+import com.example.audiowaveform.WaveformSeekBar;
 import com.example.flyingreactionanim.Directions;
 import com.example.flyingreactionanim.ZeroGravityAnimation;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -83,6 +94,7 @@ import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.screenUI.groupModule.GroupPinnedMessageScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
+import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -92,9 +104,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,6 +248,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private int localDBDataSize = 0;
 
+    MediaRecorder mMediaRecorder;
+
+    MediaPlayer mediaPlayer;
+
+    private String audioFilePath = "";
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -250,6 +272,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         binding.quoteContainer.setVisibility(View.GONE);
         binding.attachmentContainer.setVisibility(View.GONE);
+
+        binding.sendMessage.setVisibility(View.GONE);
+        binding.recordButton.setVisibility(View.VISIBLE);
+        binding.pinAttachment.setVisibility(View.VISIBLE);
 
 
         rest = new Rest(this, false, false);
@@ -278,69 +304,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         //deleteCommentListener();
         //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
 
-
-        // Navigate for Member Chat
-        binding.memberTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(ChannelChatsScreen.this, ChannelProfileScreen.class));
-
-            }
-        });
-
-        binding.pin.setOnClickListener(view -> {
-
-
-            if (pinMessageCount == 0) {
-                Utils.showSnackMessage(ChannelChatsScreen.this, binding.pin, "No Pinned Message Found!");
-            } else {
-                Intent i = new Intent(ChannelChatsScreen.this, GroupPinnedMessageScreen.class);
-                i.putExtra("post_base_url", postBaseUrl);
-                startActivity(i);
-                finish();
-            }
-        });
-
-        binding.backClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-
-
-        // Bottom sheet for Mute Notifications
-        binding.pinAttachment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                // Todo..................Uncomment below condition when video can be shared
-
-                //if (!isAnyFileAttached)
-                openAttachmentDialog();
-            }
-        });
-
-        binding.iconContainer.setOnClickListener(view -> {
-            //currentPage = 1;
-
-            if (isScrollDownHighlighted) {
-                isScrollDownHighlighted = false;
-                binding.arrowIcon.setColorFilter(getResources().getColor(R.color.tab_grey));
-            }
-
-
-            scrollToPosition(0);
-
-            binding.iconContainer.setVisibility(View.GONE);
-
-        });
-
-        binding.closeQuoteEditor.setOnClickListener(view -> {
-            binding.quoteContainer.setVisibility(View.GONE);
-            isMessageQuoted = false;
-        });
+        initiateClickListeners();
+        sendMessageAndAudioRecorderEvents();
 
 
         binding.chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -390,13 +355,16 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.send_message));
+                binding.sendMessage.setVisibility(View.VISIBLE);
+                binding.recordButton.setVisibility(View.GONE);
 
                 isUserTyping = true;
                 typeCount = charSequence.length();
 
                 if (typeCount == 0) {
-                    binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+                    binding.sendMessage.setVisibility(View.GONE);
+                    binding.recordButton.setVisibility(View.VISIBLE);
+
                     isUserTypingMessage = false;
                     endTypingListener();
                 }
@@ -413,37 +381,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
 
-        binding.sendMessage.setOnClickListener(view -> {
-
-
-            if (isUserTypingMessage) {
-                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
-                endTypingListener();
-                messageText = binding.type.getText().toString().trim();
-
-                if (isAnyFileAttached) {
-                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                        callAttachmentApi();
-                    } else {
-                        Utils.showSnackMessage(this, binding.type, "Type Message !");
-                        binding.imagePreviewLayout.setVisibility(View.GONE);
-                        isAnyFileAttached = false;
-                        isAttachmentSend = false;
-                    }
-                } else {
-                    validateSendMessage(messageText, binding.type);
-                }
-            }
-            else{
-                
-            }
-        });
-
-
-        binding.closeAttachmentContainer.setOnClickListener(view -> {
-            isAnyFileAttached = false;
-            binding.attachmentContainer.setVisibility(View.GONE);
-        });
 
 
         if (searchPinnedMessageEnabled) {
@@ -464,16 +401,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
         }
 
-
-    /*    binding.dummyUsers.setOnClickListener(view -> {
-            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(ChannelChatsScreen.this);
-            chat_options_dialog.setContentView(R.layout.bottomsheet_dummy_user_list);
-
-            chat_options_dialog.show();
-        });*/
-
-
-        //binding.emoji.setOnClickListener(view -> Utils.showDialog(1,this,rootView,emojiListModel));
     }
 
 
@@ -485,6 +412,275 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         outState.putInt("currentPage",currentPage);
 
     }*/
+
+    private void initiateClickListeners()
+    {
+        // Navigate for Member Chat
+        binding.memberTitle.setOnClickListener(view -> startActivity(new Intent(ChannelChatsScreen.this, ChannelProfileScreen.class)));
+
+        binding.pin.setOnClickListener(view -> {
+
+
+            if (pinMessageCount == 0) {
+                Utils.showSnackMessage(ChannelChatsScreen.this, binding.pin, "No Pinned Message Found!");
+            } else {
+                Intent i = new Intent(ChannelChatsScreen.this, ChannelPinnedMessageScreen.class);
+                i.putExtra("post_base_url", postBaseUrl);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        binding.backClick.setOnClickListener(view -> onBackPressed());
+
+
+        // Bottom sheet for Mute Notifications
+        binding.pinAttachment.setOnClickListener(view -> {
+
+
+            // Todo..................Uncomment below condition when video can be shared
+
+            //if (!isAnyFileAttached)
+            openAttachmentDialog();
+        });
+
+        binding.iconContainer.setOnClickListener(view -> {
+            //currentPage = 1;
+
+            if (isScrollDownHighlighted) {
+                isScrollDownHighlighted = false;
+                binding.arrowIcon.setColorFilter(getResources().getColor(R.color.tab_grey));
+            }
+
+
+            scrollToPosition(0);
+
+            binding.iconContainer.setVisibility(View.GONE);
+
+        });
+
+        binding.closeQuoteEditor.setOnClickListener(view -> {
+            binding.quoteContainer.setVisibility(View.GONE);
+
+            binding.sendMessage.setVisibility(View.GONE);
+            binding.recordButton.setVisibility(View.VISIBLE);
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+
+            isMessageQuoted = false;
+        });
+
+        binding.sendMessage.setOnClickListener(view -> {
+
+
+            if (isUserTypingMessage) {
+
+                binding.sendMessage.setVisibility(View.VISIBLE);
+                binding.recordButton.setVisibility(View.GONE);
+
+                endTypingListener();
+                messageText = binding.type.getText().toString().trim();
+
+                if (isAnyFileAttached) {
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        callAttachmentApi();
+                    } else {
+                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                        isAnyFileAttached = false;
+                        isAttachmentSend = false;
+                    }
+                } else {
+                    validateSendMessage(messageText, binding.type);
+                }
+            }
+            else{
+
+            }
+        });
+
+
+        binding.closeAttachmentContainer.setOnClickListener(view -> {
+            isAnyFileAttached = false;
+            binding.attachmentContainer.setVisibility(View.GONE);
+        });
+    }
+
+
+
+    private void sendMessageAndAudioRecorderEvents() {
+
+
+
+
+
+        binding.recordButton.setRecordView(binding.recordView);
+        binding.recordView.setOnBasketAnimationEndListener(() -> {
+            Log.d("RecordView", "Basket Animation Finished");
+            binding.footerSearchContainer.setVisibility(View.VISIBLE);
+            binding.recordView.setVisibility(View.GONE);
+        });
+
+        binding.recordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                //Start Recording..
+
+                audioFilePath = "";
+                binding.footerSearchContainer.setVisibility(View.GONE);
+                binding.recordView.setVisibility(View.VISIBLE);
+
+                recordAudio();
+                Log.d("RecordView", "onStart");
+            }
+
+            @Override
+            public void onCancel() {
+                //On Swipe To Cancel
+                Log.d("RecordView", "onCancel");
+                stopRecording();
+                Utils.deleteAudioFile(audioFilePath);
+                /*binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);*/
+            }
+
+            @Override
+            public void onFinish(long recordTime, boolean limitReached) {
+                //Stop Recording..
+                //limitReached to determine if the Record was finished when time limit reached.
+                //String time = getHumanTimeText(recordTime);
+                Log.d("RecordView", "onFinish");
+                stopRecording();
+
+                File audioFile = new File(audioFilePath);
+
+                attachmentFileList = new ArrayList<>();
+                attachmentFileList.add(audioFile);
+                isAnyFileAttached = true;
+
+                attachment_request_code = RECORD_AUDIO_REQUEST_CODE;
+                callAttachmentApi();
+
+                binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);
+
+               /* binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);*/
+
+                // Log.d("RecordTime", time);
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                //When the record time is less than One Second
+                Log.d("RecordView", "onLessThanSecond");
+                binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);
+
+                stopRecording();
+                Utils.deleteAudioFile(audioFilePath);
+            }
+
+            @Override
+            public void onLock() {
+                //When Lock gets activated
+                Log.d("RecordView", "onLock");
+            }
+
+        });
+
+
+        // binding.recordButton.setListenForRecord(false);
+
+        //ListenForRecord must be false ,otherwise onClick will not be called
+        /*binding.recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(MainActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                Log.d("RecordButton", "RECORD BUTTON CLICKED");
+            }
+        });
+
+        binding.recordView.setLockEnabled(true);
+        binding.recordView.setRecordLockImageView(findViewById(R.id.record_lock));*/
+    }
+
+
+    private void recordAudio()
+    {
+        //check the permission for the record audio and for save audio write external storage
+
+        if (CheckPermission()) {
+            audioFilePath = Utils.getAudioFilePath();
+
+            //RecordReady
+            mMediaRecorder = new MediaRecorder();
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mMediaRecorder.setOutputFile(audioFilePath);
+
+
+            try {
+                mMediaRecorder.prepare();
+                //start the recording
+                mMediaRecorder.start();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            //if permission is not given then request permission
+            RequestPermission();
+        }
+    }
+
+    private void stopRecording()
+    {
+        try {
+            mMediaRecorder.stop();
+        }
+        catch (Exception e){
+            Log.d("Recorder_Exception",e.toString());
+        }
+    }
+
+
+    public boolean CheckPermission() {
+        int first = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int first1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return first == PackageManager.PERMISSION_GRANTED && first1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    //give below permission for audio capture
+    private void RequestPermission() {
+        ActivityCompat.requestPermissions(this, new
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void init() {
 
@@ -794,6 +990,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void validateSendMessage(String message, View view) {
         binding.quoteContainer.setVisibility(View.GONE);
+        binding.sendMessage.setVisibility(View.GONE);
+        binding.recordButton.setVisibility(View.VISIBLE);
+        binding.pinAttachment.setVisibility(View.VISIBLE);
 
         binding.type.setText("");
         Utils.softKeyboard(this, false, binding.type);
@@ -1328,6 +1527,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(i).getName(), part);
                 files.add(attachment);
             }
+        } else if (attachment_request_code == RECORD_AUDIO_REQUEST_CODE) {
+            RequestBody part =
+                    RequestBody.create(
+                            MediaType.parse("audio/*"),
+                            attachmentFileList.get(0)
+                    );
+
+            MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
+            files.add(attachment);
         }
 
 
@@ -1858,6 +2066,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         isMessageQuoted = true;
 
         binding.quoteContainer.setVisibility(View.VISIBLE);
+
+        binding.sendMessage.setVisibility(View.VISIBLE);
+        binding.recordButton.setVisibility(View.GONE);
+        binding.pinAttachment.setVisibility(View.GONE);
+
+
         binding.oldMessage.setText(oldMessage);
         binding.oldMsgTime.setText(time);
         binding.oldMsgUser.setText(username);
@@ -1888,6 +2102,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             jsonRawObject.put("GroupChatID", groupChatId);
             jsonRawObject.put("isLike", like);
 
+            Log.v("Like Message Params --", jsonRawObject.toString());
             Log.v("Like Message Params --", jsonRawObject.toString());
 
             socketInstance.emit("like", jsonRawObject);
@@ -2001,6 +2216,125 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
+    public void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, ProgressBar progressBar,ImageView downloadPlayPic) {
+        new Thread() {
+            @Override
+            public void run() {
+                boolean isDownloading = true;
+
+                    String downloadPath = "/" + "connect_audio_files" + "/" + groupChannelID + "/" + groupChatID + "/"
+                            + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())
+                            + ".mp3";
+
+                    String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS) + downloadPath;
+
+
+                    Log.d("LocalFilePath", fileDownloadPath);
+                    Log.d("WebFilePath", audioPostUrl);
+
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(audioPostUrl));
+                    request.setDescription("Downloading");
+                    request.setMimeType("audio");
+                    request.setTitle("File :");
+                    request.allowScanningByMediaScanner();
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                            downloadPath);
+                    DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                    manager.enqueue(request);
+
+
+                    DownloadManager.Query query = null;
+                    query = new DownloadManager.Query();
+                    Cursor c = null;
+                    if (query != null) {
+                        query.setFilterByStatus(DownloadManager.STATUS_FAILED | DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_SUCCESSFUL | DownloadManager.STATUS_RUNNING | DownloadManager.STATUS_PENDING);
+                    } else {
+                        //return flag;
+                    }
+
+                    while (isDownloading) {
+                        c = manager.query(query);
+
+                        /*int bytes_downloaded = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                        int bytes_total = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+                        if (c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                            c = false;
+                        }*/
+
+                        if (c.moveToFirst()) {
+                            //Log.i("FLAG", "Downloading");
+                            @SuppressLint("Range") int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+
+                            if(status == DownloadManager.STATUS_RUNNING) {
+                                @SuppressLint("Range") long totalBytes = c.getLong(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                                if (totalBytes > 0) {
+                                    @SuppressLint("Range") long downloadedBytes = c.getLong(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                                    final int progress = (int) ((downloadedBytes * 100L) / totalBytes);
+                                    Log.d("download_status", "" + progress);
+                                    progressBar.setProgress(progress);
+                                }
+
+
+
+                                //final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
+
+                                //progressBar.setProgress(i);
+                            }
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                Log.i("FLAG", "done");
+                                isDownloading = false;
+
+                                channelViewAdapter.downloadComplete(groupChatID);
+                              /*  long duration = AudioPlayUtil.getAudioDuration(fileDownloadPath);
+
+                                runOnUiThread(() -> {
+                                    downloadPlayPic.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                                    AudioPlayUtil.playAudioAnimation(ChannelChatsScreen.this, seekBar, duration);
+                                });*/
+                                //channelViewAdapter.playAudio(fileDownloadPath);
+
+                            }
+                        }
+                    }
+            }
+        }.start();
+    }
+
+    @Override
+    public void playAudio(String audioPostPath, WaveformSeekBar seekBar, long duration) {
+
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                //here the play recording has been stop
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                AudioPlayUtil.stopPlayback(this);
+            }
+
+            mediaPlayer = new MediaPlayer();
+            try {
+                mediaPlayer.setDataSource(audioPostPath);
+                mediaPlayer.prepare();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //play recording here
+            AudioPlayUtil.playAudioAnimation(this, seekBar, duration);
+            mediaPlayer.start();
+    }
+
+    @Override
+    public void viewMemberProfile(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
+
+        startActivity(new Intent(ChannelChatsScreen.this,ChannelMemberProfileScreen.class));
+
+    }
+
+    @Override
     public void imagePreviewListener(int index,ArrayList<ImagePreviewModel> uriList) {
         selectedImageUriIndex = index;
         binding.imagePreview.setImageURI(uriList.get(index).getUri());
@@ -2086,7 +2420,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private void previewImage()
     {
         binding.pinAttachment.setVisibility(View.GONE);
-        binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.send_message));
+        binding.sendMessage.setVisibility(View.VISIBLE);
+        binding.recordButton.setVisibility(View.GONE);
 
         ImageMiniPreviewAdapter imageMiniPreviewAdapter= new ImageMiniPreviewAdapter(this,multipleImageUri,this);
         binding.miniImagePreviewRecycler.setHasFixedSize(true);
@@ -2114,7 +2449,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.imagePreviewLayout.setVisibility(View.GONE);
 
                 binding.pinAttachment.setVisibility(View.VISIBLE);
-                binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+                binding.sendMessage.setVisibility(View.GONE);
+                binding.recordButton.setVisibility(View.VISIBLE);
 
                 isAnyFileAttached = false;
             }
@@ -2190,7 +2526,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
             binding.pinAttachment.setVisibility(View.VISIBLE);
-            binding.sendMessage.setImageDrawable(getResources().getDrawable(R.drawable.microphone));
+            binding.sendMessage.setVisibility(View.GONE);
+            binding.recordButton.setVisibility(View.VISIBLE);
 
             Log.d("UPLOAD IMAGE",jsonObject.toString());
 
@@ -2221,7 +2558,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             binding.attachmentContainer.setVisibility(View.GONE);
             isAnyFileAttached = false;
             isAttachmentSend = true;
-            validateSendMessage(messageText,binding.type);
+            validateSendMessage("Audio Test",binding.type);
         }
         else if(requestType == PINNED_MESSAGE_COUNT)
         {

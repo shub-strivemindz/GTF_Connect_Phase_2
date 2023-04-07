@@ -140,7 +140,7 @@ public class GroupCommentScreen extends AppCompatActivity implements GroupCommen
         binding.firstName.setText(detail.getUser().getFirstname());
         binding.firstName.setText(detail.getUser().getLastname());
 
-        binding.time.setText(Utils.getDisplayableTime(detail.getUser().getUpdatedAt()));
+        binding.time.setText(Utils.getHeaderDate(detail.getUser().getUpdatedAt()));
         binding.message.setText(detail.getMessage());
 
         if (detail.getDummyViews() == 0)

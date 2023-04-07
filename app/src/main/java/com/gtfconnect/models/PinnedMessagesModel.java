@@ -711,6 +711,16 @@ public class PinnedMessagesModel {
         @Expose
         private Group group;
 
+        private boolean isAudioDownloaded = false;
+
+        public boolean isAudioDownloaded() {
+            return isAudioDownloaded;
+        }
+
+        public void setAudioDownloaded(boolean audioDownloaded) {
+            isAudioDownloaded = audioDownloaded;
+        }
+
         public Integer getPinmessagesID() {
             return pinmessagesID;
         }

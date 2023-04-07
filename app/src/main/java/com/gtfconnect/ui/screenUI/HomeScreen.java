@@ -340,7 +340,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
        // binding.searchIcon.setImageResource(R.drawable.search);
         isSearchBarOpened = false;
 
-
+        binding.greeting.setText(Utils.getDashboardGreeting());
         setProfileDetails();
 
         Utils.checkInternetConnection(this,this);

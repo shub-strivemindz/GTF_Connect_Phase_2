@@ -1,12 +1,19 @@
 package com.gtfconnect.ui.adapters.channelModuleAdapter;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,27 +26,34 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.audiowaveform.WaveformSeekBar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChannelChatItemBinding;
 import com.gtfconnect.interfaces.ChannelChatListener;
 import com.gtfconnect.interfaces.GroupChatListener;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelMediaResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.ui.screenUI.groupModule.GroupCommentScreen;
+import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.ViewHolder> {
 
     private List<ChannelRowListDataModel> list;
-    private Context context;
+    private Activity context;
 
     private ChannelRowListDataModel item;
 
@@ -62,13 +76,17 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     String post_base_url= "";
 
+    private MediaPlayer mediaPlayer;
+
+    private boolean isAudioPlaying = false;
+
     static int likeCounter;
 
 //    private int commentCount;
 
     // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
 
-    public ChannelChatAdapter(Context context, List<ChannelRowListDataModel> list, String userID, String post_base_url, ChannelChatListener channelChatListener) {
+    public ChannelChatAdapter(Activity context, List<ChannelRowListDataModel> list, String userID, String post_base_url, ChannelChatListener channelChatListener) {
         this.list = list;
         this.context = context;
         this.userID = userID;
@@ -131,7 +149,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
         }
 
-        // Todo :
 
         if (list.get(position) != null) {
             if (list.get(position).getUser() != null) {
@@ -155,6 +172,10 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                                 }
                             }
                         }
+                    } else if (position+1 == list.size()) {
+                        holder.binding.userIcon.setVisibility(View.VISIBLE);
+                        holder.binding.userName.setVisibility(View.VISIBLE);
+                        messageUserID = 0;
                     }
 
                 }
@@ -200,17 +221,100 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
-            holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+            //List<ChannelMediaResponseModel> mediaResponseModel = list.get(position).getMedia();
 
-            ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
-            holder.binding.mediaRecycler.setHasFixedSize(true);
-            holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-            holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+            String fileType = Utils.checkFileType(list.get(position).getMedia().get(0).getMimeType());
 
+            if (fileType.equalsIgnoreCase("audio")){
+
+                holder.binding.audioTimeContainer.setVisibility(View.VISIBLE);
+
+                holder.binding.mediaRecycler.setVisibility(View.GONE);
+                holder.binding.quoteContainer.setVisibility(View.GONE);
+                holder.binding.messageContainer.setVisibility(View.GONE);
+                holder.binding.headerDivider.setVisibility(View.GONE);
+
+                holder.binding.audioContainer.setVisibility(View.VISIBLE);
+
+
+                holder.binding.waveForm.setProgressInPercentage(100);
+                holder.binding.waveForm.setWaveform(AudioPlayUtil.createWaveform(), true);
+                holder.binding.waveForm.setProgressInPercentage(0);
+
+                if (list.get(position).isAudioDownloaded()){
+                    holder.binding.downloadAudio.setVisibility(View.GONE);
+                    holder.binding.playPauseRecordedAudio.setVisibility(View.VISIBLE);
+
+                    String filePath = AudioPlayUtil.getSavedAudioFilePath(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID());
+
+                    long duration = AudioPlayUtil.getAudioDuration(filePath);
+                    String totalTime = AudioPlayUtil.getAudioDurationTime(duration);
+
+                    holder.binding.totalAudioTime.setText("/" + totalTime);
+                }
+                else {
+                    if (AudioPlayUtil.checkFileExistence(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID())) {
+
+                        holder.binding.downloadAudio.setVisibility(View.GONE);
+                        holder.binding.playPauseRecordedAudio.setVisibility(View.VISIBLE);
+
+                        String filePath = AudioPlayUtil.getSavedAudioFilePath(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID());
+
+                        long duration = AudioPlayUtil.getAudioDuration(filePath);
+                        String totalTime = AudioPlayUtil.getAudioDurationTime(duration);
+
+                        holder.binding.totalAudioTime.setText("/" + totalTime);
+                    } else {
+                        holder.binding.audioTimeContainer.setVisibility(View.GONE);
+
+                        holder.binding.downloadAudio.setVisibility(View.VISIBLE);
+                        holder.binding.playPauseRecordedAudio.setVisibility(View.GONE);
+                    }
+                }
+            }
+            else {
+
+                holder.binding.audioContainer.setVisibility(View.GONE);
+                holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+
+                ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url, String.valueOf(userID));
+                holder.binding.mediaRecycler.setHasFixedSize(true);
+                holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+
+            }
             //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
         }else{
+            holder.binding.audioContainer.setVisibility(View.GONE);
             holder.binding.mediaRecycler.setVisibility(View.GONE);
         }
+
+
+
+
+        holder.binding.memberContainer.setOnClickListener(view -> {
+            channelChatListener.viewMemberProfile(Integer.parseInt(userID),list.get(position).getGCMemberID(),Integer.parseInt(list.get(position).getGroupChatID()),list.get(position).getGroupChannelID());
+        });
+
+
+
+
+
+        holder.binding.playPauseRecordedAudio.setOnClickListener(view -> {
+            if(AudioPlayUtil.checkFileExistence(list.get(position).getGroupChannelID().toString(),list.get(position).getGroupChatID())){
+                String path = AudioPlayUtil.getSavedAudioFilePath(list.get(position).getGroupChannelID().toString(),list.get(position).getGroupChatID());
+
+                long duration = AudioPlayUtil.getAudioDuration(path);
+                channelChatListener.playAudio(path,holder.binding.waveForm,duration);
+            }
+        });
+
+        holder.binding.downloadAudio.setOnClickListener(view -> {
+            String filePath = post_base_url+list.get(position).getMedia().get(0).getStoragePath()+list.get(position).getMedia().get(0).getFileName();
+            channelChatListener.downloadAudio(filePath,list.get(position).getGroupChannelID().toString(),list.get(position).getGroupChatID(),holder.binding.waveForm,holder.binding.progressBar,holder.binding.playPauseRecordedAudio);
+        });
+
+
 
        /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
             loadPostMedia(holder, position, list.get(position).getMedia().size());
@@ -245,23 +349,39 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
         if (list.get(position).getCommentData() == null) {
+
             holder.binding.commentContainer.setVisibility(View.GONE);
+            holder.binding.singleCommentContainer.setVisibility(View.GONE);
+            holder.binding.singleCommentContainerDivider.setVisibility(View.GONE);
+
         } else if (list.get(position).getCommentData().size() == 0) {
             holder.binding.commentContainer.setVisibility(View.GONE);
+            holder.binding.singleCommentContainer.setVisibility(View.GONE);
+            holder.binding.singleCommentContainerDivider.setVisibility(View.GONE);
         }
         else {
+            holder.binding.singleCommentContainer.setVisibility(View.VISIBLE);
+            holder.binding.singleCommentContainerDivider.setVisibility(View.VISIBLE);
+
             holder.binding.commentContainer.setVisibility(View.VISIBLE);
             holder.binding.commentCount.setText(String.valueOf(list.get(position).getCommentData().size()));
+
+
         }
 
-        if (list.get(position).getCommentCount() == 0) {
+      /*  if (list.get(position).getCommentCount() == 0) {
+            holder.binding.commentContainer.setVisibility(View.GONE);
 
-
+            holder.binding.singleCommentContainer.setVisibility(View.GONE);
+            holder.binding.singleCommentContainerDivider.setVisibility(View.GONE);
         }
         else {
             holder.binding.commentContainer.setVisibility(View.VISIBLE);
             holder.binding.commentCount.setText(list.get(position).getCommentCount());
-        }
+
+            holder.binding.singleCommentContainer.setVisibility(View.VISIBLE);
+            holder.binding.singleCommentContainerDivider.setVisibility(View.VISIBLE);
+        }*/
 
 
 
@@ -340,10 +460,20 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         // Reply into the Chat
         holder.binding.comment.setOnClickListener(view -> {
 
-            channelChatListener.commentMessage(position,Integer.parseInt(userID),
+
+            Intent intent = new Intent(context, GroupCommentScreen.class);
+            intent.putExtra("userDetail", data);
+            intent.putExtra("replyOnComment", true);
+            intent.putExtra("userID", userID);
+            context.startActivity(intent);
+
+
+            /*channelChatListener.commentMessage(position,Integer.parseInt(userID),
                     list.get(position).getGroupChannelID(),
                     list.get(position).getGCMemberID(),
-                    Integer.parseInt(list.get(position).getGroupChatID()));
+                    Integer.parseInt(list.get(position).getGroupChatID()));*/
+
+
 
            /* Intent intent = new Intent(context, GroupCommentScreen.class);
             intent.putExtra("replyOnComment", true);
@@ -545,8 +675,16 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-
-
+    public void downloadComplete(String groupChatID){
+        for (int i=0;i<list.size();i++)
+        {
+            if (list.get(i).getGroupChatID().equalsIgnoreCase(groupChatID)){
+                list.get(i).setAudioDownloaded(true);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
 
 
     @Override

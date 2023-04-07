@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -329,13 +330,35 @@ public class Utils {
 
     }
 
-    private static String getAudioFilePath() {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(), "EYS/Audio");
+    public static String getAudioFilePath() {
+        /*File file = new File(Environment.getExternalStorageDirectory().getPath(), "EYS/Audio");
         if (!file.exists()) {
             file.mkdirs();
         }
-        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".3gp");
+        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".3gp");*/
 
+
+
+        String videoFilePath = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS) + "/" + "connect_audio" + "_"
+                + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())
+                + ".mp3";
+
+        return videoFilePath;
+    }
+
+
+    public static boolean deleteAudioFile(String filePath){
+        File file = new File(filePath);
+        if (file.exists()){
+            file.delete();
+            Log.d("File","Deleted");
+            return true;
+        }
+        else{
+            Log.d("File","Not Deleted");
+            return false;
+        }
     }
 
 
@@ -821,6 +844,25 @@ public class Utils {
         }
         return datetime;
 
+    }
+
+
+
+    public static String getDashboardGreeting()
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH");
+        String currentTime = sdf.format(new Date());
+
+        int hour = Integer.parseInt(currentTime);
+
+        if (hour >= 0 && hour < 12){
+            return "Good Morning!";
+        } else if (hour >= 12 && hour < 17) {
+            return "Good Afternoon!";
+        }
+        else{
+            return "Good Evening!";
+        }
     }
 
 

@@ -84,6 +84,8 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
 
         reactionModel = new ChannelManageReactionModel();
 
+        binding.back.setOnClickListener(view -> onBackPressed());
+
         channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
         api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 

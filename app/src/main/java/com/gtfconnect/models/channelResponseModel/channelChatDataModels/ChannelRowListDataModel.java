@@ -92,6 +92,16 @@ public class ChannelRowListDataModel {
     @Expose
     private List<ChannelMediaResponseModel> media;
 
+    private boolean isAudioDownloaded = false;
+
+    public boolean isAudioDownloaded() {
+        return isAudioDownloaded;
+    }
+
+    public void setAudioDownloaded(boolean audioDownloaded) {
+        isAudioDownloaded = audioDownloaded;
+    }
+
     public String getGroupChatID() {
         return groupChatID;
     }

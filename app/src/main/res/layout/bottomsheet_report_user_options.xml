@@ -1,0 +1,120 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/back2"
+            android:layout_marginStart="@dimen/_16sdp"
+            app:tint="@color/theme_green"/>
+
+    <TextView
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/poppins"
+        android:textStyle="bold"
+        android:textColor="@color/theme_green"
+        android:textSize="@dimen/_12ssp"
+        android:text="Report This User"/>
+
+    </RelativeLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha=".2"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_160sdp">
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:text="Spam"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:text="Helplines in India for sexual abuse."
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:text="Hate Speech"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:text="Not Useful"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_12sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+    </RadioGroup>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/report_user"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginVertical="@dimen/_20sdp"
+        android:layout_marginHorizontal="@dimen/_45sdp"
+        app:cardBackgroundColor="@color/theme_green"
+        app:cardCornerRadius="8dp">
+
+        <TextView
+            android:textColor="#fff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/poppins500"
+            android:text="Submit"
+            android:includeFontPadding="false"/>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

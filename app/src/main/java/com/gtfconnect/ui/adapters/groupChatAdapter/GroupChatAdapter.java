@@ -18,7 +18,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
@@ -32,6 +36,7 @@ import com.gtfconnect.ui.adapters.GroupChannel_MediaAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelMediaAdapter;
 import com.gtfconnect.ui.screenUI.groupModule.GroupCommentScreen;
+import com.gtfconnect.ui.screenUI.groupModule.MultiPreviewImage;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
@@ -66,6 +71,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     private int messageUserID;
     static int likeCounter;
 
+
+    private boolean isDummyUser = true;
 //    private int commentCount;
 
     // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
@@ -102,6 +109,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
                 holder.binding.sentMessageContainer.setVisibility(View.VISIBLE);
                 holder.binding.receivedMessageContainer.setVisibility(View.GONE);
+
+                if (isDummyUser){
+                    holder.binding.dummyUserContainer.setVisibility(View.VISIBLE);
+                    isDummyUser =false ;
+                }
+                else{
+                    holder.binding.dummyUserContainer.setVisibility(View.GONE);
+                }
 
                 // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
@@ -182,17 +197,21 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
                 if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
-                    holder.binding.mediaRecycler1.setVisibility(View.VISIBLE);
+                    holder.binding.postImageContainer1.setVisibility(View.VISIBLE);
+                    /*holder.binding.mediaRecycler1.setVisibility(View.VISIBLE);
 
                     GroupChannel_MediaAdapter mediaAdapter = new GroupChannel_MediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
                     holder.binding.mediaRecycler1.setHasFixedSize(true);
                     holder.binding.mediaRecycler1.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                    holder.binding.mediaRecycler1.setAdapter(mediaAdapter);
+                    holder.binding.mediaRecycler1.setAdapter(mediaAdapter);*/
 
                     //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+
+                    loadSentPostMedia(holder, position, list.get(position).getMedia().size());
                 }
                 else{
-                    holder.binding.mediaRecycler1.setVisibility(View.GONE);
+                    //holder.binding.mediaRecycler1.setVisibility(View.GONE);
+                    holder.binding.postImageContainer1.setVisibility(View.GONE);
                 }
 
        /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
@@ -344,10 +363,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             chat_options_dialog.setContentView(R.layout.bottomsheet_post_action_options2);
             chat_options_dialog.show();
             return false;
-        });
+        });*/
 
 
-        holder.binding.postImageContainer.setOnClickListener(view -> {
+        holder.binding.postImageContainer1.setOnClickListener(view -> {
 
             Gson gson1  = new Gson();
             String mediaData =  gson1.toJson(list.get(position).getMedia());
@@ -360,14 +379,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             intent.putExtra("title",title);
 
             context.startActivity(intent);
-        });*/
+        });
 
         /*holder.binding.like.setOnLongClickListener(view -> {
             groupChatListener.likeAsEmote(position,holder.binding.bottomsheetChatOption);
             return false;
-        });
+        });*/
 
-        holder.binding.like.setOnClickListener(view -> {
+        /*holder.binding.like1.setOnClickListener(view -> {
 
             if (list.get(position).getLike() != null)
             {
@@ -411,8 +430,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    holder.binding.likeIcon.setScaleX((Float) animation.getAnimatedValue());
-                    holder.binding.likeIcon.setScaleY((Float) animation.getAnimatedValue());
+                    holder.binding.likeIcon1.setScaleX((Float) animation.getAnimatedValue());
+                    holder.binding.likeIcon1.setScaleY((Float) animation.getAnimatedValue());
                 }
             });
             anim.setRepeatCount(1);
@@ -572,19 +591,23 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
                 if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
-                    holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+                    //holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+                    holder.binding.postImageContainer.setVisibility(View.VISIBLE);
                     holder.binding.greenHighlightDivider.setVisibility(View.VISIBLE);
 
-                    GroupChannel_MediaAdapter mediaAdapter = new GroupChannel_MediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
+                    /*GroupChannel_MediaAdapter mediaAdapter = new GroupChannel_MediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
                     holder.binding.mediaRecycler.setHasFixedSize(true);
                     holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                    holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+                    holder.binding.mediaRecycler.setAdapter(mediaAdapter);*/
 
+
+                    loadReceivePostMedia(holder, position, list.get(position).getMedia().size());
                     //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
                 }
                 else{
-                    holder.binding.mediaRecycler.setVisibility(View.GONE);
+                    //holder.binding.mediaRecycler.setVisibility(View.GONE);
                     holder.binding.greenHighlightDivider.setVisibility(View.GONE);
+                    holder.binding.postImageContainer.setVisibility(View.GONE);
                 }
 
        /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
@@ -595,8 +618,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 loadVideoFile(post_path);
         }
             else {
-                loadPostMedia(holder, position, list.get(position).getMedia().size());
-            }*//*
+            loadPostMedia(holder, position, list.get(position).getMedia().size());
+            }
         }
         else{
             holder.binding.postImageContainer.setVisibility(View.GONE);
@@ -724,7 +747,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             chat_options_dialog.setContentView(R.layout.bottomsheet_post_action_options2);
             chat_options_dialog.show();
             return false;
-        });
+        });*/
 
 
         holder.binding.postImageContainer.setOnClickListener(view -> {
@@ -740,7 +763,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             intent.putExtra("title",title);
 
             context.startActivity(intent);
-        });*/
+        });
 
 
 
@@ -751,12 +774,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-        /*holder.binding.like.setOnLongClickListener(view -> {
-            groupChatListener.likeAsEmote(position,holder.binding.bottomsheetChatOption);
-            return false;
-        });
-
-        holder.binding.like.setOnClickListener(view -> {
+        /*holder.binding.like.setOnClickListener(view -> {
 
             if (list.get(position).getLike() != null)
             {
@@ -807,9 +825,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             anim.setRepeatCount(1);
             anim.setRepeatMode(ValueAnimator.REVERSE);
             anim.start();
-        });
+        });*/
 
-
+/*
         //holder.binding.playVideo.setOnClickListener(view -> playVideo);
 
         holder.binding.forward.setOnClickListener(view -> {
@@ -916,6 +934,559 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         chat_options_dialog.show();
     }
+
+
+
+
+
+
+
+
+
+    private void loadSentPostMedia(ViewHolder holder,int index,int media_count)
+    {
+
+
+        String fileType= "";
+
+        String post_path = "";
+
+
+        switch (media_count) {
+            case 1:
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+                Log.d("Entered_POst",post_base_url);
+                holder.binding.dualPostImageContainer1.setVisibility(View.GONE);
+                holder.binding.multiPostImageContainer1.setVisibility(View.GONE);
+                holder.binding.singlePostImageContainer1.setVisibility(View.VISIBLE);
+
+
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+
+                    Log.d("Post Main Url", post_path);
+
+                    holder.binding.playVideo01.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.postImage);
+                }
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
+
+                    holder.binding.playVideo01.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.postImage);
+                } else if (fileType.equalsIgnoreCase("video")) {
+
+                    holder.binding.playVideo01.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.postImage);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+                break;
+
+            case 2:
+                holder.binding.singlePostImageContainer1.setVisibility(View.GONE);
+                holder.binding.multiPostImageContainer1.setVisibility(View.GONE);
+                holder.binding.dualPostImageContainer1.setVisibility(View.VISIBLE);
+
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo11.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.dualPost11);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo11.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.dualPost11);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo11.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.dualPost1);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(1).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo21.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.dualPost21);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo21.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.dualPost21);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo21.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.dualPost2);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+                break;
+            case 3:
+                holder.binding.dualPostImageContainer1.setVisibility(View.GONE);
+                holder.binding.singlePostImageContainer1.setVisibility(View.GONE);
+                holder.binding.additionalImageCount1.setVisibility(View.GONE);
+
+                holder.binding.multiPostImageContainer1.setVisibility(View.VISIBLE);
+
+
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo31.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost11);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo31.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost11);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo31.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost1);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(1).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo41.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost21);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo41.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost21);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo41.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost2);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(2).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(2).getStoragePath() + list.get(index).getMedia().get(2).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo51.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost31);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo51.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost31);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo51.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost3);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+
+
+                    /*post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+                    Log.d("Post1 Main Url", post_path);
+                    Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.multiPost1);
+                    post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+                    Log.d("Post2 Main Url", post_path);
+                    Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.multiPost2);
+                    post_path = post_base_url + list.get(index).getMedia().get(2).getStoragePath() + list.get(index).getMedia().get(2).getFileName();
+                    Log.d("Post3 Main Url", post_path);
+                    Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.multiPost3);*/
+
+                break;
+
+            default:
+                holder.binding.dualPostImageContainer1.setVisibility(View.GONE);
+                holder.binding.singlePostImageContainer1.setVisibility(View.GONE);
+                holder.binding.additionalImageCount1.setVisibility(View.VISIBLE);
+
+                holder.binding.additionalImageCount1.setText("+ " + (media_count - 3));
+
+                holder.binding.multiPostImageContainer1.setVisibility(View.VISIBLE);
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo31.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost11);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo31.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost11);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo31.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost1);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(1).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo41.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost21);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo41.setVisibility(View.GONE);
+                    //loadDocumentFile(post_path,holder.binding.multiPost2);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo41.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost2);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(2).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(2).getStoragePath() + list.get(index).getMedia().get(2).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo51.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost31);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo51.setVisibility(View.GONE);
+                    //loadDocumentFile(post_path,holder.binding.multiPost3);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo51.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost3);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+        }
+    }
+
+
+
+    private void loadReceivePostMedia(ViewHolder holder,int index,int media_count)
+    {
+
+
+        String fileType= "";
+
+        String post_path = "";
+
+
+        switch (media_count) {
+            case 1:
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+                Log.d("Entered_POst",post_base_url);
+                holder.binding.dualPostImageContainer.setVisibility(View.GONE);
+                holder.binding.multiPostImageContainer.setVisibility(View.GONE);
+                holder.binding.singlePostImageContainer.setVisibility(View.VISIBLE);
+
+
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+
+                    Log.d("Post Main Url", post_path);
+
+                    holder.binding.playVideo.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.postImage);
+                }
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
+
+                    holder.binding.playVideo.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.postImage);
+                } else if (fileType.equalsIgnoreCase("video")) {
+
+                    holder.binding.playVideo.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.postImage);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+                break;
+
+            case 2:
+                holder.binding.singlePostImageContainer.setVisibility(View.GONE);
+                holder.binding.multiPostImageContainer.setVisibility(View.GONE);
+                holder.binding.dualPostImageContainer.setVisibility(View.VISIBLE);
+
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo1.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.dualPost1);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo1.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.dualPost1);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo1.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.dualPost1);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(1).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo2.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.dualPost2);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo2.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.dualPost2);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo2.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.dualPost2);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+                break;
+            case 3:
+                holder.binding.dualPostImageContainer.setVisibility(View.GONE);
+                holder.binding.singlePostImageContainer.setVisibility(View.GONE);
+                holder.binding.additionalImageCount.setVisibility(View.GONE);
+
+                holder.binding.multiPostImageContainer.setVisibility(View.VISIBLE);
+
+
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo3.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost1);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo3.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost1);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo3.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost1);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(1).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo4.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost2);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo4.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost2);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo4.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost2);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(2).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(2).getStoragePath() + list.get(index).getMedia().get(2).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo5.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost3);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo5.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost3);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo5.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost3);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+
+
+                    /*post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+                    Log.d("Post1 Main Url", post_path);
+                    Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.multiPost1);
+                    post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+                    Log.d("Post2 Main Url", post_path);
+                    Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.multiPost2);
+                    post_path = post_base_url + list.get(index).getMedia().get(2).getStoragePath() + list.get(index).getMedia().get(2).getFileName();
+                    Log.d("Post3 Main Url", post_path);
+                    Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.multiPost3);*/
+
+                break;
+
+            default:
+                holder.binding.dualPostImageContainer.setVisibility(View.GONE);
+                holder.binding.singlePostImageContainer.setVisibility(View.GONE);
+                holder.binding.additionalImageCount.setVisibility(View.VISIBLE);
+
+                holder.binding.additionalImageCount.setText("+ " + (media_count - 3));
+
+                holder.binding.multiPostImageContainer.setVisibility(View.VISIBLE);
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo3.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost1);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo3.setVisibility(View.GONE);
+                    loadDocumentFile(post_path,holder.binding.multiPost1);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo3.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost1);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(1).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(1).getStoragePath() + list.get(index).getMedia().get(1).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo4.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost2);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo4.setVisibility(View.GONE);
+                    //loadDocumentFile(post_path,holder.binding.multiPost2);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo4.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost2);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+
+
+                fileType = Utils.checkFileType(list.get(index).getMedia().get(2).getMimeType());
+                post_path = post_base_url + list.get(index).getMedia().get(2).getStoragePath() + list.get(index).getMedia().get(2).getFileName();
+
+                if (fileType.equalsIgnoreCase("image"))
+                {
+                    Log.d("Post Main Url", post_path);
+                    holder.binding.playVideo5.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder.binding.multiPost3);
+                }
+                else if (fileType.equalsIgnoreCase("document")) {
+                    holder.binding.playVideo5.setVisibility(View.GONE);
+                    //loadDocumentFile(post_path,holder.binding.multiPost3);
+                } else if (fileType.equalsIgnoreCase("video")) {
+                    holder.binding.playVideo5.setVisibility(View.VISIBLE);
+                    //loadVideoFile(post_path,holder.binding.multiPost3);
+                }
+                else{
+                    Log.d("File_Type_Error",fileType);
+                }
+        }
+    }
+
+
+
+
+    private void loadImageFile(String imageFilePath, ImageView imageView)
+    {
+        //Setting up loader on post
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(circularProgressDrawable);
+        requestOptions.error(R.drawable.image_not_found);
+        requestOptions.skipMemoryCache(true);
+        requestOptions.fitCenter();
+
+        Glide.with(context).load(imageFilePath).
+                fitCenter().apply(requestOptions).
+                transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+    }
+
+    private void loadVideoFile(String videoFilePath, ImageView imageView)
+    {
+        /*context.startActivity(new Intent(context, VideoActivity.class)
+                .putExtra("videourl",videoFilePath)
+                .putExtra("start_time","0")
+                .putExtra("end_time","0"));*/
+    }
+
+
+    private void loadDocumentFile(String docFilePath, ImageView imageView)
+    {
+
+    }
+
 
 
     @Override

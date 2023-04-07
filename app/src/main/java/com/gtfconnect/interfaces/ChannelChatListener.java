@@ -3,6 +3,9 @@ package com.gtfconnect.interfaces;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import com.example.audiowaveform.WaveformSeekBar;
 
 public interface ChannelChatListener {
 
@@ -21,5 +24,13 @@ public interface ChannelChatListener {
 
 
     void commentMessage(int position, int userID,int gcMemberId, int groupChatId, int groupChannelId );
+
+
+    void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, ProgressBar progressBar,ImageView downloadPlayPic);
+
+    void playAudio(String audioPostUrl, WaveformSeekBar seekBar,long duration);
+
+
+    void viewMemberProfile(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
 }

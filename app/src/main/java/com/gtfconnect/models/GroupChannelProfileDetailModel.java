@@ -42,6 +42,8 @@ public class GroupChannelProfileDetailModel {
     }
 
 
+
+
     public class Data {
 
         @SerializedName("gc_info")
@@ -56,9 +58,6 @@ public class GroupChannelProfileDetailModel {
         @SerializedName("gc_permission")
         @Expose
         private GcPermission gcPermission;
-        @SerializedName("gc_reaction")
-        @Expose
-        private GcReaction gcReaction;
         @SerializedName("gc_admin")
         @Expose
         private GcAdmin gcAdmin;
@@ -101,14 +100,6 @@ public class GroupChannelProfileDetailModel {
             this.gcPermission = gcPermission;
         }
 
-        public GcReaction getGcReaction() {
-            return gcReaction;
-        }
-
-        public void setGcReaction(GcReaction gcReaction) {
-            this.gcReaction = gcReaction;
-        }
-
         public GcAdmin getGcAdmin() {
             return gcAdmin;
         }
@@ -137,6 +128,7 @@ public class GroupChannelProfileDetailModel {
     public class DummyUser {
     }
 
+
     public class GcAdmin {
 
         @SerializedName("count")
@@ -144,7 +136,7 @@ public class GroupChannelProfileDetailModel {
         private Integer count;
         @SerializedName("list")
         @Expose
-        private List<ListDetail> list;
+        private ListDetail list;
 
         public Integer getCount() {
             return count;
@@ -154,11 +146,11 @@ public class GroupChannelProfileDetailModel {
             this.count = count;
         }
 
-        public List<ListDetail> getList() {
+        public ListDetail getList() {
             return list;
         }
 
-        public void setList(List<ListDetail> list) {
+        public void setList(ListDetail list) {
             this.list = list;
         }
 
@@ -188,13 +180,13 @@ public class GroupChannelProfileDetailModel {
         private String publicLink;
         @SerializedName("PrivateLink")
         @Expose
-        private Object privateLink;
+        private String privateLink;
         @SerializedName("IsTrending")
         @Expose
         private Integer isTrending;
         @SerializedName("TrendingLabel")
         @Expose
-        private Object trendingLabel;
+        private String trendingLabel;
         @SerializedName("MemberCount")
         @Expose
         private Integer memberCount;
@@ -215,7 +207,7 @@ public class GroupChannelProfileDetailModel {
         private Integer showPopupInfo;
         @SerializedName("PopupInfoImage")
         @Expose
-        private Object popupInfoImage;
+        private String popupInfoImage;
         @SerializedName("is_product")
         @Expose
         private Integer isProduct;
@@ -276,11 +268,11 @@ public class GroupChannelProfileDetailModel {
             this.publicLink = publicLink;
         }
 
-        public Object getPrivateLink() {
+        public String getPrivateLink() {
             return privateLink;
         }
 
-        public void setPrivateLink(Object privateLink) {
+        public void setPrivateLink(String privateLink) {
             this.privateLink = privateLink;
         }
 
@@ -292,11 +284,11 @@ public class GroupChannelProfileDetailModel {
             this.isTrending = isTrending;
         }
 
-        public Object getTrendingLabel() {
+        public String getTrendingLabel() {
             return trendingLabel;
         }
 
-        public void setTrendingLabel(Object trendingLabel) {
+        public void setTrendingLabel(String trendingLabel) {
             this.trendingLabel = trendingLabel;
         }
 
@@ -348,11 +340,11 @@ public class GroupChannelProfileDetailModel {
             this.showPopupInfo = showPopupInfo;
         }
 
-        public Object getPopupInfoImage() {
+        public String getPopupInfoImage() {
             return popupInfoImage;
         }
 
-        public void setPopupInfoImage(Object popupInfoImage) {
+        public void setPopupInfoImage(String popupInfoImage) {
             this.popupInfoImage = popupInfoImage;
         }
 
@@ -366,8 +358,100 @@ public class GroupChannelProfileDetailModel {
 
     }
     public class GcMemberSetting {
+
+        @SerializedName("mute_notification")
+        @Expose
+        private MuteNotification muteNotification;
+
+        public MuteNotification getMuteNotification() {
+            return muteNotification;
+        }
+
+        public void setMuteNotification(MuteNotification muteNotification) {
+            this.muteNotification = muteNotification;
+        }
+
     }
     public class GcMemberSubscriptionPlan {
+
+        @SerializedName("MemberSubscriptionID")
+        @Expose
+        private Integer memberSubscriptionID;
+        @SerializedName("GCSubscriptionPlanID")
+        @Expose
+        private Integer gCSubscriptionPlanID;
+        @SerializedName("SubscriptionStartDate")
+        @Expose
+        private String subscriptionStartDate;
+        @SerializedName("SubscriptionEndDate")
+        @Expose
+        private String subscriptionEndDate;
+        @SerializedName("SubscriptionPlanID")
+        @Expose
+        private Integer subscriptionPlanID;
+        @SerializedName("Name")
+        @Expose
+        private String name;
+        @SerializedName("isExpired")
+        @Expose
+        private Integer isExpired;
+
+        public Integer getMemberSubscriptionID() {
+            return memberSubscriptionID;
+        }
+
+        public void setMemberSubscriptionID(Integer memberSubscriptionID) {
+            this.memberSubscriptionID = memberSubscriptionID;
+        }
+
+        public Integer getGCSubscriptionPlanID() {
+            return gCSubscriptionPlanID;
+        }
+
+        public void setGCSubscriptionPlanID(Integer gCSubscriptionPlanID) {
+            this.gCSubscriptionPlanID = gCSubscriptionPlanID;
+        }
+
+        public String getSubscriptionStartDate() {
+            return subscriptionStartDate;
+        }
+
+        public void setSubscriptionStartDate(String subscriptionStartDate) {
+            this.subscriptionStartDate = subscriptionStartDate;
+        }
+
+        public String getSubscriptionEndDate() {
+            return subscriptionEndDate;
+        }
+
+        public void setSubscriptionEndDate(String subscriptionEndDate) {
+            this.subscriptionEndDate = subscriptionEndDate;
+        }
+
+        public Integer getSubscriptionPlanID() {
+            return subscriptionPlanID;
+        }
+
+        public void setSubscriptionPlanID(Integer subscriptionPlanID) {
+            this.subscriptionPlanID = subscriptionPlanID;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getIsExpired() {
+            return isExpired;
+        }
+
+        public void setIsExpired(Integer isExpired) {
+            this.isExpired = isExpired;
+        }
+
     }
     public class GcPermission {
 
@@ -436,32 +520,6 @@ public class GroupChannelProfileDetailModel {
 
         public void setSlowMode(Integer slowMode) {
             this.slowMode = slowMode;
-        }
-
-    }
-    public class GcReaction {
-
-        @SerializedName("count")
-        @Expose
-        private Integer count;
-        @SerializedName("reactions_list")
-        @Expose
-        private List<Reactions> reactionsList;
-
-        public Integer getCount() {
-            return count;
-        }
-
-        public void setCount(Integer count) {
-            this.count = count;
-        }
-
-        public List<Reactions> getReactionsList() {
-            return reactionsList;
-        }
-
-        public void setReactionsList(List<Reactions> reactionsList) {
-            this.reactionsList = reactionsList;
         }
 
     }
@@ -614,7 +672,7 @@ public class GroupChannelProfileDetailModel {
         private Integer subscriptionPlanID;
         @SerializedName("Badge")
         @Expose
-        private Object badge;
+        private String badge;
         @SerializedName("subscription_plan")
         @Expose
         private SubscriptionPlan subscriptionPlan;
@@ -643,11 +701,11 @@ public class GroupChannelProfileDetailModel {
             this.subscriptionPlanID = subscriptionPlanID;
         }
 
-        public Object getBadge() {
+        public String getBadge() {
             return badge;
         }
 
-        public void setBadge(Object badge) {
+        public void setBadge(String badge) {
             this.badge = badge;
         }
 
@@ -661,22 +719,61 @@ public class GroupChannelProfileDetailModel {
 
     }
     public class ListDetail {
+    }
+    public class MuteNotification {
 
+        @SerializedName("GCMemberSettingID")
+        @Expose
+        private Integer gCMemberSettingID;
+        @SerializedName("SettingID")
+        @Expose
+        private Integer settingID;
         @SerializedName("GCMemberID")
         @Expose
         private Integer gCMemberID;
-        @SerializedName("GroupChannelID")
+        @SerializedName("Value")
         @Expose
-        private Integer groupChannelID;
-        @SerializedName("UserID")
+        private Integer value;
+        @SerializedName("SubValue")
         @Expose
-        private Integer userID;
-        @SerializedName("IsAdmin")
+        private String subValue;
+        @SerializedName("Name")
         @Expose
-        private Integer isAdmin;
-        @SerializedName("user")
+        private String name;
+        @SerializedName("NameText")
         @Expose
-        private User user;
+        private String nameText;
+        @SerializedName("Type")
+        @Expose
+        private String type;
+        @SerializedName("TypeText")
+        @Expose
+        private String typeText;
+        @SerializedName("Category")
+        @Expose
+        private String category;
+        @SerializedName("CategoryText")
+        @Expose
+        private String categoryText;
+        @SerializedName("MuteTillDate")
+        @Expose
+        private String muteTillDate;
+
+        public Integer getGCMemberSettingID() {
+            return gCMemberSettingID;
+        }
+
+        public void setGCMemberSettingID(Integer gCMemberSettingID) {
+            this.gCMemberSettingID = gCMemberSettingID;
+        }
+
+        public Integer getSettingID() {
+            return settingID;
+        }
+
+        public void setSettingID(Integer settingID) {
+            this.settingID = settingID;
+        }
 
         public Integer getGCMemberID() {
             return gCMemberID;
@@ -686,60 +783,20 @@ public class GroupChannelProfileDetailModel {
             this.gCMemberID = gCMemberID;
         }
 
-        public Integer getGroupChannelID() {
-            return groupChannelID;
+        public Integer getValue() {
+            return value;
         }
 
-        public void setGroupChannelID(Integer groupChannelID) {
-            this.groupChannelID = groupChannelID;
+        public void setValue(Integer value) {
+            this.value = value;
         }
 
-        public Integer getUserID() {
-            return userID;
+        public String getSubValue() {
+            return subValue;
         }
 
-        public void setUserID(Integer userID) {
-            this.userID = userID;
-        }
-
-        public Integer getIsAdmin() {
-            return isAdmin;
-        }
-
-        public void setIsAdmin(Integer isAdmin) {
-            this.isAdmin = isAdmin;
-        }
-
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
-
-    }
-    public class Reactions {
-
-        @SerializedName("ReactionID")
-        @Expose
-        private Integer reactionID;
-        @SerializedName("Name")
-        @Expose
-        private String name;
-        @SerializedName("Type")
-        @Expose
-        private String type;
-        @SerializedName("EmojiCode")
-        @Expose
-        private String emojiCode;
-
-        public Integer getReactionID() {
-            return reactionID;
-        }
-
-        public void setReactionID(Integer reactionID) {
-            this.reactionID = reactionID;
+        public void setSubValue(String subValue) {
+            this.subValue = subValue;
         }
 
         public String getName() {
@@ -750,6 +807,14 @@ public class GroupChannelProfileDetailModel {
             this.name = name;
         }
 
+        public String getNameText() {
+            return nameText;
+        }
+
+        public void setNameText(String nameText) {
+            this.nameText = nameText;
+        }
+
         public String getType() {
             return type;
         }
@@ -758,12 +823,36 @@ public class GroupChannelProfileDetailModel {
             this.type = type;
         }
 
-        public String getEmojiCode() {
-            return emojiCode;
+        public String getTypeText() {
+            return typeText;
         }
 
-        public void setEmojiCode(String emojiCode) {
-            this.emojiCode = emojiCode;
+        public void setTypeText(String typeText) {
+            this.typeText = typeText;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getCategoryText() {
+            return categoryText;
+        }
+
+        public void setCategoryText(String categoryText) {
+            this.categoryText = categoryText;
+        }
+
+        public String getMuteTillDate() {
+            return muteTillDate;
+        }
+
+        public void setMuteTillDate(String muteTillDate) {
+            this.muteTillDate = muteTillDate;
         }
 
     }
@@ -918,57 +1007,7 @@ public class GroupChannelProfileDetailModel {
         }
 
     }
-
-    public class User {
-
-        @SerializedName("UserID")
-        @Expose
-        private Integer userID;
-        @SerializedName("Firstname")
-        @Expose
-        private String firstname;
-        @SerializedName("Lastname")
-        @Expose
-        private String lastname;
-        @SerializedName("ProfileImage")
-        @Expose
-        private Object profileImage;
-
-        public Integer getUserID() {
-            return userID;
-        }
-
-        public void setUserID(Integer userID) {
-            this.userID = userID;
-        }
-
-        public String getFirstname() {
-            return firstname;
-        }
-
-        public void setFirstname(String firstname) {
-            this.firstname = firstname;
-        }
-
-        public String getLastname() {
-            return lastname;
-        }
-
-        public void setLastname(String lastname) {
-            this.lastname = lastname;
-        }
-
-        public Object getProfileImage() {
-            return profileImage;
-        }
-
-        public void setProfileImage(Object profileImage) {
-            this.profileImage = profileImage;
-        }
-
-    }
 }
-
 
 
 

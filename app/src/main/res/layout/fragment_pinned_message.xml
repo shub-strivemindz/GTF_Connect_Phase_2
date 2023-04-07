@@ -78,6 +78,7 @@ android:orientation="vertical">
     android:layout_width="match_parent"
     android:layout_height="@dimen/_1sdp"
     android:alpha=".2"
+    android:id="@+id/header_divider"
     android:layout_marginHorizontal="@dimen/_16sdp"/>
 
 <TextView
@@ -116,7 +117,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/black"
+                    android:background="@drawable/no_preview_available"
                     android:scaleType="centerCrop"
                     />
 
@@ -154,7 +155,7 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/dual_post1"
-                        android:background="@color/black"
+                        android:background="@drawable/no_preview_available"
                         android:scaleType="centerCrop"
                         />
 
@@ -177,7 +178,7 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/dual_post2"
-                        android:background="@color/black"
+                        android:background="@drawable/no_preview_available"
                         android:scaleType="centerCrop"
                         />
 
@@ -216,7 +217,7 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:id="@+id/multi_post1"
-                        android:background="@color/black"
+                        android:background="@drawable/no_preview_available"
                         android:scaleType="centerCrop"
                         />
 
@@ -245,7 +246,7 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:layout_width="match_parent"
                             android:id="@+id/multi_post2"
                             android:layout_height="match_parent"
-                            android:background="@color/black"
+                            android:background="@drawable/no_preview_available"
                             android:scaleType="centerCrop"
                             />
 
@@ -271,7 +272,7 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:id="@+id/multi_post3"
-                            android:background="@color/black"
+                            android:background="@drawable/no_preview_available"
                             android:scaleType="centerCrop"
                             />
 
@@ -301,7 +302,112 @@ more then 1000 top most trading courses+ daily or weekly"
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
     </RelativeLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/audio_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_50sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/card_light_grey"
+        app:cardCornerRadius="@dimen/_4sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+
+                <ImageView
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/download_file"
+                    app:tint="@color/audioPlayTint"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:id="@+id/download_audio"/>
+
+                <ImageView
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/play"
+                    android:visibility="gone"
+                    app:tint="@color/audioPlayTint"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:id="@+id/play_pause_recorded_audio"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/download_circular_shape"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:indeterminate="false"
+                    android:visibility="gone"
+                    android:progressDrawable="@drawable/download_audio_progress_bar"
+                    android:textAlignment="center" />
+
+            </RelativeLayout>
+
+            <com.example.audiowaveform.WaveformSeekBar
+                android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/_4sdp"
+                android:layout_weight="1"
+                app:waveProgressColor="@color/theme_green"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_height="match_parent"
+                android:id="@+id/waveForm"/>
+
+            <LinearLayout
+                android:id="@+id/audio_time_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="00"
+                    android:id="@+id/start_time_counter"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/_9ssp"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="/01:30"
+                    android:id="@+id/total_audio_time"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/_9ssp"
+                    android:textColor="@color/black"
+                    android:layout_marginEnd="@dimen/_10sdp"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/volume"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:id="@+id/volume_switch"/>
+
+
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"

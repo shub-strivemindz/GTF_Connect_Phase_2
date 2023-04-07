@@ -99,6 +99,8 @@
         <activity android:name=".ui.screenUI.userProfileModule.UpdatePasswordScreen"/>
         <activity android:name=".ui.screenUI.userProfileModule.UpdateUserInfoScreen"/>
 
+        <activity android:name=".ui.screenUI.channelModule.ChannelMemberProfileScreen"/>
+
         <activity android:name=".ui.screenUI.channelModule.ChannelPinnedMessageScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelBlocklistScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManagePermissionScreen"/>

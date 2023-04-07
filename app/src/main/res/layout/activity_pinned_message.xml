@@ -10,7 +10,7 @@
     <LinearLayout
         android:background="@color/theme_green"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_height="@dimen/_45sdp"
         android:orientation="horizontal">
 
         <ImageView

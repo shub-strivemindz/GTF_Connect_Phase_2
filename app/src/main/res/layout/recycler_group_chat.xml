@@ -72,12 +72,214 @@ more then 1000 top most trading courses+ daily or weekly"
                 android:layout_marginVertical="@dimen/_5sdp"
                 app:dividerColor="@color/white" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/media_recycler1"
+            <RelativeLayout
+                android:id="@+id/post_image_container1"
                 android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_below="@id/message_container"
-                android:layout_height="wrap_content"/>
+                android:layout_height="@dimen/_130sdp"
+                android:layout_marginHorizontal="@dimen/_16sdp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/single_post_image_container1"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="match_parent"
+                    app:cardCornerRadius="@dimen/_6sdp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/post_image1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/no_preview_available"
+                            android:scaleType="centerCrop"
+                            />
+
+                        <ImageView
+                            android:id="@+id/play_video01"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:src="@drawable/play_circle"
+                            android:layout_centerInParent="true"/>
+
+                    </RelativeLayout>
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/dual_post_image_container1"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="match_parent"
+                    app:cardCornerRadius="@dimen/_6sdp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id="@+id/dual_post11"
+                                android:background="@drawable/no_preview_available"
+                                android:scaleType="centerCrop"
+                                />
+
+                            <ImageView
+                                android:id="@+id/play_video11"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:src="@drawable/play_circle"
+                                android:layout_centerInParent="true"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id="@+id/dual_post21"
+                                android:background="@drawable/no_preview_available"
+                                android:scaleType="centerCrop"
+                                />
+
+                            <ImageView
+                                android:id="@+id/play_video21"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:src="@drawable/play_circle"
+                                android:layout_centerInParent="true"/>
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/multi_post_image_container1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardCornerRadius="@dimen/_6sdp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_weight="1">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:id="@+id/multi_post11"
+                                android:background="@drawable/no_preview_available"
+                                android:scaleType="centerCrop"
+                                />
+
+                            <ImageView
+                                android:id="@+id/play_video31"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:src="@drawable/play_circle"
+                                android:layout_centerInParent="true"/>
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:id="@+id/multi_post21"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/no_preview_available"
+                                    android:scaleType="centerCrop"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/play_video41"
+                                    android:layout_width="@dimen/_30sdp"
+                                    android:layout_height="@dimen/_30sdp"
+                                    android:src="@drawable/play_circle"
+                                    android:layout_centerInParent="true"/>
+                            </RelativeLayout>
+
+                            <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_10sdp"
+                                app:dividerColor="@color/white"/>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/multi_post31"
+                                    android:background="@drawable/no_preview_available"
+                                    android:scaleType="centerCrop"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/play_video51"
+                                    android:layout_width="@dimen/_30sdp"
+                                    android:layout_height="@dimen/_30sdp"
+                                    android:src="@drawable/play_circle"
+                                    android:layout_centerInParent="true"/>
+
+                                <TextView
+                                    android:visibility="gone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="+1"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold"
+                                    android:textSize="@dimen/_24ssp"
+                                    android:gravity="center"
+                                    android:id="@+id/additional_image_count1"
+                                    android:background="#4D2FB463"/>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -233,7 +435,7 @@ more then 1000 top most trading courses+ daily or weekly"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_25sdp"
-                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@android:color/transparent">
 
                 <LinearLayout
@@ -246,6 +448,7 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:id="@+id/like_icon1"
                         android:layout_gravity="center_vertical"
                         android:layout_width="@dimen/_14sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
                         android:layout_height="@dimen/_14sdp"
                         app:tint="@color/white"
                         android:src="@drawable/like_thumb"/>
@@ -391,6 +594,7 @@ more then 1000 top most trading courses+ daily or weekly"
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
+                android:id="@+id/dummy_user_container"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_20sdp"
                 android:gravity="end"
@@ -423,30 +627,6 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_9ssp"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="@dimen/_10sdp"
-                        android:layout_height="match_parent"
-                        app:tint="@color/groupSentMessageView"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:src="@drawable/views"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="30"
-                        android:textColor="@color/groupSentMessageView"
-                        android:textSize="@dimen/_9ssp"
-                        android:fontFamily="@font/open_sans"/>
-
-                </LinearLayout>
-
             </LinearLayout>
 
         </LinearLayout>
@@ -474,6 +654,7 @@ more then 1000 top most trading courses+ daily or weekly"
         android:id="@+id/received_message_container"
         android:layout_width="match_parent"
         android:elevation="1dp"
+        android:visibility="gone"
         android:clickable="true"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_40sdp"
@@ -608,12 +789,214 @@ more then 1000 top most trading courses+ daily or weekly"
 
                 </RelativeLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/media_recycler"
+                <RelativeLayout
+                    android:id="@+id/post_image_container"
                     android:layout_width="match_parent"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_below="@id/message_container"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="@dimen/_130sdp"
+                    android:layout_marginHorizontal="@dimen/_16sdp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/single_post_image_container"
+                        android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:layout_height="match_parent"
+                        app:cardCornerRadius="@dimen/_6sdp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/post_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/no_preview_available"
+                                android:scaleType="centerCrop"
+                                />
+
+                            <ImageView
+                                android:id="@+id/play_video"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:src="@drawable/play_circle"
+                                android:layout_centerInParent="true"/>
+
+                        </RelativeLayout>
+
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/dual_post_image_container"
+                        android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:layout_height="match_parent"
+                        app:cardCornerRadius="@dimen/_6sdp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="@dimen/_5sdp"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/dual_post1"
+                                    android:background="@drawable/no_preview_available"
+                                    android:scaleType="centerCrop"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/play_video1"
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    android:src="@drawable/play_circle"
+                                    android:layout_centerInParent="true"/>
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/_5sdp"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/dual_post2"
+                                    android:background="@drawable/no_preview_available"
+                                    android:scaleType="centerCrop"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/play_video2"
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    android:src="@drawable/play_circle"
+                                    android:layout_centerInParent="true"/>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/multi_post_image_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cardCornerRadius="@dimen/_6sdp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="@dimen/_5sdp"
+                                android:layout_weight="1">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:id="@+id/multi_post1"
+                                    android:background="@drawable/no_preview_available"
+                                    android:scaleType="centerCrop"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/play_video3"
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    android:src="@drawable/play_circle"
+                                    android:layout_centerInParent="true"/>
+
+                            </RelativeLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/_5sdp"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:id="@+id/multi_post2"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/no_preview_available"
+                                        android:scaleType="centerCrop"
+                                        />
+
+                                    <ImageView
+                                        android:id="@+id/play_video4"
+                                        android:layout_width="@dimen/_30sdp"
+                                        android:layout_height="@dimen/_30sdp"
+                                        android:src="@drawable/play_circle"
+                                        android:layout_centerInParent="true"/>
+                                </RelativeLayout>
+
+                                <com.google.android.material.divider.MaterialDivider
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_10sdp"
+                                    app:dividerColor="@color/white"/>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:id="@+id/multi_post3"
+                                        android:background="@drawable/no_preview_available"
+                                        android:scaleType="centerCrop"
+                                        />
+
+                                    <ImageView
+                                        android:id="@+id/play_video5"
+                                        android:layout_width="@dimen/_30sdp"
+                                        android:layout_height="@dimen/_30sdp"
+                                        android:src="@drawable/play_circle"
+                                        android:layout_centerInParent="true"/>
+
+                                    <TextView
+                                        android:visibility="gone"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="+1"
+                                        android:textColor="@color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="@dimen/_24ssp"
+                                        android:gravity="center"
+                                        android:id="@+id/additional_image_count"
+                                        android:background="#4D2FB463"/>
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -770,7 +1153,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_width="match_parent"
                     android:layout_marginBottom="@dimen/_4sdp"
                     android:layout_height="@dimen/_25sdp"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
                     android:background="@android:color/transparent">
 
                     <LinearLayout
@@ -781,6 +1164,7 @@ more then 1000 top most trading courses+ daily or weekly"
 
                         <ImageView
                             android:id="@+id/like_icon"
+                            android:layout_marginStart="@dimen/_10sdp"
                             android:layout_gravity="center_vertical"
                             android:layout_width="@dimen/_14sdp"
                             android:layout_height="@dimen/_14sdp"

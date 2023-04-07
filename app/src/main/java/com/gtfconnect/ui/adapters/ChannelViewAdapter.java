@@ -43,7 +43,7 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
                 holder.binding.subTitle.setText(responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage());
 
 
-            holder.binding.time.setText(Utils.getDisplayableTime(responseModel.getData().get(index).getGroup().getMessage().get(0).getCreatedAt()));
+            holder.binding.time.setText(Utils.getHeaderDate(responseModel.getData().get(index).getGroup().getMessage().get(0).getUpdatedAt()));
         }
 
 

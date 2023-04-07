@@ -21,6 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -92,7 +93,9 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     private boolean isReactionsUpdated = false;
 
-    private boolean isNotificationMute = false;
+    private boolean isNotificationEnabled;
+
+    private boolean isUpdateNotificationSettingCalled = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,18 +113,23 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
         binding.title2.setOnClickListener(view -> startActivity(new Intent(ChannelProfileScreen.this,ChannelAdminSubscribersScreen.class)));
 
-        binding.muteNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        binding.muteNotification.setOnClickListener(view -> {
 
-                if (isNotificationMute){
-                    binding.notificationText.setText("Unmute");
-                }
+            requestType = UPDATE_GC_SETTING;
+            params = new HashMap<>();
 
-               /* BottomSheetDialog mute_notification_dialog = new BottomSheetDialog(ChannelProfileScreen.this);
-                mute_notification_dialog.setContentView(R.layout.bottomsheet_mute_notification);
-                mute_notification_dialog.show();*/
+            if (isNotificationEnabled) {
+                params.put("IsNotification", 0);
+                isNotificationEnabled = false;
             }
+            else{
+                params.put("IsNotification", 1);
+                isNotificationEnabled = true;
+            }
+            connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+           /* BottomSheetDialog mute_notification_dialog = new BottomSheetDialog(ChannelProfileScreen.this);
+            mute_notification_dialog.setContentView(R.layout.bottomsheet_mute_notification);
+            mute_notification_dialog.show();*/
         });
 
         binding.backClick.setOnClickListener(new View.OnClickListener() {
@@ -353,6 +361,29 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
     }
 
 
+    private void updateNotificationSetting()
+    {
+        if (profileDetailModel != null && profileDetailModel.getData() != null){
+            if (profileDetailModel.getData().getGcSetting() != null) {
+                if (profileDetailModel.getData().getGcSetting().getIsNotification() != null) {
+
+                    if (profileDetailModel.getData().getGcSetting().getIsNotification() == 0) {
+                        isNotificationEnabled = false;
+                        binding.notificationText.setText("Unmute");
+                        binding.notificationIcon.setImageDrawable(getResources().getDrawable(R.drawable.unmute));
+                    } else {
+                        isNotificationEnabled = true;
+                        binding.notificationText.setText("Mute");
+                        binding.notificationIcon.setImageDrawable(getResources().getDrawable(R.drawable.mute));
+                    }
+
+                    Log.d("Mute_status",profileDetailModel.getData().getGcSetting().getIsNotification()+"");
+                }
+            }
+        }
+    }
+
+
 
 
     @Override
@@ -362,12 +393,14 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     @Override
     public void onDataRender(JsonObject jsonObject) {
+        Log.d("rendered","successfully!");
         renderResponse(jsonObject);
         //Toast.makeText(this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResponseRender(JsonObject jsonObject) {
+        Log.d("rendered","successfully!");
         renderResponse(jsonObject);
 
     }
@@ -402,14 +435,18 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     private void renderResponse(JsonObject response)
     {
+        Log.d("rendered","successfully!");
 
         if (requestType == GET_PROFILE_DETAIL) {
             Gson gson = new Gson();
             Type type = new TypeToken<GroupChannelProfileDetailModel>() {
             }.getType();
 
+
             profileDetailModel = new GroupChannelProfileDetailModel();
             profileDetailModel = gson.fromJson(response, type);
+
+            updateNotificationSetting();
 
             if (isReactionsUpdated){
                 settingViewAdapter.updateData(profileDetailModel);
@@ -423,6 +460,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
             requestType = GET_UPDATED_GC_SETTING;
             connectViewModel.get_admin_group_channel_settings(channelID,api_token,"android","test");
 
+            Log.d("rendered","1");
         }
         else if (requestType == GET_UPDATED_GC_SETTING) {
 
@@ -433,7 +471,13 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
             profileDetailModel = new GroupChannelProfileDetailModel();
             profileDetailModel = gson.fromJson(response, type);
 
+            updateNotificationSetting();
+
+
             settingViewAdapter.updateData(profileDetailModel);
+
+            Log.d("rendered","2");
+
 
         } else if (requestType == UPDATE_GC_REACTION_SETTING) {
 
@@ -464,6 +508,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
     public void updateAccessTypeStatus(int status) {
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
+
         params.put("Name",profileDetailModel.getData().getGcInfo().getName());
         params.put("Description",profileDetailModel.getData().getGcInfo().getDescription());
         params.put("Type",profileDetailModel.getData().getGcInfo().getType());

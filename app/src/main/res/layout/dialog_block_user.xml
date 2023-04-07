@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="@dimen/_30sdp"
+    android:layout_height="@dimen/_180sdp"
+    app:cardCornerRadius="@dimen/_12sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:text="Warning"
+            android:fontFamily="@font/open_sans"
+            android:textStyle="bold"
+            android:textColor="@color/theme_red"
+            android:textSize="@dimen/_13sdp"
+            android:gravity="center" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/warning2"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/_60sdp"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textSize="@dimen/_11ssp"
+                android:text="Are you sure you want to Block" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:textStyle="bold"
+                android:textSize="@dimen/_11ssp"
+                android:textColor="@color/theme_green"
+                android:text="Johan Harper"
+                android:gravity="center" />
+
+                <TextView
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:textSize="@dimen/_11ssp"
+                    android:text=" to the group ?"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:layout_width="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:fontFamily="@font/open_sans"
+                android:textStyle="bold"
+                android:textSize="@dimen/_10ssp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_height="match_parent"
+                android:text="Permanent Block"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Block"
+                android:textColor="@color/theme_red"
+                android:fontFamily="@font/open_sans"
+                android:id="@+id/block"
+                android:textSize="@dimen/_12sdp"
+                android:gravity="center"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:alpha=".2"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:textColor="@color/theme_blue"
+                android:fontFamily="@font/open_sans"
+                android:textSize="@dimen/_12sdp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Cancel"
+                android:id="@+id/cancel"
+                android:gravity="center"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

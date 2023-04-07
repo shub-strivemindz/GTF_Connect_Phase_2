@@ -65,7 +65,7 @@ public class GroupCommentAdapter extends RecyclerView.Adapter<GroupCommentAdapte
         }
         holder.binding.userName.setText(userName);
 
-        String time = Utils.getDisplayableTime(commentList.get(position).getUpdatedAt());
+        String time = Utils.getHeaderDate(commentList.get(position).getUpdatedAt());
         holder.binding.commentTime.setText(time);
 
         holder.binding.comment.setText(commentList.get(position).getComment());

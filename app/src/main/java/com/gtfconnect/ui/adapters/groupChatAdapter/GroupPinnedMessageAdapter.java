@@ -24,6 +24,7 @@ import com.gtfconnect.interfaces.PinnedMessageListener;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.ui.screenUI.groupModule.GroupCommentScreen;
 import com.gtfconnect.ui.screenUI.groupModule.MultiPreviewImage;
+import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Utils;
 
 import java.util.ArrayList;
@@ -76,13 +77,64 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
 
         if (list.get(position).getChat().getMedia() !=null && !list.get(position).getChat().getMedia().isEmpty())
         {
-            holder.binding.postImageContainer.setVisibility(View.VISIBLE);
 
-            // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
-            loadPostMedia(holder, position, list.get(position).getChat().getMedia().size());
+            String fileType = Utils.checkFileType(list.get(position).getChat().getMedia().get(0).getMimeType());
 
+            if (fileType.equalsIgnoreCase("audio")){
+
+                holder.binding.audioTimeContainer.setVisibility(View.VISIBLE);
+
+                holder.binding.postImageContainer.setVisibility(View.GONE);
+                holder.binding.message.setVisibility(View.GONE);
+                holder.binding.headerDivider.setVisibility(View.GONE);
+
+                holder.binding.audioContainer.setVisibility(View.VISIBLE);
+
+
+                holder.binding.waveForm.setProgressInPercentage(100);
+                holder.binding.waveForm.setWaveform(AudioPlayUtil.createWaveform(), true);
+                holder.binding.waveForm.setProgressInPercentage(0);
+
+                if (list.get(position).isAudioDownloaded()){
+                    holder.binding.downloadAudio.setVisibility(View.GONE);
+                    holder.binding.playPauseRecordedAudio.setVisibility(View.VISIBLE);
+
+                    String filePath = AudioPlayUtil.getSavedAudioFilePath(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID().toString());
+
+                    long duration = AudioPlayUtil.getAudioDuration(filePath);
+                    String totalTime = AudioPlayUtil.getAudioDurationTime(duration);
+
+                    holder.binding.totalAudioTime.setText("/" + totalTime);
+                }
+                else {
+                    if (AudioPlayUtil.checkFileExistence(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID().toString())) {
+
+                        holder.binding.downloadAudio.setVisibility(View.GONE);
+                        holder.binding.playPauseRecordedAudio.setVisibility(View.VISIBLE);
+
+                        String filePath = AudioPlayUtil.getSavedAudioFilePath(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID().toString());
+
+                        long duration = AudioPlayUtil.getAudioDuration(filePath);
+                        String totalTime = AudioPlayUtil.getAudioDurationTime(duration);
+
+                        holder.binding.totalAudioTime.setText("/" + totalTime);
+                    } else {
+                        holder.binding.audioTimeContainer.setVisibility(View.GONE);
+
+                        holder.binding.downloadAudio.setVisibility(View.VISIBLE);
+                        holder.binding.playPauseRecordedAudio.setVisibility(View.GONE);
+                    }
+                }
+            }
+            else {
+                holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+
+                // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
+                loadPostMedia(holder, position, list.get(position).getChat().getMedia().size());
+            }
         }
         else{
+            holder.binding.audioContainer.setVisibility(View.GONE);
             holder.binding.postImageContainer.setVisibility(View.GONE);
         }
 
@@ -95,8 +147,8 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
         }
 
         if (list.get(position).getCreatedAt() != null) {
-            time = Utils.getDisplayableTime(list.get(position).getCreatedAt());
-            holder.binding.time.setText(Utils.getDisplayableTime(list.get(position).getCreatedAt()));
+            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
+            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time.setText("XX/XX/XXXX");
         }
@@ -176,7 +228,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.postImage);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
                     holder.binding.playVideo.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.postImage);
@@ -206,7 +258,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo1.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.dualPost1);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo1.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.dualPost1);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -227,7 +279,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo2.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.dualPost2);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo2.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.dualPost2);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -258,7 +310,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo3.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.multiPost1);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo3.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.multiPost1);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -279,7 +331,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo4.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.multiPost2);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo4.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.multiPost2);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -300,7 +352,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo5.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.multiPost3);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo5.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.multiPost3);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -347,7 +399,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo3.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.multiPost1);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo3.setVisibility(View.GONE);
                     loadDocumentFile(post_path,holder.binding.multiPost1);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -368,7 +420,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo4.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.multiPost2);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo4.setVisibility(View.GONE);
                     //loadDocumentFile(post_path,holder.binding.multiPost2);
                 } else if (fileType.equalsIgnoreCase("video")) {
@@ -389,7 +441,7 @@ public class GroupPinnedMessageAdapter extends RecyclerView.Adapter<GroupPinnedM
                     holder.binding.playVideo5.setVisibility(View.GONE);
                     loadImageFile(post_path,holder.binding.multiPost3);
                 }
-                else if (fileType.equalsIgnoreCase("document")) {
+                else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
                     holder.binding.playVideo5.setVisibility(View.GONE);
                     //loadDocumentFile(post_path,holder.binding.multiPost3);
                 } else if (fileType.equalsIgnoreCase("video")) {

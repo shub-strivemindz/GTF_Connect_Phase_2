@@ -161,6 +161,7 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_20sdp"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/_16sdp"
             android:alpha=".8"
             android:layout_centerHorizontal="true"
@@ -444,12 +445,21 @@
                 android:scaleType="centerInside"
                 app:mic_icon="@drawable/microphone" />
 
+            <ImageView
+                android:id="@+id/send_message"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/send_message"
+                android:layout_alignParentEnd="true"/>
+
             <LinearLayout
                 android:id="@+id/footer_search_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/_32sdp"
-                android:layout_toStartOf="@+id/search_n_audio_action"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -515,22 +525,6 @@
                     android:src="@drawable/attach_doc"/>
 
             </LinearLayout>
-
-            <RelativeLayout
-                android:layout_alignParentEnd="true"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/search_n_audio_action">
-
-            <ImageView
-                android:id="@+id/send_message"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_width="@dimen/_18sdp"
-                android:visibility="gone"
-                android:layout_height="match_parent"
-                android:src="@drawable/send_message"/>
-
-            </RelativeLayout>
 
         </RelativeLayout>
 
