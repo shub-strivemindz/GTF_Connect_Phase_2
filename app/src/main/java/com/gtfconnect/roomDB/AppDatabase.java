@@ -12,10 +12,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
 
-@Database(entities = {ChannelDashboardDataModel.class, GroupDashboardDataModel.class}, version = 7)
+@Database(entities = {ChannelDashboardDataModel.class, GroupDashboardDataModel.class, ChannelChatHeaderDbEntity.class, ChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class}, version = 13)
 @TypeConverters({Convertors.class})
 
 public abstract class AppDatabase extends RoomDatabase {

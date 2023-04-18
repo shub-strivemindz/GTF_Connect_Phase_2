@@ -69,6 +69,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private int messageUserID = 0;
 
+    private String messageTime = "";
+
 
     String userName = "";
     String message = "";
@@ -150,9 +152,14 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
 
 
+
+
+
+        // ---------------------------------------------------------- To Find If message send by same user or not. --------------------------------------------
         if (list.get(position) != null) {
             if (list.get(position).getUser() != null) {
                 if (list.get(position).getUser().getUserID() != null) {
+
                     messageUserID = Integer.parseInt(list.get(position).getUser().getUserID());
 
 
@@ -161,6 +168,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                             if (list.get(position + 1).getUser() != null) {
                                 if (list.get(position + 1).getUser().getUserID() != null) {
                                     int nextUserID = Integer.parseInt(list.get(position + 1).getUser().getUserID());
+
                                     if (messageUserID == nextUserID) {
                                         holder.binding.userIcon.setVisibility(View.GONE);
                                         holder.binding.userName.setVisibility(View.GONE);
@@ -181,6 +189,61 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 }
             }
         }
+
+
+
+
+
+
+
+
+        // ---------------------------------------------------------- To Find If message date of chat. --------------------------------------------
+        if (list.get(position) != null) {
+            if (list.get(position).getUser() != null) {
+                if (list.get(position).getUser().getUserID() != null) {
+
+                    messageTime = Utils.getChipDate(list.get(position).getUpdatedAt());
+
+
+                    if (position + 1 < list.size()) {
+                        if (list.get(position + 1) != null) {
+                            if (list.get(position + 1).getUser() != null) {
+                                if (list.get(position + 1).getUser().getUserID() != null) {
+                                    String nextMessageTime = Utils.getChipDate(list.get(position+1).getUpdatedAt());
+
+                                    if (messageTime.equalsIgnoreCase(nextMessageTime)) {
+                                        holder.binding.currentHeaderDate.setVisibility(View.GONE);
+                                    } else {
+                                        holder.binding.currentHeaderDate.setVisibility(View.VISIBLE);
+                                        holder.binding.currentDate.setText(Utils.getChipDate(list.get(position).getUpdatedAt()));
+                                        messageTime = "";
+                                    }
+                                }
+                            }
+                        }
+                    } else if (position+1 == list.size()) {
+                        holder.binding.currentHeaderDate.setVisibility(View.VISIBLE);
+                        holder.binding.currentDate.setText(Utils.getChipDate(list.get(position).getUpdatedAt()));
+                        messageTime = "";
+                    }
+
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         if (list.get(position).getGroupChatRefID() != null) {
@@ -311,7 +374,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         holder.binding.downloadAudio.setOnClickListener(view -> {
             String filePath = post_base_url+list.get(position).getMedia().get(0).getStoragePath()+list.get(position).getMedia().get(0).getFileName();
-            channelChatListener.downloadAudio(filePath,list.get(position).getGroupChannelID().toString(),list.get(position).getGroupChatID(),holder.binding.waveForm,holder.binding.progressBar,holder.binding.playPauseRecordedAudio);
+            channelChatListener.downloadAudio(filePath,list.get(position).getGroupChannelID().toString(),list.get(position).getGroupChatID(),holder.binding.waveForm,holder.binding.downloaderLoader,holder.binding.playPauseRecordedAudio);
         });
 
 
@@ -595,6 +658,31 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             forward_dialog.show();
         });
     }
+
+
+
+
+    public String getChipDate(int position)
+    {
+        String date = "";
+        if (list!=null) {
+            if (list.size()-1 >= position) {
+                if (list.get(position) != null) {
+                    if (list.get(position).getUpdatedAt() != null) {
+                        date = Utils.getChipDate(list.get(position).getUpdatedAt());
+                    }
+                }
+            }
+        }
+        else{
+            date = "";
+        }
+        return date;
+    }
+
+
+
+
 
 
     private void loadBottomsheet(ViewHolder holder,int position)

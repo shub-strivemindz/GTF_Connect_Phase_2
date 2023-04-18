@@ -540,7 +540,10 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     @Override
     public void updateViewChatHistoryStatus(int status) {
-
+        requestType = UPDATE_GC_SETTING;
+        params = new HashMap<>();
+        params.put("ChatHistoryIsEnable",status);
+        connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
     }
 
     @Override

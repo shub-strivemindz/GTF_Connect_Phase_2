@@ -158,7 +158,8 @@ public interface RestService {
                                                                      @Header("DeviceType") String device_type,
                                                                      @Header("DeviceToken") String device_token,
                                                                      @Query("page") int page,
-                                                                     @Query("per_page") int per_page);
+                                                                     @Query("per_page") int per_page,
+                                                                     @Query("is_active") int isActive);
 
 
 
@@ -212,5 +213,38 @@ public interface RestService {
             @QueryMap Map<String, Object> params,
             @Part List<MultipartBody.Part> files
     );
+
+
+
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ApiUrls.URL_GROUP_GET_DUMMY_USER)
+    Observable<JsonElement> get_group_dummy_user_list(@Path("id") int id,
+                                                                     @Header ("Authorization") String api_token,
+                                                                     @Header("DeviceType") String device_type,
+                                                                     @Header("DeviceToken") String device_token);
+
+
+
+
+    @FormUrlEncoded
+    @PATCH(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ApiUrls.URL_GROUP_UPDATE_DUMMY_USER)
+    Observable<JsonElement> update_group_dummy_user_list(@Path("id") int id,
+                                                      @Header ("Authorization") String api_token,
+                                                      @Header("DeviceType") String device_type,
+                                                      @Header("DeviceToken") String device_token,
+                                                      @FieldMap Map<String,Object> params);
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+ApiUrls.URL_GET_EXCLUSIVE_OFFER)
+    Observable<JsonElement> get_exclusive_offers(@Header ("Authorization") String api_token,
+                                                 @Header("DeviceType") String device_type,
+                                                 @Header("DeviceToken") String device_token,
+                                                 //@Query("search") String searchQuery,
+                                                 @Query("page") int page,
+                                                 @Query("per_page") int per_page);
+
 }
 

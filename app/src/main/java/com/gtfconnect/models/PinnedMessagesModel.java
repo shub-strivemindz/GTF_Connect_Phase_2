@@ -5,10 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-
-
-
-
 public class PinnedMessagesModel {
 
     @SerializedName("status")
@@ -45,447 +41,6 @@ public class PinnedMessagesModel {
         this.data = data;
     }
 
-    public class Group {
-
-        @SerializedName("GroupChannelID")
-        @Expose
-        private Integer groupChannelID;
-        @SerializedName("Name")
-        @Expose
-        private String name;
-        @SerializedName("Description")
-        @Expose
-        private String description;
-        @SerializedName("Type")
-        @Expose
-        private String type;
-        @SerializedName("AccessType")
-        @Expose
-        private String accessType;
-        @SerializedName("ProfileImage")
-        @Expose
-        private String profileImage;
-        @SerializedName("PublicLink")
-        @Expose
-        private String publicLink;
-        @SerializedName("PrivateLink")
-        @Expose
-        private Object privateLink;
-        @SerializedName("IsTrending")
-        @Expose
-        private Integer isTrending;
-        @SerializedName("TrendingLabel")
-        @Expose
-        private Object trendingLabel;
-        @SerializedName("MemberCount")
-        @Expose
-        private String memberCount;
-        @SerializedName("Status")
-        @Expose
-        private String status;
-        @SerializedName("CreatedAt")
-        @Expose
-        private String createdAt;
-        @SerializedName("UpdatedAt")
-        @Expose
-        private String updatedAt;
-
-        public Integer getGroupChannelID() {
-            return groupChannelID;
-        }
-
-        public void setGroupChannelID(Integer groupChannelID) {
-            this.groupChannelID = groupChannelID;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getAccessType() {
-            return accessType;
-        }
-
-        public void setAccessType(String accessType) {
-            this.accessType = accessType;
-        }
-
-        public String getProfileImage() {
-            return profileImage;
-        }
-
-        public void setProfileImage(String profileImage) {
-            this.profileImage = profileImage;
-        }
-
-        public String getPublicLink() {
-            return publicLink;
-        }
-
-        public void setPublicLink(String publicLink) {
-            this.publicLink = publicLink;
-        }
-
-        public Object getPrivateLink() {
-            return privateLink;
-        }
-
-        public void setPrivateLink(Object privateLink) {
-            this.privateLink = privateLink;
-        }
-
-        public Integer getIsTrending() {
-            return isTrending;
-        }
-
-        public void setIsTrending(Integer isTrending) {
-            this.isTrending = isTrending;
-        }
-
-        public Object getTrendingLabel() {
-            return trendingLabel;
-        }
-
-        public void setTrendingLabel(Object trendingLabel) {
-            this.trendingLabel = trendingLabel;
-        }
-
-        public String getMemberCount() {
-            return memberCount;
-        }
-
-        public void setMemberCount(String memberCount) {
-            this.memberCount = memberCount;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-    }
-    public class Medium {
-
-        @SerializedName("GroupChatMediaID")
-        @Expose
-        private Integer groupChatMediaID;
-        @SerializedName("GroupChatID")
-        @Expose
-        private Integer groupChatID;
-        @SerializedName("GroupChannelID")
-        @Expose
-        private Integer groupChannelID;
-        @SerializedName("GCMemberID")
-        @Expose
-        private Integer gCMemberID;
-        @SerializedName("ChatCommentId")
-        @Expose
-        private Object chatCommentId;
-        @SerializedName("StoragePath")
-        @Expose
-        private String storagePath;
-        @SerializedName("StorageType")
-        @Expose
-        private String storageType;
-        @SerializedName("MediaTypeId")
-        @Expose
-        private Object mediaTypeId;
-        @SerializedName("Status")
-        @Expose
-        private String status;
-        @SerializedName("MimeType")
-        @Expose
-        private String mimeType;
-        @SerializedName("FileName")
-        @Expose
-        private String fileName;
-        @SerializedName("UserID")
-        @Expose
-        private Integer userID;
-        @SerializedName("CreatedAt")
-        @Expose
-        private String createdAt;
-        @SerializedName("UpdatedAt")
-        @Expose
-        private String updatedAt;
-
-        public Integer getGroupChatMediaID() {
-            return groupChatMediaID;
-        }
-
-        public void setGroupChatMediaID(Integer groupChatMediaID) {
-            this.groupChatMediaID = groupChatMediaID;
-        }
-
-        public Integer getGroupChatID() {
-            return groupChatID;
-        }
-
-        public void setGroupChatID(Integer groupChatID) {
-            this.groupChatID = groupChatID;
-        }
-
-        public Integer getGroupChannelID() {
-            return groupChannelID;
-        }
-
-        public void setGroupChannelID(Integer groupChannelID) {
-            this.groupChannelID = groupChannelID;
-        }
-
-        public Integer getGCMemberID() {
-            return gCMemberID;
-        }
-
-        public void setGCMemberID(Integer gCMemberID) {
-            this.gCMemberID = gCMemberID;
-        }
-
-        public Object getChatCommentId() {
-            return chatCommentId;
-        }
-
-        public void setChatCommentId(Object chatCommentId) {
-            this.chatCommentId = chatCommentId;
-        }
-
-        public String getStoragePath() {
-            return storagePath;
-        }
-
-        public void setStoragePath(String storagePath) {
-            this.storagePath = storagePath;
-        }
-
-        public String getStorageType() {
-            return storageType;
-        }
-
-        public void setStorageType(String storageType) {
-            this.storageType = storageType;
-        }
-
-        public Object getMediaTypeId() {
-            return mediaTypeId;
-        }
-
-        public void setMediaTypeId(Object mediaTypeId) {
-            this.mediaTypeId = mediaTypeId;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getMimeType() {
-            return mimeType;
-        }
-
-        public void setMimeType(String mimeType) {
-            this.mimeType = mimeType;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
-
-        public Integer getUserID() {
-            return userID;
-        }
-
-        public void setUserID(Integer userID) {
-            this.userID = userID;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-    }
-    public class User {
-
-        @SerializedName("UserID")
-        @Expose
-        private String userID;
-        @SerializedName("GTFUserID")
-        @Expose
-        private Integer gTFUserID;
-        @SerializedName("Email")
-        @Expose
-        private String email;
-        @SerializedName("Phone")
-        @Expose
-        private String phone;
-        @SerializedName("Firstname")
-        @Expose
-        private String firstname;
-        @SerializedName("Lastname")
-        @Expose
-        private String lastname;
-        @SerializedName("ProfileImage")
-        @Expose
-        private Object profileImage;
-        @SerializedName("api_token")
-        @Expose
-        private Object apiToken;
-        @SerializedName("LastLoginAt")
-        @Expose
-        private Object lastLoginAt;
-        @SerializedName("CreatedAt")
-        @Expose
-        private String createdAt;
-        @SerializedName("UpdatedAt")
-        @Expose
-        private String updatedAt;
-
-        public String getUserID() {
-            return userID;
-        }
-
-        public void setUserID(String userID) {
-            this.userID = userID;
-        }
-
-        public Integer getGTFUserID() {
-            return gTFUserID;
-        }
-
-        public void setGTFUserID(Integer gTFUserID) {
-            this.gTFUserID = gTFUserID;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
-
-        public String getFirstname() {
-            return firstname;
-        }
-
-        public void setFirstname(String firstname) {
-            this.firstname = firstname;
-        }
-
-        public String getLastname() {
-            return lastname;
-        }
-
-        public void setLastname(String lastname) {
-            this.lastname = lastname;
-        }
-
-        public Object getProfileImage() {
-            return profileImage;
-        }
-
-        public void setProfileImage(Object profileImage) {
-            this.profileImage = profileImage;
-        }
-
-        public Object getApiToken() {
-            return apiToken;
-        }
-
-        public void setApiToken(Object apiToken) {
-            this.apiToken = apiToken;
-        }
-
-        public Object getLastLoginAt() {
-            return lastLoginAt;
-        }
-
-        public void setLastLoginAt(Object lastLoginAt) {
-            this.lastLoginAt = lastLoginAt;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-    }
 
     public class Chat {
 
@@ -528,6 +83,12 @@ public class PinnedMessagesModel {
         @SerializedName("ChatType")
         @Expose
         private String chatType;
+        @SerializedName("CommentCount")
+        @Expose
+        private Integer commentCount;
+        @SerializedName("ChatStatus")
+        @Expose
+        private Integer chatStatus;
         @SerializedName("CreatedAt")
         @Expose
         private String createdAt;
@@ -645,6 +206,22 @@ public class PinnedMessagesModel {
             this.chatType = chatType;
         }
 
+        public Integer getCommentCount() {
+            return commentCount;
+        }
+
+        public void setCommentCount(Integer commentCount) {
+            this.commentCount = commentCount;
+        }
+
+        public Integer getChatStatus() {
+            return chatStatus;
+        }
+
+        public void setChatStatus(Integer chatStatus) {
+            this.chatStatus = chatStatus;
+        }
+
         public String getCreatedAt() {
             return createdAt;
         }
@@ -678,6 +255,7 @@ public class PinnedMessagesModel {
         }
 
     }
+
     public class Datum {
 
         @SerializedName("pinmessagesID")
@@ -711,14 +289,22 @@ public class PinnedMessagesModel {
         @Expose
         private Group group;
 
-        private boolean isAudioDownloaded = false;
+        private boolean audioDownloaded = false;
+
+        public Integer getgCMemberID() {
+            return gCMemberID;
+        }
+
+        public void setgCMemberID(Integer gCMemberID) {
+            this.gCMemberID = gCMemberID;
+        }
 
         public boolean isAudioDownloaded() {
-            return isAudioDownloaded;
+            return audioDownloaded;
         }
 
         public void setAudioDownloaded(boolean audioDownloaded) {
-            isAudioDownloaded = audioDownloaded;
+            this.audioDownloaded = audioDownloaded;
         }
 
         public Integer getPinmessagesID() {
@@ -802,8 +388,460 @@ public class PinnedMessagesModel {
         }
 
     }
+
+    public class Group {
+
+        @SerializedName("GroupChannelID")
+        @Expose
+        private Integer groupChannelID;
+        @SerializedName("Name")
+        @Expose
+        private String name;
+        @SerializedName("Description")
+        @Expose
+        private String description;
+        @SerializedName("Type")
+        @Expose
+        private String type;
+        @SerializedName("AccessType")
+        @Expose
+        private String accessType;
+        @SerializedName("ProfileImage")
+        @Expose
+        private String profileImage;
+        @SerializedName("PublicLink")
+        @Expose
+        private Object publicLink;
+        @SerializedName("PrivateLink")
+        @Expose
+        private Object privateLink;
+        @SerializedName("IsTrending")
+        @Expose
+        private Integer isTrending;
+        @SerializedName("TrendingLabel")
+        @Expose
+        private Object trendingLabel;
+        @SerializedName("MemberCount")
+        @Expose
+        private String memberCount;
+        @SerializedName("Status")
+        @Expose
+        private String status;
+        @SerializedName("CreatedAt")
+        @Expose
+        private String createdAt;
+        @SerializedName("UpdatedAt")
+        @Expose
+        private String updatedAt;
+
+        public Integer getGroupChannelID() {
+            return groupChannelID;
+        }
+
+        public void setGroupChannelID(Integer groupChannelID) {
+            this.groupChannelID = groupChannelID;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getAccessType() {
+            return accessType;
+        }
+
+        public void setAccessType(String accessType) {
+            this.accessType = accessType;
+        }
+
+        public String getProfileImage() {
+            return profileImage;
+        }
+
+        public void setProfileImage(String profileImage) {
+            this.profileImage = profileImage;
+        }
+
+        public Object getPublicLink() {
+            return publicLink;
+        }
+
+        public void setPublicLink(Object publicLink) {
+            this.publicLink = publicLink;
+        }
+
+        public Object getPrivateLink() {
+            return privateLink;
+        }
+
+        public void setPrivateLink(Object privateLink) {
+            this.privateLink = privateLink;
+        }
+
+        public Integer getIsTrending() {
+            return isTrending;
+        }
+
+        public void setIsTrending(Integer isTrending) {
+            this.isTrending = isTrending;
+        }
+
+        public Object getTrendingLabel() {
+            return trendingLabel;
+        }
+
+        public void setTrendingLabel(Object trendingLabel) {
+            this.trendingLabel = trendingLabel;
+        }
+
+        public String getMemberCount() {
+            return memberCount;
+        }
+
+        public void setMemberCount(String memberCount) {
+            this.memberCount = memberCount;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+    }
+
+    public class Medium {
+
+        @SerializedName("GroupChatMediaID")
+        @Expose
+        private Integer groupChatMediaID;
+        @SerializedName("GroupChatID")
+        @Expose
+        private Integer groupChatID;
+        @SerializedName("GroupChannelID")
+        @Expose
+        private Integer groupChannelID;
+        @SerializedName("GCMemberID")
+        @Expose
+        private Integer gCMemberID;
+        @SerializedName("ChatCommentId")
+        @Expose
+        private Object chatCommentId;
+        @SerializedName("StoragePath")
+        @Expose
+        private String storagePath;
+        @SerializedName("StorageType")
+        @Expose
+        private String storageType;
+        @SerializedName("MediaTypeId")
+        @Expose
+        private Object mediaTypeId;
+        @SerializedName("Status")
+        @Expose
+        private String status;
+        @SerializedName("MimeType")
+        @Expose
+        private String mimeType;
+        @SerializedName("FileName")
+        @Expose
+        private String fileName;
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("FileSize")
+        @Expose
+        private Integer fileSize;
+        @SerializedName("CreatedAt")
+        @Expose
+        private String createdAt;
+        @SerializedName("UpdatedAt")
+        @Expose
+        private String updatedAt;
+
+        public Integer getGroupChatMediaID() {
+            return groupChatMediaID;
+        }
+
+        public void setGroupChatMediaID(Integer groupChatMediaID) {
+            this.groupChatMediaID = groupChatMediaID;
+        }
+
+        public Integer getGroupChatID() {
+            return groupChatID;
+        }
+
+        public void setGroupChatID(Integer groupChatID) {
+            this.groupChatID = groupChatID;
+        }
+
+        public Integer getGroupChannelID() {
+            return groupChannelID;
+        }
+
+        public void setGroupChannelID(Integer groupChannelID) {
+            this.groupChannelID = groupChannelID;
+        }
+
+        public Integer getGCMemberID() {
+            return gCMemberID;
+        }
+
+        public void setGCMemberID(Integer gCMemberID) {
+            this.gCMemberID = gCMemberID;
+        }
+
+        public Object getChatCommentId() {
+            return chatCommentId;
+        }
+
+        public void setChatCommentId(Object chatCommentId) {
+            this.chatCommentId = chatCommentId;
+        }
+
+        public String getStoragePath() {
+            return storagePath;
+        }
+
+        public void setStoragePath(String storagePath) {
+            this.storagePath = storagePath;
+        }
+
+        public String getStorageType() {
+            return storageType;
+        }
+
+        public void setStorageType(String storageType) {
+            this.storageType = storageType;
+        }
+
+        public Object getMediaTypeId() {
+            return mediaTypeId;
+        }
+
+        public void setMediaTypeId(Object mediaTypeId) {
+            this.mediaTypeId = mediaTypeId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getMimeType() {
+            return mimeType;
+        }
+
+        public void setMimeType(String mimeType) {
+            this.mimeType = mimeType;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public Integer getFileSize() {
+            return fileSize;
+        }
+
+        public void setFileSize(Integer fileSize) {
+            this.fileSize = fileSize;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+    }
+
+    public class User {
+
+        @SerializedName("UserID")
+        @Expose
+        private String userID;
+        @SerializedName("GTFUserID")
+        @Expose
+        private Integer gTFUserID;
+        @SerializedName("Email")
+        @Expose
+        private String email;
+        @SerializedName("Phone")
+        @Expose
+        private String phone;
+        @SerializedName("Firstname")
+        @Expose
+        private String firstname;
+        @SerializedName("Lastname")
+        @Expose
+        private String lastname;
+        @SerializedName("ProfileImage")
+        @Expose
+        private Object profileImage;
+        @SerializedName("api_token")
+        @Expose
+        private String apiToken;
+        @SerializedName("LastLoginAt")
+        @Expose
+        private Object lastLoginAt;
+        @SerializedName("CreatedAt")
+        @Expose
+        private String createdAt;
+        @SerializedName("UpdatedAt")
+        @Expose
+        private String updatedAt;
+
+        public String getUserID() {
+            return userID;
+        }
+
+        public void setUserID(String userID) {
+            this.userID = userID;
+        }
+
+        public Integer getGTFUserID() {
+            return gTFUserID;
+        }
+
+        public void setGTFUserID(Integer gTFUserID) {
+            this.gTFUserID = gTFUserID;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
+
+        public void setLastname(String lastname) {
+            this.lastname = lastname;
+        }
+
+        public Object getProfileImage() {
+            return profileImage;
+        }
+
+        public void setProfileImage(Object profileImage) {
+            this.profileImage = profileImage;
+        }
+
+        public String getApiToken() {
+            return apiToken;
+        }
+
+        public void setApiToken(String apiToken) {
+            this.apiToken = apiToken;
+        }
+
+        public Object getLastLoginAt() {
+            return lastLoginAt;
+        }
+
+        public void setLastLoginAt(Object lastLoginAt) {
+            this.lastLoginAt = lastLoginAt;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+    }
+
 }
-
-
-
-

@@ -42,8 +42,6 @@ public class GroupChannelProfileDetailModel {
     }
 
 
-
-
     public class Data {
 
         @SerializedName("gc_info")
@@ -52,6 +50,9 @@ public class GroupChannelProfileDetailModel {
         @SerializedName("gc_setting")
         @Expose
         private GcSetting gcSetting;
+        @SerializedName("gc_member_info")
+        @Expose
+        private GcMemberInfo gcMemberInfo;
         @SerializedName("gc_member_setting")
         @Expose
         private GcMemberSetting gcMemberSetting;
@@ -82,6 +83,14 @@ public class GroupChannelProfileDetailModel {
 
         public void setGcSetting(GcSetting gcSetting) {
             this.gcSetting = gcSetting;
+        }
+
+        public GcMemberInfo getGcMemberInfo() {
+            return gcMemberInfo;
+        }
+
+        public void setGcMemberInfo(GcMemberInfo gcMemberInfo) {
+            this.gcMemberInfo = gcMemberInfo;
         }
 
         public GcMemberSetting getGcMemberSetting() {
@@ -128,7 +137,6 @@ public class GroupChannelProfileDetailModel {
     public class DummyUser {
     }
 
-
     public class GcAdmin {
 
         @SerializedName("count")
@@ -136,7 +144,7 @@ public class GroupChannelProfileDetailModel {
         private Integer count;
         @SerializedName("list")
         @Expose
-        private ListDetail list;
+        private List<String> list;
 
         public Integer getCount() {
             return count;
@@ -146,11 +154,11 @@ public class GroupChannelProfileDetailModel {
             this.count = count;
         }
 
-        public ListDetail getList() {
+        public List<String> getList() {
             return list;
         }
 
-        public void setList(ListDetail list) {
+        public void setList(List<String> list) {
             this.list = list;
         }
 
@@ -357,6 +365,66 @@ public class GroupChannelProfileDetailModel {
         }
 
     }
+    public class GcMemberInfo {
+
+        @SerializedName("GCMemberID")
+        @Expose
+        private Integer gCMemberID;
+        @SerializedName("GroupChannelID")
+        @Expose
+        private Integer groupChannelID;
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("IsAdmin")
+        @Expose
+        private Integer isAdmin;
+        @SerializedName("Status")
+        @Expose
+        private String status;
+
+        public Integer getGCMemberID() {
+            return gCMemberID;
+        }
+
+        public void setGCMemberID(Integer gCMemberID) {
+            this.gCMemberID = gCMemberID;
+        }
+
+        public Integer getGroupChannelID() {
+            return groupChannelID;
+        }
+
+        public void setGroupChannelID(Integer groupChannelID) {
+            this.groupChannelID = groupChannelID;
+        }
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public Integer getIsAdmin() {
+            return isAdmin;
+        }
+
+        public void setIsAdmin(Integer isAdmin) {
+            this.isAdmin = isAdmin;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+    }
+
     public class GcMemberSetting {
 
         @SerializedName("mute_notification")
@@ -372,86 +440,8 @@ public class GroupChannelProfileDetailModel {
         }
 
     }
+
     public class GcMemberSubscriptionPlan {
-
-        @SerializedName("MemberSubscriptionID")
-        @Expose
-        private Integer memberSubscriptionID;
-        @SerializedName("GCSubscriptionPlanID")
-        @Expose
-        private Integer gCSubscriptionPlanID;
-        @SerializedName("SubscriptionStartDate")
-        @Expose
-        private String subscriptionStartDate;
-        @SerializedName("SubscriptionEndDate")
-        @Expose
-        private String subscriptionEndDate;
-        @SerializedName("SubscriptionPlanID")
-        @Expose
-        private Integer subscriptionPlanID;
-        @SerializedName("Name")
-        @Expose
-        private String name;
-        @SerializedName("isExpired")
-        @Expose
-        private Integer isExpired;
-
-        public Integer getMemberSubscriptionID() {
-            return memberSubscriptionID;
-        }
-
-        public void setMemberSubscriptionID(Integer memberSubscriptionID) {
-            this.memberSubscriptionID = memberSubscriptionID;
-        }
-
-        public Integer getGCSubscriptionPlanID() {
-            return gCSubscriptionPlanID;
-        }
-
-        public void setGCSubscriptionPlanID(Integer gCSubscriptionPlanID) {
-            this.gCSubscriptionPlanID = gCSubscriptionPlanID;
-        }
-
-        public String getSubscriptionStartDate() {
-            return subscriptionStartDate;
-        }
-
-        public void setSubscriptionStartDate(String subscriptionStartDate) {
-            this.subscriptionStartDate = subscriptionStartDate;
-        }
-
-        public String getSubscriptionEndDate() {
-            return subscriptionEndDate;
-        }
-
-        public void setSubscriptionEndDate(String subscriptionEndDate) {
-            this.subscriptionEndDate = subscriptionEndDate;
-        }
-
-        public Integer getSubscriptionPlanID() {
-            return subscriptionPlanID;
-        }
-
-        public void setSubscriptionPlanID(Integer subscriptionPlanID) {
-            this.subscriptionPlanID = subscriptionPlanID;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Integer getIsExpired() {
-            return isExpired;
-        }
-
-        public void setIsExpired(Integer isExpired) {
-            this.isExpired = isExpired;
-        }
-
     }
     public class GcPermission {
 
@@ -561,6 +551,9 @@ public class GroupChannelProfileDetailModel {
         @SerializedName("DummyUser")
         @Expose
         private DummyUser dummyUser;
+        @SerializedName("ChatHistoryIsEnable")
+        @Expose
+        private Integer chatHistoryIsEnable;
 
         public Integer getGroupChannelID() {
             return groupChannelID;
@@ -658,6 +651,14 @@ public class GroupChannelProfileDetailModel {
             this.dummyUser = dummyUser;
         }
 
+        public Integer getChatHistoryIsEnable() {
+            return chatHistoryIsEnable;
+        }
+
+        public void setChatHistoryIsEnable(Integer chatHistoryIsEnable) {
+            this.chatHistoryIsEnable = chatHistoryIsEnable;
+        }
+
     }
     public class GcSubscriptionPlan {
 
@@ -717,8 +718,6 @@ public class GroupChannelProfileDetailModel {
             this.subscriptionPlan = subscriptionPlan;
         }
 
-    }
-    public class ListDetail {
     }
     public class MuteNotification {
 
@@ -1008,6 +1007,9 @@ public class GroupChannelProfileDetailModel {
 
     }
 }
+
+
+
 
 
 

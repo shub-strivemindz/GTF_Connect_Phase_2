@@ -162,6 +162,7 @@
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_20sdp"
             android:visibility="gone"
+            android:id="@+id/chip_date_container"
             app:cardCornerRadius="@dimen/_16sdp"
             android:alpha=".8"
             android:layout_centerHorizontal="true"
@@ -175,7 +176,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/_9ssp"
                 android:gravity="center"
-                android:id="@+id/current_date"/>
+                android:id="@+id/chip_date"/>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -462,13 +463,37 @@
                 android:layout_marginEnd="@dimen/_32sdp"
                 android:orientation="horizontal">
 
-                <ImageView
+                <RelativeLayout
                     android:layout_width="@dimen/_18sdp"
                     android:layout_height="@dimen/_18sdp"
-                    android:src="@drawable/re"
-                    android:id="@+id/dummy_users"
+                    android:id="@+id/dummy_user_container"
+                    android:visibility="gone"
                     android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/dummyUsers"
+                        app:cardCornerRadius="@dimen/_100sdp"
+                        app:cardBackgroundColor="@color/dummy_user_background_color">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="RE"
+                            android:id="@+id/dummy_user_initials"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/poppins"
+                            android:textSize="@dimen/_8ssp"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:gravity="center"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                </RelativeLayout>
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"

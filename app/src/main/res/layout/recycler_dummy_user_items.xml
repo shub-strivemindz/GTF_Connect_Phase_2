@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/dummy_user_container"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:text="Richards"
+            android:id="@+id/dummy_radio_button"
+            android:textColor="@color/tab_grey"
+            android:fontFamily="@font/poppins"
+            android:textFontWeight="400"
+            android:paddingStart="@dimen/_10sdp"
+            android:textSize="@dimen/_10ssp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:alpha=".2"
+            android:layout_height="1dp"/>
+
+</LinearLayout>

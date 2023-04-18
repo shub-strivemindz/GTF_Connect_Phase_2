@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentGroupViewBinding;
 import com.gtfconnect.databinding.FragmentRecentViewBinding;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.AppDao;
 import com.gtfconnect.roomDB.AppDatabase;
@@ -34,6 +35,8 @@ import com.gtfconnect.utilities.Utils;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.socket.client.Ack;
 
@@ -56,34 +59,7 @@ public class RecentFragment extends Fragment {
     private int localDBDataSize = 0;
 
 
-
-
-    public RecentFragment() {}
-
-
-    public static RecentFragment newInstance() {
-        RecentFragment fragment = new RecentFragment();
-
-        /*Bundle args = new Bundle();
-        args.putInt(ARG_COUNT, regionCount);
-        fragment.setArguments(args);*/
-        return fragment;
-    }
-
-
-  /*  @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        *//*if (getArguments() != null) {
-            viewCount = getArguments().getInt(ARG_COUNT);
-        }*//*
-    }
-*/
-
-
-
-
-
+    private List<ExclusiveOfferDataModel> exclusiveOfferDataModels;
 
 
 
@@ -113,10 +89,7 @@ public class RecentFragment extends Fragment {
         });
 
 
-        ExclusiveOfferAdapter exclusiveOfferAdapter= new ExclusiveOfferAdapter(getActivity());
-        binding.exclusiveViewList.setHasFixedSize(true);
-        binding.exclusiveViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.exclusiveViewList.setAdapter(exclusiveOfferAdapter);
+
 
 
         // Todo : un comment when implemented all 4 tabs socket
@@ -132,9 +105,7 @@ public class RecentFragment extends Fragment {
 
     private void init()
     {
-        appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
-
         loadLocalData();
 
     }
@@ -142,6 +113,21 @@ public class RecentFragment extends Fragment {
 
     private void loadLocalData()
     {
+
+        //Get exclusive offers :
+        databaseViewModel.getExclusiveOfferData().observe(requireActivity(), getExclusiveOfferList -> {
+                    if (getExclusiveOfferList != null && !getExclusiveOfferList.isEmpty()) {
+
+                        exclusiveOfferDataModels = new ArrayList<>();
+                        exclusiveOfferDataModels.addAll(getExclusiveOfferList);
+
+                        loadExclusiveOffer();
+                    }
+                });
+
+
+
+        // Get list :
         databaseViewModel.getGroups().observe(requireActivity(), groupResponseModel -> {
             if (groupResponseModel != null && !groupResponseModel.isEmpty()) {
 
@@ -161,6 +147,15 @@ public class RecentFragment extends Fragment {
     }
 
 
+
+
+    private void loadExclusiveOffer()
+    {
+        ExclusiveOfferAdapter exclusiveOfferAdapter= new ExclusiveOfferAdapter(getActivity(),exclusiveOfferDataModels);
+        binding.exclusiveViewList.setHasFixedSize(true);
+        binding.exclusiveViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.exclusiveViewList.setAdapter(exclusiveOfferAdapter);
+    }
 
 
 

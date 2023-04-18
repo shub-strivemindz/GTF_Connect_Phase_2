@@ -12,12 +12,37 @@ import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelL
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelMediaResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class Convertors {
+
+
+
+    @TypeConverter
+    public ExclusiveOfferDataModel.Setting jsonToExclusiveOfferData(String json) {
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ExclusiveOfferDataModel.Setting>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+    @TypeConverter
+    public String exclusiveOfferDataToJson(ExclusiveOfferDataModel.Setting specializations) {
+        return new Gson().toJson(specializations);
+    }
+
+
+
+
+
+
+
+
 
 
     @TypeConverter
@@ -134,4 +159,34 @@ public class Convertors {
         return new Gson().toJson(specializations);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @TypeConverter
+    public ChannelRowListDataModel jsonToChannelRowData(String json) {
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ChannelRowListDataModel>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+    @TypeConverter
+    public String channelRowDataToJson(ChannelRowListDataModel specializations) {
+        return new Gson().toJson(specializations);
+    }
 }

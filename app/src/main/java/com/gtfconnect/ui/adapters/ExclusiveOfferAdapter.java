@@ -8,20 +8,31 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerExclusiveItemBinding;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
+
+import java.util.List;
 
 public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAdapter.ViewHolder> {
 
     private Context context;
 
-    public  ExclusiveOfferAdapter(Context context){
+    private List<ExclusiveOfferDataModel> exclusiveOfferDataModels;
+
+    public  ExclusiveOfferAdapter(Context context,List<ExclusiveOfferDataModel> exclusiveOfferDataModels){
         this.context= context;
+        this.exclusiveOfferDataModels = exclusiveOfferDataModels;
     }
 
     @NonNull
@@ -33,13 +44,37 @@ public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAd
     @Override
     public void onBindViewHolder(ExclusiveOfferAdapter.ViewHolder holder, int position) {
 
+        holder.binding.offerTag.setTypeface(holder.binding.offerTag.getTypeface(), Typeface.BOLD_ITALIC);
 
+
+        if (exclusiveOfferDataModels.get(position).getName() != null ){
+            holder.binding.title.setText(exclusiveOfferDataModels.get(position).getName());
+        }
+
+        if (exclusiveOfferDataModels.get(position).getPopupInfoImage() != null){
+            loadImage(exclusiveOfferDataModels.get(position).getPopupInfoImage(),holder.binding.userAvatar);
+        }
+
+        holder.binding.offerTag.setTextColor(context.getResources().getColor(R.color.exclusive_pink));
+        holder.binding.offerTag.setText(context.getResources().getString(R.string.trending));
+        holder.binding.offerTagBackground.setCardBackgroundColor(context.getResources().getColor(R.color.exclusive_pink_background));
+
+
+
+
+
+
+
+
+
+
+
+
+/*
         if (position == 0){
             holder.binding.title.setText("Trading In The Zone 2.0 Extended");
-            holder.binding.offerTag.setTypeface(holder.binding.offerTag.getTypeface(), Typeface.BOLD_ITALIC);
-            holder.binding.offerTag.setTextColor(context.getResources().getColor(R.color.exclusive_pink));
-            holder.binding.offerTag.setText(context.getResources().getString(R.string.trending));
-            holder.binding.offerTagBackground.setCardBackgroundColor(context.getResources().getColor(R.color.exclusive_pink_background));
+
+
             holder.binding.chatItem.setOnClickListener(view -> context.startActivity(new Intent(context, ExclusiveOfferScreen.class)));
         }
         if (position == 1){
@@ -64,13 +99,34 @@ public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAd
                  free_membership_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                  free_membership_dialog.show();
              });
-        }
+        }*/
 
+    }
+
+
+
+    private void loadImage(String imageUrl, ImageView image)
+    {
+        //Setting up loader on post
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(circularProgressDrawable);
+        requestOptions.error(R.drawable.image_not_found);
+        requestOptions.skipMemoryCache(true);
+        requestOptions.fitCenter();
+
+        Glide.with(context).load(imageUrl).
+                fitCenter().apply(requestOptions).
+                transition(DrawableTransitionOptions.withCrossFade()).into(image);
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return exclusiveOfferDataModels.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

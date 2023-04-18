@@ -7,10 +7,9 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/current_header_date"
         android:layout_width="match_parent"
-        android:background="@color/card_light_grey"
+        android:background="@color/channelBackgroundColor"
         android:layout_height="@dimen/_35sdp">
 
     <com.google.android.material.card.MaterialCardView
@@ -131,7 +130,7 @@
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_1sdp"
+        android:layout_height="1dp"
         android:alpha=".2"
         android:layout_below="@id/header"
         android:id="@+id/header_divider"
@@ -359,18 +358,13 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:id="@+id/play_pause_recorded_audio"/>
 
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    style="?android:attr/progressBarStyleHorizontal"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:visibility="gone"
                     android:layout_width="@dimen/_16sdp"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/download_circular_shape"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:indeterminate="false"
-                    android:visibility="gone"
-                    android:progressDrawable="@drawable/download_audio_progress_bar"
-                    android:textAlignment="center" />
+                    android:layout_centerVertical="true"
+                    android:id="@+id/downloader_loader"/>
 
             </RelativeLayout>
 
@@ -776,7 +770,7 @@ more then 1000 top most trading courses+ daily or weekly"
     <com.google.android.material.divider.MaterialDivider
         android:layout_marginTop="@dimen/_8sdp"
         android:layout_width="match_parent"
-        android:alpha=".3"
+        app:dividerColor="@color/channelBackgroundColor"
         android:layout_below="@id/footer"
         android:layout_height="@dimen/_4sdp"/>
 

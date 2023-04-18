@@ -65,5 +65,9 @@ public class ApiUrls {
 
     public static final String URL_GROUP_CHANNEL_GET_SUBSCRIPTION_MEMBERS = "subscribers";
 
+    public static final String URL_GROUP_GET_DUMMY_USER = "dummy_user";
 
+    public static final String URL_GROUP_UPDATE_DUMMY_USER = "dummy_user/update";
+
+    public static final String URL_GET_EXCLUSIVE_OFFER = "exclusive-group-channel";
 }

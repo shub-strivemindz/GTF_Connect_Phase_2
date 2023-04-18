@@ -53,20 +53,6 @@ public class ChannelFragment extends Fragment {
 
 
 
-    public ChannelFragment() {}
-
-
-    public static ChannelFragment newInstance() {
-        ChannelFragment fragment = new ChannelFragment();
-
-        /*Bundle args = new Bundle();
-        args.putInt(ARG_COUNT, regionCount);
-        fragment.setArguments(args);*/
-        return fragment;
-    }
-
-
-
 
     @Nullable
     @Override
@@ -83,12 +69,6 @@ public class ChannelFragment extends Fragment {
         // Todo : Unset count to real data
         //unreadMessageListener.getUnreadCount(0);
 
-        // Load Recent List Data -----
-        /*ChannelViewAdapter recentViewAdapter= new ChannelViewAdapter(requireContext(),3);
-        binding.channelViewList.setHasFixedSize(true);
-        binding.channelViewList.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.channelViewList.setAdapter(recentViewAdapter);*/
-
         return binding.getRoot();
     }
 
@@ -98,7 +78,7 @@ public class ChannelFragment extends Fragment {
         appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
-        loadLocalData();
+        //loadLocalData();
 
     }
 
@@ -115,6 +95,8 @@ public class ChannelFragment extends Fragment {
                     responseModel.setData(channelResponseModel);
 
                     loadDataToAdapter();
+
+                    Log.d("Channel_TABLE",channelResponseModel.toString());
 
                     updateChannelDashboardSocket();
                 } else {

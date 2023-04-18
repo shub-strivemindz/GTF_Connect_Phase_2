@@ -1,6 +1,7 @@
 package com.gtfconnect.roomDB;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,8 +10,12 @@ import androidx.lifecycle.LiveData;
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 
 import java.util.List;
 
@@ -22,6 +27,23 @@ public class DatabaseViewModel extends AndroidViewModel {
         super(application);
         repo = new DatabaseRepo(application);
     }
+
+
+
+    public void insertExclusiveOffer(ExclusiveOfferDataModel dataModel) {
+        repo.insertExclusiveOfferData(dataModel);
+    }
+
+    public LiveData<List<ExclusiveOfferDataModel>> getExclusiveOfferData() {
+        return repo.getExclusiveOfferData();
+    }
+
+
+
+
+
+
+
 
 
     public void insertChannels(ChannelDashboardDataModel result) {
@@ -48,5 +70,61 @@ public class DatabaseViewModel extends AndroidViewModel {
 
     public LiveData<List<GroupDashboardDataModel>> getGroups() {
         return repo.getGroupDashboardData();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void insertChannelChatData(ChannelChatDbEntity result) {
+        repo.insertChannelChatData(result);
+    }
+
+
+    public void insertChannelChatRowData(ChannelChatBodyDbEntity channelRowListDataModel){
+        repo.insertChannelRowData(channelRowListDataModel);
+    }
+
+
+    public LiveData<ChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
+        Log.d("run","twice");
+        return repo.getChannelChatData(groupChannelID,isAsc);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void delete_database()
+    {
+        repo.delete_database();
     }
 }

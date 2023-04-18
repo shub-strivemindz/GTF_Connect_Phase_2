@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.RecyclerReactionListItemBinding;
+import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 
 public class EmojiReactionListAdapter extends RecyclerView.Adapter<EmojiReactionListAdapter.ViewHolder> {
 
@@ -22,8 +23,11 @@ public class EmojiReactionListAdapter extends RecyclerView.Adapter<EmojiReaction
 
     String[] dummyReaction = {"👍","❤","\uD83D\uDE06","\uD83D\uDE32","\uD83D\uDE22","\uD83D\uDE21"};
 
-    public  EmojiReactionListAdapter(Context context){
+    private ChannelManageReactionModel reactionModel;
+
+    public  EmojiReactionListAdapter(Context context, ChannelManageReactionModel reactionModel){
         this.context= context;
+        this.reactionModel = reactionModel;
     }
 
     @NonNull
@@ -35,14 +39,22 @@ public class EmojiReactionListAdapter extends RecyclerView.Adapter<EmojiReaction
     @Override
     public void onBindViewHolder(EmojiReactionListAdapter.ViewHolder holder, int position) {
 
-        holder.binding.reaction.setText(dummyReaction[position]);
-
-        holder.binding.reaction.setOnClickListener(view -> mListener.onItemAccept(position+1,dummyReaction[position],"Dummy Emoji Name"));
+        if (reactionModel != null && reactionModel.getData() != null && reactionModel.getData().getList() != null && !reactionModel.getData().getList().isEmpty()){
+            holder.binding.reaction.setText(reactionModel.getData().getList().get(position).getEmojiCode());
+            holder.binding.reaction.setOnClickListener(view -> mListener.onItemAccept(reactionModel.getData().getList().get(position).getReactionID(),reactionModel.getData().getList().get(position).getEmojiCode(),reactionModel.getData().getList().get(position).getName()));
+        }
+        else{
+            holder.binding.reaction.setText(dummyReaction[position]);
+            holder.binding.reaction.setOnClickListener(view -> mListener.onItemAccept(position+1,dummyReaction[position],"Dummy Emoji Name"));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return dummyReaction.length;
+            if (reactionModel != null && reactionModel.getData()!= null && reactionModel.getData().getList() != null && !reactionModel.getData().getList().isEmpty()){
+                return reactionModel.getData().getList().size();
+            }
+            return dummyReaction.length;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

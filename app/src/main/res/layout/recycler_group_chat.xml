@@ -5,7 +5,37 @@
     android:background="@color/card_light_grey"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <LinearLayout
+        android:id="@+id/date_chip_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_20sdp"
+            app:cardCornerRadius="@dimen/_16sdp"
+            android:alpha=".8"
+            app:cardBackgroundColor="@color/chatHeaderDateBackgroundColor">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Feb, 24 2023"
+                android:textColor="@color/textGreyDateColor"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/_9ssp"
+                android:gravity="center"
+                android:id="@+id/current_date"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
     <RelativeLayout
+        android:layout_below="@id/date_chip_container"
         android:elevation="1dp"
         android:layout_marginVertical="@dimen/_4sdp"
         android:id="@+id/sent_message_container"
@@ -650,6 +680,7 @@ more then 1000 top most trading courses+ daily or weekly"
     </RelativeLayout>
 
     <RelativeLayout
+        android:layout_below="@id/date_chip_container"
         android:layout_marginVertical="@dimen/_4sdp"
         android:id="@+id/received_message_container"
         android:layout_width="match_parent"

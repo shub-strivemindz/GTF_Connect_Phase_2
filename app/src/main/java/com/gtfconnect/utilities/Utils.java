@@ -66,6 +66,7 @@ import com.gtfconnect.models.CityData;
 import com.gtfconnect.models.CountryData;
 import com.gtfconnect.models.EmojiListModel;
 import com.gtfconnect.models.StateData;
+import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.ui.adapters.EmojiReactionListAdapter;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
@@ -331,13 +332,6 @@ public class Utils {
     }
 
     public static String getAudioFilePath() {
-        /*File file = new File(Environment.getExternalStorageDirectory().getPath(), "EYS/Audio");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".3gp");*/
-
-
 
         String videoFilePath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS) + "/" + "connect_audio" + "_"
@@ -456,7 +450,7 @@ public class Utils {
 
 
     // ======================================================= Can be used to for slide pop up from side edges of view ============================
-    public static PopupWindow showDialog(int position, Context context, ImageView chatView, EmojiListModel emojiListModel, SelectEmoteReaction listener) { //, EditUserDialogListener editUserDialogListener
+    public static PopupWindow showDialog(int position, Context context, ImageView chatView, ChannelManageReactionModel emojiListModel, SelectEmoteReaction listener) { //, EditUserDialogListener editUserDialogListener
         try {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.popup_window, null);
@@ -478,7 +472,7 @@ public class Utils {
 
             RecyclerView reactionRecycler = layout.findViewById(R.id.reaction_recycler);
 
-            EmojiReactionListAdapter emojiReactionListAdapter = new EmojiReactionListAdapter(context);
+            EmojiReactionListAdapter emojiReactionListAdapter = new EmojiReactionListAdapter(context,emojiListModel);
             reactionRecycler.setHasFixedSize(true);
             reactionRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             reactionRecycler.setAdapter(emojiReactionListAdapter);
@@ -866,96 +860,6 @@ public class Utils {
     }
 
 
-    public static String getDisplayableTime(String dateString) {
-
-        long time = 0;
-        String msgDate = "";
-
-        try {
-            //String dateString = "30/09/2014";
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
-            Date date = sdf.parse(dateString);
-
-            // ---------------------------------------------------------Can be Changed as per Condition : Subtracting 6 hours from time -----------------------
-
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.add(Calendar.HOUR, 6);
-            cal.add(Calendar.MINUTE,30);
-            Date calculatedTime = cal.getTime();
-
-            // --------------------------------------------------------------------------------------------------------------------------------------------
-
-            msgDate = DateFormat.getDateInstance().format(calculatedTime);
-            Log.v("getDisplayableDate",String.valueOf(msgDate));
-
-
-            time = calculatedTime.getTime();
-            Log.v("getDisplayableTime",String.valueOf(time));
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        long difference=0;
-        Long currentTime = java.lang.System.currentTimeMillis();
-
-        if(currentTime > time)
-        {
-            difference= currentTime - time;
-            final long seconds = difference/1000;
-            final long minutes = seconds/60;
-            final long hours = minutes/60;
-            final long days = hours/24;
-            final long months = days/31;
-            final long years = days/365;
-
-            if (seconds < 0)
-            {
-                return "not yet";
-            }
-            else if (seconds < 60)
-            {
-                return seconds == 1 ? "a second ago" : seconds + " seconds ago";
-            }
-            else if (seconds < 120)
-            {
-                return "a minute ago";
-            }
-            else if (seconds < 2700) // 45 * 60
-            {
-                return minutes + " minutes ago";
-            }
-            else if (seconds < 5400) // 90 * 60
-            {
-                return "an hour ago";
-            }
-            else if (seconds < 86400) // 24  60  60
-            {
-                return hours + " hours ago";
-            }
-            else if (seconds < 172800) // 48  60  60
-            {
-                return "yesterday";
-            }
-            /*else if (seconds < 2592000) // 30  24  60 * 60
-            {
-                return days + " days ago";
-            }
-            else if (seconds < 31104000) // 12  30  24  60  60
-            {
-
-                return months <= 1 ? "one month ago" : days + " months ago";
-            }*/
-            else
-            {
-                return msgDate;
-            }
-        }
-        return null;
-    }
-
-
     public static String getHeaderDate(String chatDate) {
         String tempChatDate = chatDate;
         String serverCurrentDate = "";
@@ -984,7 +888,7 @@ public class Utils {
                 chatDate = "Yesterday";
             }
             else{
-                SimpleDateFormat format = new SimpleDateFormat("MMMM dd yyyy");
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM");
                 chatDate = format.format(value);
             }
         } catch (Exception e) {
@@ -992,6 +896,45 @@ public class Utils {
         }
         return chatDate;
     }
+
+
+    public static String getChipDate(String chipDate){
+        String tempChatDate = chipDate;
+        String serverCurrentDate = "";
+        String currentDate = "";
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(chipDate);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMM, hh:mm aa"); //this format changeable
+            dateFormatter.setTimeZone(TimeZone.getDefault());
+            chipDate = dateFormatter.format(value);
+
+
+            //current date
+            String OurDate = chipDate;
+            String[] separated = OurDate.split(",");
+            serverCurrentDate = separated[0];
+            String ServerCurrentDate1 = separated[1];
+            currentDate = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
+            yesterdayDate();
+            if (currentDate.equalsIgnoreCase(serverCurrentDate)) {
+                chipDate = "Today";
+            } else if (serverCurrentDate.equalsIgnoreCase(yesterdayDate())) {
+                chipDate = "Yesterday";
+            }
+            else{
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM");
+                chipDate = format.format(value);
+            }
+        } catch (Exception e) {
+            chipDate = "00-00-0000 00:00";
+        }
+        return chipDate;
+    }
+
 
     private static String yesterdayDate() {
 
@@ -1108,6 +1051,97 @@ public class Utils {
     }
 
 
+
+    /*public static String getDisplayableTime(String dateString) {
+
+        long time = 0;
+        String msgDate = "";
+
+        try {
+            //String dateString = "30/09/2014";
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+            Date date = sdf.parse(dateString);
+
+            // ---------------------------------------------------------Can be Changed as per Condition : Subtracting 6 hours from time -----------------------
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.HOUR, 6);
+            cal.add(Calendar.MINUTE,30);
+            Date calculatedTime = cal.getTime();
+
+            // --------------------------------------------------------------------------------------------------------------------------------------------
+
+            msgDate = DateFormat.getDateInstance().format(calculatedTime);
+            Log.v("getDisplayableDate",String.valueOf(msgDate));
+
+
+            time = calculatedTime.getTime();
+            Log.v("getDisplayableTime",String.valueOf(time));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        long difference=0;
+        Long currentTime = java.lang.System.currentTimeMillis();
+
+        if(currentTime > time)
+        {
+            difference= currentTime - time;
+            final long seconds = difference/1000;
+            final long minutes = seconds/60;
+            final long hours = minutes/60;
+            final long days = hours/24;
+            final long months = days/31;
+            final long years = days/365;
+
+            if (seconds < 0)
+            {
+                return "not yet";
+            }
+            else if (seconds < 60)
+            {
+                return seconds == 1 ? "a second ago" : seconds + " seconds ago";
+            }
+            else if (seconds < 120)
+            {
+                return "a minute ago";
+            }
+            else if (seconds < 2700) // 45 * 60
+            {
+                return minutes + " minutes ago";
+            }
+            else if (seconds < 5400) // 90 * 60
+            {
+                return "an hour ago";
+            }
+            else if (seconds < 86400) // 24  60  60
+            {
+                return hours + " hours ago";
+            }
+            else if (seconds < 172800) // 48  60  60
+            {
+                return "yesterday";
+            }
+            *//*else if (seconds < 2592000) // 30  24  60 * 60
+            {
+                return days + " days ago";
+            }
+            else if (seconds < 31104000) // 12  30  24  60  60
+            {
+
+                return months <= 1 ? "one month ago" : days + " months ago";
+            }*//*
+            else
+            {
+                return msgDate;
+            }
+        }
+        return null;
+    }*/
+
+
     public static void registerInternetReceiver(Context context)
     {
         internetReceiver = new InternetService();
@@ -1119,5 +1153,30 @@ public class Utils {
         context.unregisterReceiver(internetReceiver);
     }
 
+
+
+    public static String getUserInitials(String firstName,String lastName){
+
+        String title = "";
+
+        if (firstName != null && !firstName.isEmpty()) {
+            title = "" + firstName.charAt(0);
+        }
+        if (lastName != null && !lastName.isEmpty()) {
+            title += "" + lastName.charAt(0);
+        }
+
+
+            /*String[] separated_name = name.split(" ");
+
+            int wordCount = separated_name.length;
+            Log.d("userInitialData ","name = "+name+" count = "+wordCount);
+
+            if (wordCount > 1){
+                String last_name = separated_name[wordCount-1];
+                title += ""+last_name.charAt(0);
+            }*/
+        return title.toUpperCase();
+    }
 
 }

@@ -30,6 +30,7 @@ import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityLoginBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.models.LoginResponseModel;
+import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.authModule.registerModule.RegisterScreen1;
@@ -61,7 +62,7 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
 
     private LoginResponseModel loginResponse = new LoginResponseModel();
 
-
+    private DatabaseViewModel databaseViewModel;
 
     //private AppDao appDao;
 
@@ -71,7 +72,12 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+
         binding.errorDialog.setVisibility(View.GONE);
+
+        clearDatabase();
+
 
         // Getting API data fetch
         //auth_rest = new Rest(this);            // for authentication ------------
@@ -126,6 +132,18 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
             }
         });
     }
+
+
+    private void clearDatabase(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                databaseViewModel = new ViewModelProvider(LoginScreen.this).get(DatabaseViewModel.class);
+                databaseViewModel.delete_database();
+            }
+        }).start();
+    }
+
 
     private void validationLoginCheck()
     {

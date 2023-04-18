@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/channelBackgroundColor"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -78,7 +79,6 @@
                 android:fontFamily="@font/open_sans"
                 android:textSize="@dimen/_10ssp"
                 android:textFontWeight="400"
-                android:text="1,402,345"
                 android:textColor="@color/white"/>
 
             <TextView
@@ -160,9 +160,10 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_20sdp"
+            android:visibility="gone"
+            android:id="@+id/chip_date_container"
             app:cardCornerRadius="@dimen/_16sdp"
             android:alpha=".8"
-            android:visibility="gone"
             android:layout_centerHorizontal="true"
             app:cardBackgroundColor="@color/theme_green">
 
@@ -174,7 +175,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/_9ssp"
                 android:gravity="center"
-                android:id="@+id/current_date"/>
+                android:id="@+id/chip_date"/>
 
         </com.google.android.material.card.MaterialCardView>
 

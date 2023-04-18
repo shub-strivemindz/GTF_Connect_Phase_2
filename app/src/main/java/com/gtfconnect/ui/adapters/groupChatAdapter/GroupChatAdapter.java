@@ -68,6 +68,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
     String post_base_url= "";
 
+    private String messageTime = "";
+
     private int messageUserID;
     static int likeCounter;
 
@@ -105,20 +107,71 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         viewHolder = holder;
 
         if (list != null && list.get(position) != null && !list.isEmpty()) {
+
+
+            // ---------------------------------------------------------- To Find If message date of chat. --------------------------------------------
+            if (list.get(position) != null) {
+                if (list.get(position).getUser() != null) {
+                    if (list.get(position).getUser().getUserID() != null) {
+
+                        messageTime = Utils.getChipDate(list.get(position).getUpdatedAt());
+
+
+                        if (position + 1 < list.size()) {
+                            if (list.get(position + 1) != null) {
+                                if (list.get(position + 1).getUser() != null) {
+                                    if (list.get(position + 1).getUser().getUserID() != null) {
+                                        String nextMessageTime = Utils.getChipDate(list.get(position+1).getUpdatedAt());
+
+                                        if (messageTime.equalsIgnoreCase(nextMessageTime)) {
+                                            holder.binding.dateChipContainer.setVisibility(View.GONE);
+                                        } else {
+                                            holder.binding.dateChipContainer.setVisibility(View.VISIBLE);
+                                            holder.binding.currentDate.setText(Utils.getChipDate(list.get(position).getUpdatedAt()));
+                                            messageTime = "";
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (position+1 == list.size()) {
+                            holder.binding.dateChipContainer.setVisibility(View.VISIBLE);
+                            holder.binding.currentDate.setText(Utils.getChipDate(list.get(position).getUpdatedAt()));
+                            messageTime = "";
+                        }
+
+                    }
+                }
+            }
+
+
+
+
             if (userID.equalsIgnoreCase(String.valueOf(list.get(position).getUserID()))){
+                sentMessageView(holder,position);
+            }
+            else{
+                receivedMessageView(holder,position);
+            }
+        }
 
-                holder.binding.sentMessageContainer.setVisibility(View.VISIBLE);
-                holder.binding.receivedMessageContainer.setVisibility(View.GONE);
 
-                if (isDummyUser){
-                    holder.binding.dummyUserContainer.setVisibility(View.VISIBLE);
-                    isDummyUser =false ;
-                }
-                else{
-                    holder.binding.dummyUserContainer.setVisibility(View.GONE);
-                }
+    }
 
-                // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
+
+
+    private void sentMessageView(ViewHolder holder,int position){
+        holder.binding.sentMessageContainer.setVisibility(View.VISIBLE);
+        holder.binding.receivedMessageContainer.setVisibility(View.GONE);
+
+        if (isDummyUser){
+            holder.binding.dummyUserContainer.setVisibility(View.VISIBLE);
+            isDummyUser =false ;
+        }
+        else{
+            holder.binding.dummyUserContainer.setVisibility(View.GONE);
+        }
+
+        // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
        /* if (list.get(position) != null){
             if (list.get(position).getUpdatedAt()!=null && !list.get(position).getUpdatedAt().isEmpty()){
@@ -133,36 +186,36 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-                Gson gson = new Gson();
-                String data = gson.toJson(list.get(position));
+        Gson gson = new Gson();
+        String data = gson.toJson(list.get(position));
 
-                if (list.get(position).getUser() != null) {
-                    if (list.get(position).getUser().getFirstname() == null && list.get(position).getUser().getLastname() == null) {
-                        userName = "Bot";
-                        holder.binding.userName.setText("Bot");
-                    } else {
+        if (list.get(position).getUser() != null) {
+            if (list.get(position).getUser().getFirstname() == null && list.get(position).getUser().getLastname() == null) {
+                userName = "Bot";
+                holder.binding.userName.setText("Bot");
+            } else {
 
-                        Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
+                Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
 
-                        int userId= Integer.parseInt(list.get(position).getUser().getUserID());
-                        if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
-                            holder.binding.userName.setText("You");
-                        }
-                        else {
-                            userName = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
-                            holder.binding.userName.setText(userName);
-                        }
-                    }
+                int userId= Integer.parseInt(list.get(position).getUser().getUserID());
+                if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
+                    holder.binding.userName.setText("You");
                 }
+                else {
+                    userName = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
+                    holder.binding.userName.setText(userName);
+                }
+            }
+        }
 
-                if (list.get(position).getGroupChatRefID() != null) {
-                    holder.binding.quoteContainer1.setVisibility(View.VISIBLE);
-                    holder.binding.headerDivider.setVisibility(View.GONE);
-                    holder.binding.messageDivider1.setVisibility(View.GONE);
-                    holder.binding.messageContainer1.setVisibility(View.GONE);
-                    holder.binding.quoteDivider1.setVisibility(View.VISIBLE);
+        if (list.get(position).getGroupChatRefID() != null) {
+            holder.binding.quoteContainer1.setVisibility(View.VISIBLE);
+            holder.binding.headerDivider.setVisibility(View.GONE);
+            holder.binding.messageDivider1.setVisibility(View.GONE);
+            holder.binding.messageContainer1.setVisibility(View.GONE);
+            holder.binding.quoteDivider1.setVisibility(View.VISIBLE);
 
-                    if (list.get(position).getQuote() != null) {
+            if (list.get(position).getQuote() != null) {
                 /*if (list.get(position).getQuote().getMessage() != null) {
                     if (String.valueOf(list.get(position).getUserID()).equalsIgnoreCase(userID)) {
 
@@ -175,29 +228,29 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                         holder.binding.oldMsgTime.setTextColor(context.getColor(R.color.white));
                     }
                 }*/
-                        holder.binding.oldMessage1.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
-                        holder.binding.oldMessage1.setText(list.get(position).getQuote().getMessage());
+                holder.binding.oldMessage1.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
+                holder.binding.oldMessage1.setText(list.get(position).getQuote().getMessage());
 
-                        String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
-                        holder.binding.oldMsgUser1.setText(username);
+                String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
+                holder.binding.oldMsgUser1.setText(username);
 
-                        holder.binding.oldMsgTime1.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
+                holder.binding.oldMsgTime1.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
 
 
-                        holder.binding.newMessage1.setText(list.get(position).getMessage());
+                holder.binding.newMessage1.setText(list.get(position).getMessage());
 
-                    }
-                } else {
-                    holder.binding.headerDivider.setVisibility(View.VISIBLE);
-                    holder.binding.messageContainer1.setVisibility(View.VISIBLE);
-                    holder.binding.quoteContainer1.setVisibility(View.GONE);
-                    holder.binding.quoteDivider1.setVisibility(View.GONE);
-                    holder.binding.messageDivider1.setVisibility(View.VISIBLE);
-                }
+            }
+        } else {
+            holder.binding.headerDivider.setVisibility(View.VISIBLE);
+            holder.binding.messageContainer1.setVisibility(View.VISIBLE);
+            holder.binding.quoteContainer1.setVisibility(View.GONE);
+            holder.binding.quoteDivider1.setVisibility(View.GONE);
+            holder.binding.messageDivider1.setVisibility(View.VISIBLE);
+        }
 
-                if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
+        if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
-                    holder.binding.postImageContainer1.setVisibility(View.VISIBLE);
+            holder.binding.postImageContainer1.setVisibility(View.VISIBLE);
                     /*holder.binding.mediaRecycler1.setVisibility(View.VISIBLE);
 
                     GroupChannel_MediaAdapter mediaAdapter = new GroupChannel_MediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
@@ -205,14 +258,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     holder.binding.mediaRecycler1.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                     holder.binding.mediaRecycler1.setAdapter(mediaAdapter);*/
 
-                    //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+            //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
 
-                    loadSentPostMedia(holder, position, list.get(position).getMedia().size());
-                }
-                else{
-                    //holder.binding.mediaRecycler1.setVisibility(View.GONE);
-                    holder.binding.postImageContainer1.setVisibility(View.GONE);
-                }
+            loadSentPostMedia(holder, position, list.get(position).getMedia().size());
+        }
+        else{
+            //holder.binding.mediaRecycler1.setVisibility(View.GONE);
+            holder.binding.postImageContainer1.setVisibility(View.GONE);
+        }
 
        /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
             loadPostMedia(holder, position, list.get(position).getMedia().size());
@@ -233,20 +286,20 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-                if (list.get(position).getMessage() != null) {
-                    message = list.get(position).getMessage();
-                    holder.binding.message1.setText(list.get(position).getMessage());
-                } else {
-                    message = "No message found";
-                    holder.binding.message1.setText("No message found");
-                }
+        if (list.get(position).getMessage() != null) {
+            message = list.get(position).getMessage();
+            holder.binding.message1.setText(list.get(position).getMessage());
+        } else {
+            message = "No message found";
+            holder.binding.message1.setText("No message found");
+        }
 
-                if (list.get(position).getCreatedAt() != null) {
-                    time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
-                    holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
-                } else {
-                    holder.binding.time.setText("XX/XX/XXXX");
-                }
+        if (list.get(position).getCreatedAt() != null) {
+            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
+            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+        } else {
+            holder.binding.time.setText("XX/XX/XXXX");
+        }
 
 
 
@@ -301,17 +354,17 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 //                holder.binding.expandMessage.setVisibility(View.GONE);
 //            }
 
-                holder.binding.message1.setOnClickListener(view -> {
-                    if(isMessageClicked){
-                        //This will shrink textview to 2 lines if it is expanded.
-                        holder.binding.message1.setMaxLines(3);
-                        isMessageClicked = false;
-                    } else {
-                        //This will expand the textview if it is of 2 lines
-                        holder.binding.message1.setMaxLines(Integer.MAX_VALUE);
-                        isMessageClicked = true;
-                    }
-                });
+        holder.binding.message1.setOnClickListener(view -> {
+            if(isMessageClicked){
+                //This will shrink textview to 2 lines if it is expanded.
+                holder.binding.message1.setMaxLines(3);
+                isMessageClicked = false;
+            } else {
+                //This will expand the textview if it is of 2 lines
+                holder.binding.message1.setMaxLines(Integer.MAX_VALUE);
+                isMessageClicked = true;
+            }
+        });
 
       /*  holder.binding.viewComment.setOnClickListener(view -> {
 
@@ -325,11 +378,11 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-                holder.binding.quoteMsgContainer1.setOnClickListener(view -> {
-                    if (list.get(position).getQuote() != null) {
-                        groupChatListener.searchQuoteMessage(position,list.get(position).getQuote().getGroupChatID());
-                    }
-                });
+        holder.binding.quoteMsgContainer1.setOnClickListener(view -> {
+            if (list.get(position).getQuote() != null) {
+                groupChatListener.searchQuoteMessage(position,list.get(position).getQuote().getGroupChatID());
+            }
+        });
 
 
 
@@ -356,7 +409,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             return false;
         });
 
-                // Bottom-sheet for image options --
+        // Bottom-sheet for image options --
 
         /*holder.binding.postImageContainer.setOnLongClickListener(view -> {
             BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
@@ -440,10 +493,68 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });*/
 
 
-                holder.binding.like1.setOnLongClickListener(view -> {
-                    groupChatListener.likeAsEmote(position,holder.binding.likeIcon1);
-                    return false;
-                });
+        holder.binding.like1.setOnLongClickListener(view -> {
+            groupChatListener.likeAsEmote(position,holder.binding.likeIcon1);
+            return false;
+        });
+
+
+
+        holder.binding.like1.setOnClickListener(view -> {
+
+            if (list.get(position).getLike() != null)
+            {
+                if (list.get(position).getLike().size() != 0)
+                {
+                    if (list.get(position).getLike().get(0).getIsLike() == 0)
+                    {
+                        groupChatListener.likePost(Integer.parseInt(userID),
+                                list.get(position).getGroupChannelID(),
+                                list.get(position).getGCMemberID(),
+                                Integer.parseInt(list.get(position).getGroupChatID()),
+                                1);
+                    }
+                    else{
+                        groupChatListener.likePost(Integer.parseInt(userID),
+                                list.get(position).getGroupChannelID(),
+                                list.get(position).getGCMemberID(),
+                                Integer.parseInt(list.get(position).getGroupChatID()),
+                                0);
+                    }
+                }
+                else {
+                    groupChatListener.likePost(Integer.parseInt(userID),
+                            list.get(position).getGroupChannelID(),
+                            list.get(position).getGCMemberID(),
+                            Integer.parseInt(list.get(position).getGroupChatID()),
+                            1);
+                }
+            }
+            else {
+                groupChatListener.likePost(Integer.parseInt(userID),
+                        list.get(position).getGroupChannelID(),
+                        list.get(position).getGCMemberID(),
+                        Integer.parseInt(list.get(position).getGroupChatID()),
+                        1);
+            }
+
+
+            final ValueAnimator anim = ValueAnimator.ofFloat(1f, 1.5f);
+            anim.setDuration(1000);
+            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    holder.binding.likeIcon1.setScaleX((Float) animation.getAnimatedValue());
+                    holder.binding.likeIcon1.setScaleY((Float) animation.getAnimatedValue());
+                }
+            });
+            anim.setRepeatCount(1);
+            anim.setRepeatMode(ValueAnimator.REVERSE);
+            anim.start();
+        });
+
+
+
 
 
         /*//holder.binding.playVideo.setOnClickListener(view -> playVideo);
@@ -470,12 +581,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
             forward_dialog.show();
         });*/
-            }
-            else{
+    }
 
-                holder.binding.sentMessageContainer.setVisibility(View.GONE);
-                holder.binding.receivedMessageContainer.setVisibility(View.VISIBLE);
-                // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
+
+
+    private void receivedMessageView(ViewHolder holder,int position){
+        holder.binding.sentMessageContainer.setVisibility(View.GONE);
+        holder.binding.receivedMessageContainer.setVisibility(View.VISIBLE);
+        // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
        /* if (list.get(position) != null){
             if (list.get(position).getUpdatedAt()!=null && !list.get(position).getUpdatedAt().isEmpty()){
@@ -487,42 +600,42 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
             }
         }*/
-                holder.binding.receivedMessageContainer.setOnLongClickListener(view -> {
-                    Log.d("Not going ","why");
-                    loadBottomSheet(holder,position);
-                    return false;
-                });
+        holder.binding.receivedMessageContainer.setOnLongClickListener(view -> {
+            Log.d("Not going ","why");
+            loadBottomSheet(holder,position);
+            return false;
+        });
 
 
-                Gson gson = new Gson();
-                String data = gson.toJson(list.get(position));
+        Gson gson = new Gson();
+        String data = gson.toJson(list.get(position));
 
-                if (list.get(position).getUser() != null) {
-                    if (list.get(position).getUser().getFirstname() == null && list.get(position).getUser().getLastname() == null) {
-                        userName = "Bot";
-                        holder.binding.userName.setText("Bot");
-                    } else {
+        if (list.get(position).getUser() != null) {
+            if (list.get(position).getUser().getFirstname() == null && list.get(position).getUser().getLastname() == null) {
+                userName = "Bot";
+                holder.binding.userName.setText("Bot");
+            } else {
 
-                        Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
+                Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
 
-                        int userId= Integer.parseInt(list.get(position).getUser().getUserID());
-                        if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
-                            holder.binding.userName.setText("You");
-                        }
-                        else {
-                            userName = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
-                            holder.binding.userName.setText(userName);
-                        }
-                    }
+                int userId= Integer.parseInt(list.get(position).getUser().getUserID());
+                if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
+                    holder.binding.userName.setText("You");
                 }
+                else {
+                    userName = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
+                    holder.binding.userName.setText(userName);
+                }
+            }
+        }
 
-                if (list.get(position).getGroupChatRefID() != null) {
-                    holder.binding.quoteContainer.setVisibility(View.VISIBLE);
-                    holder.binding.headerDivider.setVisibility(View.GONE);
-                    holder.binding.messageContainer.setVisibility(View.GONE);
-                    holder.binding.quoteDivider.setVisibility(View.VISIBLE);
+        if (list.get(position).getGroupChatRefID() != null) {
+            holder.binding.quoteContainer.setVisibility(View.VISIBLE);
+            holder.binding.headerDivider.setVisibility(View.GONE);
+            holder.binding.messageContainer.setVisibility(View.GONE);
+            holder.binding.quoteDivider.setVisibility(View.VISIBLE);
 
-                    if (list.get(position).getQuote() != null) {
+            if (list.get(position).getQuote() != null) {
                 /*if (list.get(position).getQuote().getMessage() != null) {
                     if (String.valueOf(list.get(position).getUserID()).equalsIgnoreCase(userID)) {
 
@@ -535,65 +648,67 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                         holder.binding.oldMsgTime.setTextColor(context.getColor(R.color.white));
                     }
                 }*/
-                        holder.binding.oldMessage.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
-                        holder.binding.oldMessage.setText(list.get(position).getQuote().getMessage());
+                holder.binding.oldMessage.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
+                holder.binding.oldMessage.setText(list.get(position).getQuote().getMessage());
 
-                        String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
-                        holder.binding.oldMsgUser.setText(username);
+                String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
+                holder.binding.oldMsgUser.setText(username);
 
-                        holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
-
-
-                        holder.binding.newMessage.setText(list.get(position).getMessage());
-
-                    }
-                } else {
-                    holder.binding.headerDivider.setVisibility(View.VISIBLE);
-                    holder.binding.messageContainer.setVisibility(View.VISIBLE);
-                    holder.binding.quoteContainer.setVisibility(View.GONE);
-                    holder.binding.quoteDivider.setVisibility(View.GONE);
-                }
+                holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
 
 
+                holder.binding.newMessage.setText(list.get(position).getMessage());
 
-                    if (list.get(position) != null) {
-                        if (list.get(position).getUser() != null) {
-                            if (list.get(position).getUser().getUserID() != null) {
-                                messageUserID = Integer.parseInt(list.get(position).getUser().getUserID());
+            }
+        } else {
+            holder.binding.headerDivider.setVisibility(View.VISIBLE);
+            holder.binding.messageContainer.setVisibility(View.VISIBLE);
+            holder.binding.quoteContainer.setVisibility(View.GONE);
+            holder.binding.quoteDivider.setVisibility(View.GONE);
+        }
 
 
-                                if (position + 1 < list.size()) {
-                                    if (list.get(position + 1) != null) {
-                                        if (list.get(position + 1).getUser() != null) {
-                                            if (list.get(position + 1).getUser().getUserID() != null) {
-                                                int nextUserID = Integer.parseInt(list.get(position + 1).getUser().getUserID());
-                                                if (messageUserID == nextUserID) {
+
+        if (list.get(position) != null) {
+            if (list.get(position).getUser() != null) {
+                if (list.get(position).getUser().getUserID() != null) {
+                    messageUserID = Integer.parseInt(list.get(position).getUser().getUserID());
+
+
+                    if (position + 1 < list.size()) {
+                        if (list.get(position + 1) != null) {
+                            if (list.get(position + 1).getUser() != null) {
+                                if (list.get(position + 1).getUser().getUserID() != null) {
+                                    int nextUserID = Integer.parseInt(list.get(position + 1).getUser().getUserID());
+                                    if (messageUserID == nextUserID) {
                                                     /*holder.binding.highWhiteSpacer.setVisibility(View.GONE);
                                                     holder.binding.lowWhiteSpacer.setVisibility(View.VISIBLE);*/
-                                                    holder.binding.userContainer.setVisibility(View.GONE);
-                                                } else {
+                                        holder.binding.userContainer.setVisibility(View.GONE);
+                                    } else {
                                                     /*holder.binding.highWhiteSpacer.setVisibility(View.VISIBLE);
                                                     holder.binding.lowWhiteSpacer.setVisibility(View.GONE);*/
-                                                    holder.binding.userContainer.setVisibility(View.VISIBLE);
-                                                    messageUserID = 0;
-                                                }
-                                            }
-                                        }
+                                        holder.binding.userContainer.setVisibility(View.VISIBLE);
+                                        messageUserID = 0;
                                     }
                                 }
-
                             }
                         }
                     }
 
+                }
+            }
+        }
 
 
 
-                if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
-                    //holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
-                    holder.binding.postImageContainer.setVisibility(View.VISIBLE);
-                    holder.binding.greenHighlightDivider.setVisibility(View.VISIBLE);
+
+
+        if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
+
+            //holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+            holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+            holder.binding.greenHighlightDivider.setVisibility(View.VISIBLE);
 
                     /*GroupChannel_MediaAdapter mediaAdapter = new GroupChannel_MediaAdapter(context,holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url,String.valueOf(userID));
                     holder.binding.mediaRecycler.setHasFixedSize(true);
@@ -601,14 +716,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     holder.binding.mediaRecycler.setAdapter(mediaAdapter);*/
 
 
-                    loadReceivePostMedia(holder, position, list.get(position).getMedia().size());
-                    //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
-                }
-                else{
-                    //holder.binding.mediaRecycler.setVisibility(View.GONE);
-                    holder.binding.greenHighlightDivider.setVisibility(View.GONE);
-                    holder.binding.postImageContainer.setVisibility(View.GONE);
-                }
+            loadReceivePostMedia(holder, position, list.get(position).getMedia().size());
+            //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+        }
+        else{
+            //holder.binding.mediaRecycler.setVisibility(View.GONE);
+            holder.binding.greenHighlightDivider.setVisibility(View.GONE);
+            holder.binding.postImageContainer.setVisibility(View.GONE);
+        }
 
        /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
             loadPostMedia(holder, position, list.get(position).getMedia().size());
@@ -625,20 +740,20 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.binding.postImageContainer.setVisibility(View.GONE);
         }*/
 
-                if (list.get(position).getMessage() != null) {
-                    message = list.get(position).getMessage();
-                    holder.binding.message.setText(list.get(position).getMessage());
-                } else {
-                    message = "No message found";
-                    holder.binding.message.setText("No message found");
-                }
+        if (list.get(position).getMessage() != null) {
+            message = list.get(position).getMessage();
+            holder.binding.message.setText(list.get(position).getMessage());
+        } else {
+            message = "No message found";
+            holder.binding.message.setText("No message found");
+        }
 
-                if (list.get(position).getCreatedAt() != null) {
-                    time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
-                    holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
-                } else {
-                    holder.binding.time.setText("XX/XX/XXXX");
-                }
+        if (list.get(position).getCreatedAt() != null) {
+            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
+            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+        } else {
+            holder.binding.time.setText("XX/XX/XXXX");
+        }
 
 
 
@@ -693,17 +808,17 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 //                holder.binding.expandMessage.setVisibility(View.GONE);
 //            }
 
-                holder.binding.message.setOnClickListener(view -> {
-                    if(isMessageClicked){
-                        //This will shrink textview to 2 lines if it is expanded.
-                        holder.binding.message.setMaxLines(3);
-                        isMessageClicked = false;
-                    } else {
-                        //This will expand the textview if it is of 2 lines
-                        holder.binding.message.setMaxLines(Integer.MAX_VALUE);
-                        isMessageClicked = true;
-                    }
-                });
+        holder.binding.message.setOnClickListener(view -> {
+            if(isMessageClicked){
+                //This will shrink textview to 2 lines if it is expanded.
+                holder.binding.message.setMaxLines(3);
+                isMessageClicked = false;
+            } else {
+                //This will expand the textview if it is of 2 lines
+                holder.binding.message.setMaxLines(Integer.MAX_VALUE);
+                isMessageClicked = true;
+            }
+        });
 
       /*  holder.binding.viewComment.setOnClickListener(view -> {
 
@@ -717,11 +832,11 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-                holder.binding.quoteMsgContainer.setOnClickListener(view -> {
-                    if (list.get(position).getQuote() != null) {
-                        groupChatListener.searchQuoteMessage(position,list.get(position).getQuote().getGroupChatID());
-                    }
-                });
+        holder.binding.quoteMsgContainer.setOnClickListener(view -> {
+            if (list.get(position).getQuote() != null) {
+                groupChatListener.searchQuoteMessage(position,list.get(position).getQuote().getGroupChatID());
+            }
+        });
 
 
 
@@ -740,7 +855,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         // Bottom-sheet for chat options --
         holder.binding.bottomsheetChatOption.setOnClickListener(view -> loadBottomsheet(holder,position));*/
 
-                // Bottom-sheet for image options --
+        // Bottom-sheet for image options --
 
         /*holder.binding.postImageContainer.setOnLongClickListener(view -> {
             BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
@@ -767,14 +882,14 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-                holder.binding.like.setOnLongClickListener(view -> {
-                    groupChatListener.likeAsEmote(position,holder.binding.likeIcon);
-                    return false;
-                });
+        holder.binding.like.setOnLongClickListener(view -> {
+            groupChatListener.likeAsEmote(position,holder.binding.likeIcon);
+            return false;
+        });
 
 
 
-        /*holder.binding.like.setOnClickListener(view -> {
+        holder.binding.like.setOnClickListener(view -> {
 
             if (list.get(position).getLike() != null)
             {
@@ -825,7 +940,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             anim.setRepeatCount(1);
             anim.setRepeatMode(ValueAnimator.REVERSE);
             anim.start();
-        });*/
+        });
 
 /*
         //holder.binding.playVideo.setOnClickListener(view -> playVideo);
@@ -852,11 +967,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
             forward_dialog.show();
         });*/
-            }
-        }
-
-
     }
+
+
 
 
     private void loadBottomSheet(ViewHolder holder,int position)
@@ -1509,6 +1622,28 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         }
     }
+
+
+    public String getChipDate(int position)
+    {
+        Log.d("position item",""+position);
+
+        String date = "";
+        if (list!=null) {
+            if (list.size() > position) {
+                if (list.get(position) != null) {
+                    if (list.get(position).getUpdatedAt() != null) {
+                        date = Utils.getChipDate(list.get(position).getUpdatedAt());
+                    }
+                }
+            }
+        }
+        else{
+            date = "";
+        }
+        return date;
+    }
+
 
 
     public View getSelectedView(int position){

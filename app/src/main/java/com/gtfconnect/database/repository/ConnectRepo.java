@@ -46,8 +46,8 @@ public class ConnectRepo {
     }
 
 
-    public Observable<JsonElement> get_group_channel_manage_reaction_list(int id, String api_token,String device_type, String device_token, int page,int per_page) {
-        return restService.get_group_channel_manage_reaction_list(id, api_token, device_type, device_token,page,per_page);
+    public Observable<JsonElement> get_group_channel_manage_reaction_list(int id, String api_token,String device_type, String device_token, int page,int per_page, int isActive) {
+        return restService.get_group_channel_manage_reaction_list(id, api_token, device_type, device_token,page,per_page,isActive);
     }
 
 
@@ -68,6 +68,21 @@ public class ConnectRepo {
         return restService.update_group_channel_reaction_list(id, api_token, device_type, device_token,params);
     }
 
+
+    public Observable<JsonElement> get_exclusive_offers(String api_token, String device_type, String device_token,String search, int page,int per_page) {
+        return restService.get_exclusive_offers(api_token,device_type,device_token,page,per_page);
+    }
+
+
+
+    public Observable<JsonElement> get_dummy_user_list(int id, String api_token,String device_type, String device_token) {
+        return restService.get_group_dummy_user_list(id, api_token, device_type, device_token);
+    }
+
+
+    public Observable<JsonElement> update_dummy_user_list(int id, String api_token,String device_type, String device_token,Map<String,Object> params) {
+        return restService.update_group_dummy_user_list(id, api_token, device_type, device_token,params);
+    }
 
 
     public Observable<JsonElement> update_group_channel_reactions_settings(int id,String endPoint, String api_token,String device_type, String device_token, Map<String,Object> params) {

@@ -60,11 +60,9 @@ public class Rest {
 
         if (isAuthApi) {
             restService = RestAdapter.getAuthAdapter(ctx);
-            //Toast.makeText(ctx, "Auth Implementation", Toast.LENGTH_SHORT).show();
             isAuthApi = false;
         } else if (isAuthProfileApi) {
             restService = RestAdapter.getAuthProfileAdapter(ctx);
-            //Toast.makeText(ctx, "Profile Url Implementation", Toast.LENGTH_SHORT).show();
             isAuthProfileApi = false;
         } else
             restService = RestAdapter.getChatAdapter(ctx);

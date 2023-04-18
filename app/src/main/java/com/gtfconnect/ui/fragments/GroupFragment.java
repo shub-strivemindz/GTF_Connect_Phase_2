@@ -60,22 +60,6 @@ public class GroupFragment extends Fragment {
 
 
 
-
-    public GroupFragment() {}
-
-
-    public static GroupFragment newInstance() {
-        GroupFragment fragment = new GroupFragment();
-
-        /*Bundle args = new Bundle();
-        args.putInt(ARG_COUNT, regionCount);
-        fragment.setArguments(args);*/
-        return fragment;
-    }
-
-
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,7 +87,7 @@ public class GroupFragment extends Fragment {
         appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
-        loadLocalData();
+        //loadLocalData();
 
     }
 

@@ -5,17 +5,46 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
 
 import java.util.List;
 
 @Dao
 public interface AppDao {
+
+
+    // -------------------------------------------------------------------- Exclusive Offer Response Data -----------------------------------------------------
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertExclusiveOfferData(ExclusiveOfferDataModel exclusiveOfferDataModel);
+
+    @Query("delete from exclusive_offer_data")
+    void delete_exclusive_offer_data();
+
+    @Query("select * from  exclusive_offer_data")
+    LiveData<List<ExclusiveOfferDataModel>> getExclusiveOfferList();
+
+
+
+
+
+
+
+
+
+
+
+
 
     // -------------------------------------------------------------------- Channel Dashboard Response Data -----------------------------------------------------
 
@@ -33,7 +62,47 @@ public interface AppDao {
     // -------------------------------------------------------------------- Channel Chat Response Data -----------------------------------------------------
 
 
- /*   @Insert(onConflict = OnConflictStrategy.IGNORE)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertChannelChatHeaderData(ChannelChatHeaderDbEntity chatHeaderDbEntity);
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertChannelChatBodyData(List<ChannelChatBodyDbEntity> chatBodyDb);
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertChannelChatRowBodyData(ChannelChatBodyDbEntity chatBodyDb);
+
+
+    @Query("delete from channel_chat_header")
+    void delete_channel_header_data();
+
+    @Query("delete from channel_chat_body")
+    void delete_channel_body_data();
+
+
+    @Query("select * from  channel_chat_body JOIN channel_chat_header ON channel_chat_header.groupChannelID = channel_chat_body.groupChannelId where channel_chat_body.groupChannelId = :id ORDER BY CASE WHEN :isAsc = 1 THEN channel_chat_body.groupChatID END DESC")
+    LiveData<ChannelChatDbEntity> getChannelChatData(String id, int isAsc);
+
+
+
+
+    //@Query("DELETE FROM channel_chat_body where  NOT IN (SELECT id from tableName ORDER BY id DESC LIMIT 20)")
+
+
+    /*@Query("delete from channel_chat_header")
+    void delete_channel_chat_data();
+
+
+    @Query("select * from  channel_chat_header")
+    LiveData<ChannelChatResponseModel> getChannelChatHeaderData();*/
+
+
+
+
+
+ /* @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertChannelChatData(ChannelChatResponseModel channelChatResponseModel);
 
     @Query("delete from channel_chat_data")

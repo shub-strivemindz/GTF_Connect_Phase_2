@@ -95,6 +95,10 @@
 
     <color name="chatHeaderDateBackgroundColor">#05000000</color>
 
+    <color name="channelBackgroundColor">#EDF2F6</color>
+
+    <color name="dummy_user_background_color">#407EC1</color>
+
 
 
     <color name="radioButtonSelectedBackgroundColor">#1A2FB463</color>

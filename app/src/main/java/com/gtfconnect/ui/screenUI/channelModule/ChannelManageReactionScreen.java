@@ -202,7 +202,7 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
 
     private void getReactionFromList(){
         requestType = GET_GC_REACTION_LIST;
-        connectViewModel.get_group_channel_manage_reaction_list(channelID,api_token,"android","test",currentPage,25);
+        connectViewModel.get_group_channel_manage_reaction_list(channelID,api_token,"android","test",currentPage,25,0);
     }
 
 

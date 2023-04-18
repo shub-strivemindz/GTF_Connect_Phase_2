@@ -149,8 +149,8 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
-    public void get_group_channel_manage_reaction_list(int id, String api_token, String device_type, String device_token, int page, int per_page) {
-        disposables.add(repo.get_group_channel_manage_reaction_list(id, api_token, device_type, device_token,page,per_page).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+    public void get_group_channel_manage_reaction_list(int id, String api_token, String device_type, String device_token, int page, int per_page,int isActive) {
+        disposables.add(repo.get_group_channel_manage_reaction_list(id, api_token, device_type, device_token,page,per_page,isActive).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());
@@ -224,6 +224,57 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
+    public void get_dummy_user_list(int id, String api_token, String device_type, String device_token) {
+        disposables.add(repo.get_dummy_user_list(id, api_token, device_type, device_token).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
+
+    public void update_dummy_user_list(int id, String api_token, String device_type, String device_token,Map<String,Object> params) {
+        disposables.add(repo.update_dummy_user_list(id, api_token, device_type, device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
     public void update_groupChannel_settings(int id, String api_token, String device_type, String device_token, Map<String,Object> params) {
         disposables.add(repo.update_group_channel_settings(id, api_token, device_type, device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -250,6 +301,33 @@ public class ConnectViewModel extends AndroidViewModel {
 
     public void update_groupChannel_reactions_settings(int id, String endPoint, String api_token, String device_type, String device_token, Map<String,Object> params) {
         disposables.add(repo.update_group_channel_reactions_settings(id, endPoint, api_token, device_type, device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
+    public void get_exclusive_offers(String api_token, String device_type, String device_token,String search, int page) {
+
+        final int per_page = 10;
+        disposables.add(repo.get_exclusive_offers(api_token,device_type,device_token,search,page,per_page).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());
