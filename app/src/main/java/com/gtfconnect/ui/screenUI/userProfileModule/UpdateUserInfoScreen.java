@@ -275,16 +275,16 @@ public class UpdateUserInfoScreen extends AppCompatActivity implements ApiRespon
 
 
         Log.d("Country_ID",  model.toString());
-        countryCode = model.getData().getProfileInfo().getCountryMain().getCountryID();
-        stateCode = model.getData().getProfileInfo().getStateMain().getStateID();
-        cityCode = model.getData().getProfileInfo().getCityMain().getCityID();
+        countryCode = model.getData().getProfileInfo().getCountryList().getCountryID();
+        stateCode = model.getData().getProfileInfo().getStateList().getStateID();
+        cityCode = model.getData().getProfileInfo().getCityList().getCityID();
 
         date_of_birth = model.getData().getProfileInfo().getDob();
 
 //        binding.address.setHint(model.getData().getProfileInfo().getAddress());
-        binding.country.setHint(model.getData().getProfileInfo().getCountryMain().getName());
-        binding.state.setHint(model.getData().getProfileInfo().getStateMain().getName());
-        binding.city.setHint(model.getData().getProfileInfo().getCityMain().getName());
+        binding.country.setHint(model.getData().getProfileInfo().getCountryList().getName());
+        binding.state.setHint(model.getData().getProfileInfo().getStateList().getName());
+        binding.city.setHint(model.getData().getProfileInfo().getCityList().getName());
 
         binding.pincode.setHint(postalCode);
         binding.postalCode.setCountryForPhoneCode(Integer.parseInt(model.getData().getProfileInfo().getPhoneCode()));

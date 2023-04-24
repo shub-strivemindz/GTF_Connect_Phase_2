@@ -355,7 +355,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-        holder.binding.memberContainer.setOnClickListener(view -> {
+        holder.binding.memberProfileContainer.setOnClickListener(view -> {
             channelChatListener.viewMemberProfile(Integer.parseInt(userID),list.get(position).getGCMemberID(),Integer.parseInt(list.get(position).getGroupChatID()),list.get(position).getGroupChannelID());
         });
 

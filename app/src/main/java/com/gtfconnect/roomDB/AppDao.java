@@ -16,6 +16,7 @@ import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public interface AppDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertExclusiveOfferData(ExclusiveOfferDataModel exclusiveOfferDataModel);
+
+    @Query("delete from exclusive_offer_data where groupChannelID = :groupChannelID")
+    void deleteExclusiveOffer(int groupChannelID);
 
     @Query("delete from exclusive_offer_data")
     void delete_exclusive_offer_data();
@@ -44,6 +48,20 @@ public interface AppDao {
 
 
 
+
+
+    // -------------------------------------------------------------------- Save Image Response Data -----------------------------------------------------
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertImageInGallery(GroupChannelGalleryEntity groupChannelGalleryEntity);
+
+
+    @Query("delete from group_channel_gallery")
+    void delete_gallery_data();
+
+
+    @Query("select * from group_channel_gallery where GalleryType = 'PROFILE'")
+    LiveData<GroupChannelGalleryEntity> get_profile_image();
 
 
     // -------------------------------------------------------------------- Channel Dashboard Response Data -----------------------------------------------------

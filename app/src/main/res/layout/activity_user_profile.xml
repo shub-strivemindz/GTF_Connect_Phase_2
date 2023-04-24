@@ -64,12 +64,45 @@
             android:layout_height="@dimen/_75sdp"
             android:orientation="horizontal">
 
-            <ImageView
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".24"
-                android:src="@drawable/bot2"
-                android:layout_marginVertical="@dimen/_12sdp"/>
+                android:layout_weight=".14"
+                android:layout_margin="@dimen/_14sdp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/theme_green">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:id="@+id/profile_image"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <RelativeLayout
+                android:id="@+id/update_profile_pic"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:elevation="@dimen/_2sdp"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:background="@drawable/update_profile_pic_icon_bg">
+
+                <ImageView
+                    android:layout_centerInParent="true"
+                    android:layout_width="@dimen/_8sdp"
+                    android:layout_height="@dimen/_8sdp"
+                    android:src="@drawable/refresh_circle"/>
+
+            </RelativeLayout>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_marginVertical="@dimen/_10sdp"

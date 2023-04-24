@@ -6,16 +6,36 @@
     android:background="@color/background"
     android:orientation="vertical">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:fitsSystemWindows="true"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@color/background"
+                android:fitsSystemWindows="true"
+                app:expandedTitleMarginEnd="@dimen/_64sdp"
+                app:expandedTitleMarginStart="@dimen/_48sdp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
+                <LinearLayout
                 android:id="@+id/header_container"
                 android:layout_width="match_parent"
                 android:background="@color/theme_green"
@@ -85,7 +105,7 @@
                             android:text="Online"
                             android:textColor="@color/white"
                             android:fontFamily="@font/open_sans"
-                            android:textSize="@dimen/_11ssp"
+                            android:textSize="@dimen/_9ssp"
                             android:textStyle="bold"
                             android:layout_marginStart="@dimen/_16sdp"/>
 
@@ -113,13 +133,13 @@
 
         </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_below="@id/header_container"
-                android:id="@+id/report_user"
-                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_45sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_below="@id/header_container"
+                    android:id="@+id/report_user"
+                    android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_gravity="center"
@@ -143,6 +163,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat"
+                    android:textColor="@color/profileTextColor"
                     android:textFontWeight="400"
                     android:textSize="@dimen/_11ssp"
                     android:text="Report this user"/>
@@ -178,11 +199,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:fontFamily="@font/montserrat"
+                        android:textColor="@color/profileTextColor"
                         android:textFontWeight="400"
                         android:textSize="@dimen/_11ssp"
                         android:text="Block this user"/>
 
                 </LinearLayout>
+
+                </RelativeLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar9"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
+                android:background="@color/background"
+                android:visibility="gone"
+                app:layout_collapseMode="pin"
+                app:title="" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             <com.google.android.material.tabs.TabLayout
                 android:layout_marginStart="@dimen/_8sdp"
@@ -203,10 +238,12 @@
                     android:layout_height="wrap_content"
                     android:text="Document" />
 
+<!--
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Links"/>
+-->
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -221,6 +258,16 @@
                 android:alpha=".2"
                 android:layout_height="1dp"/>
 
+            </com.google.android.material.appbar.AppBarLayout>
+
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/layoutNestedScroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="@dimen/_6sdp"
                 android:id="@+id/profile_recycler"
@@ -229,8 +276,8 @@
                 android:layout_below="@id/tab_layout"
                 android:layout_marginBottom="@dimen/_20sdp"/>
 
-        </RelativeLayout>
+            </androidx.core.widget.NestedScrollView>
 
-    </androidx.core.widget.NestedScrollView>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

@@ -159,4 +159,8 @@ dependencies {
 
     // Manipulate View Custom Number Picker
     implementation 'io.github.ShawnLin013:number-picker:2.4.13'
+
+
+    // Video playback
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.5'
 }

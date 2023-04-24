@@ -20,6 +20,8 @@ public class ApiUrls {
 
     public static final String UPDATE_PROFILE_DATA = "updateprofile";
 
+    public static final String UPDATE_PROFILE_PIC = "update_profile_pic";
+
     public static final String URL_REGISTRATION = "registration";
 
     public static final String URL_LOGIN = "login";
@@ -70,4 +72,6 @@ public class ApiUrls {
     public static final String URL_GROUP_UPDATE_DUMMY_USER = "dummy_user/update";
 
     public static final String URL_GET_EXCLUSIVE_OFFER = "exclusive-group-channel";
+
+    public static final String URL_GET_GROUP_CHANNEL_MEMBER_PROFILE = "user-info-media";
 }

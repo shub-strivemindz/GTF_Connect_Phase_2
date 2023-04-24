@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 
 public class AuthRepo {
     /*private final AppDao appDao;
@@ -73,11 +74,9 @@ public class AuthRepo {
     }
 
 
-    /*public LiveData<ProfileData> getUser() {
-        return appDao.getUserData();
-    }
 
-    public LiveData<List<CountryData>> GetCountry() {
-        return appDao.GetCountryList();
-    }*/
+
+    public Observable<JsonElement> update_profile_pic(String api_token, int userID, MultipartBody.Part image) {
+        return restService.update_profile_pic(api_token,userID,image);
+    }
 }

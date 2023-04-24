@@ -209,35 +209,43 @@ public class AuthViewModel extends AndroidViewModel {
             }
         }));
     }
-/*
 
 
-    // user access
-    public void insertUser(ProfileData loginData) {
-        repo.insertUser(loginData);
+
+
+    public void updateProfilePic(String api_token,int userID,File image){
+        RequestBody part =
+                RequestBody.create(
+                        MediaType.parse("*/*"),
+                        image
+                );
+        MultipartBody.Part image_part = MultipartBody.Part.createFormData("ProfilePic", image.getName(), part);
+
+
+
+
+        disposables.add(repo.update_profile_pic(api_token,userID,image_part).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+
+
     }
 
-    public void UpdateImage(String url,int id) {
-        repo.UpdateImage(url,id);
-    }
 
-    public void UpdateEmail(String email,int id) {
-        repo.UpdateEmail(email,id);
-    }
-
-
-    public LiveData<ProfileData> getUSer() {
-        return repo.getUser();
-    }
-
-    public LiveData<List<CountryData>> GetCountry() {
-        return repo.GetCountry();
-    }
-
-    public void logout() {
-        repo.logout();
-    }
-*/
 
     @Override
     protected void onCleared() {

@@ -35,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="razer.trade.zip"
                 android:textSize="@dimen/_12ssp"
+                android:id="@+id/document_name"
                 android:fontFamily="@font/poppins500"/>
 
             <TextView
@@ -42,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/_3sdp"
+                android:id="@+id/document_size"
                 android:text="40 kb"
                 android:textSize="@dimen/_10ssp"
                 android:fontFamily="@font/poppins"

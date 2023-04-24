@@ -4,6 +4,10 @@ import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,7 +21,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
@@ -31,18 +44,26 @@ import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityHomeBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.UnreadCountHeaderListener;
+import com.gtfconnect.models.ProfileResponseModel;
+import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferResponseModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GalleryTypeStatus;
+import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.services.SocketService;
 import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.ui.screenUI.userProfileModule.UserProfileScreen;
+import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.AuthViewModel;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderListener, InternetService.ReceiverListener,ApiResponseListener {
 
@@ -80,8 +101,13 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
     private int requestType ;
 
 
+    private ProfileResponseModel profileResponseModel;
+
     private DatabaseViewModel databaseViewModel;
 
+    private GroupChannelGalleryEntity galleryEntity;
+
+    private List<ExclusiveOfferDataModel> exclusiveOfferDataModels;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -202,7 +228,6 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
-
         requestType = GET_PROFILE_DATA;
         connectViewModel.getUserProfile(PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
 
@@ -212,6 +237,46 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         Log.d("api_token","1 = "+PreferenceConnector.readString(this,PreferenceConnector.API_CONNECT_TOKEN,""));
         Log.d("api_token","2 = "+PreferenceConnector.readString(this,PreferenceConnector.API_GTF_TOKEN_,""));
     }
+
+
+    // =============================================================== Getting Images Locally from database =================================================
+    private void loadLocalData(){
+
+        galleryEntity = new GroupChannelGalleryEntity();
+
+        // ===================================================== Profile Image Loader ================================================================
+
+        databaseViewModel.getProfileImage().observe(this, groupChannelGalleryEntity -> {
+
+            if (groupChannelGalleryEntity != null && groupChannelGalleryEntity.getImageData() != null) {
+
+                galleryEntity = groupChannelGalleryEntity;
+
+                Bitmap profileImage = LocalGalleryUtil.getImageFromDB(groupChannelGalleryEntity.getImageData());
+                binding.profileImage.setImageBitmap(profileImage);
+            }
+        });
+
+
+        // =================================================== Just to check and update Exclusive Offer List =====================================================
+
+        exclusiveOfferDataModels = new ArrayList<>();
+        //Get exclusive offers :
+        databaseViewModel.getExclusiveOfferData().observe(this, getExclusiveOfferList -> {
+            if (getExclusiveOfferList != null && !getExclusiveOfferList.isEmpty()) {
+                exclusiveOfferDataModels.addAll(getExclusiveOfferList);
+            }
+        });
+
+    }
+
+
+
+
+
+
+
+
 
     private void setBottomNavigation() {
 
@@ -305,6 +370,8 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
     protected void onResume() {
         super.onResume();
         isSearchBarOpened = false;
+
+        loadLocalData();
 
         binding.greeting.setText(Utils.getDashboardGreeting());
         setProfileDetails();
@@ -415,6 +482,30 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
         if (requestType == GET_PROFILE_DATA){
 
+            profileResponseModel = new ProfileResponseModel();
+
+          Gson gson = new Gson();
+          Type  type = new TypeToken<ProfileResponseModel>(){}.getType();
+
+
+          profileResponseModel = gson.fromJson(jsonObject,type);
+
+            if (galleryEntity != null && galleryEntity.getImageUrl()!=null) {
+                if (!galleryEntity.getImageUrl().equalsIgnoreCase(profileResponseModel.getData().getProfileInfo().getProfileImage())) {
+                    saveAndLoadImage("Condition 1");
+                }
+            }
+            else{
+                if (profileResponseModel != null && profileResponseModel.getData() != null && profileResponseModel.getData().getProfileInfo() != null){
+                    if (profileResponseModel.getData().getProfileInfo().getProfileThumbnail() != null)
+                    {
+                        saveAndLoadImage("Condition 2");
+                    }
+                }
+            }
+
+
+            Log.d("api_called","exclusive");
             requestType = GET_EXCLUSIVE_OFFER;
             connectViewModel.get_exclusive_offers(PreferenceConnector.readString(this,PreferenceConnector.API_GTF_TOKEN_,""),"android","test","",1);
 
@@ -429,8 +520,78 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
             ExclusiveOfferResponseModel exclusiveOfferResponseModel = gson.fromJson(jsonObject,type);
 
 
+            // =================================================== Just to check and update Exclusive Offer List =====================================================
+
+            /***
+             * In Below code ======= Data of both list must be in sorted form for Conditional checks
+             * Conditional checks for new Exclusive offer entry in the list.
+             * Check 1 = IF New entry has been made.
+             * Check 2 = IF any entry removed.
+             */
+
+            if (exclusiveOfferDataModels != null && !exclusiveOfferDataModels.isEmpty()){
+                if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData()!=null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
+
+                    // Check 1 =========
+                    if (exclusiveOfferResponseModel.getData().getList().size() > exclusiveOfferDataModels.size()){
+
+                        for (int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++) {
+                            boolean checkFlag = true;
+
+                            for (int j = 0; j < exclusiveOfferDataModels.size(); j++) {
+
+                                if (!Objects.equals(exclusiveOfferDataModels.get(j).getGroupChannelID(), exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID())){
+                                    checkFlag = false;
+                                    break;
+                                }
+                            }
+                            if (!checkFlag){
+                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+                            }
+                        }
+                    }
+                    // Check 2 =============
+                    else if (exclusiveOfferResponseModel.getData().getList().size() < exclusiveOfferDataModels.size()) {
+
+                        for (int i = 0; i < exclusiveOfferDataModels.size(); i++) {
+                            boolean checkFlag = true;
+
+                            for (int j = 0; j < exclusiveOfferResponseModel.getData().getList().size(); j++) {
+
+                                if (!Objects.equals(exclusiveOfferDataModels.get(i).getGroupChannelID(), exclusiveOfferResponseModel.getData().getList().get(j).getGroupChannelID())) {
+                                    checkFlag = false;
+                                    break;
+                                }
+                            }
+                            if (!checkFlag) {
+                                databaseViewModel.deleteExclusiveOffer(exclusiveOfferDataModels.get(i).getGroupChannelID());
+                            }
+                        }
+                    }
+                    else {
+                        for (int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++) {
+                            boolean checkFlag = true;
+
+                            for (int j = 0; j < exclusiveOfferDataModels.size(); j++) {
+
+                                if (!Objects.equals(exclusiveOfferDataModels.get(j).getGroupChannelID(), exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID())){
+                                    checkFlag = false;
+                                    break;
+                                }
+                            }
+                            if (!checkFlag){
+                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+                            }
+                        }
+                    }
+                }
+            }
+
+
             if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData()!=null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()){
                 for(int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++){
+                    Log.d("Exclusive_data","2 ===== "+exclusiveOfferDataModels.get(i).getGroupChannelID());
+
                     databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
                 }
             }
@@ -438,4 +599,46 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         }
 
     }
+
+
+
+    private void saveAndLoadImage(String tag)
+    {
+
+        Log.d("Function",tag);
+
+
+        //Setting up loader on post
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(circularProgressDrawable);
+        requestOptions.error(R.drawable.image_not_found);
+        requestOptions.skipMemoryCache(true);
+        requestOptions.fitCenter();
+
+        Glide.with(this).load(profileResponseModel.getData().getProfileInfo().getProfileImage()).
+                listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                        // Saving Image
+
+                        databaseViewModel.insertImageInGallery(LocalGalleryUtil.saveImage("Profile", GalleryTypeStatus.PROFILE.name(),resource,profileResponseModel.getData().getProfileInfo().getProfileImage(),profileResponseModel.getData().getProfileInfo().getProfileThumbnail(),0,0));
+                        return false;
+                    }
+                }).
+                fitCenter().apply(requestOptions).
+                transition(DrawableTransitionOptions.withCrossFade()).into(binding.profileImage);
+
+    }
+
 }

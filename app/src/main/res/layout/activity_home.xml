@@ -30,15 +30,17 @@
                     app:cardElevation="0dp"
                     android:layout_width="@dimen/_45sdp"
                     android:layout_height="@dimen/_45sdp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="1dp"
                     app:cardCornerRadius="@dimen/_100sdp">
 
                     <ImageView
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bot2"
-                        android:src="@drawable/avatar_circle3"/>
+                        android:layout_width="match_parent"
+                        android:id="@+id/profile_image"
+                        android:scaleType="centerCrop"
+                        android:layout_height="match_parent" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -131,7 +133,6 @@
         app:defaultNavHost="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:navGraph="@navigation/home_nav_graph" />
-
 
     <com.google.android.material.tabs.TabLayout
         android:layout_gravity="bottom"

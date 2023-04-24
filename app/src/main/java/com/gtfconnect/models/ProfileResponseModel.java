@@ -42,6 +42,150 @@ public class ProfileResponseModel {
     }
 
 
+    public class CityList {
+
+        @SerializedName("CityID")
+        @Expose
+        private Integer cityID;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("StateID")
+        @Expose
+        private Integer stateID;
+
+        public Integer getCityID() {
+            return cityID;
+        }
+
+        public void setCityID(Integer cityID) {
+            this.cityID = cityID;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getStateID() {
+            return stateID;
+        }
+
+        public void setStateID(Integer stateID) {
+            this.stateID = stateID;
+        }
+
+    }
+    public class CountryList {
+
+        @SerializedName("CountryID")
+        @Expose
+        private Integer countryID;
+        @SerializedName("sortname")
+        @Expose
+        private String sortname;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("nicename")
+        @Expose
+        private String nicename;
+        @SerializedName("phonecode")
+        @Expose
+        private Integer phonecode;
+
+        public Integer getCountryID() {
+            return countryID;
+        }
+
+        public void setCountryID(Integer countryID) {
+            this.countryID = countryID;
+        }
+
+        public String getSortname() {
+            return sortname;
+        }
+
+        public void setSortname(String sortname) {
+            this.sortname = sortname;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getNicename() {
+            return nicename;
+        }
+
+        public void setNicename(String nicename) {
+            this.nicename = nicename;
+        }
+
+        public Integer getPhonecode() {
+            return phonecode;
+        }
+
+        public void setPhonecode(Integer phonecode) {
+            this.phonecode = phonecode;
+        }
+
+    }
+    public class Data {
+
+        @SerializedName("profile_info")
+        @Expose
+        private ProfileInfo profileInfo;
+        @SerializedName("user_role_info")
+        @Expose
+        private UserRoleInfo userRoleInfo;
+        @SerializedName("user_permission")
+        @Expose
+        private UserPermission userPermission;
+        @SerializedName("user_setting")
+        @Expose
+        private List<UserSetting> userSetting;
+
+        public ProfileInfo getProfileInfo() {
+            return profileInfo;
+        }
+
+        public void setProfileInfo(ProfileInfo profileInfo) {
+            this.profileInfo = profileInfo;
+        }
+
+        public UserRoleInfo getUserRoleInfo() {
+            return userRoleInfo;
+        }
+
+        public void setUserRoleInfo(UserRoleInfo userRoleInfo) {
+            this.userRoleInfo = userRoleInfo;
+        }
+
+        public UserPermission getUserPermission() {
+            return userPermission;
+        }
+
+        public void setUserPermission(UserPermission userPermission) {
+            this.userPermission = userPermission;
+        }
+
+        public List<UserSetting> getUserSetting() {
+            return userSetting;
+        }
+
+        public void setUserSetting(List<UserSetting> userSetting) {
+            this.userSetting = userSetting;
+        }
+
+    }
     public class Permission {
 
         @SerializedName("PermissionID")
@@ -221,15 +365,18 @@ public class ProfileResponseModel {
         @SerializedName("UserID")
         @Expose
         private Integer userID;
+        @SerializedName("ProfileThumbnail")
+        @Expose
+        private String profileThumbnail;
         @SerializedName("country")
         @Expose
-        private CountryMain countryMain;
+        private CountryList countryList;
         @SerializedName("state")
         @Expose
-        private StateMain stateMain;
+        private StateList stateList;
         @SerializedName("city")
         @Expose
-        private CityMain cityMain;
+        private CityList cityList;
 
         public Integer getGTFUserID() {
             return gTFUserID;
@@ -447,28 +594,36 @@ public class ProfileResponseModel {
             this.userID = userID;
         }
 
-        public CountryMain getCountryMain() {
-            return countryMain;
+        public String getProfileThumbnail() {
+            return profileThumbnail;
         }
 
-        public void setCountryMain(CountryMain countryMain) {
-            this.countryMain = countryMain;
+        public void setProfileThumbnail(String profileThumbnail) {
+            this.profileThumbnail = profileThumbnail;
         }
 
-        public StateMain getStateMain() {
-            return stateMain;
+        public CountryList getCountryList() {
+            return countryList;
         }
 
-        public void setStateMain(StateMain stateMain) {
-            this.stateMain = stateMain;
+        public void setCountryList(CountryList countryList) {
+            this.countryList = countryList;
         }
 
-        public CityMain getCityMain() {
-            return cityMain;
+        public StateList getStateList() {
+            return stateList;
         }
 
-        public void setCityMain(CityMain cityMain) {
-            this.cityMain = cityMain;
+        public void setStateList(StateList stateList) {
+            this.stateList = stateList;
+        }
+
+        public CityList getCityList() {
+            return cityList;
+        }
+
+        public void setCityList(CityList cityList) {
+            this.cityList = cityList;
         }
 
     }
@@ -579,7 +734,7 @@ public class ProfileResponseModel {
         }
 
     }
-    public class StateMain {
+    public class StateList {
 
         @SerializedName("StateID")
         @Expose
@@ -639,150 +794,7 @@ public class ProfileResponseModel {
 
     }
     public class UserPermission {
-    }
 
-    public class CityMain {
-
-        @SerializedName("CityID")
-        @Expose
-        private Integer cityID;
-        @SerializedName("name")
-        @Expose
-        private String name;
-        @SerializedName("StateID")
-        @Expose
-        private Integer stateID;
-
-        public Integer getCityID() {
-            return cityID;
-        }
-
-        public void setCityID(Integer cityID) {
-            this.cityID = cityID;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Integer getStateID() {
-            return stateID;
-        }
-
-        public void setStateID(Integer stateID) {
-            this.stateID = stateID;
-        }
-
-    }
-    public class CountryMain {
-
-        @SerializedName("CountryID")
-        @Expose
-        private Integer countryID;
-        @SerializedName("sortname")
-        @Expose
-        private String sortname;
-        @SerializedName("name")
-        @Expose
-        private String name;
-        @SerializedName("nicename")
-        @Expose
-        private String nicename;
-        @SerializedName("phonecode")
-        @Expose
-        private Integer phonecode;
-
-        public Integer getCountryID() {
-            return countryID;
-        }
-
-        public void setCountryID(Integer countryID) {
-            this.countryID = countryID;
-        }
-
-        public String getSortname() {
-            return sortname;
-        }
-
-        public void setSortname(String sortname) {
-            this.sortname = sortname;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getNicename() {
-            return nicename;
-        }
-
-        public void setNicename(String nicename) {
-            this.nicename = nicename;
-        }
-
-        public Integer getPhonecode() {
-            return phonecode;
-        }
-
-        public void setPhonecode(Integer phonecode) {
-            this.phonecode = phonecode;
-        }
-
-    }
-    public class Data {
-
-        @SerializedName("profile_info")
-        @Expose
-        private ProfileInfo profileInfo;
-        @SerializedName("user_role_info")
-        @Expose
-        private UserRoleInfo userRoleInfo;
-        @SerializedName("user_permission")
-        @Expose
-        private UserPermission userPermission;
-        @SerializedName("user_setting")
-        @Expose
-        private List<UserSetting> userSetting;
-
-        public ProfileInfo getProfileInfo() {
-            return profileInfo;
-        }
-
-        public void setProfileInfo(ProfileInfo profileInfo) {
-            this.profileInfo = profileInfo;
-        }
-
-        public UserRoleInfo getUserRoleInfo() {
-            return userRoleInfo;
-        }
-
-        public void setUserRoleInfo(UserRoleInfo userRoleInfo) {
-            this.userRoleInfo = userRoleInfo;
-        }
-
-        public UserPermission getUserPermission() {
-            return userPermission;
-        }
-
-        public void setUserPermission(UserPermission userPermission) {
-            this.userPermission = userPermission;
-        }
-
-        public List<UserSetting> getUserSetting() {
-            return userSetting;
-        }
-
-        public void setUserSetting(List<UserSetting> userSetting) {
-            this.userSetting = userSetting;
-        }
 
     }
     public class UserRoleInfo {
@@ -904,4 +916,3 @@ public class ProfileResponseModel {
 
     }
 }
-

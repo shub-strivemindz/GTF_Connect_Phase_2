@@ -12,6 +12,7 @@
         app:cardCornerRadius="@dimen/_10sdp">
 
         <RelativeLayout
+            android:id="@+id/header_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -74,6 +75,24 @@
                 android:textSize="@dimen/_10ssp"/>
 
         </LinearLayout>
+
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:controller_layout_id="@layout/custom_controller"
+            app:hide_on_touch="true"
+            app:resize_mode="fit"
+            app:show_timeout="5000"
+            app:surface_type="texture_view" />
+
+        <ProgressBar
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/progress_bar"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true"/>
 
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

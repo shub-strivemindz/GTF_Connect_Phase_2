@@ -88,4 +88,10 @@ public class ConnectRepo {
     public Observable<JsonElement> update_group_channel_reactions_settings(int id,String endPoint, String api_token,String device_type, String device_token, Map<String,Object> params) {
         return restService.update_group_channel_reactions_settings(id, endPoint, api_token, device_type, device_token,params);
     }
+
+
+
+    public Observable<JsonElement> get_group_channel_member_media(int id, String api_token,String device_type, String device_token,String memberID) {
+        return restService.get_group_channel_member_media(id,api_token,device_type,device_token,memberID);
+    }
 }

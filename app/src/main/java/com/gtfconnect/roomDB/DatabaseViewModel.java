@@ -16,6 +16,7 @@ import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 
 import java.util.List;
 
@@ -30,9 +31,40 @@ public class DatabaseViewModel extends AndroidViewModel {
 
 
 
+
+
+
+    public void insertImageInGallery(GroupChannelGalleryEntity dataModel) {
+        repo.insertImageInGallery(dataModel);
+    }
+
+    public LiveData<GroupChannelGalleryEntity> getProfileImage() {
+        return repo.getProfileImage();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void insertExclusiveOffer(ExclusiveOfferDataModel dataModel) {
         repo.insertExclusiveOfferData(dataModel);
     }
+
+
+
+    public void deleteExclusiveOffer(int groupChannelID) {
+        repo.deleteExclusiveOffer(groupChannelID);
+    }
+
+
 
     public LiveData<List<ExclusiveOfferDataModel>> getExclusiveOfferData() {
         return repo.getExclusiveOfferData();

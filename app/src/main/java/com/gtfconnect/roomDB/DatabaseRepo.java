@@ -13,6 +13,7 @@ import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -25,6 +26,35 @@ public class DatabaseRepo {
         AppDatabase appDatabase = AppDatabase.getInstance(application);
         appDao = appDatabase.appDao();
     }
+
+
+
+
+
+    // ================================================================ Gallery Data =====================================================================
+
+    public void insertImageInGallery(GroupChannelGalleryEntity galleryEntity) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                appDao.delete_gallery_data();
+                appDao.insertImageInGallery(galleryEntity);
+
+            }
+        });
+    }
+
+    public LiveData<GroupChannelGalleryEntity> getProfileImage() {
+        return appDao.get_profile_image();
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -44,6 +74,20 @@ public class DatabaseRepo {
             }
         });
     }
+
+
+
+    public void deleteExclusiveOffer(int groupChannelID) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                appDao.deleteExclusiveOffer(groupChannelID);
+
+            }
+        });
+    }
+
+
 
     public LiveData<List<ExclusiveOfferDataModel>> getExclusiveOfferData() {
         return appDao.getExclusiveOfferList();

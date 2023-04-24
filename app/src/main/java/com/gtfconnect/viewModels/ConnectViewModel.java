@@ -324,6 +324,33 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
+
+
+    public void get_group_channel_member_media(int id, String api_token,String device_type, String device_token,String memberID) {
+        disposables.add(repo.get_group_channel_member_media(id, api_token, device_type, device_token,memberID).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
     public void get_exclusive_offers(String api_token, String device_type, String device_token,String search, int page) {
 
         final int per_page = 10;

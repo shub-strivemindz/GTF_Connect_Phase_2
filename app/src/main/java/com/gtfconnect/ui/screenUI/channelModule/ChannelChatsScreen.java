@@ -933,7 +933,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }.getType();
 
         responseModel = new ChannelChatResponseModel();
-        list = new ArrayList<>();
 
         try {
             jsonRawObject = new JSONObject();
@@ -2451,7 +2450,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     @Override
     public void viewMemberProfile(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
 
-        startActivity(new Intent(ChannelChatsScreen.this, ChannelMemberProfileScreen.class));
+        Intent intent = new Intent(ChannelChatsScreen.this, ChannelMemberProfileScreen.class);
+        intent.putExtra("gc_member_id",String.valueOf(gcMemberId));
+        startActivity(intent);
 
     }
 

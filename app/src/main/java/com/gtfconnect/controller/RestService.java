@@ -246,5 +246,34 @@ public interface RestService {
                                                  @Query("page") int page,
                                                  @Query("per_page") int per_page);
 
+
+
+
+
+
+
+    @Multipart
+    @POST(ApiUrls.UPDATE_PROFILE_PIC)
+    Observable<JsonElement> update_profile_pic(
+            @Header ("Authorization") String api_token,
+            @Query("UserID") int userId,
+            @Part MultipartBody.Part image
+    );
+
+
+
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ApiUrls.URL_GET_GROUP_CHANNEL_MEMBER_PROFILE)
+    Observable<JsonElement> get_group_channel_member_media(@Path("id") int id,
+                                                         @Header ("Authorization") String api_token,
+                                                         @Header("DeviceType") String device_type,
+                                                         @Header("DeviceToken") String device_token,
+                                                         @Query("gc_member_id") String memberID);
+
 }
+
+
+
 

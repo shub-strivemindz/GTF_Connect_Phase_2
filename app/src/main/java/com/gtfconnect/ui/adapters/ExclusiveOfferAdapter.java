@@ -116,7 +116,7 @@ public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAd
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(circularProgressDrawable);
         requestOptions.error(R.drawable.image_not_found);
-        requestOptions.skipMemoryCache(true);
+        requestOptions.skipMemoryCache(false);
         requestOptions.fitCenter();
 
         Glide.with(context).load(imageUrl).
