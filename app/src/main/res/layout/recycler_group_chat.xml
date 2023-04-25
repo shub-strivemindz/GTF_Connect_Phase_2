@@ -624,17 +624,28 @@ more then 1000 top most trading courses+ daily or weekly"
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
-                android:id="@+id/dummy_user_container"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_20sdp"
                 android:gravity="end"
                 android:orientation="horizontal">
+
+                <CheckBox
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:scaleX=".8"
+                    android:id="@+id/select_post1"
+                    android:scaleY=".8"
+                    android:buttonTint="@color/white"
+                    android:visibility="gone"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="John Harper"
+                    android:id="@+id/dummy_user_name"
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:fontFamily="@font/open_sans"
                     android:textColor="@color/white"
@@ -642,6 +653,7 @@ more then 1000 top most trading courses+ daily or weekly"
 
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="1dp"
+                    android:id="@+id/dummy_user_time_divider"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_4sdp"
@@ -685,8 +697,8 @@ more then 1000 top most trading courses+ daily or weekly"
         android:id="@+id/received_message_container"
         android:layout_width="match_parent"
         android:elevation="1dp"
-        android:visibility="gone"
         android:clickable="true"
+        android:visibility="gone"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_40sdp"
         android:background="@drawable/group_message_received_background"
@@ -726,11 +738,8 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_alignParentStart="true"
                         android:orientation="horizontal">
-
-
-
-
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_gravity="center_vertical"
@@ -740,13 +749,12 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:background="#fff"
                             android:src="@drawable/bot2"/>
 
-
-
                         <TextView
                             android:id="@+id/user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:text="Lina Harper"
+                            android:maxLines="1"
                             android:textColor="@color/theme_green"
                             android:layout_marginStart="@dimen/_10sdp"
                             android:gravity="center_vertical"
@@ -759,6 +767,7 @@ more then 1000 top most trading courses+ daily or weekly"
 
                     <TextView
                         android:layout_toEndOf="@id/user_container"
+                        android:layout_toStartOf="@id/select_post"
                         android:id="@+id/time"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -770,7 +779,17 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:fontFamily="@font/open_sans"/>
 
 
-
+                    <CheckBox
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:scaleX=".8"
+                        android:id="@+id/select_post"
+                        android:visibility="gone"
+                        android:scaleY=".8"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:buttonTint="@color/theme_green"
+                        android:layout_marginEnd="@dimen/_16sdp" />
 
                 </RelativeLayout>
 

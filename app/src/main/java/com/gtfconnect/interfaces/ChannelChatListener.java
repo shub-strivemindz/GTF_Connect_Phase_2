@@ -34,7 +34,6 @@ public interface ChannelChatListener {
 
     void viewMemberProfile(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
-
-    void addDateChipAnimation();
+    void forwardMultiplePost(int selectedCount);
 
 }

@@ -139,5 +139,13 @@ public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAd
 
         }
     }
+
+
+
+
+    public void updateOfferList(List<ExclusiveOfferDataModel> exclusiveOfferDataModels){
+        this.exclusiveOfferDataModels = exclusiveOfferDataModels;
+        notifyDataSetChanged();
+    }
 }
 

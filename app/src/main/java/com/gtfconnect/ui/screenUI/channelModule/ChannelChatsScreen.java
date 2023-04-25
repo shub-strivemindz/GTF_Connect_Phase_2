@@ -261,11 +261,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private ChannelManageReactionModel reactionModel;
 
+    private boolean isListenersInitialized = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("Lifecycle Check ", "In the onCreate() event");
 
         binding = ActivityChannelChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -274,12 +277,38 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
 
         //destroyListeners();
+        gcMemberID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_MEMBER_ID, ""));
+        userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
+
+        channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
+
+        String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
+        binding.userName.setText(userName);
+
+
+        //if (!isListenersInitialized){
+            Log.d("Message_Received_Listener","Listener Initialization Check");
+
+            //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
+            userTypingListener();
+            messageReceivedListener();
+            updateLikeListener();
+            deletePostListener();
+            commentReceiver();
+            //deleteCommentListener();
+            //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
+
+
+
+         /*   isListenersInitialized = true;
+        }*/
 
         // list = new ArrayList<>();
         databaseEntity = new ChannelChatDbEntity();
 
         binding.quoteContainer.setVisibility(View.GONE);
         binding.attachmentContainer.setVisibility(View.GONE);
+        binding.forwardContainer.setVisibility(View.GONE);
 
         binding.sendMessage.setVisibility(View.GONE);
         binding.recordButton.setVisibility(View.VISIBLE);
@@ -296,15 +325,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
       /*  currentPage = 1;
         refreshGroupChatSocket();*/
-
-        //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
-        userTypingListener();
-        messageReceivedListener();
-        updateLikeListener();
-        deletePostListener();
-        commentReceiver();
-        //deleteCommentListener();
-        //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
 
         initiateClickListeners();
         sendMessageAndAudioRecorderEvents();
@@ -371,7 +391,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     Log.d("Page", "" + currentPage);
 
-                    binding.loader.setVisibility(View.VISIBLE);
+                    //binding.loader.setVisibility(View.VISIBLE);
 
                     updateChannelChatSocketData();
 
@@ -757,7 +777,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             }
         });
-        loadLocalData();
 
         String api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
@@ -798,15 +817,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void loadLocalData() {
 
-        gcMemberID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_MEMBER_ID, ""));
-        userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
-
-        channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
-
-        String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
-        binding.userName.setText(userName);
-
-        Log.d("run", " times");
+        Log.d("run", " times = "+channelID);
 
         databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, new Observer<ChannelChatDbEntity>() {
             @Override
@@ -826,6 +837,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         int last_index = channelChatDbEntities.getChatBodyDbEntitiesLists().size();
                         lastLocalGroupChatID = "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(last_index - 1).getGroupChatID();
                         Log.d("ChannelChatDataChatDB", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(0).getGroupChatID());
+
 
                         for (int i = channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1; i >= 0; i--) {
 
@@ -851,6 +863,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                         if (!isDataLoadedOnce) {
                             loadDataToAdapter();
+                            refreshGroupChatSocket();
                             isDataLoadedOnce = true;
                         }
 
@@ -909,7 +922,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
-
         // Load Comments List Data -----
         channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
         binding.chats.setHasFixedSize(true);
@@ -925,7 +937,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     // -------------------------------------------------------------------Socket  Implementation --------------------------------------------------------------------
 
+
+
+
     private void refreshGroupChatSocket() {
+
+
         Gson gson = new Gson();
         Type type;
 
@@ -943,6 +960,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             Log.d("Chat list params --", "Refresh = " + jsonRawObject.toString());
 
+            Log.d("Message_Received_Listener","Refresh Fragment");
+
             //if (!isListLoadedOnce)
             //runOnUiThread(() -> rest.ShowDialogue());
 
@@ -951,7 +970,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 runOnUiThread(() -> rest.dismissProgressdialog());
 
                 JSONObject responseData = (JSONObject) args[0];
-                Log.d("Group Chat Data ----", responseData.toString());
+                Log.d("Channel Chat Data ----", responseData.toString());
 
                 JsonParser jsonParser = new JsonParser();
                 JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
@@ -961,7 +980,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 runOnUiThread(() -> {
 
-                    binding.loader.setVisibility(View.GONE);
+                    //binding.loader.setVisibility(View.GONE);
+
 
                     if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
 
@@ -984,21 +1004,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 insertDataInDB(responseModel);
                             }
 
-                            Log.d("ChannelGroupChat", "local chat ID = " + lastLocalGroupChatID);
-                            Log.d("ChannelGroupChat", "response chat ID = " + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
-                            Log.d("ChannelGroupChat", "response = " + responseModel.getData().getChatData().getRows().size());
+                            Log.d("ChannelChatDataChatDB", "local chat ID = " + lastLocalGroupChatID);
+                            Log.d("ChannelChatDataChatDB", "response chat ID = " + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
+                            Log.d("ChannelChatDataChatDB", "response = " + responseModel.getData().getChatData().getRows().size());
 
-                            /*for (int i = 0; i < ; i++) {
-                                lastLocalGroupChatID = ""+databaseEntity.getChatBodyDbEntitiesLists().get(i).getGroupChatID();
-                                if (lastLocalGroupChatID.equalsIgnoreCase(responseModel.getData().getChatData().getRows().get(0).getGroupChatID())) {
-                                    isDataInserted = true;
-                                    break;
-                                }
-                            }*/
-                            /*if (!isDataInserted) {
-                                Log.d("data_inserted",responseData.toString());
-                                insertDataInDB(responseModel);
-                            }*/
+
                         } else {
                             insertDataInDB(responseModel);
                         }
@@ -1013,6 +1023,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             Log.d("JsonException ---", e.toString());
         }
     }
+
+
+
+
 
   /*  private void getChannelChatSocketData() {
         isListLoadedOnce = true;
@@ -1143,7 +1157,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                         Log.d("SocketDB", responseData.toString());
 
-                        binding.loader.setVisibility(View.GONE);
+                        //binding.loader.setVisibility(View.GONE);
 
                         if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
                             insertDataInDB(responseModel);
@@ -1308,10 +1322,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private void messageReceivedListener() {
 
         Log.d("socket_connection>>", "" + socketInstance.connected());
+        Log.d("Message_Received_Listener","Channel Message Listener Method");
 
         socketInstance.on("messageReceived", args -> {
 
-            Log.d("Message", "Received");
+            Log.d("Message_Received_Listener", "Message Received");
 
             receivedMessage = new ChannelMessageReceivedModel();
 
@@ -2457,8 +2472,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
-    public void addDateChipAnimation() {
-
+    public void forwardMultiplePost(int selectedCount) {
+        if (selectedCount <= 0){
+            binding.forwardContainer.setVisibility(View.GONE);
+        }
+        else{
+            binding.forwardContainer.setVisibility(View.VISIBLE);
+            binding.forwardCount.setText(String.valueOf(selectedCount));
+        }
     }
 
     @Override
@@ -2716,7 +2737,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Log.d("Lifecycle Check ", "In the onResume() event");
 
         currentPage = 1;
-        refreshGroupChatSocket();
+        loadLocalData();
+
     }
 
     @Override

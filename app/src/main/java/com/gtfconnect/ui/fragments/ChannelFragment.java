@@ -77,9 +77,6 @@ public class ChannelFragment extends Fragment {
     {
         appDao = AppDatabase.getInstance(requireActivity().getApplication()).appDao();
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
-
-        //loadLocalData();
-
     }
 
 
@@ -196,9 +193,11 @@ public class ChannelFragment extends Fragment {
 
     private void messageReceived() {
 
-        socketInstance.on("messageReceived", args -> {
+        /*socketInstance.on("messageReceived", args -> {
+
+            Log.d("Message_Received_Listener","Channel Fragment");
             //updateChannelDashboardSocket();
-        });
+        });*/
     }
     @Override
     public void onStop() {

@@ -247,6 +247,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     ConnectViewModel connectViewModel;
 
+    private boolean showPostSelectionCheckBox = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -428,7 +430,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     isScrolling = false;
                     currentPage++;
 
-                    binding.loader.setVisibility(View.VISIBLE);
+                    //binding.loader.setVisibility(View.VISIBLE);
 
                     updateGroupChatSocket(true);
 
@@ -819,7 +821,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     subscribers = responseModel.getData().getSubscriptionCount();
                     binding.userSubscribers.setText(String.valueOf(subscribers));
 
-                    binding.loader.setVisibility(View.GONE);
+                    //binding.loader.setVisibility(View.GONE);
 
                     list.addAll(responseModel.getData().getChatData().getRows());
                     postBaseUrl = responseModel.getData().getBaseUrl();
@@ -880,7 +882,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         subscribers = responseModel.getData().getSubscriptionCount();
                         binding.userSubscribers.setText(String.valueOf(subscribers));
 
-                        binding.loader.setVisibility(View.GONE);
+                        //binding.loader.setVisibility(View.GONE);
+
+                        for (int i=0;i<responseModel.getData().getChatData().getRows().size();i++){
+                            responseModel.getData().getChatData().getRows().get(i).setShowPostSelection(showPostSelectionCheckBox);
+                        }
 
                         list.addAll(responseModel.getData().getChatData().getRows());
 
@@ -2136,6 +2142,25 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         rest.ShowDialogue();
 
         searchMessageInList(String.valueOf(groupChatId));*/
+    }
+
+    @Override
+    public void forwardMultiplePost(int selectedPostCount,boolean showPostSelection) {
+
+        showPostSelectionCheckBox = showPostSelection;
+
+        if (selectedPostCount <= 0){
+            binding.forwardContainer.setVisibility(View.GONE);
+        }
+        else{
+            binding.forwardContainer.setVisibility(View.VISIBLE);
+            binding.forwardCount.setText(String.valueOf(selectedPostCount));
+        }
+    }
+
+    @Override
+    public void updateChatList(ArrayList<GroupChatResponseModel.Row> list) {
+        this.list = list;
     }
 
     @Override

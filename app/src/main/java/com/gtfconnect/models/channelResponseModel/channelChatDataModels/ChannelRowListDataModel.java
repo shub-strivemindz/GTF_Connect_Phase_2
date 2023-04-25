@@ -92,7 +92,19 @@ public class ChannelRowListDataModel {
     @Expose
     private List<ChannelMediaResponseModel> media;
 
+
+    private boolean showPostSelection = false;
+
     private boolean isAudioDownloaded = false;
+
+
+    public boolean isShowPostSelection() {
+        return showPostSelection;
+    }
+
+    public void setShowPostSelection(boolean showPostSelection) {
+        this.showPostSelection = showPostSelection;
+    }
 
     public boolean isAudioDownloaded() {
         return isAudioDownloaded;

@@ -1,8 +1,10 @@
 package com.gtfconnect.ui.adapters.commonGroupChannelAdapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -18,7 +20,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.medialibrary.VideoActivity;
 import com.gtfconnect.R;
+import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentMediaListItemBinding;
 import com.gtfconnect.databinding.FragmentUserDocumentItemBinding;
 import com.gtfconnect.databinding.FragmentUserLinkItemBinding;
@@ -26,6 +30,7 @@ import com.gtfconnect.models.groupChannelModels.GroupChannelMediaResponseModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GalleryTypeStatus;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.DocumentAdapter;
 import com.gtfconnect.utilities.LocalGalleryUtil;
+import com.gtfconnect.utilities.Utils;
 
 public class GroupChannelMemberMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -35,12 +40,18 @@ public class GroupChannelMemberMediaAdapter extends RecyclerView.Adapter<Recycle
 
     private GroupChannelMediaResponseModel mediaResponseModel;
 
+    private String base_url;
+
+    private Rest rest;
+
+    //private boolean isResponseLoaded ;
+
     public  GroupChannelMemberMediaAdapter(Context context,int viewType,GroupChannelMediaResponseModel mediaResponseModel){
 
         this.context = context;
         this.viewType = viewType;
         this.mediaResponseModel = mediaResponseModel;
-
+        //this.isResponseLoaded = isResponseLoaded;
     }
 
     @NonNull
@@ -62,18 +73,47 @@ public class GroupChannelMemberMediaAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
+        base_url = "https://gtfconnect-api.strivemindz.com/";
+
         if (mediaResponseModel != null && mediaResponseModel.getData() != null) {
 
             if (viewType == 3) {
 
                 MediaViewHolder viewHolder = (MediaViewHolder) holder;
 
-                if (mediaResponseModel.getData().getDocument() != null && !mediaResponseModel.getData().getDocument().isEmpty()) {
-                    if(mediaResponseModel.getData().getMedia().get(position).getFileName() != null){
+                if (mediaResponseModel.getData().getMedia() != null && !mediaResponseModel.getData().getMedia().isEmpty()) {
 
+                    if (Utils.checkFileType(mediaResponseModel.getData().getMedia().get(position).getMimeType()).equalsIgnoreCase("video")){
+                        viewHolder.binding.playButton.setVisibility(View.VISIBLE);
                     }
-                }
+                    else{
+                        viewHolder.binding.playButton.setVisibility(View.GONE);
+                    }
 
+
+                    if (mediaResponseModel.getData().getMedia().get(position).getStoragePath() != null){
+                        if(mediaResponseModel.getData().getMedia().get(position).getFileName() != null){
+                            base_url += mediaResponseModel.getData().getMedia().get(position).getStoragePath() + mediaResponseModel.getData().getMedia().get(position).getFileName();
+                            loadImage(base_url,viewHolder.binding.mediaImage);
+                        }
+                    }
+                    else{
+                        if(mediaResponseModel.getData().getMedia().get(position).getFileName() != null){
+                            base_url += mediaResponseModel.getData().getMedia().get(position).getFileName();
+                            loadImage(base_url,viewHolder.binding.mediaImage);
+                        }
+                    }
+
+
+
+                    viewHolder.binding.playButton.setOnClickListener(v -> {
+
+                        context.startActivity(new Intent(context, VideoActivity.class)
+                                .putExtra("videourl", base_url)
+                                .putExtra("start_time", "0")
+                                .putExtra("end_time", "0"));
+                    });
+                }
             } else {
                 DocumentViewHolder viewHolder = (DocumentViewHolder) holder;
                 if (mediaResponseModel.getData().getDocument() != null && !mediaResponseModel.getData().getDocument().isEmpty()) {

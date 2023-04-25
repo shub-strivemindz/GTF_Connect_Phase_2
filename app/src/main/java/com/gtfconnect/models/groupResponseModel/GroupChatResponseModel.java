@@ -276,6 +276,27 @@ public class GroupChatResponseModel {
         @Expose
         private List<GroupChatResponseModel.Medium> media;
 
+
+        private boolean isPostSelected = false;
+
+        private boolean showPostSelection = false;
+
+        public boolean isPostSelected() {
+            return isPostSelected;
+        }
+
+        public void setPostSelected(boolean postSelected) {
+            isPostSelected = postSelected;
+        }
+
+        public boolean isShowPostSelection() {
+            return showPostSelection;
+        }
+
+        public void setShowPostSelection(boolean showPostSelection) {
+            this.showPostSelection = showPostSelection;
+        }
+
         public String getGroupChatID() {
             return groupChatID;
         }

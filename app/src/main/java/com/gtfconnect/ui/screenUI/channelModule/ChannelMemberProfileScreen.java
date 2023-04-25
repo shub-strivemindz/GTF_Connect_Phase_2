@@ -6,7 +6,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,9 +19,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.work.impl.model.Preference;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
@@ -37,10 +43,12 @@ import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.SettingAda
 import com.gtfconnect.ui.adapters.commonGroupChannelAdapters.GroupChannelMemberMediaAdapter;
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
+import com.gtfconnect.utilities.GridItemDecoration;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class ChannelMemberProfileScreen extends AppCompatActivity implements ApiResponseListener{
 
@@ -57,6 +65,8 @@ public class ChannelMemberProfileScreen extends AppCompatActivity implements Api
     private GroupChannelMediaResponseModel groupChannelMediaResponseModel;
 
     private GroupChannelMemberMediaAdapter mediaAdapter;
+
+    //private boolean isDataResponseLoaded = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,17 +118,31 @@ public class ChannelMemberProfileScreen extends AppCompatActivity implements Api
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case 0:
+
+                        binding.mediaRecycler.setVisibility(View.GONE);
+                        binding.documentRecycler.setVisibility(View.VISIBLE);
+
                         mediaAdapter = new GroupChannelMemberMediaAdapter(ChannelMemberProfileScreen.this,1,groupChannelMediaResponseModel);
-                        binding.profileRecycler.setHasFixedSize(true);
-                        binding.profileRecycler.setLayoutManager(new LinearLayoutManager(ChannelMemberProfileScreen.this));
-                        binding.profileRecycler.setAdapter(mediaAdapter);
+                        binding.documentRecycler.setHasFixedSize(true);
+                        binding.documentRecycler.setLayoutManager(new LinearLayoutManager(ChannelMemberProfileScreen.this));
+                        binding.documentRecycler.setAdapter(mediaAdapter);
                         break;
 
                     case 1:
+
+                        binding.mediaRecycler.setVisibility(View.VISIBLE);
+                        binding.documentRecycler.setVisibility(View.GONE);
+
+                        int spanCount = 3; // 3 columns
+                        int spacing = 10; // 50px
+                        boolean includeEdge = true;
+
                         mediaAdapter = new GroupChannelMemberMediaAdapter(ChannelMemberProfileScreen.this,3,groupChannelMediaResponseModel);
-                        binding.profileRecycler.setHasFixedSize(true);
-                        binding.profileRecycler.setLayoutManager(new LinearLayoutManager(ChannelMemberProfileScreen.this));
-                        binding.profileRecycler.setAdapter(mediaAdapter);
+                        binding.mediaRecycler.setHasFixedSize(true);
+                        binding.mediaRecycler.setLayoutManager(new GridLayoutManager(ChannelMemberProfileScreen.this,3));
+                        binding.mediaRecycler.setAdapter(mediaAdapter);
+
+                        binding.mediaRecycler.addItemDecoration(new GridItemDecoration(spanCount, spacing, includeEdge));
                         break;
 /*
                     case 2:
@@ -176,12 +200,14 @@ public class ChannelMemberProfileScreen extends AppCompatActivity implements Api
 
     @Override
     public void onLoading() {
-        // rest.ShowDialogue();
+        //isDataResponseLoaded = false;
+        rest.ShowDialogue();
     }
 
     @Override
     public void onDataRender(JsonObject jsonObject) {
         renderResponse(jsonObject);
+
         //Toast.makeText(this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
     }
 
@@ -230,10 +256,38 @@ public class ChannelMemberProfileScreen extends AppCompatActivity implements Api
 
         groupChannelMediaResponseModel = gson.fromJson(jsonObject,type);
 
+        binding.mediaRecycler.setVisibility(View.GONE);
+        binding.documentRecycler.setVisibility(View.VISIBLE);
+
         mediaAdapter = new GroupChannelMemberMediaAdapter(ChannelMemberProfileScreen.this,1,groupChannelMediaResponseModel);
-        binding.profileRecycler.setHasFixedSize(true);
-        binding.profileRecycler.setLayoutManager(new LinearLayoutManager(ChannelMemberProfileScreen.this));
-        binding.profileRecycler.setAdapter(mediaAdapter);
+        binding.documentRecycler.setHasFixedSize(true);
+        binding.documentRecycler.setLayoutManager(new LinearLayoutManager(ChannelMemberProfileScreen.this));
+        binding.documentRecycler.setAdapter(mediaAdapter);
 
     }
+
+
+
+    /*private void recyclerAnimator()
+    {
+        Dialog dialog = new Dialog(this);
+        dialog.setCancelable(false);
+
+        dialog.setContentView(R.layout.loading_item);
+        LottieAnimationView animationView = dialog.findViewById(R.id.loading_animation);
+        animationView.setAnimation(R.raw.round_loader);
+        animationView.playAnimation();
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams layoutParams = Objects.requireNonNull(window).getAttributes();
+        layoutParams.gravity = Gravity.CENTER;
+        window.setAttributes(layoutParams);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        dialog.show();
+    }*/
 }

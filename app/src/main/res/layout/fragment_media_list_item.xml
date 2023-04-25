@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/_100sdp"
-    android:layout_height="@dimen/_100sdp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_95sdp"
+    android:layout_height="@dimen/_90sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:layout_width="match_parent"
@@ -9,4 +10,13 @@
         android:scaleType="centerCrop"
         android:id="@+id/media_image"/>
 
-</LinearLayout>
+    <ImageView
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:src="@drawable/play"
+        android:id="@+id/play_button"
+        app:tint="@color/theme_green"
+        android:layout_centerInParent="true"
+        android:elevation="@dimen/_20sdp"/>
+
+</RelativeLayout>

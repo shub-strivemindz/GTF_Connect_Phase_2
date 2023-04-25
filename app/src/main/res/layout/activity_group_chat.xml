@@ -341,6 +341,83 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_marginBottom="@dimen/_10sdp"
             android:layout_above="@id/search_container"
+            android:id="@+id/forward_container"
+            app:cardElevation="@dimen/_4sdp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#525656"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginHorizontal="@dimen/_50sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/forward_count"
+                        android:layout_gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/montserrat"
+                        android:textSize="@dimen/_11ssp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:textStyle="bold"
+                        android:text="1"/>
+
+                    <TextView
+                        android:layout_gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_10ssp"
+                        android:text="message selected"/>
+
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    app:cardBackgroundColor="#272727">
+
+                    <TextView
+                        android:layout_gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_10ssp"
+                        android:text="Forward"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_above="@id/search_container"
             android:id="@+id/attachment_container"
             app:cardElevation="@dimen/_4sdp"
             android:layout_width="match_parent"

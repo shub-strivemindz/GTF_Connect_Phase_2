@@ -95,12 +95,23 @@
                     android:fontFamily="@font/open_sans"/>
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_gravity="end"
             android:gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
+            <CheckBox
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:scaleX=".8"
+                android:id="@+id/select_post"
+                android:scaleY=".8"
+                android:buttonTint="@color/theme_green"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_gravity="center_vertical"/>
 
         <ImageView
             android:layout_toStartOf="@id/view_count"

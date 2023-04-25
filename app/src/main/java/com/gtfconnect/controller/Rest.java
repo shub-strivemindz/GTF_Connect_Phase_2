@@ -31,11 +31,20 @@ public class Rest {
     RestService restService;
     public LottieAnimationView animationView;
 
+    private boolean isAdapterAnimator;
+
 
     public Rest(Context context,boolean isAuthCallback,boolean isAuthProfileCallback) {
         ctx = context;
         isAuthApi = isAuthCallback;
         isAuthProfileApi = isAuthProfileCallback;
+        init();
+    }
+
+    public Rest (Context context,boolean isAdapterAnimator){
+        this.ctx = context;
+        this.isAdapterAnimator = isAdapterAnimator;
+
         init();
     }
 

@@ -268,13 +268,34 @@
                 android:fillViewport="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    app:cardBackgroundColor="@color/background"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    app:cardCornerRadius="@dimen/_14sdp"
+                    app:cardElevation="0dp"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="@dimen/_6sdp"
-                android:id="@+id/profile_recycler"
+                android:id="@+id/document_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/tab_layout"
-                android:layout_marginBottom="@dimen/_20sdp"/>
+                android:layout_height="match_parent" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/media_recycler"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
             </androidx.core.widget.NestedScrollView>
 

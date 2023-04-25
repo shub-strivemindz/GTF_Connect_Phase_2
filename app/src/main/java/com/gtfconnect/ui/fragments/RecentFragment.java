@@ -62,6 +62,7 @@ public class RecentFragment extends Fragment {
     private List<ExclusiveOfferDataModel> exclusiveOfferDataModels;
 
 
+    private ExclusiveOfferAdapter exclusiveOfferAdapter;
 
 
     @Nullable
@@ -96,6 +97,15 @@ public class RecentFragment extends Fragment {
         userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
         Log.d("USER ID ",String.valueOf(userId));
 
+        exclusiveOfferDataModels = new ArrayList<>();
+
+        exclusiveOfferAdapter = new ExclusiveOfferAdapter(getActivity(),exclusiveOfferDataModels);
+        binding.exclusiveViewList.setHasFixedSize(true);
+        binding.exclusiveViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.exclusiveViewList.setAdapter(exclusiveOfferAdapter);
+
+
+
         messageReceived();
 
         return binding.getRoot();
@@ -106,25 +116,23 @@ public class RecentFragment extends Fragment {
     private void init()
     {
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
-        loadLocalData();
-
+        //loadLocalData();
     }
 
 
     private void loadLocalData()
     {
 
+
         //Get exclusive offers :
         databaseViewModel.getExclusiveOfferData().observe(requireActivity(), getExclusiveOfferList -> {
                     if (getExclusiveOfferList != null && !getExclusiveOfferList.isEmpty()) {
 
-                        exclusiveOfferDataModels = new ArrayList<>();
                         exclusiveOfferDataModels.addAll(getExclusiveOfferList);
+                        exclusiveOfferAdapter.updateOfferList(exclusiveOfferDataModels);
 
-                        loadExclusiveOffer();
                     }
                 });
-
 
 
         // Get list :
@@ -144,17 +152,6 @@ public class RecentFragment extends Fragment {
                 updateGroupDashboardSocket();
             }
         });
-    }
-
-
-
-
-    private void loadExclusiveOffer()
-    {
-        ExclusiveOfferAdapter exclusiveOfferAdapter= new ExclusiveOfferAdapter(getActivity(),exclusiveOfferDataModels);
-        binding.exclusiveViewList.setHasFixedSize(true);
-        binding.exclusiveViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.exclusiveViewList.setAdapter(exclusiveOfferAdapter);
     }
 
 
@@ -251,9 +248,10 @@ public class RecentFragment extends Fragment {
 
     private void messageReceived() {
 
-        socketInstance.on("messageReceived", args -> {
+        /*socketInstance.on("messageReceived", args -> {
+            Log.d("Message_Received_on","Home Fragment");
             //updateGroupDashboardSocket();
-        });
+        });*/
     }
 
     @Override

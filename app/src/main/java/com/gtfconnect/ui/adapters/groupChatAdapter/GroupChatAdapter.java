@@ -62,6 +62,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     private ViewHolder viewHolder;
     private boolean isMessageClicked = false;
 
+    private int selectedPostCount;
+
     String userName = "";
     String message = "";
     String time = "";
@@ -86,6 +88,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         this.groupChatListener = groupChatListener;
         this.post_base_url = post_base_url;
         ///this.commentCount = commentCount;
+
+
+        selectedPostCount = 0;
     }
 
     public void updateList(ArrayList<GroupChatResponseModel.Row> list)
@@ -152,6 +157,16 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             else{
                 receivedMessageView(holder,position);
             }
+
+
+            if (list.get(position).isShowPostSelection()){
+                holder.binding.selectPost1.setVisibility(View.VISIBLE);
+                holder.binding.selectPost.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.binding.selectPost1.setVisibility(View.GONE);
+                holder.binding.selectPost.setVisibility(View.GONE);
+            }
         }
 
 
@@ -160,34 +175,37 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
     private void sentMessageView(ViewHolder holder,int position){
+
         holder.binding.sentMessageContainer.setVisibility(View.VISIBLE);
         holder.binding.receivedMessageContainer.setVisibility(View.GONE);
 
         if (isDummyUser){
-            holder.binding.dummyUserContainer.setVisibility(View.VISIBLE);
+            holder.binding.dummyUserName.setVisibility(View.VISIBLE);
+            holder.binding.dummyUserTimeDivider.setVisibility(View.VISIBLE);
             isDummyUser =false ;
         }
         else{
-            holder.binding.dummyUserContainer.setVisibility(View.GONE);
+            holder.binding.dummyUserName.setVisibility(View.GONE);
+            holder.binding.dummyUserTimeDivider.setVisibility(View.GONE);
         }
 
-        // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
-       /* if (list.get(position) != null){
-            if (list.get(position).getUpdatedAt()!=null && !list.get(position).getUpdatedAt().isEmpty()){
-                if (Utils.getHeaderDate(list.get(position).getUpdatedAt()).equalsIgnoreCase("Today")){
 
-                    holder.binding.currentHeaderDate.setVisibility(View.VISIBLE);
-                    holder.binding.currentDate.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
-                }
-
-            }
-        }*/
-
+        if (list.get(position).isPostSelected()){
+            holder.binding.selectPost1.setChecked(true);
+        }
+        else {
+            holder.binding.selectPost1.setChecked(false);
+        }
 
 
         Gson gson = new Gson();
         String data = gson.toJson(list.get(position));
+
+
+
+
+
 
         if (list.get(position).getUser() != null) {
             if (list.get(position).getUser().getFirstname() == null && list.get(position).getUser().getLastname() == null) {
@@ -303,6 +321,34 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
+        holder.binding.selectPost1.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+
+                list.get(position).setPostSelected(true);
+
+                selectedPostCount++;
+                groupChatListener.forwardMultiplePost(selectedPostCount,true);
+            }
+            else{
+                list.get(position).setPostSelected(false);
+
+                selectedPostCount--;
+                if (selectedPostCount <= 0){
+
+                    holder.binding.selectPost1.setVisibility(View.GONE);
+                    holder.binding.dummyUserTimeDivider.setVisibility(View.GONE);
+
+                    groupChatListener.forwardMultiplePost(-1,false);
+
+                    toggleSelectionCheckbox(false);
+                }
+                else{
+                    groupChatListener.forwardMultiplePost(selectedPostCount,true);
+                }
+            }
+        });
+
+
      /*   if (list.get(position).getCommentData() == null) {
             holder.binding.commentContainer.setVisibility(View.GONE);
         } else if (list.get(position).getCommentData().size() == 0) {
@@ -404,7 +450,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         holder.binding.sentMessageContainer.setOnLongClickListener(view -> {
             Log.d("Not going ","why2");
-            loadBottomSheet(holder,position);
+            loadBottomSheet(holder,position,true);
 
             return false;
         });
@@ -588,23 +634,22 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     private void receivedMessageView(ViewHolder holder,int position){
         holder.binding.sentMessageContainer.setVisibility(View.GONE);
         holder.binding.receivedMessageContainer.setVisibility(View.VISIBLE);
-        // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
-       /* if (list.get(position) != null){
-            if (list.get(position).getUpdatedAt()!=null && !list.get(position).getUpdatedAt().isEmpty()){
-                if (Utils.getHeaderDate(list.get(position).getUpdatedAt()).equalsIgnoreCase("Today")){
 
-                    holder.binding.currentHeaderDate.setVisibility(View.VISIBLE);
-                    holder.binding.currentDate.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
-                }
-
-            }
-        }*/
         holder.binding.receivedMessageContainer.setOnLongClickListener(view -> {
             Log.d("Not going ","why");
-            loadBottomSheet(holder,position);
+            loadBottomSheet(holder,position,false);
             return false;
         });
+
+
+
+        if (list.get(position).isPostSelected()){
+            holder.binding.selectPost.setChecked(true);
+        }
+        else {
+            holder.binding.selectPost.setChecked(false);
+        }
 
 
         Gson gson = new Gson();
@@ -628,6 +673,34 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 }
             }
         }
+
+
+
+        holder.binding.selectPost.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                list.get(position).setPostSelected(true);
+                selectedPostCount++;
+                groupChatListener.forwardMultiplePost(selectedPostCount,true);
+            }
+            else{
+                list.get(position).setPostSelected(false);
+
+                selectedPostCount--;
+                if (selectedPostCount <= 0){
+
+                    holder.binding.selectPost.setVisibility(View.GONE);
+
+                    groupChatListener.forwardMultiplePost(-1,false);
+
+                    toggleSelectionCheckbox(false);
+                }
+                else{
+                    groupChatListener.forwardMultiplePost(selectedPostCount,true);
+                }
+            }
+        });
+
+
 
         if (list.get(position).getGroupChatRefID() != null) {
             holder.binding.quoteContainer.setVisibility(View.VISIBLE);
@@ -972,7 +1045,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-    private void loadBottomSheet(ViewHolder holder,int position)
+    private void loadBottomSheet(ViewHolder holder,int position,boolean isSentMessage)
     {
         BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
         chat_options_dialog.setContentView(R.layout.bottomsheet_group_chat_actions);
@@ -982,6 +1055,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         TextView copy = chat_options_dialog.findViewById(R.id.copy);
         TextView remove = chat_options_dialog.findViewById(R.id.remove);
         TextView cancel = chat_options_dialog.findViewById(R.id.cancel);
+
+        TextView select = chat_options_dialog.findViewById(R.id.select);
 
         if(list.get(position).getUserID() == PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0))
         {
@@ -1002,6 +1077,21 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
             groupChatListener.sendQuotedMessage(holder.binding.getRoot(), list.get(position).getGroupChatID(), list.get(position).getMessage(), name, time);
+            chat_options_dialog.dismiss();
+        });
+
+
+        select.setOnClickListener(v -> {
+            groupChatListener.forwardMultiplePost(selectedPostCount,true);
+
+            if (isSentMessage) {
+                holder.binding.selectPost1.setChecked(true);
+            }
+            else{
+                holder.binding.selectPost.setChecked(true);
+            }
+
+            toggleSelectionCheckbox(true);
             chat_options_dialog.dismiss();
         });
 
@@ -1643,6 +1733,26 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         }
         return date;
     }
+
+
+
+    private void toggleSelectionCheckbox(boolean showCheckbox){
+
+        if (showCheckbox){
+            for (int i=0;i< list.size();i++){
+                list.get(i).setShowPostSelection(true);
+            }
+        }
+        else{
+            for (int i=0;i< list.size();i++){
+                list.get(i).setShowPostSelection(false);
+            }
+        }
+
+        groupChatListener.updateChatList(list);
+        notifyDataSetChanged();
+    }
+
 
 
 

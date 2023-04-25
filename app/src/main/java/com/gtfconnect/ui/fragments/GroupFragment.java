@@ -211,9 +211,11 @@ public class GroupFragment extends Fragment {
 
     private void messageReceived() {
 
-        socketInstance.on("messageReceived", args -> {
+        /*socketInstance.on("messageReceived", args -> {
+
+            Log.d("Message_Received_on","Group Fragment");
             //updateGroupDashboardSocket();
-        });
+        });*/
     }
 
     @Override

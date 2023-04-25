@@ -5,6 +5,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+
+import java.util.ArrayList;
+
 public interface GroupChatListener {
 
 
@@ -20,5 +24,10 @@ public interface GroupChatListener {
 
 
     public void deletePost(int userID,int gcMemberId, int groupChatId, int groupChannelId );
+
+
+    void forwardMultiplePost(int selectedPostCount,boolean showPostSelection);
+
+    void updateChatList(ArrayList<GroupChatResponseModel.Row> list);
 
 }

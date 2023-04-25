@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -71,6 +73,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private String messageTime = "";
 
+    private int selectedPostCount ;
+
 
     String userName = "";
     String message = "";
@@ -95,12 +99,18 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         this.channelChatListener = channelChatListener;
         this.post_base_url = post_base_url;
         ///this.commentCount = commentCount;
+
+        selectedPostCount = 0;
     }
 
     public void updateList(List<ChannelRowListDataModel> list)
     {
         this.list = list;
         notifyDataSetChanged();
+    }
+
+    public void updatePostBaseUrl(String post_base_url){
+        this.post_base_url = post_base_url;
     }
 
     @NonNull
@@ -432,19 +442,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         }
 
-      /*  if (list.get(position).getCommentCount() == 0) {
-            holder.binding.commentContainer.setVisibility(View.GONE);
 
-            holder.binding.singleCommentContainer.setVisibility(View.GONE);
-            holder.binding.singleCommentContainerDivider.setVisibility(View.GONE);
+        if (list.get(position).isShowPostSelection()){
+            holder.binding.selectPost.setVisibility(View.VISIBLE);
         }
-        else {
-            holder.binding.commentContainer.setVisibility(View.VISIBLE);
-            holder.binding.commentCount.setText(list.get(position).getCommentCount());
-
-            holder.binding.singleCommentContainer.setVisibility(View.VISIBLE);
-            holder.binding.singleCommentContainerDivider.setVisibility(View.VISIBLE);
-        }*/
+        else{
+            holder.binding.selectPost.setVisibility(View.GONE);
+        }
 
 
 
@@ -657,6 +661,32 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
             forward_dialog.show();
         });
+
+
+
+
+
+
+        holder.binding.selectPost.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                selectedPostCount++;
+                channelChatListener.forwardMultiplePost(selectedPostCount);
+            }
+            else{
+                selectedPostCount--;
+                if (selectedPostCount <= 0){
+                    holder.binding.selectPost.setVisibility(View.GONE);
+                    channelChatListener.forwardMultiplePost(-1);
+
+                    toggleSelectionCheckbox(false);
+                }
+                else{
+                    channelChatListener.forwardMultiplePost(selectedPostCount);
+                }
+            }
+        });
+
+
     }
 
 
@@ -690,6 +720,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
         chat_options_dialog.setContentView(R.layout.bottomsheet_group_chat_actions);
 
+        TextView select = chat_options_dialog.findViewById(R.id.select);
+
         TextView pin = chat_options_dialog.findViewById(R.id.pin);
         TextView quote = chat_options_dialog.findViewById(R.id.quote);
         TextView copy = chat_options_dialog.findViewById(R.id.copy);
@@ -715,6 +747,18 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
             channelChatListener.sendQuotedMessage(holder.binding.getRoot(), list.get(position).getGroupChatID(), list.get(position).getMessage(), name, time);
+            chat_options_dialog.dismiss();
+        });
+
+
+
+        select.setOnClickListener(v -> {
+            channelChatListener.forwardMultiplePost(selectedPostCount);
+
+            holder.binding.selectPost.setVisibility(View.VISIBLE);
+            holder.binding.selectPost.setChecked(true);
+
+            toggleSelectionCheckbox(true);
             chat_options_dialog.dismiss();
         });
 
@@ -759,6 +803,22 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         cancel.setOnClickListener(view -> chat_options_dialog.dismiss());
 
         chat_options_dialog.show();
+    }
+
+
+    private void toggleSelectionCheckbox(boolean showCheckbox){
+
+        if (showCheckbox){
+            for (int i=0;i< list.size();i++){
+                list.get(i).setShowPostSelection(true);
+            }
+        }
+        else{
+            for (int i=0;i< list.size();i++){
+                list.get(i).setShowPostSelection(false);
+            }
+        }
+        notifyDataSetChanged();
     }
 
 

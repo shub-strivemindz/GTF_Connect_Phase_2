@@ -586,16 +586,14 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                     }
                 }
             }
-
-
-            if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData()!=null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()){
-                for(int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++){
-                    Log.d("Exclusive_data","2 ===== "+exclusiveOfferDataModels.get(i).getGroupChannelID());
-
-                    databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+            else {
+                if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData() != null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
+                    for (int i = 0; i < exclusiveOfferResponseModel.getData().getList().size(); i++) {
+                        Log.d("Exclusive_data", "2 ===== " + exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID());
+                        databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+                    }
                 }
             }
-
         }
 
     }
