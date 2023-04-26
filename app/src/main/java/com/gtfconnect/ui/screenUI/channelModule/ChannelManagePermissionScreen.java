@@ -21,7 +21,7 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityManagePermissionBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.models.GroupChannelProfileDetailModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
@@ -32,7 +32,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
 
     ActivityManagePermissionBinding binding;
 
-    GroupChannelProfileDetailModel detailModel;
+    InfoDbEntity detailModel;
 
     private final int UPDATE_DATA = 201;
 
@@ -65,10 +65,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
         channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
         api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
-        detailModel = new GroupChannelProfileDetailModel();
-        Gson gson = new Gson();
-        String data = getIntent().getStringExtra("data");
-        detailModel = gson.fromJson(data, GroupChannelProfileDetailModel.class);
+        loadLocalData();
 
         init();
         setData();
@@ -301,8 +298,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
 
 
     private void setData() {
-        if (detailModel.getData().getGcPermission() != null) {
-            if (detailModel.getData().getGcPermission().getSendMedia() == 1){
+        if (detailModel.getGcPermission() != null) {
+            if (detailModel.getGcPermission().getSendMedia() == 1){
                 binding.sendMediaSwitch.setChecked(true);
                 sendMedia = 1;
             }
@@ -312,7 +309,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             }
 
 
-            if (detailModel.getData().getGcPermission().getEmbedLinks() == 1){
+            if (detailModel.getGcPermission().getEmbedLinks() == 1){
                 binding.sendEmbedLinkSwitch.setChecked(true);
                 embedLinks = 1;
             }
@@ -321,7 +318,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 embedLinks = 0;
             }
 
-            if (detailModel.getData().getGcPermission().getPinMessage() == 1){
+            if (detailModel.getGcPermission().getPinMessage() == 1){
                 binding.pinMessageSwitch.setChecked(true);
                 pinMessage = 1;
             }
@@ -330,7 +327,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 pinMessage = 0;
             }
 
-            if (detailModel.getData().getGcPermission().getSendStickerGIF() == 1){
+            if (detailModel.getGcPermission().getSendStickerGIF() == 1){
                 binding.sendStickerGifSwitch.setChecked(true);
                 sendSticker = 1;
             }
@@ -339,7 +336,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 sendSticker = 0;
             }
 
-            if (detailModel.getData().getGcPermission().getSendMessage() == 1){
+            if (detailModel.getGcPermission().getSendMessage() == 1){
                 binding.sendMessageSwitch.setChecked(true);
                 sendMessage = 1;
             }
@@ -348,8 +345,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 sendMessage = 0;
             }
 
-            if (detailModel.getData().getGcSetting()!=null){
-                if (detailModel.getData().getGcSetting().getRestrictSharingContent() == 1){
+            if (detailModel.getGcSetting()!=null){
+                if (detailModel.getGcSetting().getRestrictSharingContent() == 1){
                     binding.sharingContentSwitch.setChecked(true);
                     sharingContent = 1;
                 }
@@ -359,7 +356,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 }
             }
 
-            if (detailModel.getData().getGcPermission().getSlowMode() == 10){
+            if (detailModel.getGcPermission().getSlowMode() == 10){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
                 binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
@@ -368,7 +365,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 binding.gap10.setChecked(true);
                 slowModeTime = 10;
             }
-            else if (detailModel.getData().getGcPermission().getSlowMode() == 30){
+            else if (detailModel.getGcPermission().getSlowMode() == 30){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
                 binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
@@ -377,7 +374,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 binding.gap30.setChecked(true);
                 slowModeTime = 30;
             }
-            else if (detailModel.getData().getGcPermission().getSlowMode() == 1){
+            else if (detailModel.getGcPermission().getSlowMode() == 1){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
                 binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
@@ -386,7 +383,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 binding.gap1.setChecked(true);
                 slowModeTime = 1;
             }
-            else if (detailModel.getData().getGcPermission().getSlowMode() == 5){
+            else if (detailModel.getGcPermission().getSlowMode() == 5){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
                 binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
@@ -395,7 +392,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 binding.gap5.setChecked(true);
                 slowModeTime = 5;
             }
-            else if (detailModel.getData().getGcPermission().getSlowMode() == 24){
+            else if (detailModel.getGcPermission().getSlowMode() == 24){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
                 binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
@@ -411,6 +408,15 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
         }
     }
 
+
+
+    private void loadLocalData(){
+
+        detailModel = new InfoDbEntity();
+        Gson gson = new Gson();
+        String data = getIntent().getStringExtra("data");
+        detailModel = gson.fromJson(data, InfoDbEntity.class);
+    }
 
 
 
@@ -435,7 +441,6 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             }
         });
     }
-
 
 
     @Override

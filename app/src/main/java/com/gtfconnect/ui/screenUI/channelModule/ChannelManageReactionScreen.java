@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.View;
 import android.widget.AbsListView;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -24,8 +23,8 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityManageReactionsBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.models.GroupChannelProfileDetailModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.ManageReactionsListAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -61,7 +60,7 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
 
     private String api_token;
 
-    private GroupChannelProfileDetailModel detailModel;
+    private InfoDbEntity detailModel;
 
     private boolean isScrolling = false;
 
@@ -90,10 +89,10 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
         api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
 
-        detailModel = new GroupChannelProfileDetailModel();
+        detailModel = new InfoDbEntity();
         Gson gson = new Gson();
         String responseData = getIntent().getStringExtra("data");
-        detailModel = gson.fromJson(responseData, GroupChannelProfileDetailModel.class);
+        detailModel = gson.fromJson(responseData, InfoDbEntity.class);
 
 
         init();

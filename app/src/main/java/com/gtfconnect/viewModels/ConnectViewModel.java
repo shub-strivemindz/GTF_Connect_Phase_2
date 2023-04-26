@@ -78,10 +78,8 @@ public class ConnectViewModel extends AndroidViewModel {
     }
 
 
-
-
-    public void get_admin_group_channel_settings(int id, String api_token,String device_type, String device_token) {
-        disposables.add(repo.get_admin_group_channel_settings(id,api_token, device_type, device_token).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+    public void update_groupChannel_profile(int id,String api_token, String device_type, String device_token, Map<String,Object> params) {
+        disposables.add(repo.update_group_channel_profile(id, api_token, device_type, device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());
@@ -103,8 +101,10 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
-    public void update_groupChannel_profile(int id,String api_token, String device_type, String device_token, Map<String,Object> params) {
-        disposables.add(repo.update_group_channel_profile(id, api_token, device_type, device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+
+
+    public void get_group_channel_info(int id,String api_token, String device_type, String device_token) {
+        disposables.add(repo.get_group_channel_info(id, api_token, device_type, device_token).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());
@@ -345,6 +345,46 @@ public class ConnectViewModel extends AndroidViewModel {
             }
         }));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void get_saved_messages(String api_token,String device_type, String device_token,int per_page,int page) {
+        disposables.add(repo.get_saved_messages(api_token, device_type, device_token,per_page,page).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
+
+
 
 
 

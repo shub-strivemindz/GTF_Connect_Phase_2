@@ -1,141 +1,126 @@
-package com.gtfconnect.models;
+package com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities;
+
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class GroupChannelProfileDetailModel {
 
-    @SerializedName("message")
+@Entity(tableName = "group_channel_info_data")
+public class InfoDbEntity {
+
+    @PrimaryKey(autoGenerate = false)
+    private int groupChannelID;
+
+    @SerializedName("gc_info")
     @Expose
-    private String message;
-    @SerializedName("data")
+    private GcInfo gcInfo;
+    @SerializedName("gc_setting")
     @Expose
-    private Data data;
-    @SerializedName("status")
+    private GcSetting gcSetting;
+    @SerializedName("gc_member_info")
     @Expose
-    private Integer status;
+    private GcMemberInfo gcMemberInfo;
+    @SerializedName("gc_member_setting")
+    @Expose
+    private GcMemberSetting gcMemberSetting;
+    @SerializedName("gc_permission")
+    @Expose
+    private GcPermission gcPermission;
+    @SerializedName("gc_admin")
+    @Expose
+    private GcAdmin gcAdmin;
+    @SerializedName("gc_member_subscription_plan")
+    @Expose
+    private GcMemberSubscriptionPlan gcMemberSubscriptionPlan;
+    @SerializedName("gc_subscription_plan")
+    @Expose
+    private List<GcSubscriptionPlan> gcSubscriptionPlan;
 
-    public String getMessage() {
-        return message;
+
+    public int getGroupChannelID() {
+        return groupChannelID;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setGroupChannelID(int groupChannelID) {
+        this.groupChannelID = groupChannelID;
     }
 
-    public Data getData() {
-        return data;
+    public GcInfo getGcInfo() {
+        return gcInfo;
     }
 
-    public void setData(Data data) {
-        this.data = data;
+    public void setGcInfo(GcInfo gcInfo) {
+        this.gcInfo = gcInfo;
     }
 
-    public Integer getStatus() {
-        return status;
+    public GcSetting getGcSetting() {
+        return gcSetting;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setGcSetting(GcSetting gcSetting) {
+        this.gcSetting = gcSetting;
+    }
+
+    public GcMemberInfo getGcMemberInfo() {
+        return gcMemberInfo;
+    }
+
+    public void setGcMemberInfo(GcMemberInfo gcMemberInfo) {
+        this.gcMemberInfo = gcMemberInfo;
+    }
+
+    public GcMemberSetting getGcMemberSetting() {
+        return gcMemberSetting;
+    }
+
+    public void setGcMemberSetting(GcMemberSetting gcMemberSetting) {
+        this.gcMemberSetting = gcMemberSetting;
+    }
+
+    public GcPermission getGcPermission() {
+        return gcPermission;
+    }
+
+    public void setGcPermission(GcPermission gcPermission) {
+        this.gcPermission = gcPermission;
+    }
+
+    public GcAdmin getGcAdmin() {
+        return gcAdmin;
+    }
+
+    public void setGcAdmin(GcAdmin gcAdmin) {
+        this.gcAdmin = gcAdmin;
+    }
+
+    public GcMemberSubscriptionPlan getGcMemberSubscriptionPlan() {
+        return gcMemberSubscriptionPlan;
+    }
+
+    public void setGcMemberSubscriptionPlan(GcMemberSubscriptionPlan gcMemberSubscriptionPlan) {
+        this.gcMemberSubscriptionPlan = gcMemberSubscriptionPlan;
+    }
+
+    public List<GcSubscriptionPlan> getGcSubscriptionPlan() {
+        return gcSubscriptionPlan;
+    }
+
+    public void setGcSubscriptionPlan(List<GcSubscriptionPlan> gcSubscriptionPlan) {
+        this.gcSubscriptionPlan = gcSubscriptionPlan;
     }
 
 
-    public class Data {
 
-        @SerializedName("gc_info")
-        @Expose
-        private GcInfo gcInfo;
-        @SerializedName("gc_setting")
-        @Expose
-        private GcSetting gcSetting;
-        @SerializedName("gc_member_info")
-        @Expose
-        private GcMemberInfo gcMemberInfo;
-        @SerializedName("gc_member_setting")
-        @Expose
-        private GcMemberSetting gcMemberSetting;
-        @SerializedName("gc_permission")
-        @Expose
-        private GcPermission gcPermission;
-        @SerializedName("gc_admin")
-        @Expose
-        private GcAdmin gcAdmin;
-        @SerializedName("gc_member_subscription_plan")
-        @Expose
-        private GcMemberSubscriptionPlan gcMemberSubscriptionPlan;
-        @SerializedName("gc_subscription_plan")
-        @Expose
-        private List<GcSubscriptionPlan> gcSubscriptionPlan;
 
-        public GcInfo getGcInfo() {
-            return gcInfo;
-        }
-
-        public void setGcInfo(GcInfo gcInfo) {
-            this.gcInfo = gcInfo;
-        }
-
-        public GcSetting getGcSetting() {
-            return gcSetting;
-        }
-
-        public void setGcSetting(GcSetting gcSetting) {
-            this.gcSetting = gcSetting;
-        }
-
-        public GcMemberInfo getGcMemberInfo() {
-            return gcMemberInfo;
-        }
-
-        public void setGcMemberInfo(GcMemberInfo gcMemberInfo) {
-            this.gcMemberInfo = gcMemberInfo;
-        }
-
-        public GcMemberSetting getGcMemberSetting() {
-            return gcMemberSetting;
-        }
-
-        public void setGcMemberSetting(GcMemberSetting gcMemberSetting) {
-            this.gcMemberSetting = gcMemberSetting;
-        }
-
-        public GcPermission getGcPermission() {
-            return gcPermission;
-        }
-
-        public void setGcPermission(GcPermission gcPermission) {
-            this.gcPermission = gcPermission;
-        }
-
-        public GcAdmin getGcAdmin() {
-            return gcAdmin;
-        }
-
-        public void setGcAdmin(GcAdmin gcAdmin) {
-            this.gcAdmin = gcAdmin;
-        }
-
-        public GcMemberSubscriptionPlan getGcMemberSubscriptionPlan() {
-            return gcMemberSubscriptionPlan;
-        }
-
-        public void setGcMemberSubscriptionPlan(GcMemberSubscriptionPlan gcMemberSubscriptionPlan) {
-            this.gcMemberSubscriptionPlan = gcMemberSubscriptionPlan;
-        }
-
-        public List<GcSubscriptionPlan> getGcSubscriptionPlan() {
-            return gcSubscriptionPlan;
-        }
-
-        public void setGcSubscriptionPlan(List<GcSubscriptionPlan> gcSubscriptionPlan) {
-            this.gcSubscriptionPlan = gcSubscriptionPlan;
-        }
-
-    }
     public class DummyUser {
+
     }
+
 
     public class GcAdmin {
 
@@ -424,7 +409,6 @@ public class GroupChannelProfileDetailModel {
         }
 
     }
-
     public class GcMemberSetting {
 
         @SerializedName("mute_notification")
@@ -440,8 +424,9 @@ public class GroupChannelProfileDetailModel {
         }
 
     }
-
     public class GcMemberSubscriptionPlan {
+
+
     }
     public class GcPermission {
 
@@ -1006,13 +991,5 @@ public class GroupChannelProfileDetailModel {
         }
 
     }
+
 }
-
-
-
-
-
-
-
-
-

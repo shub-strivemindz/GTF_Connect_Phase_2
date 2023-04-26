@@ -109,6 +109,8 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
     private List<ExclusiveOfferDataModel> exclusiveOfferDataModels;
 
+    private List<Long> exclusive_inserted_row_ids;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -260,13 +262,30 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
         // =================================================== Just to check and update Exclusive Offer List =====================================================
 
-        exclusiveOfferDataModels = new ArrayList<>();
+        /*exclusiveOfferDataModels = new ArrayList<>();
         //Get exclusive offers :
         databaseViewModel.getExclusiveOfferData().observe(this, getExclusiveOfferList -> {
             if (getExclusiveOfferList != null && !getExclusiveOfferList.isEmpty()) {
+
+                Log.d("Exclusive","run_time_repeat");
+                Log.d("Exclusive"," DB size ===== "+getExclusiveOfferList.size());
+
+
+*//*                for (int i=0;i<exclusive_inserted_row_ids.size();i++){
+
+                    for (int j=0;j<getExclusiveOfferList.size();j++) {
+                        if (getExclusiveOfferList.get(j).getGroupChannelID() == exclusive_inserted_row_ids.get(i).intValue()) {
+                            exclusiveOfferDataModels.add(getExclusiveOfferList.get(j));
+                            break;
+                        }
+                    }
+                }*//*
+
+
+                exclusiveOfferDataModels = new ArrayList<>();
                 exclusiveOfferDataModels.addAll(getExclusiveOfferList);
             }
-        });
+        });*/
 
     }
 
@@ -529,12 +548,15 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
              * Check 2 = IF any entry removed.
              */
 
+            exclusive_inserted_row_ids = new ArrayList<>();
+
             if (exclusiveOfferDataModels != null && !exclusiveOfferDataModels.isEmpty()){
                 if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData()!=null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
 
+                    Log.d("Exclusive","Exclusive Response Size = "+exclusiveOfferResponseModel.getData().getList().size()+" Exclusive DB size = "+exclusiveOfferDataModels.size());
+
                     // Check 1 =========
                     if (exclusiveOfferResponseModel.getData().getList().size() > exclusiveOfferDataModels.size()){
-
                         for (int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++) {
                             boolean checkFlag = true;
 
@@ -546,7 +568,9 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                                 }
                             }
                             if (!checkFlag){
-                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+                                Log.d("Exclusive","Insertion Flag Check Called");
+                                //exclusive_inserted_row_ids.add(databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList()));
+                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList());
                             }
                         }
                     }
@@ -580,7 +604,8 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                                 }
                             }
                             if (!checkFlag){
-                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+                                //exclusive_inserted_row_ids.add(databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i)));
+                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList());
                             }
                         }
                     }
@@ -590,7 +615,8 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                 if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData() != null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
                     for (int i = 0; i < exclusiveOfferResponseModel.getData().getList().size(); i++) {
                         Log.d("Exclusive_data", "2 ===== " + exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID());
-                        databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i));
+                        //exclusive_inserted_row_ids.add(databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i)));
+                        databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList());
                     }
                 }
             }

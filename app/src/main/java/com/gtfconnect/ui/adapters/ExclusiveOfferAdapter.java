@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -55,9 +56,40 @@ public class ExclusiveOfferAdapter extends RecyclerView.Adapter<ExclusiveOfferAd
             loadImage(exclusiveOfferDataModels.get(position).getPopupInfoImage(),holder.binding.userAvatar);
         }
 
-        holder.binding.offerTag.setTextColor(context.getResources().getColor(R.color.exclusive_pink));
-        holder.binding.offerTag.setText(context.getResources().getString(R.string.trending));
-        holder.binding.offerTagBackground.setCardBackgroundColor(context.getResources().getColor(R.color.exclusive_pink_background));
+        if (exclusiveOfferDataModels.get(position).getTrendingLabel() != null){
+            holder.binding.offerTagBackground.setVisibility(View.VISIBLE);
+
+            if (exclusiveOfferDataModels.get(position).getTrendingLabel().equalsIgnoreCase("Best Seller")){
+                holder.binding.offerTag.setTextColor(context.getResources().getColor(R.color.exclusive_orange));
+                holder.binding.offerTag.setText("Best Seller");
+                holder.binding.offerTagBackground.setCardBackgroundColor(context.getResources().getColor(R.color.exclusive_orange_background));
+            }
+            else if (exclusiveOfferDataModels.get(position).getTrendingLabel().equalsIgnoreCase("Trending")) {
+                holder.binding.offerTag.setTextColor(context.getResources().getColor(R.color.exclusive_pink));
+                holder.binding.offerTag.setText(context.getResources().getString(R.string.trending));
+                holder.binding.offerTagBackground.setCardBackgroundColor(context.getResources().getColor(R.color.exclusive_pink_background));
+            }
+        }
+        else{
+            holder.binding.offerTagBackground.setVisibility(View.GONE);
+        }
+
+        if (exclusiveOfferDataModels.get(position).getMemberCount() != null){
+            if (exclusiveOfferDataModels.get(position).getMemberCount() > 0){
+                holder.binding.subscribers.setVisibility(View.VISIBLE);
+
+                holder.binding.subscribers.setText(exclusiveOfferDataModels.get(position).getMemberCount()+" Subscribers");
+            }
+            else{
+                holder.binding.subscribers.setVisibility(View.GONE);
+            }
+        }
+        else{
+            holder.binding.subscribers.setVisibility(View.GONE);
+        }
+
+
+        /**/
 
 
 

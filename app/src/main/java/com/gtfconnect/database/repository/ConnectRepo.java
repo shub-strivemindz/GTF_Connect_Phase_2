@@ -29,15 +29,17 @@ public class ConnectRepo {
     }
 
 
-    public Observable<JsonElement> get_admin_group_channel_settings(int id, String api_token,String device_type, String device_token) {
-        return restService.get_admin_group_channel_settings(id, api_token, device_type, device_token);
-    }
-
-
 
     public Observable<JsonElement> update_group_channel_profile(int id, String api_token,String device_type, String device_token, Map<String,Object> params) {
         return restService.update_group_channel_profile(id, api_token, device_type, device_token,params);
     }
+
+
+
+    public Observable<JsonElement> get_group_channel_info(int id, String api_token,String device_type, String device_token) {
+        return restService.get_group_channel_info(id, api_token, device_type, device_token);
+    }
+
 
 
 
@@ -93,5 +95,12 @@ public class ConnectRepo {
 
     public Observable<JsonElement> get_group_channel_member_media(int id, String api_token,String device_type, String device_token,String memberID) {
         return restService.get_group_channel_member_media(id,api_token,device_type,device_token,memberID);
+    }
+
+
+
+
+    public Observable<JsonElement> get_saved_messages(String api_token,String device_type, String device_token,int per_page,int page) {
+        return restService.get_saved_messages(api_token,device_type,device_token,per_page,page);
     }
 }

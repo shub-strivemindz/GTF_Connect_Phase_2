@@ -17,6 +17,7 @@ import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbE
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface AppDao {
     // -------------------------------------------------------------------- Exclusive Offer Response Data -----------------------------------------------------
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertExclusiveOfferData(ExclusiveOfferDataModel exclusiveOfferDataModel);
+    void insertExclusiveOfferData(List<ExclusiveOfferDataModel> exclusiveOfferDataModel);
 
     @Query("delete from exclusive_offer_data where groupChannelID = :groupChannelID")
     void deleteExclusiveOffer(int groupChannelID);
@@ -62,6 +63,46 @@ public interface AppDao {
 
     @Query("select * from group_channel_gallery where GalleryType = 'PROFILE'")
     LiveData<GroupChannelGalleryEntity> get_profile_image();
+
+
+
+
+
+
+
+
+
+
+    // ====================================================================== Group Channel Detail Info =======================================================
+
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertGroupChannelInfo(InfoDbEntity infoDbEntity);
+
+    /*@Query("delete from exclusive_offer_data where groupChannelID = :groupChannelID")
+    void deleteExclusiveOffer(int groupChannelID);*/
+
+    @Query("delete from group_channel_info_data")
+    void delete_group_channel_info_data();
+
+    @Query("select * from  group_channel_info_data where groupChannelID = :groupChannelID")
+    LiveData<InfoDbEntity> getGroupChannelInfo(int groupChannelID);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // -------------------------------------------------------------------- Channel Dashboard Response Data -----------------------------------------------------

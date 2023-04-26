@@ -1,6 +1,5 @@
 package com.gtfconnect.ui.screenUI.channelModule;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,10 +17,8 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivitySubscriberBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.models.GroupChannelProfileDetailModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageSubscriberResponseModel;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.ManageSubscribersListAdapter;
-import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.MediaAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
 

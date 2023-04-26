@@ -84,6 +84,7 @@ import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
+import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
@@ -91,6 +92,7 @@ import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
@@ -137,6 +139,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private final int REQUEST_UPLOAD_FILE = 3;
 
     private final int PINNED_MESSAGE_COUNT = 4;
+
+    private final int GET_GROUP_CHANNEL_INFO = 5;
 
     private int requestType;
 
@@ -262,6 +266,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private ChannelManageReactionModel reactionModel;
 
     private boolean isListenersInitialized = false;
+
+    private ConnectViewModel connectViewModel;
+
+
+    private InfoDbEntity infoDbEntity;
 
 
     @Override
@@ -658,10 +667,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.footerSearchContainer.setVisibility(View.VISIBLE);
                 binding.recordView.setVisibility(View.GONE);
 
-               /* binding.footerSearchContainer.setVisibility(View.VISIBLE);
-                binding.recordView.setVisibility(View.GONE);*/
-
-                // Log.d("RecordTime", time);
             }
 
             @Override
@@ -763,7 +768,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         rest = new Rest(this, false, true);
         listener = this;
         //appDao = AppDatabase.getInstance(getApplication()).appDao();
-        ConnectViewModel connectViewModel = new ViewModelProvider(this).get(ConnectViewModel.class);
+        connectViewModel = new ViewModelProvider(this).get(ConnectViewModel.class);
         connectViewModel.getResponseLiveData().observe(this, new Observer<ApiResponse>() {
             @Override
             public void onChanged(ApiResponse apiResponse) {
@@ -817,64 +822,65 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void loadLocalData() {
 
-        Log.d("run", " times = "+channelID);
+        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
+            if(infoDbEntity != null){
+                this.infoDbEntity = infoDbEntity;
+            }
+        });
 
-        databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, new Observer<ChannelChatDbEntity>() {
-            @Override
-            public void onChanged(ChannelChatDbEntity channelChatDbEntities) {
+        databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
 
-                databaseEntity = channelChatDbEntities;
-                list = new ArrayList<>();
+            databaseEntity = channelChatDbEntities;
+            list = new ArrayList<>();
 
-                // Todo : Need to find the why its getting called twice :
-                Log.d("run", " times2");
+            // Todo : Need to find the why its getting called twice :
+            Log.d("run", " times2");
 
-                if (channelChatDbEntities != null) {
-                    if (channelChatDbEntities.getChatBodyDbEntitiesLists() != null) {
+            if (channelChatDbEntities != null) {
+                if (channelChatDbEntities.getChatBodyDbEntitiesLists() != null) {
 
-                        Log.d("run", " times3");
+                    Log.d("run", " times3");
 
-                        int last_index = channelChatDbEntities.getChatBodyDbEntitiesLists().size();
-                        lastLocalGroupChatID = "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(last_index - 1).getGroupChatID();
-                        Log.d("ChannelChatDataChatDB", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(0).getGroupChatID());
-
-
-                        for (int i = channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1; i >= 0; i--) {
-
-                            Log.d("dbData", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getGroupChatID());
-                            Log.d("dbData", "Size = " + channelChatDbEntities.getChatBodyDbEntitiesLists().size());
-
-                            list.add(channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getRows());
-
-                            //currentPage = channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getPage();
-                        }
+                    int last_index = channelChatDbEntities.getChatBodyDbEntitiesLists().size();
+                    lastLocalGroupChatID = "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(last_index - 1).getGroupChatID();
+                    Log.d("ChannelChatDataChatDB", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(0).getGroupChatID());
 
 
-                        if (channelChatDbEntities.getChatHeaderDbEntity() != null) {
-                            if (channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl() != null) {
-                                postBaseUrl = channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl();
-                            }
-                            if (channelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount() != null) {
-                                subscribers = Integer.parseInt(channelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount());
-                                binding.userSubscribers.setText(String.valueOf(subscribers));
-                            }
-                        }
+                    for (int i = channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1; i >= 0; i--) {
 
+                        Log.d("dbData", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getGroupChatID());
+                        Log.d("dbData", "Size = " + channelChatDbEntities.getChatBodyDbEntitiesLists().size());
 
-                        if (!isDataLoadedOnce) {
-                            loadDataToAdapter();
-                            refreshGroupChatSocket();
-                            isDataLoadedOnce = true;
-                        }
+                        list.add(channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getRows());
 
-
-                        //channelViewAdapter.updateList(list);
-                    } else {
-                        refreshGroupChatSocket();
+                        //currentPage = channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getPage();
                     }
+
+
+                    if (channelChatDbEntities.getChatHeaderDbEntity() != null) {
+                        if (channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl() != null) {
+                            postBaseUrl = channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl();
+                        }
+                        if (channelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount() != null) {
+                            subscribers = Integer.parseInt(channelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount());
+                            binding.userSubscribers.setText(String.valueOf(subscribers));
+                        }
+                    }
+
+
+                    if (!isDataLoadedOnce) {
+                        loadDataToAdapter();
+                        refreshGroupChatSocket();
+                        isDataLoadedOnce = true;
+                    }
+
+
+                    //channelViewAdapter.updateList(list);
                 } else {
                     refreshGroupChatSocket();
                 }
+            } else {
+                refreshGroupChatSocket();
             }
         });
     }
@@ -2665,7 +2671,29 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 isDataLoadedFirstTime = false;*/
 
+            requestType = GET_GROUP_CHANNEL_INFO;
+            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""),"android","test");
+
+        }
+        else if (requestType == GET_GROUP_CHANNEL_INFO) {
+            gson = new Gson();
+            Type type = new TypeToken<GroupChannelInfoResponseModel>() {
+            }.getType();
+
+
+            GroupChannelInfoResponseModel groupChannelInfoResponseModel = gson.fromJson(jsonObject, type);
+
+            if (groupChannelInfoResponseModel != null && groupChannelInfoResponseModel.getData() != null) {
+                InfoDbEntity data;
+                data = groupChannelInfoResponseModel.getData();
+                data.setGroupChannelID(channelID);
+
+                databaseViewModel.insertGroupChannelInfo(data);
+            }
+
+
             init();
+
         } else if (requestType == REQUEST_UPLOAD_FILE) {
 
 

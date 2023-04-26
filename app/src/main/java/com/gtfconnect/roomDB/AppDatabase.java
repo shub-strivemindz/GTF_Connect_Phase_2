@@ -10,18 +10,17 @@ import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
-import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.roomDB.convertors.CommonConvertor;
+import com.gtfconnect.roomDB.convertors.GroupChannelInfoConvertor;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
-@Database(entities = {ChannelDashboardDataModel.class, GroupDashboardDataModel.class, ChannelChatHeaderDbEntity.class, ChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class, GroupChannelGalleryEntity.class}, version = 14)
-@TypeConverters({Convertors.class})
+@Database(entities = {ChannelDashboardDataModel.class, GroupDashboardDataModel.class, ChannelChatHeaderDbEntity.class, ChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class, GroupChannelGalleryEntity.class, InfoDbEntity.class}, version = 16)
+@TypeConverters({CommonConvertor.class, GroupChannelInfoConvertor.class})
 
 public abstract class AppDatabase extends RoomDatabase {
 

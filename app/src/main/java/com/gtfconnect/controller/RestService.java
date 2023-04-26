@@ -125,12 +125,6 @@ public interface RestService {
                                                           @Header("DeviceToken") String device_token);
 
 
-    @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+"details")
-    Observable<JsonElement> get_admin_group_channel_settings(@Path("id") int id,
-                                                             @Header ("Authorization") String api_token,
-                                                             @Header("DeviceType") String device_type,
-                                                             @Header("DeviceToken") String device_token);
-
     @FormUrlEncoded
     @PATCH(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ ApiUrls.URL_GROUP_CHANNEL_UPDATE_PROFILE)
     Observable<JsonElement> update_group_channel_profile(@Path("id") int id,
@@ -138,6 +132,21 @@ public interface RestService {
                                                          @Header("DeviceType") String device_type,
                                                          @Header("DeviceToken") String device_token,
                                                          @FieldMap Map<String, Object> params);
+
+
+
+
+
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ ApiUrls.URL_GROUP_CHANNEL_INFO)
+    Observable<JsonElement> get_group_channel_info(@Path("id") int id,
+                                                         @Header ("Authorization") String api_token,
+                                                         @Header("DeviceType") String device_type,
+                                                         @Header("DeviceToken") String device_token);
+
+
 
 
 
@@ -272,6 +281,20 @@ public interface RestService {
                                                          @Header("DeviceToken") String device_token,
                                                          @Query("gc_member_id") String memberID);
 
+
+
+
+
+
+
+
+
+    @GET(ApiUrls.URL_GET_SAVED_MESSAGES)
+    Observable<JsonElement> get_saved_messages(@Header ("Authorization") String api_token,
+                                               @Header("DeviceType") String device_type,
+                                               @Header("DeviceToken") String device_token,
+                                               @Query("per_page") int per_page,
+                                               @Query("page") int page);
 }
 
 

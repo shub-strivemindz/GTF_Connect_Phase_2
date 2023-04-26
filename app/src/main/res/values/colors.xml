@@ -94,7 +94,7 @@
 
     <color name="manipulateViewItemColor">#26000000</color>
 
-    <color name="chatHeaderDateBackgroundColor">#05000000</color>
+    <color name="chatHeaderDateBackgroundColor">#e8e8e8</color>
 
     <color name="channelBackgroundColor">#EDF2F6</color>
 
@@ -110,6 +110,32 @@
     <color name="membership_blue">#3EA9FE</color>
     <color name="membership_red">#FF4A4D</color>
     <color name="membership_yellow">#FDA623</color>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <color name="groupChatReceivedCardColor">#ffffff</color>
+    <color name="groupChatBackgroundColor">#f4f4f4</color>
+
+
+    <color name="audioCardFiller">#f4f4f4</color>
+
+    <color name="sendMessageCardFiller">#f7f7f7</color>
+
 
 
 

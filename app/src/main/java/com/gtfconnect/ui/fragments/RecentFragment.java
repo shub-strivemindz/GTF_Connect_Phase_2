@@ -128,6 +128,8 @@ public class RecentFragment extends Fragment {
         databaseViewModel.getExclusiveOfferData().observe(requireActivity(), getExclusiveOfferList -> {
                     if (getExclusiveOfferList != null && !getExclusiveOfferList.isEmpty()) {
 
+                        exclusiveOfferDataModels = new ArrayList<>();
+
                         exclusiveOfferDataModels.addAll(getExclusiveOfferList);
                         exclusiveOfferAdapter.updateOfferList(exclusiveOfferDataModels);
 

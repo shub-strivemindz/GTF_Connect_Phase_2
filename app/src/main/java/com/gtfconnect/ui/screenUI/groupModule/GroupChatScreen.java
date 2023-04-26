@@ -1,5 +1,6 @@
 package com.gtfconnect.ui.screenUI.groupModule;
 
+import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
@@ -44,6 +45,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -76,11 +79,14 @@ import com.gtfconnect.models.ImagePreviewModel;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.models.SendAttachmentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
+import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.groupResponseModel.GetDummyUserModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
+import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
@@ -97,6 +103,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -130,6 +137,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private final int GET_DUMMY_USER = 5;
 
     private final int UPDATE_DUMMY_USER = 6;
+
+    private final int GET_GROUP_CHANNEL_INFO = 7;
+
 
     private int requestType;
 
@@ -250,6 +260,15 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private boolean showPostSelectionCheckBox = false;
 
 
+    private DatabaseViewModel databaseViewModel;
+
+    private InfoDbEntity infoDbEntity;
+
+
+    private MediaRecorder mMediaRecorder;
+
+    private String audioFilePath = "";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -300,6 +319,15 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         //deleteCommentListener();
         //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
 
+
+
+        binding.quoteContainer.setVisibility(View.GONE);
+        binding.attachmentContainer.setVisibility(View.GONE);
+        binding.forwardContainer.setVisibility(View.GONE);
+
+        binding.sendMessage.setVisibility(View.GONE);
+        binding.recordButton.setVisibility(View.VISIBLE);
+        binding.pinAttachment.setVisibility(View.VISIBLE);
 
 
 
@@ -363,6 +391,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         });
 
         binding.closeQuoteEditor.setOnClickListener(view -> {
+
+            binding.sendMessage.setVisibility(View.GONE);
+            binding.recordButton.setVisibility(View.VISIBLE);
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+
             binding.quoteContainer.setVisibility(View.GONE);
             isMessageQuoted = false;
         });
@@ -584,13 +617,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
         binding.recordButton.setRecordView(binding.recordView);
-        binding.recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
-            @Override
-            public void onAnimationEnd() {
-                Log.d("RecordView", "Basket Animation Finished");
-                binding.footerSearchContainer.setVisibility(View.VISIBLE);
-                binding.recordView.setVisibility(View.GONE);
-            }
+        binding.recordView.setOnBasketAnimationEndListener(() -> {
+            Log.d("RecordView", "Basket Animation Finished");
+            binding.footerSearchContainer.setVisibility(View.VISIBLE);
+            binding.recordView.setVisibility(View.GONE);
         });
 
         binding.recordView.setOnRecordListener(new OnRecordListener() {
@@ -598,9 +628,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             public void onStart() {
                 //Start Recording..
 
+                audioFilePath = "";
                 binding.footerSearchContainer.setVisibility(View.GONE);
                 binding.recordView.setVisibility(View.VISIBLE);
 
+                recordAudio();
                 Log.d("RecordView", "onStart");
             }
 
@@ -608,6 +640,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             public void onCancel() {
                 //On Swipe To Cancel
                 Log.d("RecordView", "onCancel");
+                stopRecording();
+                Utils.deleteAudioFile(audioFilePath);
                 /*binding.footerSearchContainer.setVisibility(View.VISIBLE);
                 binding.recordView.setVisibility(View.GONE);*/
             }
@@ -618,10 +652,20 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 //limitReached to determine if the Record was finished when time limit reached.
                 //String time = getHumanTimeText(recordTime);
                 Log.d("RecordView", "onFinish");
-               /* binding.footerSearchContainer.setVisibility(View.VISIBLE);
-                binding.recordView.setVisibility(View.GONE);*/
+                stopRecording();
 
-                // Log.d("RecordTime", time);
+                File audioFile = new File(audioFilePath);
+
+                attachmentFileList = new ArrayList<>();
+                attachmentFileList.add(audioFile);
+                isAnyFileAttached = true;
+
+                attachment_request_code = RECORD_AUDIO_REQUEST_CODE;
+                callAttachmentApi();
+
+                binding.footerSearchContainer.setVisibility(View.VISIBLE);
+                binding.recordView.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -630,6 +674,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 Log.d("RecordView", "onLessThanSecond");
                 binding.footerSearchContainer.setVisibility(View.VISIBLE);
                 binding.recordView.setVisibility(View.GONE);
+
+                stopRecording();
+                Utils.deleteAudioFile(audioFilePath);
             }
 
             @Override
@@ -640,6 +687,75 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         });
 
+
+        // binding.recordButton.setListenForRecord(false);
+
+        //ListenForRecord must be false ,otherwise onClick will not be called
+        /*binding.recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(MainActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                Log.d("RecordButton", "RECORD BUTTON CLICKED");
+            }
+        });
+
+        binding.recordView.setLockEnabled(true);
+        binding.recordView.setRecordLockImageView(findViewById(R.id.record_lock));*/
+    }
+
+
+    private void recordAudio() {
+        //check the permission for the record audio and for save audio write external storage
+
+        if (CheckPermission()) {
+            audioFilePath = Utils.getAudioFilePath();
+
+            //RecordReady
+            mMediaRecorder = new MediaRecorder();
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mMediaRecorder.setOutputFile(audioFilePath);
+
+
+            try {
+                mMediaRecorder.prepare();
+                //start the recording
+                mMediaRecorder.start();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            //if permission is not given then request permission
+            RequestPermission();
+        }
+    }
+
+    private void stopRecording() {
+        try {
+            mMediaRecorder.stop();
+        } catch (Exception e) {
+            Log.d("Recorder_Exception", e.toString());
+        }
+    }
+
+
+    public boolean CheckPermission() {
+        int first = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int first1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return first == PackageManager.PERMISSION_GRANTED && first1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    //give below permission for audio capture
+    private void RequestPermission() {
+        ActivityCompat.requestPermissions(this, new
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
     }
 
 
@@ -650,8 +766,25 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
 
+    private void loadLocalData(){
 
+        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
+            if(infoDbEntity != null){
+                this.infoDbEntity = infoDbEntity;
 
+                // Todo ================================ Need to add below functionality
+
+                /**
+                 * Below conditional checks are to check for any changes done by admin or expiry of subscription plan
+                 * Check 1 ======== Reactions enabled or not
+                 * Check 2 ======== AllowMemberOnly
+                 * Check 3 ======== AllowDiscussion
+                 * ===================================== Yet to be implemented
+                 */
+
+            }
+        });
+    }
 
 
 
@@ -675,7 +808,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     public void init() {
 
-
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
         // Getting API data fetch
         rest = new Rest(this, false, true);
@@ -818,14 +951,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 runOnUiThread(() -> {
 
-                    subscribers = responseModel.getData().getSubscriptionCount();
-                    binding.userSubscribers.setText(String.valueOf(subscribers));
+                    if(responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                        subscribers = responseModel.getData().getSubscriptionCount();
+                        binding.userSubscribers.setText(String.valueOf(subscribers));
 
-                    //binding.loader.setVisibility(View.GONE);
+                        //binding.loader.setVisibility(View.GONE);
 
-                    list.addAll(responseModel.getData().getChatData().getRows());
-                    postBaseUrl = responseModel.getData().getBaseUrl();
-                    loadDataToAdapter();
+                        list.addAll(responseModel.getData().getChatData().getRows());
+                        postBaseUrl = responseModel.getData().getBaseUrl();
+                        loadDataToAdapter();
+                    }
                 });
 
 
@@ -962,7 +1097,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     private void validateSendMessage(String message, View view) {
+
         binding.quoteContainer.setVisibility(View.GONE);
+        binding.sendMessage.setVisibility(View.GONE);
+        binding.recordButton.setVisibility(View.VISIBLE);
+        binding.pinAttachment.setVisibility(View.VISIBLE);
 
         binding.type.setText("");
         Utils.softKeyboard(this, false, binding.type);
@@ -1498,6 +1637,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 files.add(attachment);
             }
         }
+        else if (attachment_request_code == RECORD_AUDIO_REQUEST_CODE) {
+            RequestBody part =
+                    RequestBody.create(
+                            MediaType.parse("audio/*"),
+                            attachmentFileList.get(0)
+                    );
+
+            MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
+            files.add(attachment);
+        }
 
 
         attachment_request_code = 0;
@@ -2027,6 +2176,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         isMessageQuoted = true;
 
         binding.quoteContainer.setVisibility(View.VISIBLE);
+
+        binding.sendMessage.setVisibility(View.VISIBLE);
+        binding.recordButton.setVisibility(View.GONE);
+        binding.pinAttachment.setVisibility(View.GONE);
+
+
         binding.oldMessage.setText(oldMessage);
         binding.oldMsgTime.setText(time);
         binding.oldMsgUser.setText(username);
@@ -2271,6 +2426,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private void previewImage()
     {
+        binding.pinAttachment.setVisibility(View.GONE);
+        binding.sendMessage.setVisibility(View.VISIBLE);
+        binding.recordButton.setVisibility(View.GONE);
 
         ImageMiniPreviewAdapter imageMiniPreviewAdapter= new ImageMiniPreviewAdapter(this,multipleImageUri,this);
         binding.miniImagePreviewRecycler.setHasFixedSize(true);
@@ -2295,6 +2453,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 multipleImageUri.clear();
                 Toast.makeText(this, "You haven't picked any image", Toast.LENGTH_LONG).show();
                 imageMiniPreviewAdapter.updateList(multipleImageUri,0);
+
+                binding.pinAttachment.setVisibility(View.VISIBLE);
+                binding.sendMessage.setVisibility(View.GONE);
+                binding.recordButton.setVisibility(View.VISIBLE);
+
                 binding.imagePreviewLayout.setVisibility(View.GONE);
                 isAnyFileAttached = false;
             }
@@ -2367,6 +2530,27 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             listener = this;
             //appDao = AppDatabase.getInstance(getApplication()).appDao();
 
+
+            requestType = GET_GROUP_CHANNEL_INFO;
+            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""),"android","test");
+        }
+        else if (requestType == GET_GROUP_CHANNEL_INFO) {
+            gson = new Gson();
+            Type type = new TypeToken<GroupChannelInfoResponseModel>() {
+            }.getType();
+
+
+            GroupChannelInfoResponseModel groupChannelInfoResponseModel = gson.fromJson(jsonObject, type);
+
+            if (groupChannelInfoResponseModel != null && groupChannelInfoResponseModel.getData() != null) {
+                InfoDbEntity data;
+                data = groupChannelInfoResponseModel.getData();
+                data.setGroupChannelID(channelID);
+
+                databaseViewModel.insertGroupChannelInfo(data);
+            }
+
+
             requestType = REQUEST_EMOJI_LIST;
             chatViewModel.getEmojiList();
         }
@@ -2397,6 +2581,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         else if (requestType == REQUEST_UPLOAD_FILE) {
             Log.d("UPLOAD IMAGE",jsonObject.toString());
 
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+            binding.sendMessage.setVisibility(View.GONE);
+            binding.recordButton.setVisibility(View.VISIBLE);
+
             SendAttachmentResponseModel sendAttachmentResponseModel = new SendAttachmentResponseModel();
 
 
@@ -2424,7 +2612,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             binding.attachmentContainer.setVisibility(View.GONE);
             isAnyFileAttached = false;
             isAttachmentSend = true;
-            validateSendMessage(messageText,binding.type);
+            validateSendMessage("Audio Test",binding.type);
         }
         else if(requestType == PINNED_MESSAGE_COUNT)
         {
@@ -2502,6 +2690,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         currentPage = 1;
         refreshGroupChatSocket();
+
+
+        loadLocalData();
     }
 
     @Override

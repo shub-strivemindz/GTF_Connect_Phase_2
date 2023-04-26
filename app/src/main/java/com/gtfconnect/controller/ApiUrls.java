@@ -55,7 +55,7 @@ public class ApiUrls {
 
     public static final String URL_GROUP_CHANNEL_SUBSCRIPTION_PLAN = "subscription_plans/subscription";
 
-    public static final String URL_GROUP_CHANNEL_ADMIN_SETTINGS = "details";
+    public static final String URL_GROUP_CHANNEL_INFO = "details";
 
     public static final String URL_GROUP_CHANNEL_UPDATE_PROFILE = "update";
 
@@ -74,4 +74,7 @@ public class ApiUrls {
     public static final String URL_GET_EXCLUSIVE_OFFER = "exclusive-group-channel";
 
     public static final String URL_GET_GROUP_CHANNEL_MEMBER_PROFILE = "user-info-media";
+
+
+    public static final String URL_GET_SAVED_MESSAGES = "user/saved-message";
 }

@@ -16,21 +16,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentUserSettingBinding;
 import com.gtfconnect.interfaces.ChannelSettingListener;
-import com.gtfconnect.models.GroupChannelProfileDetailModel;
+import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelBlocklistScreen;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelManagePermissionScreen;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelProfileScreen;
 import com.shawnlin.numberpicker.NumberPicker;
 
 public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHolder> {
 
     Context context;
 
-    GroupChannelProfileDetailModel profileDetailModel;
+    InfoDbEntity profileDetailModel;
 
     private boolean isChannelDescriptionClicked = false;
 
@@ -39,7 +37,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     private ChannelSettingListener listener;
 
-    public  SettingAdapter(Context context,GroupChannelProfileDetailModel profileDetailModel,ChannelSettingListener listener){
+    public  SettingAdapter(Context context,InfoDbEntity profileDetailModel,ChannelSettingListener listener){
         this.context = context;
         this.profileDetailModel = profileDetailModel;
         this.listener = listener;
@@ -69,15 +67,15 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
 
 
-        if (profileDetailModel != null && profileDetailModel.getData() != null) {
-            if (profileDetailModel.getData().getGcInfo() != null) {
+        if (profileDetailModel != null && profileDetailModel != null) {
+            if (profileDetailModel.getGcInfo() != null) {
 
-                if (profileDetailModel.getData().getGcInfo().getDescription() != null) {
-                    holder.binding.channelDescription.setText(profileDetailModel.getData().getGcInfo().getDescription());
+                if (profileDetailModel.getGcInfo().getDescription() != null) {
+                    holder.binding.channelDescription.setText(profileDetailModel.getGcInfo().getDescription());
                 }
 
-                if(profileDetailModel.getData().getGcInfo().getAccessType() != null && !profileDetailModel.getData().getGcInfo().getAccessType().isEmpty()){
-                    if (profileDetailModel.getData().getGcInfo().getAccessType().equalsIgnoreCase("public")){
+                if(profileDetailModel.getGcInfo().getAccessType() != null && !profileDetailModel.getGcInfo().getAccessType().isEmpty()){
+                    if (profileDetailModel.getGcInfo().getAccessType().equalsIgnoreCase("public")){
                         holder.binding.privateChannelSwitch.setChecked(true);
                         holder.binding.privateChannelSwitchText.setText("On");
                         accessType = 1;
@@ -92,9 +90,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
             }
 
 
-            if (profileDetailModel.getData().getGcSetting() != null) {
-                if (profileDetailModel.getData().getGcSetting().getAllowDiscussion() != null) {
-                    if (profileDetailModel.getData().getGcSetting().getAllowDiscussion() == 1) {
+            if (profileDetailModel.getGcSetting() != null) {
+                if (profileDetailModel.getGcSetting().getAllowDiscussion() != null) {
+                    if (profileDetailModel.getGcSetting().getAllowDiscussion() == 1) {
                         holder.binding.discussionSwitch.setChecked(true);
                         holder.binding.discussionSwitchText.setText("On");
                         discussion = 1;
@@ -106,29 +104,29 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
                 }
 
 
-                if(profileDetailModel.getData().getGcSetting().getEnableReactions() != null){
-                    if (profileDetailModel.getData().getGcSetting().getEnableReactions() == 0){
+                if(profileDetailModel.getGcSetting().getEnableReactions() != null){
+                    if (profileDetailModel.getGcSetting().getEnableReactions() == 0){
                         holder.binding.manageReactionSwitch.setChecked(false);
                         holder.binding.manageReactionSwitchText.setText("Off");
-                        Log.d("Reaction_Status",profileDetailModel.getData().getGcSetting().getEnableReactions().toString());
+                        Log.d("Reaction_Status",profileDetailModel.getGcSetting().getEnableReactions().toString());
                         manageReaction = 0;
                     }
                     else{
                         holder.binding.manageReactionSwitch.setChecked(true);
                         holder.binding.manageReactionSwitchText.setText("On");
-                        Log.d("Reaction_Status",profileDetailModel.getData().getGcSetting().getEnableReactions().toString());
+                        Log.d("Reaction_Status",profileDetailModel.getGcSetting().getEnableReactions().toString());
                         manageReaction = 1;
                     }
                 }
 
 
-                if (profileDetailModel.getData().getGcSetting().getEnableManipulateViews() != null){
-                    if(profileDetailModel.getData().getGcSetting().getEnableManipulateViews() == 1) {
+                if (profileDetailModel.getGcSetting().getEnableManipulateViews() != null){
+                    if(profileDetailModel.getGcSetting().getEnableManipulateViews() == 1) {
 
                         manipulateView = 1;
 
-                        if (profileDetailModel.getData().getGcSetting().getManipulateViewsPercent() != null) {
-                            if (profileDetailModel.getData().getGcSetting().getManipulateViewsPercent() == 0) {
+                        if (profileDetailModel.getGcSetting().getManipulateViewsPercent() != null) {
+                            if (profileDetailModel.getGcSetting().getManipulateViewsPercent() == 0) {
                                 holder.binding.manipulateViewSwitch.setChecked(false);
                                 holder.binding.manipulateViewSwitchText.setText("Off");
 
@@ -137,7 +135,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
                                 holder.binding.manipulateViewSwitch.setChecked(true);
                                 holder.binding.manipulateViewSwitchText.setText("On");
 
-                                manipulateView = profileDetailModel.getData().getGcSetting().getManipulateViewsPercent();
+                                manipulateView = profileDetailModel.getGcSetting().getManipulateViewsPercent();
                             }
                         }
                     }
@@ -155,7 +153,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
 
         holder.binding.manageReaction.setOnClickListener(view -> {
-            if ((profileDetailModel.getData().getGcSetting().getEnableReactions() != null && profileDetailModel.getData().getGcSetting().getEnableReactions() == 1) || manageReaction == 1){
+            if ((profileDetailModel.getGcSetting().getEnableReactions() != null && profileDetailModel.getGcSetting().getEnableReactions() == 1) || manageReaction == 1){
                 listener.callManageReactionsClass(1);
             }
         });
@@ -168,7 +166,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
                     holder.binding.manageReactionSwitchText.setText("On");
 
 
-                   listener.callManageReactionsClass(profileDetailModel.getData().getGcSetting().getEnableReactions());
+                   listener.callManageReactionsClass(profileDetailModel.getGcSetting().getEnableReactions());
                 }
                 else{
                     manageReaction = 0;
@@ -255,7 +253,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
         holder.binding.manipulateViewContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (profileDetailModel.getData().getGcSetting().getEnableManipulateViews() == 1){
+                if (profileDetailModel.getGcSetting().getEnableManipulateViews() == 1){
                     showManipulateViewDialog();
                 }
             }
@@ -295,7 +293,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
     }
 
 
-    public void updateData(GroupChannelProfileDetailModel profileDetailModel){
+    public void updateData(InfoDbEntity profileDetailModel){
         this.profileDetailModel = profileDetailModel;
         notifyDataSetChanged();
     }
@@ -374,7 +372,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
             @Override
             public void onCancel(DialogInterface dialogInterface) {
 
-                if (manipulateViewPercent != profileDetailModel.getData().getGcSetting().getManipulateViewsPercent()){
+                if (manipulateViewPercent != profileDetailModel.getGcSetting().getManipulateViewsPercent()){
                     listener.updateManipulateViewsStatus(1,manipulateViewPercent);
                 }
             }

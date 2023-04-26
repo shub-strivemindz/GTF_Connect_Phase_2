@@ -8,14 +8,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentSavedMessageBinding;
+import com.gtfconnect.models.savedMessageModels.SavedMessageResponseModel;
 
 public class SavedMessageAdapter extends RecyclerView.Adapter<SavedMessageAdapter.ViewHolder> {
 
-        private int tempItemCount;
+        private SavedMessageResponseModel savedMessageResponseModel;
         private Context context;
 
-        public  SavedMessageAdapter(Context context,int tempItemCount){
-                this.tempItemCount = tempItemCount;
+        public  SavedMessageAdapter(Context context, SavedMessageResponseModel savedMessageResponseModel){
+                this.savedMessageResponseModel = savedMessageResponseModel;
                 this.context = context;
         }
 
@@ -32,7 +33,7 @@ public class SavedMessageAdapter extends RecyclerView.Adapter<SavedMessageAdapte
 
         @Override
         public int getItemCount() {
-                return tempItemCount;
+                return savedMessageResponseModel.getData().getList().size();
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {

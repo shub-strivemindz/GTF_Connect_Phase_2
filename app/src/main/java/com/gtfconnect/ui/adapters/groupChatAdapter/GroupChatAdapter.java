@@ -73,13 +73,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     private String messageTime = "";
 
     private int messageUserID;
-    static int likeCounter;
-
 
     private boolean isDummyUser = true;
-//    private int commentCount;
 
-    // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
+
 
     public GroupChatAdapter(Context context, ArrayList<GroupChatResponseModel.Row> list, String userID, String post_base_url, GroupChatListener groupChatListener) {
         this.list = list;
@@ -197,12 +194,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         else {
             holder.binding.selectPost1.setChecked(false);
         }
-
-
-        Gson gson = new Gson();
-        String data = gson.toJson(list.get(position));
-
-
 
 
 

@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
@@ -17,6 +18,7 @@ import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
 import java.util.List;
 
@@ -39,7 +41,22 @@ public class DatabaseViewModel extends AndroidViewModel {
     }
 
     public LiveData<GroupChannelGalleryEntity> getProfileImage() {
-        return repo.getProfileImage();
+        return  repo.getProfileImage();
+    }
+
+
+
+
+
+
+
+    public void insertGroupChannelInfo(InfoDbEntity dataModel) {
+        repo.insertGroupChannelInfo(dataModel);
+    }
+
+
+    public LiveData<InfoDbEntity> getGroupChannelInfo(int groupChannelID) {
+        return repo.getGroupChannelInfo(groupChannelID);
     }
 
 
@@ -51,10 +68,7 @@ public class DatabaseViewModel extends AndroidViewModel {
 
 
 
-
-
-
-    public void insertExclusiveOffer(ExclusiveOfferDataModel dataModel) {
+    public void insertExclusiveOffer(List<ExclusiveOfferDataModel> dataModel) {
         repo.insertExclusiveOfferData(dataModel);
     }
 
@@ -67,7 +81,7 @@ public class DatabaseViewModel extends AndroidViewModel {
 
 
     public LiveData<List<ExclusiveOfferDataModel>> getExclusiveOfferData() {
-        return repo.getExclusiveOfferData();
+        return Transformations.distinctUntilChanged(repo.getExclusiveOfferData());
     }
 
 

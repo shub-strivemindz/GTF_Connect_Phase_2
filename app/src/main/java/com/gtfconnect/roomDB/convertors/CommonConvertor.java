@@ -1,4 +1,4 @@
-package com.gtfconnect.roomDB;
+package com.gtfconnect.roomDB.convertors;
 
 import android.util.Log;
 
@@ -6,19 +6,15 @@ import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatCommentModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelLikeModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelMediaResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
-public class Convertors {
+public class CommonConvertor {
 
 
 

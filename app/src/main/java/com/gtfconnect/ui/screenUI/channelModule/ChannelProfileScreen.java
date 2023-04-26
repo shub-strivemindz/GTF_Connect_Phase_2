@@ -1,8 +1,5 @@
 package com.gtfconnect.ui.screenUI.channelModule;
 
-import static com.gtfconnect.services.SocketService.context;
-
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -21,7 +18,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,7 +26,6 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -41,17 +36,16 @@ import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityChannelProfileBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.ChannelSettingListener;
-import com.gtfconnect.models.GroupChannelProfileDetailModel;
+import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
+import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.DocumentAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.LinkAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.MediaAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.SettingAdapter;
 import com.gtfconnect.ui.screenUI.HomeScreen;
-import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.ui.screenUI.groupModule.GroupEditProfileScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
-import com.gtfconnect.utilities.Utils;
-import com.gtfconnect.viewModels.AuthViewModel;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.lang.reflect.Type;
@@ -62,9 +56,9 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     ActivityChannelProfileBinding binding;
 
-    GroupChannelProfileDetailModel profileDetailModel;
+    private InfoDbEntity profileDetailModel;
 
-    private final int GET_PROFILE_DETAIL = 201;
+    private final int GET_GROUP_CHANNEL_INFO = 201;
 
     private final int UPDATE_GC_SETTING = 301;
 
@@ -79,6 +73,10 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
     private final int GC_REFRESH_UPDATED_DATA_CODE = 1001;
 
     private final int GC_REFRESH_UPDATED_REACTION_CODE = 1002;
+
+
+    private DatabaseViewModel databaseViewModel;
+
 
     private Rest rest;
     private ApiResponseListener listener;
@@ -213,8 +211,8 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                 TextView message = (TextView) copyLink_dialog.findViewById(R.id.dialog_message);
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
-                if (profileDetailModel.getData().getGcInfo().getPublicLink() != null && !profileDetailModel.getData().getGcInfo().getPublicLink().isEmpty()) {
-                    ClipData clip = ClipData.newPlainText("Channel Link", profileDetailModel.getData().getGcInfo().getPublicLink());
+                if (profileDetailModel.getGcInfo().getPublicLink() != null && !profileDetailModel.getGcInfo().getPublicLink().isEmpty()) {
+                    ClipData clip = ClipData.newPlainText("Channel Link", profileDetailModel.getGcInfo().getPublicLink());
                     clipboard.setPrimaryClip(clip);
                 } else {
                     message.setText("No link found to copy");
@@ -290,7 +288,44 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
     }
 
 
+
+    private void loadLocalData(){
+
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
+        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
+            if(infoDbEntity != null){
+                this.profileDetailModel = infoDbEntity;
+                rest.dismissProgressdialog();
+
+
+                if (requestType == GET_UPDATED_GC_SETTING){
+                    updateNotificationSetting();
+                    settingViewAdapter.updateData(profileDetailModel);
+                }
+                else {
+                    updateNotificationSetting();
+
+                    if (isReactionsUpdated) {
+                        settingViewAdapter.updateData(profileDetailModel);
+                    } else {
+                        setProfileDetails();
+                    }
+                }
+
+            }
+        });
+    }
+
+
+
+
+
     private void init() {
+
+
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
 
         rest = new Rest(this,false,false);
 
@@ -312,8 +347,8 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
             }
         });
 
-        requestType = GET_PROFILE_DETAIL;
-        connectViewModel.get_admin_group_channel_settings(channelID,api_token,"android","test");
+        requestType = GET_GROUP_CHANNEL_INFO;
+        connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
 
     }
 
@@ -322,22 +357,22 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
     private void setProfileDetails()
     {
 
-        if (profileDetailModel.getData()!=null)
+        if (profileDetailModel!=null)
         {
-            if(profileDetailModel.getData().getGcInfo()!=null)
+            if(profileDetailModel.getGcInfo()!=null)
             {
-                if (!profileDetailModel.getData().getGcInfo().getName().isEmpty() && profileDetailModel.getData().getGcInfo().getName()!=null)
+                if (!profileDetailModel.getGcInfo().getName().isEmpty() && profileDetailModel.getGcInfo().getName()!=null)
                 {
-                    binding.title.setText(profileDetailModel.getData().getGcInfo().getName());
+                    binding.title.setText(profileDetailModel.getGcInfo().getName());
                 }
-                if (profileDetailModel.getData().getGcInfo().getMemberCount() != 0 && profileDetailModel.getData().getGcInfo().getMemberCount()!=null)
+                if (profileDetailModel.getGcInfo().getMemberCount() != 0 && profileDetailModel.getGcInfo().getMemberCount()!=null)
                 {
-                    binding.subscriberCount.setText(String.valueOf(profileDetailModel.getData().getGcInfo().getMemberCount()));
+                    binding.subscriberCount.setText(String.valueOf(profileDetailModel.getGcInfo().getMemberCount()));
                 }
                 else {
                     binding.title2.setVisibility(View.GONE);
                 }
-                if (!profileDetailModel.getData().getGcInfo().getProfileImage().isEmpty() && profileDetailModel.getData().getGcInfo().getProfileImage()!=null)
+                if (!profileDetailModel.getGcInfo().getProfileImage().isEmpty() && profileDetailModel.getGcInfo().getProfileImage()!=null)
                 {
                     //Setting up loader on post
                     CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
@@ -348,10 +383,10 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.placeholder(circularProgressDrawable);
                     requestOptions.error(R.drawable.image_not_found);
-                    requestOptions.skipMemoryCache(true);
+                    requestOptions.skipMemoryCache(false);
                     requestOptions.fitCenter();
 
-                    Glide.with(this).load(profileDetailModel.getData().getGcInfo().getProfileImage()).
+                    Glide.with(this).load(profileDetailModel.getGcInfo().getProfileImage()).
                             fitCenter().apply(requestOptions).
                             transition(DrawableTransitionOptions.withCrossFade()).into(binding.logo);
                 }
@@ -363,11 +398,11 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     private void updateNotificationSetting()
     {
-        if (profileDetailModel != null && profileDetailModel.getData() != null){
-            if (profileDetailModel.getData().getGcSetting() != null) {
-                if (profileDetailModel.getData().getGcSetting().getIsNotification() != null) {
+        if (profileDetailModel != null && profileDetailModel != null){
+            if (profileDetailModel.getGcSetting() != null) {
+                if (profileDetailModel.getGcSetting().getIsNotification() != null) {
 
-                    if (profileDetailModel.getData().getGcSetting().getIsNotification() == 0) {
+                    if (profileDetailModel.getGcSetting().getIsNotification() == 0) {
                         isNotificationEnabled = false;
                         binding.notificationText.setText("Unmute");
                         binding.notificationIcon.setImageDrawable(getResources().getDrawable(R.drawable.unmute));
@@ -377,18 +412,30 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                         binding.notificationIcon.setImageDrawable(getResources().getDrawable(R.drawable.mute));
                     }
 
-                    Log.d("Mute_status",profileDetailModel.getData().getGcSetting().getIsNotification()+"");
+                    Log.d("Mute_status",profileDetailModel.getGcSetting().getIsNotification()+"");
                 }
             }
         }
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        loadLocalData();
+    }
 
     @Override
     public void onLoading() {
-        rest.ShowDialogue();
+        if (requestType ==GET_GROUP_CHANNEL_INFO) {
+            if (profileDetailModel == null) {
+                rest.ShowDialogue();
+            }
+        }
+        else{
+            rest.ShowDialogue();
+        }
     }
 
     @Override
@@ -437,52 +484,50 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
     {
         Log.d("rendered","successfully!");
 
-        if (requestType == GET_PROFILE_DETAIL) {
+        if (requestType == GET_GROUP_CHANNEL_INFO) {
             Gson gson = new Gson();
-            Type type = new TypeToken<GroupChannelProfileDetailModel>() {
+            Type type = new TypeToken<GroupChannelInfoResponseModel>() {
             }.getType();
 
 
-            profileDetailModel = new GroupChannelProfileDetailModel();
-            profileDetailModel = gson.fromJson(response, type);
+            GroupChannelInfoResponseModel groupChannelInfoResponseModel = gson.fromJson(response, type);
 
-            updateNotificationSetting();
+            if (groupChannelInfoResponseModel != null && groupChannelInfoResponseModel.getData() != null) {
+                InfoDbEntity data;
+                data = groupChannelInfoResponseModel.getData();
+                data.setGroupChannelID(channelID);
 
-            if (isReactionsUpdated){
-                settingViewAdapter.updateData(profileDetailModel);
-            }
-            else {
-                setProfileDetails();
+                databaseViewModel.insertGroupChannelInfo(data);
             }
         }
         else if (requestType == UPDATE_GC_SETTING) {
 
             requestType = GET_UPDATED_GC_SETTING;
-            connectViewModel.get_admin_group_channel_settings(channelID,api_token,"android","test");
+            connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
 
-            Log.d("rendered","1");
+
         }
         else if (requestType == GET_UPDATED_GC_SETTING) {
 
             Gson gson = new Gson();
-            Type type = new TypeToken<GroupChannelProfileDetailModel>() {
+            Type type = new TypeToken<GroupChannelInfoResponseModel>() {
             }.getType();
 
-            profileDetailModel = new GroupChannelProfileDetailModel();
-            profileDetailModel = gson.fromJson(response, type);
 
-            updateNotificationSetting();
+            GroupChannelInfoResponseModel groupChannelInfoResponseModel = gson.fromJson(response, type);
 
+            if (groupChannelInfoResponseModel != null && groupChannelInfoResponseModel.getData() != null) {
+                InfoDbEntity data;
+                data = groupChannelInfoResponseModel.getData();
+                data.setGroupChannelID(channelID);
 
-            settingViewAdapter.updateData(profileDetailModel);
-
-            Log.d("rendered","2");
-
+                databaseViewModel.insertGroupChannelInfo(data);
+            }
 
         } else if (requestType == UPDATE_GC_REACTION_SETTING) {
 
             requestType = UPDATED_GC_REACTION_SETTING;
-            connectViewModel.get_admin_group_channel_settings(channelID,api_token,"android","test");
+            connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
 
         } else if (requestType == UPDATED_GC_REACTION_SETTING) {
 
@@ -509,9 +554,9 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
 
-        params.put("Name",profileDetailModel.getData().getGcInfo().getName());
-        params.put("Description",profileDetailModel.getData().getGcInfo().getDescription());
-        params.put("Type",profileDetailModel.getData().getGcInfo().getType());
+        params.put("Name",profileDetailModel.getGcInfo().getName());
+        params.put("Description",profileDetailModel.getGcInfo().getDescription());
+        params.put("Type",profileDetailModel.getGcInfo().getType());
 
         if (status == 0){
             params.put("AccessType","private");
@@ -586,16 +631,16 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
                     binding.tabLayout.getTabAt(3).select();
 
-                    requestType = GET_PROFILE_DETAIL;
-                    connectViewModel.get_admin_group_channel_settings(channelID,api_token,"android","test");
+                    requestType = GET_GROUP_CHANNEL_INFO;
+                    connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
                 }
                 else if (result.getResultCode() == GC_REFRESH_UPDATED_REACTION_CODE) {
 
                     binding.tabLayout.getTabAt(3).select();
 
-                    requestType = GET_PROFILE_DETAIL;
+                    requestType = GET_GROUP_CHANNEL_INFO;
                     isReactionsUpdated = true;
-                    connectViewModel.get_admin_group_channel_settings(channelID,api_token,"android","test");
+                    connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
                 }
             });
 }

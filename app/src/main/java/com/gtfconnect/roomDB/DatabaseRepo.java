@@ -14,6 +14,7 @@ import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -26,6 +27,7 @@ public class DatabaseRepo {
         AppDatabase appDatabase = AppDatabase.getInstance(application);
         appDao = appDatabase.appDao();
     }
+
 
 
 
@@ -58,13 +60,45 @@ public class DatabaseRepo {
 
 
 
+// ==================================================================== Group Channel Detail Info =====================================================
+
+
+    public void insertGroupChannelInfo(InfoDbEntity infoDbEntity) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                appDao.insertGroupChannelInfo(infoDbEntity);
+            }
+        });
+    }
+
+    public LiveData<InfoDbEntity> getGroupChannelInfo(int groupChannelID) {
+        return appDao.getGroupChannelInfo(groupChannelID);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
     // ================================================================ Channel Data =====================================================================
 
-    public void insertExclusiveOfferData(ExclusiveOfferDataModel exclusiveOfferDataModel) {
+    public void insertExclusiveOfferData(List<ExclusiveOfferDataModel> exclusiveOfferDataModel) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -132,11 +166,9 @@ public class DatabaseRepo {
             public void run() {
                 appDao.delete_channel_chat_data();
                 appDao.insertChannelChatData(channelDashboardData);
-
             }
         });
     }
-
     public LiveData<ChannelChatResponseModel> getChannelChatData() {
         return appDao.getChannelChatData();
     }*/
@@ -242,7 +274,6 @@ public class DatabaseRepo {
                 appDao.insertChannelChatHeaderData(channelChatDb.chatHeaderDbEntity);
             }
         });
-
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
