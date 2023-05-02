@@ -21,7 +21,7 @@ import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
-@Database(entities = {DashboardListEntity.class, GroupChannelChatHeaderDbEntity.class, GroupChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class, GroupChannelGalleryEntity.class, InfoDbEntity.class}, version = 18)
+@Database(entities = {DashboardListEntity.class, GroupChannelChatHeaderDbEntity.class, GroupChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class, GroupChannelGalleryEntity.class, InfoDbEntity.class}, version = 22)
 @TypeConverters({CommonConvertor.class, GroupChannelInfoConvertor.class, DashboardDataConvertor.class})
 
 public abstract class AppDatabase extends RoomDatabase {

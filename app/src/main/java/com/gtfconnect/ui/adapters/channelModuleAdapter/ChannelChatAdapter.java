@@ -109,6 +109,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         notifyDataSetChanged();
     }
 
+
     public void updatePostBaseUrl(String post_base_url){
         this.post_base_url = post_base_url;
     }

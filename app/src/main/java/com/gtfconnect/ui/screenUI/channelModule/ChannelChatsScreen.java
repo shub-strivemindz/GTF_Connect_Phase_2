@@ -304,6 +304,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         list = new ArrayList<>();
         receivedMessageList = new ArrayList<>();
 
+        loadDataToAdapter();
+
         searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
 
         //destroyListeners();
@@ -322,24 +324,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         deletePostListener();
         commentReceiver();
 
-
-
-
-        loadLocalData();
-
-
-            //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
-            //deleteCommentListener();
-            //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
-
-
-
-         /*   isListenersInitialized = true;
-        }*/
-
-
-
-        // list = new ArrayList<>();
         databaseEntity = new GroupChannelChatDbEntity();
 
         binding.quoteContainer.setVisibility(View.GONE);
@@ -534,8 +518,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
         channelChatDb.setChatHeaderDbEntity(headerDb);
         channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
-        Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
-        Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());
+        /*Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
+        Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());*/
         databaseViewModel.insertChannelChatData(channelChatDb);
     }
 
@@ -544,9 +528,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     /*@Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putInt("currentPage",currentPage);
-
     }*/
 
     private void initiateClickListeners() {
@@ -725,7 +707,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 Log.d("RecordButton", "RECORD BUTTON CLICKED");
             }
         });
-
         binding.recordView.setLockEnabled(true);
         binding.recordView.setRecordLockImageView(findViewById(R.id.record_lock));*/
     }
@@ -854,35 +835,24 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
 
-        /*databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
-
+        databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
             databaseEntity = channelChatDbEntities;
             list = new ArrayList<>();
 
-            // Todo : Need to find the why its getting called twice :
-            Log.d("run", " times2");
-
             if (channelChatDbEntities != null) {
                 if (channelChatDbEntities.getChatBodyDbEntitiesLists() != null) {
-
                     Log.d("run", " times3");
 
-                    int last_index = channelChatDbEntities.getChatBodyDbEntitiesLists().size();
-                    lastLocalGroupChatID = "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(last_index - 1).getGroupChatID();
-                    Log.d("ChannelChatDataChatDB", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(0).getGroupChatID());
-
+                    Log.d("ChannelChatDataChatDB", "last entered message id =" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1).getGroupChatID());
 
                     for (int i = channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1; i >= 0; i--) {
 
-                        Log.d("dbData", "" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getGroupChatID());
-                        Log.d("dbData", "Size = " + channelChatDbEntities.getChatBodyDbEntitiesLists().size());
+                        Log.d("ChannelChatDataChatDB", "message id = " + channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getGroupChatID());
+                        Log.d("ChannelChatDataChatDB", "Size = " + channelChatDbEntities.getChatBodyDbEntitiesLists().size());
 
                         list.add(channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getRows());
-
-                        //currentPage = channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getPage();
+                        channelViewAdapter.updateList(list);
                     }
-
-
                     if (channelChatDbEntities.getChatHeaderDbEntity() != null) {
                         if (channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl() != null) {
                             postBaseUrl = channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl();
@@ -892,58 +862,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                             binding.userSubscribers.setText(String.valueOf(subscribers));
                         }
                     }
-
-
-                    if (!isDataLoadedOnce) {
-                        loadDataToAdapter();
-                        refreshGroupChatSocket();
-                        isDataLoadedOnce = true;
-                    }
-
-
-                    //channelViewAdapter.updateList(list);
-                } else {
-                    refreshGroupChatSocket();
+                    //channelViewAdapter.updatePostBaseUrl(postBaseUrl);
                 }
-            } else {
-                refreshGroupChatSocket();
             }
-        });*/
-
-
-        String chat_data = PreferenceConnector.readString(ChannelChatsScreen.this, PreferenceConnector.CHANNEL_DATA + "/" + channelID, "");
-
-        Gson gson = new Gson();
-        responseModel = new ChannelChatResponseModel();
-        responseModel = gson.fromJson(chat_data, ChannelChatResponseModel.class);
-
-
-        if (responseModel != null) {
-            list = new ArrayList<>();
-
-            if (responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
-                subscribers = responseModel.getData().getSubscriptionCount();
-                binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                list.addAll(responseModel.getData().getChatData().getRows());
-                postBaseUrl = responseModel.getData().getBaseUrl();
-                loadDataToAdapter();
-
-                /*currentPage = 1;
-                refreshChannelChatSocket();*/
-            }
-        }
-            /*else{
-
-                currentPage = 1;
-                refreshChannelChatSocket();
-            }
-        }
-        else{
-
-            currentPage = 1;
-            refreshChannelChatSocket();
-        }*/
+        });
+        refreshChannelChatSocket();
     }
 
 
@@ -955,8 +878,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         return LinearSmoothScroller.SNAP_TO_START;
                     }
                 };
-
-
         smoothScroller.setTargetPosition(position);
         mLayoutManager.startSmoothScroll(smoothScroller);*/
 
@@ -979,7 +900,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     //anim.setRepeatMode(Animation.REVERSE);
                     anim.setRepeatCount(Animation.INFINITE);
                     getRoot.startAnimation(anim);
-
                 }
             }
         }, 1000);
@@ -1014,7 +934,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }.getType();
 
         responseModel = new ChannelChatResponseModel();
-        list = new ArrayList<>();
 
         try {
             jsonRawObject = new JSONObject();
@@ -1024,9 +943,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             jsonRawObject.put("page", currentPage);
 
             Log.d("Chat list params --", jsonRawObject.toString());
-
-      /*      if (!isListLoadedOnce)
-                runOnUiThread(() -> rest.ShowDialogue());*/
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
@@ -1049,14 +965,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 runOnUiThread(() -> {
 
                     if(responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
-                        subscribers = responseModel.getData().getSubscriptionCount();
-                        binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                        //binding.loader.setVisibility(View.GONE);
-
-                        list.addAll(responseModel.getData().getChatData().getRows());
-                        postBaseUrl = responseModel.getData().getBaseUrl();
-                        loadDataToAdapter();
+                        insertDataInDB(responseModel);
                     }
                 });
 
@@ -1066,232 +975,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             Log.d("JsonException ---", e.toString());
         }
     }
-
-  /*  private void getChannelChatSocketData() {
-        isListLoadedOnce = true;
-
-        Gson gson = new Gson();
-        Type type;
-
-        type = new TypeToken<ChannelChatResponseModel>() {
-        }.getType();
-
-        responseModel = new ChannelChatResponseModel();
-
-        try {
-            jsonRawObject = new JSONObject();
-            jsonRawObject.put("GCMemberID", gcMemberID);
-            jsonRawObject.put("GroupChannelID", channelID);
-            jsonRawObject.put("userId", userID);
-            jsonRawObject.put("page", currentPage);
-
-            Log.d("Chat list params --", jsonRawObject.toString());
-
-            //if (!isScrolling && !isListLoadedOnce)
-               // runOnUiThread(() -> rest.ShowDialogue());
-
-            socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
-
-           *//*     if (!isScrolling)
-                    runOnUiThread(() -> rest.dismissProgressdialog());*//*
-
-                JSONObject responseData = (JSONObject) args[0];
-                Log.d("Group Chat Data 2 ----", responseData.toString());
-
-                JsonParser jsonParser = new JsonParser();
-                JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
-
-                responseModel = gson.fromJson(gsonObject, type);
-
-                if (responseData == null) {
-                    Utils.showSnackMessage(this, binding.getRoot(), "No Data Found");
-                    Log.d("authenticateUserAndFetchData -- ", "Error");
-                } else {
-
-                    runOnUiThread(() -> {
-
-
-                        Log.d("SocketDB",responseData.toString());
-
-                        binding.loader.setVisibility(View.GONE);
-
-
-                        if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows()!=null && !responseModel.getData().getChatData().getRows().isEmpty()) {
-
-                            *//*if (responseModel.getData().getSubscriptionCount() != null) {
-                                subscribers = responseModel.getData().getSubscriptionCount();
-                            }*//*
-
-                            //binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                            if (databaseEntity!=null && databaseEntity.getChatBodyDbEntitiesLists() != null && !databaseEntity.getChatBodyDbEntitiesLists().isEmpty()) {
-
-                                    int lastIndex = databaseEntity.getChatBodyDbEntitiesLists().size() - 1;
-                                    lastLocalGroupChatID = "" + databaseEntity.getChatBodyDbEntitiesLists().get(lastIndex).getGroupChatID();
-
-                                    if (!lastLocalGroupChatID.equalsIgnoreCase(responseModel.getData().getChatData().getRows().get(0).getGroupChatID())) {
-                                        insertDataInDB(responseModel);
-                                    }
-
-                                    Log.d("GroupChat", "last" + lastLocalGroupChatID);
-                                    Log.d("GroupChat", "new" + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
-                            }
-                            else{
-                                insertDataInDB(responseModel);
-                            }
-
-                            //postBaseUrl = responseModel.getData().getBaseUrl();
-                        }
-                    });
-                }
-            });
-        } catch (Exception e) {
-            Log.d("JsonException ---", e.toString());
-        }
-    }*/
-
-    /*private void refreshChatSocket() {
-
-
-        Gson gson = new Gson();
-        Type type;
-
-        type = new TypeToken<ChannelChatResponseModel>() {
-        }.getType();
-
-        responseModel = new ChannelChatResponseModel();
-
-        try {
-            jsonRawObject = new JSONObject();
-            jsonRawObject.put("GCMemberID", gcMemberID);
-            jsonRawObject.put("GroupChannelID", channelID);
-            jsonRawObject.put("userId", userID);
-            jsonRawObject.put("page", currentPage);
-
-            Log.d("Chat list params --", "Refresh = " + jsonRawObject.toString());
-
-            Log.d("Message_Received_Listener","Refresh Fragment");
-
-            //if (!isListLoadedOnce)
-            //runOnUiThread(() -> rest.ShowDialogue());
-
-            socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
-
-                runOnUiThread(() -> rest.dismissProgressdialog());
-
-                JSONObject responseData = (JSONObject) args[0];
-                Log.d("Channel Chat Data ----", responseData.toString());
-
-                JsonParser jsonParser = new JsonParser();
-                JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
-
-                responseModel = gson.fromJson(gsonObject, type);
-
-
-                runOnUiThread(() -> {
-
-                    //binding.loader.setVisibility(View.GONE);
-
-
-                    if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
-
-                        if (responseModel.getData().getSubscriptionCount() != null) {
-                            subscribers = responseModel.getData().getSubscriptionCount();
-                        }
-
-                        binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                        Log.d("ChannelChatDataChatDB", "Update" + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
-
-                        if (databaseEntity != null && databaseEntity.getChatBodyDbEntitiesLists() != null && !databaseEntity.getChatBodyDbEntitiesLists().isEmpty()) {
-
-                            //boolean isDataInserted = false;
-
-                            int lastIndex = databaseEntity.getChatBodyDbEntitiesLists().size() - 1;
-                            lastLocalGroupChatID = "" + databaseEntity.getChatBodyDbEntitiesLists().get(lastIndex).getGroupChatID();
-
-                            if (!lastLocalGroupChatID.equalsIgnoreCase(responseModel.getData().getChatData().getRows().get(0).getGroupChatID())) {
-                                insertDataInDB(responseModel);
-                            }
-
-                            Log.d("ChannelChatDataChatDB", "local chat ID = " + lastLocalGroupChatID);
-                            Log.d("ChannelChatDataChatDB", "response chat ID = " + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
-                            Log.d("ChannelChatDataChatDB", "response = " + responseModel.getData().getChatData().getRows().size());
-
-
-                        } else {
-                            insertDataInDB(responseModel);
-                        }
-
-                        postBaseUrl = responseModel.getData().getBaseUrl();
-                    }
-                });
-
-
-            });
-        } catch (Exception e) {
-            Log.d("JsonException ---", e.toString());
-        }
-    }*/
-    /*private void updateChannelChatSocketData() {
-
-        Gson gson = new Gson();
-        Type type;
-
-        type = new TypeToken<ChannelChatResponseModel>() {
-        }.getType();
-
-        responseModel = new ChannelChatResponseModel();
-
-        try {
-            jsonRawObject = new JSONObject();
-            jsonRawObject.put("GCMemberID", gcMemberID);
-            jsonRawObject.put("GroupChannelID", channelID);
-            jsonRawObject.put("userId", userID);
-            jsonRawObject.put("page", currentPage);
-
-            Log.d("Chat list params --", jsonRawObject.toString());
-
-            //if (!isScrolling && !isListLoadedOnce)
-            // runOnUiThread(() -> rest.ShowDialogue());
-
-            socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
-
-           *//*     if (!isScrolling)
-                    runOnUiThread(() -> rest.dismissProgressdialog());*//*
-
-
-                JSONObject responseData = (JSONObject) args[0];
-                Log.d("Group Chat Data ----", responseData.toString());
-
-                JsonParser jsonParser = new JsonParser();
-                JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
-
-                responseModel = gson.fromJson(gsonObject, type);
-
-                if (responseData == null) {
-                    Utils.showSnackMessage(this, binding.getRoot(), "No Data Found");
-                    Log.d("authenticateUserAndFetchData -- ", "Error");
-                } else {
-
-                    runOnUiThread(() -> {
-
-                        Log.d("SocketDB", responseData.toString());
-
-                        //binding.loader.setVisibility(View.GONE);
-
-                        if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
-                            insertDataInDB(responseModel);
-                        }
-                    });
-                }
-            });
-        } catch (Exception e) {
-            Log.d("JsonException ---", e.toString());
-        }
-    }*/
-
-
 
     private void updateChannelChatSocket(boolean isScrolling) {
         isListLoadedOnce = true;
@@ -1313,9 +996,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             Log.d("Chat list params --", jsonRawObject.toString());
 
-            /*if (!isScrolling && !isListLoadedOnce)
-                runOnUiThread(() -> rest.ShowDialogue());*/
-
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
                 if (!isScrolling)
@@ -1336,20 +1016,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 } else {
 
                     runOnUiThread(() -> {
-
-                        subscribers = responseModel.getData().getSubscriptionCount();
-                        binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                        //binding.loader.setVisibility(View.GONE);
-
-                        /*for (int i=0;i<responseModel.getData().getChatData().getRows().size();i++){
-                            responseModel.getData().getChatData().getRows().get(i).setShowPostSelection(showPostSelectionCheckBox);
-                        }*/
-
-                        list.addAll(responseModel.getData().getChatData().getRows());
-
-                        postBaseUrl = responseModel.getData().getBaseUrl();
-                        loadDataToAdapter();
+                        insertDataInDB(responseModel);
                     });
                 }
 
@@ -1504,7 +1171,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 //scrollToFirstPosition();
                                 currentPage = 1;
                                 refreshGroupChatSocket();
-
                             } else {
                                 Log.d("Msg sent ", "failed");
                             }*/
@@ -1547,46 +1213,69 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
 
-
-            //refreshGroupChatSocket();
-
-            ChannelRowListDataModel rowData = receivedMessage.getSaveMsg().getGetData();
+            //ChannelRowListDataModel rowData = receivedMessage.getSaveMsg().getGetData();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
+                    refreshChannelChatSocket();
 
-                    try {
-                        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
+                    /*try {
+                        if (rowData.getUserID() != null) {
+                            if (!Objects.equals(userID, rowData.getUserID())){
 
-                        if (responseModel.getData().getChatData().getCount() != null) {
-                            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
+                                GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
+
+                                if(databaseEntity != null && databaseEntity.getChatHeaderDbEntity() != null){
+
+                                    if (databaseEntity.getChatHeaderDbEntity().getCount() != null) {
+                                        headerDb.setCount(databaseEntity.getChatHeaderDbEntity().getCount());
+                                    }
+
+                                    headerDb.setGroupChannelID(channelID+"");
+
+                                    if (databaseEntity.getChatHeaderDbEntity().getBaseUrl() != null) {
+                                        headerDb.setBaseUrl(databaseEntity.getChatHeaderDbEntity().getBaseUrl());
+                                    }
+
+                                    if (databaseEntity.getChatHeaderDbEntity().getSubscriptionCount() != null) {
+                                        headerDb.setSubscriptionCount(databaseEntity.getChatHeaderDbEntity().getSubscriptionCount());
+                                    }
+                                }
+                                else{
+                                    headerDb.setCount("");
+                                    headerDb.setGroupChannelID(channelID+"");
+                                    headerDb.setBaseUrl("");
+                                    headerDb.setSubscriptionCount("");
+                                }
+
+                                List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+
+                                for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
+
+                                    GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                    bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                    bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                    bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                    bodyDbEntity.setPage(currentPage);
+
+                                    chatBodyDbEntityList.add(bodyDbEntity);
+
+                                }
+
+
+                                GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
+                                channelChatDb.setChatHeaderDbEntity(headerDb);
+                                channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
+                                Log.d("DB_chat_data", channelChatDb.getChatBodyDbEntitiesLists().get(0).getGroupChatID()+"");
+                                Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());
+                                databaseViewModel.insertChannelChatData(channelChatDb);
+                            }
                         }
 
-                        headerDb.setGroupChannelID(rowData.getGroupChannelID().toString());
-                        headerDb.setBaseUrl(postBaseUrl);
-                        headerDb.setSubscriptionCount("" + subscribers);
-
-                        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
-
-                        GroupChannelChatBodyDbEntity chatBodyDbEntity = new GroupChannelChatBodyDbEntity();
-                        chatBodyDbEntity.setGroupChatID(Integer.parseInt(rowData.getGroupChatID()));
-                        chatBodyDbEntity.setGroupChannelID(rowData.getGroupChannelID().toString());
-                        chatBodyDbEntity.setRows(rowData);
-
-
-                        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
-                        channelChatDb.setChatHeaderDbEntity(headerDb);
-                        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
-                        Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
-                        Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());
-                        databaseViewModel.insertChannelChatData(channelChatDb);
-
-                        list.add(0, chatBodyDbEntity.getRows());
-                        channelViewAdapter.updateList(list);
                     } catch (Exception e) {
                         Log.d("Typing header exception --", e.toString());
-                    }
+                    }*/
                 }
             });
         });
@@ -1751,13 +1440,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     /*private void deleteCommentListener()
     {
-
         Gson gson = new Gson();
         Type type;
-
         type = new TypeToken<List<GroupChatResponseModel.CommentResponseModel>>() {
         }.getType();
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1767,7 +1453,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         JSONArray response = new JSONArray();
                         JSONObject data = (JSONObject) args[0];
                         Log.d("Comment Data :","after delete --"+data.toString());
-
                         try {
                             response = data.getJSONObject("data").getJSONArray("commentList");
                         }
@@ -1775,16 +1460,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         {
                             Log.d("Edit Comment Listener error :",e.toString());
                         }
-
                         commentDeleteResponseModel.setCommentData(gson.fromJson(response.toString(), type));
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 searchMessageInList(commentDeleteResponseModel.getGroupChatID().toString(),false,false,true);
                             }
                         });
-
                     }
                 });
             }
@@ -1835,20 +1517,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
 
-                                    boolean isDataInserted = false;
-                                    for (int i = 0; i < databaseEntity.getChatBodyDbEntitiesLists().size(); i++) {
-                                        lastLocalGroupChatID = "" + databaseEntity.getChatBodyDbEntitiesLists().get(i).getGroupChatID();
-                                        if (lastLocalGroupChatID.equalsIgnoreCase(responseModel.getData().getChatData().getRows().get(0).getGroupChatID())) {
-                                            isDataInserted = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!isDataInserted) {
-                                        insertDataInDB(responseModel);
-                                    }
-
-                                    list.addAll(responseModel.getData().getChatData().getRows());
-                                    loadDataToAdapter();
+                                    insertDataInDB(responseModel);
                                     loadSearchData = false;
                                     currentPage++;
 
@@ -2503,12 +2172,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         isMessageNotFound = true;
         loadSearchData = false;
         isDataAvailable = true;
-
         searchedTillPosition = 0;
-
-
         rest.ShowDialogue();
-
         searchMessageInList(String.valueOf(groupChatId));*/
     }
 
@@ -2584,7 +2249,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                         /*int bytes_downloaded = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                         int bytes_total = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-
                         if (c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
                             c = false;
                         }*/
@@ -2616,7 +2280,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                     progressBar.setVisibility(View.GONE);
                                     channelViewAdapter.downloadComplete(groupChatID);
                               /*  long duration = AudioPlayUtil.getAudioDuration(fileDownloadPath);
-
                                 runOnUiThread(() -> {
                                     downloadPlayPic.setImageDrawable(getResources().getDrawable(R.drawable.play));
                                     AudioPlayUtil.playAudioAnimation(ChannelChatsScreen.this, seekBar, duration);
@@ -2850,14 +2513,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             reactionModel = gson.fromJson(jsonObject, type);
 
                /* mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
                 adapter = new ManageReactionsListAdapter(this, reactionModel);
                 binding.reactionsRecycler.setHasFixedSize(true);
                 binding.reactionsRecycler.setLayoutManager(mLayoutManager);
                 binding.reactionsRecycler.setAdapter(adapter);
-
                 binding.reactionsRecycler.getLayoutManager().onRestoreInstanceState(recyclerViewState);
-
                 isDataLoadedFirstTime = false;*/
 
             requestType = GET_GROUP_CHANNEL_INFO;
@@ -2954,7 +2614,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Log.d("Lifecycle Check ", "In the onResume() event");
 
         currentPage = 1;
-        refreshChannelChatSocket();
+        loadLocalData();
 
     }
 
