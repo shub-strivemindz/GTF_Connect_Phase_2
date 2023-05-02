@@ -3,6 +3,11 @@ package com.gtfconnect.ui.screenUI.groupModule;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
+import static com.gtfconnect.utilities.Constants.CAPTURE_IMAGE_REQUEST_CODE;
+import static com.gtfconnect.utilities.Constants.RECORD_AUDIO_REQUEST_CODE;
+import static com.gtfconnect.utilities.Constants.SELECT_DOCUMENT_REQUEST_CODE;
+import static com.gtfconnect.utilities.Constants.SELECT_PICTURE_REQUEST_CODE;
+import static com.gtfconnect.utilities.Constants.SELECT_VIDEO_REQUEST_CODE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -47,6 +52,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -79,6 +85,7 @@ import com.gtfconnect.models.ImagePreviewModel;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.models.SendAttachmentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.groupResponseModel.GetDummyUserModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
@@ -91,8 +98,12 @@ import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelProfileScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
+import com.gtfconnect.utilities.Constants;
+import com.gtfconnect.utilities.CustomEditText;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -143,16 +154,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private int requestType;
 
-    private final int SELECT_VIDEO_REQUEST_CODE = 1964;
-
-    private final int SELECT_PICTURE_REQUEST_CODE = 1965;
-
-    private final int SELECT_DOCUMENT_REQUEST_CODE = 1966;
-
-    private final int CAPTURE_IMAGE_REQUEST_CODE = 1967;
-
-    private final int RECORD_AUDIO_REQUEST_CODE = 1968;
-
     private ArrayList<ImagePreviewModel> multipleImageUri;
 
     private Uri singleImageUri;
@@ -176,6 +177,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private int typeCount = 0;
 
     private GroupChatResponseModel responseModel;
+
+    private GroupChatResponseModel localResponseModel;
 
     private boolean isMessageNotFound = true;
 
@@ -275,15 +278,36 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
+
 
         channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
 
         init();
 
+
+        // Setting GIF | Image Insertion in Search EditText
+        binding.type.setKeyBoardInputCallbackListener(new CustomEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(InputContentInfoCompat inputContentInfo,
+                                        int flags, Bundle opts) {
+
+                //you will get your gif/png/jpg here in inputContentInfo
+                // You can use a webView or ImageView to load the gif
+
+                Uri linkUri = inputContentInfo.getLinkUri();
+
+                Intent intent = new Intent(GroupChatScreen.this, GifPreviewScreen.class);
+                intent.putExtra("gif",linkUri.toString());
+                startForActivityResultLauncher.launch(intent);
+
+                //mWebView.loadUrl(linkUri != null ? linkUri.toString() : "null");
+
+            }
+        });
+
         //destroyListeners();
 
-        list = new ArrayList<>();
+        searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
 
         binding.quoteContainer.setVisibility(View.GONE);
         binding.attachmentContainer.setVisibility(View.GONE);
@@ -759,13 +783,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
 
-
-
-
-
-
-
-
     private void loadLocalData(){
 
         databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
@@ -784,26 +801,31 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             }
         });
+
+
+
+        String chat_data = PreferenceConnector.readString(GroupChatScreen.this, PreferenceConnector.CHANNEL_DATA + "/" + channelID, "");
+
+        Gson gson = new Gson();
+        localResponseModel = new GroupChatResponseModel();
+        localResponseModel = gson.fromJson(chat_data, GroupChatResponseModel.class);
+
+
+        if (localResponseModel != null) {
+            list = new ArrayList<>();
+
+            if (localResponseModel != null && localResponseModel.getData() != null && localResponseModel.getData().getChatData() != null && localResponseModel.getData().getChatData().getRows() != null) {
+                subscribers = localResponseModel.getData().getSubscriptionCount();
+                binding.userSubscribers.setText(String.valueOf(subscribers));
+
+                list.addAll(localResponseModel.getData().getChatData().getRows());
+                postBaseUrl = localResponseModel.getData().getBaseUrl();
+                loadDataToAdapter();
+
+
+            }
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public void init() {
@@ -854,7 +876,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         requestType = GET_DUMMY_USER;
         connectViewModel.get_dummy_user_list(channelID,api_token,"android","test");
     }
-
 
 
 
@@ -948,6 +969,15 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 responseModel = gson.fromJson(gsonObject, type);
 
+                if(currentPage == 1){
+
+                    localResponseModel = new GroupChatResponseModel();
+                    localResponseModel = gson.fromJson(gsonObject,type);
+
+                    Gson loadData = new Gson();
+                    String convertedData = loadData.toJson(localResponseModel);
+                    PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
+                }
 
                 runOnUiThread(() -> {
 
@@ -1021,6 +1051,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                         for (int i=0;i<responseModel.getData().getChatData().getRows().size();i++){
                             responseModel.getData().getChatData().getRows().get(i).setShowPostSelection(showPostSelectionCheckBox);
+                        }
+
+                        if(currentPage == 1){
+
+                            localResponseModel = new GroupChatResponseModel();
+                            localResponseModel = gson.fromJson(gsonObject,type);
+
+                            Gson loadData = new Gson();
+                            String convertedData = loadData.toJson(localResponseModel);
+                            PreferenceConnector.writeString(GroupChatScreen.this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
                         }
 
                         list.addAll(responseModel.getData().getChatData().getRows());
@@ -1185,6 +1225,28 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         });
     }
 
+
+
+/*    private ArrayList<GroupChatResponseModel.Row> getLastTenPost(){
+
+        ArrayList<GroupChatResponseModel.Row> data = new ArrayList<>();
+
+        if (list != null){
+            for (int i=0;i<list.size();i++){
+                if (i >= 10){
+                    break;
+                }
+                else{
+                    data.add(list.get(i));
+                }
+
+            }
+        }
+        return data;
+    }*/
+
+
+
     private void messageReceivedListener() {
 
         receivedMessage = new GroupMessageReceivedModel();
@@ -1199,6 +1261,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         socketInstance.on("messageReceived", args -> {
 
             isScrollDownHighlighted = true;
+
 
 
             JSONObject data = (JSONObject) args[0];
@@ -1219,8 +1282,38 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 @Override
                 public void run() {
                     try {
-                        list.add(0, rowData);
-                        groupViewAdapter.updateList(list);
+
+                        if(currentPage == 1) {
+
+                            localResponseModel.getData().getChatData().getRows().set(0,rowData);
+
+                            Gson loadData = new Gson();
+                            String convertedData = loadData.toJson(localResponseModel);
+                            PreferenceConnector.writeString(GroupChatScreen.this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
+                        }
+
+                        /*if (responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null){
+                            GroupChatResponseModel.Row data = rowData;
+                            responseModel.getData().getChatData().getRows().set(0,data);
+                        }*/
+
+                        if (rowData != null && rowData.getUser() != null && rowData.getUser().getUserID() != null){
+
+                            if(!rowData.getUser().getUserID().equalsIgnoreCase(userID.toString())){
+
+                                if(currentPage == 1) {
+
+                                    localResponseModel.getData().getChatData().getRows().set(0,rowData);
+
+                                    Gson loadData = new Gson();
+                                    String convertedData = loadData.toJson(localResponseModel);
+                                    PreferenceConnector.writeString(GroupChatScreen.this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
+                                }
+
+                                list.add(0, rowData);
+                                groupViewAdapter.updateList(list);
+                            }
+                        }
                     } catch (Exception e) {
                         Log.d("Typing header exception --", e.toString());
                     }
@@ -1657,132 +1750,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
     // -------------------------------------------------------------------Access Storage Implementation ----------------------------------------------------------------
-
-    /*private void startRecording() {
-        // check permission method is used to check
-        // that the user has granted permission
-        // to record and store the audio.
-        if (CheckAudioPermissions()) {
-
-            // setbackgroundcolor method will change
-            // the background color of text view.
-            stopTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-            startTV.setBackgroundColor(getResources().getColor(R.color.gray));
-            playTV.setBackgroundColor(getResources().getColor(R.color.gray));
-            stopplayTV.setBackgroundColor(getResources().getColor(R.color.gray));
-
-            // we are here initializing our filename variable
-            // with the path of the recorded audio file.
-            mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-            mFileName += "/AudioRecording.3gp";
-
-            // below method is used to initialize
-            // the media recorder class
-            mRecorder = new MediaRecorder();
-
-            // below method is used to set the audio
-            // source which we are using a mic.
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-
-            // below method is used to set
-            // the output format of the audio.
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-
-            // below method is used to set the
-            // audio encoder for our recorded audio.
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-            // below method is used to set the
-            // output file location for our recorded audio
-            mRecorder.setOutputFile(mFileName);
-            try {
-                // below method will prepare
-                // our audio recorder class
-                mRecorder.prepare();
-            } catch (IOException e) {
-                Log.e("TAG", "prepare() failed");
-            }
-            // start method will start
-            // the audio recording.
-            mRecorder.start();
-            statusTV.setText("Recording Started");
-        } else {
-            // if audio recording permissions are
-            // not granted by user below method will
-            // ask for runtime permission for mic and storage.
-            RequestPermissions();
-        }
-    }
-
-
-    public boolean CheckAudioPermissions() {
-        // this method is used to check permission
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void RequestPermissions() {
-        // this method is used to request the
-        // permission for audio recording and storage.
-        ActivityCompat.requestPermissions(this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, RECORD_AUDIO_REQUEST_CODE);
-    }
-
-
-    public void playAudio() {
-        stopTV.setBackgroundColor(getResources().getColor(R.color.gray));
-        startTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-        playTV.setBackgroundColor(getResources().getColor(R.color.gray));
-        stopplayTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-
-        // for playing our recorded audio
-        // we are using media player class.
-        mPlayer = new MediaPlayer();
-        try {
-            // below method is used to set the
-            // data source which will be our file name
-            mPlayer.setDataSource(mFileName);
-
-            // below method will prepare our media player
-            mPlayer.prepare();
-
-            // below method will start our media player.
-            mPlayer.start();
-            statusTV.setText("Recording Started Playing");
-        } catch (IOException e) {
-            Log.e("TAG", "prepare() failed");
-        }
-    }
-
-    public void pauseRecording() {
-        stopTV.setBackgroundColor(getResources().getColor(R.color.gray));
-        startTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-        playTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-        stopplayTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-
-        // below method will stop
-        // the audio recording.
-        mRecorder.stop();
-
-        // below method will release
-        // the media recorder class.
-        mRecorder.release();
-        mRecorder = null;
-        statusTV.setText("Recording Stopped");
-    }
-
-    public void pausePlaying() {
-        // this method will release the media player
-        // class and pause the playing of our recorded audio.
-        mPlayer.release();
-        mPlayer = null;
-        stopTV.setBackgroundColor(getResources().getColor(R.color.gray));
-        startTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-        playTV.setBackgroundColor(getResources().getColor(R.color.purple_200));
-        stopplayTV.setBackgroundColor(getResources().getColor(R.color.gray));
-        statusTV.setText("Recording Play Stopped");
-    }*/
-
 
 
 
@@ -2730,4 +2697,24 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         super.onDestroy();
         Log.d("Lifecycle Check ", "In the onDestroy() event");
     }
+
+
+
+
+
+
+
+    // -------------------------------------------------------------- Handling all update from Other Screens -----------------------------------------------------------
+
+    ActivityResultLauncher<Intent> startForActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+
+                if (result.getResultCode() == Constants.SHARE_GIF) {
+
+                    // Todo : Share gif from here
+                } else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
+                    Utils.showSnackMessage(this,binding.getRoot(),"GIF not available");
+                }
+            });
 }

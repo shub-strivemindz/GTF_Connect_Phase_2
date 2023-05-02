@@ -141,8 +141,13 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.VISIBLE);
 
                 //loadVideoFile(post_path,holder.binding.postImage);
-            }
-            else{
+            } else if (fileType.equalsIgnoreCase("gif")) {
+
+                holder1.binding.playVideo.setVisibility(View.GONE);
+                holder1.binding.docContainer.setVisibility(View.GONE);
+
+                loadImageFile(post_path,holder1.binding.postImage);
+            } else{
                 Log.d("File_Type_Error",fileType);
             }
 
@@ -254,6 +259,13 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.VISIBLE);
 
                 //loadVideoFile(post_path,holder.binding.postImage);
+            }
+            else if (fileType.equalsIgnoreCase("gif")) {
+
+                holder1.binding.playVideo.setVisibility(View.GONE);
+                holder1.binding.docContainer.setVisibility(View.GONE);
+
+                loadImageFile(post_path,holder1.binding.postImage);
             }
             else{
                 Log.d("File_Type_Error",fileType);

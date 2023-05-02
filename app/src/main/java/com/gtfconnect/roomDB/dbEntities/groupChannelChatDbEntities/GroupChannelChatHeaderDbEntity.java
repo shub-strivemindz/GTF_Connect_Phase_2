@@ -1,11 +1,11 @@
-package com.gtfconnect.roomDB.dbEntities.channelChatDbEntities;
+package com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "channel_chat_header")
-public class ChannelChatHeaderDbEntity {
+public class GroupChannelChatHeaderDbEntity {
 
     String baseUrl = "";
 

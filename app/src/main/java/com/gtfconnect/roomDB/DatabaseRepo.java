@@ -5,14 +5,12 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
-import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
+
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
@@ -143,19 +141,19 @@ public class DatabaseRepo {
 
     // ================================================================ Channel Data =====================================================================
 
-    public void insertChannelDashboardData(ChannelDashboardDataModel channelDashboardData) {
+    public void insertDashboardData(List<DashboardListEntity> dashboardListEntities) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                appDao.delete_channel_dashboard_data();
-                appDao.insertChannelDashboardData(channelDashboardData);
+                //appDao.delete_channel_dashboard_data();
+                appDao.insertDashboardData(dashboardListEntities);
 
             }
         });
     }
 
-    public LiveData<List<ChannelDashboardDataModel>> getChannelDashboardData() {
-        return appDao.getDashboardChannelData();
+    public LiveData<List<DashboardListEntity>> getDashboardData(String dashboardType) {
+        return appDao.getDashboardData(dashboardType);
     }
 
 
@@ -176,6 +174,7 @@ public class DatabaseRepo {
 
 
     // ================================================================ Group Data =====================================================================
+/*
 
     public void insertGroupDashboardData(GroupDashboardDataModel groupDashboardData) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
@@ -191,6 +190,7 @@ public class DatabaseRepo {
     public LiveData<List<GroupDashboardDataModel>> getGroupDashboardData() {
         return appDao.getGroupDashboardData();
     }
+*/
 
 
 
@@ -198,8 +198,7 @@ public class DatabaseRepo {
 
 
     public void delete_database(){
-        appDao.delete_group_dashboard_data();
-        appDao.delete_channel_dashboard_data();
+        appDao.delete_dashboard_data();
         appDao.delete_channel_body_data();
         appDao.delete_channel_header_data();
         appDao.delete_exclusive_offer_data();
@@ -252,7 +251,7 @@ public class DatabaseRepo {
 
 
 
-    public void insertChannelRowData(ChannelChatBodyDbEntity chatBodyRowDb) {
+    public void insertChannelRowData(GroupChannelChatBodyDbEntity chatBodyRowDb) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -266,7 +265,7 @@ public class DatabaseRepo {
 
 
 
-    public void insertChannelChatData(ChannelChatDbEntity channelChatDb) {
+    public void insertChannelChatData(GroupChannelChatDbEntity channelChatDb) {
        /* Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -284,7 +283,7 @@ public class DatabaseRepo {
         new insertChannelChatAsync(appDao).execute(channelChatDb);
     }
 
-    private static class insertChannelChatAsync extends AsyncTask<ChannelChatDbEntity, Void, Void> {
+    private static class insertChannelChatAsync extends AsyncTask<GroupChannelChatDbEntity, Void, Void> {
         private AppDao appDaoAsync;
 
         insertChannelChatAsync(AppDao appDao) {
@@ -292,7 +291,7 @@ public class DatabaseRepo {
         }
 
         @Override
-        protected Void doInBackground(ChannelChatDbEntity... chatDbEntities) {
+        protected Void doInBackground(GroupChannelChatDbEntity... chatDbEntities) {
 
             appDaoAsync.insertChannelChatHeaderData(chatDbEntities[0].chatHeaderDbEntity);
 
@@ -301,7 +300,7 @@ public class DatabaseRepo {
         }
     }
 
-    public LiveData<ChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
+    public LiveData<GroupChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
         return appDao.getChannelChatData(groupChannelID,isAsc);
     }
 }

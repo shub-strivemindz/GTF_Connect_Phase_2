@@ -8,9 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
-import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
+
 
 import java.lang.reflect.Type;
 
@@ -41,7 +40,7 @@ public class CommonConvertor {
 
 
 
-    @TypeConverter
+    /*@TypeConverter
     public ChannelDashboardDataModel.Group jsonToChannelDashboardData(String json) {
 
         Gson gson = new Gson();
@@ -54,7 +53,7 @@ public class CommonConvertor {
     public String channelDashboardDataToJson(ChannelDashboardDataModel.Group specializations) {
         return new Gson().toJson(specializations);
     }
-
+    */
 
    /* @TypeConverter
     public List<ChannelRowListDataModel> jsonToChannelChatRowData(String json) {
@@ -140,7 +139,7 @@ public class CommonConvertor {
 
 
 
-
+/*
     @TypeConverter
     public GroupDashboardDataModel.Group jsonToGroupDashboardData(String json) {
 
@@ -153,7 +152,7 @@ public class CommonConvertor {
     @TypeConverter
     public String groupDashboardDataToJson(GroupDashboardDataModel.Group specializations) {
         return new Gson().toJson(specializations);
-    }
+    }*/
 
 
 

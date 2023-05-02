@@ -11,18 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
-import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.ui.screenUI.groupModule.GroupChatScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
+import java.util.List;
+
 public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.ViewHolder> {
 
-    private GroupResponseModel responseModel;
+    private List<DashboardListEntity> responseModel;
     private Context context;
 
 
-    public  GroupViewAdapter(Context context, GroupResponseModel responseModel){
+    public  GroupViewAdapter(Context context, List<DashboardListEntity> responseModel){
         this.responseModel = responseModel;
         this.context = context;
     }
@@ -38,22 +40,22 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
 
         final int index = position;
 
-        holder.binding.title.setText(responseModel.getData().get(index).getGroup().getName());
+        holder.binding.title.setText(responseModel.get(index).getGroup().getName());
 
-        if (responseModel.getData().get(index).getGroup().getMessage() != null && !responseModel.getData().get(index).getGroup().getMessage().isEmpty()) {
-            if (responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage() != null)
-                holder.binding.subTitle.setText(responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage());
+        if (responseModel.get(index).getGroup().getMessage() != null && !responseModel.get(index).getGroup().getMessage().isEmpty()) {
+            if (responseModel.get(index).getGroup().getMessage().get(0).getMessage() != null)
+                holder.binding.subTitle.setText(responseModel.get(index).getGroup().getMessage().get(0).getMessage());
 
 
-            holder.binding.time.setText(Utils.getHeaderDate(responseModel.getData().get(index).getGroup().getMessage().get(0).getUpdatedAt()));
+            holder.binding.time.setText(Utils.getHeaderDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
         }
 
 
 
 
 
-        if (responseModel.getData().get(index).getUnreadcount() != null && !responseModel.getData().get(index).getUnreadcount().isEmpty()){
-            holder.binding.notificationCount.setText(responseModel.getData().get(index).getUnreadcount());
+        if (responseModel.get(index).getUnreadcount() != null && !responseModel.get(index).getUnreadcount().isEmpty()){
+            holder.binding.notificationCount.setText(responseModel.get(index).getUnreadcount());
         }
 
 
@@ -66,11 +68,11 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
                 Intent intent = new Intent(context, GroupChatScreen.class);
 
 
-                PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.getData().get(index).getGCMemberID());
-                PreferenceConnector.writeString(context,PreferenceConnector.GC_CHANNEL_ID,responseModel.getData().get(index).getGroupChannelID().toString());
-                PreferenceConnector.writeString(context,PreferenceConnector.GC_NAME,responseModel.getData().get(index).getGroup().getName());
+                PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.get(index).getGCMemberID());
+                PreferenceConnector.writeString(context,PreferenceConnector.GC_CHANNEL_ID,responseModel.get(index).getGroupChannelID().toString());
+                PreferenceConnector.writeString(context,PreferenceConnector.GC_NAME,responseModel.get(index).getGroup().getName());
 
-                //PreferenceConnector.writeString(context,PreferenceConnector.connect_userID,responseModel.getData().get(index).getUserID());
+                //PreferenceConnector.writeString(context,PreferenceConnector.connect_userID,responseModel.get(index).getUserID());
                 context.startActivity(intent);
             }
         });
@@ -78,8 +80,8 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
 
     @Override
     public int getItemCount() {
-        Log.d("LIST_SIZE",String.valueOf(responseModel.getData().size()));
-        return responseModel.getData().size();
+        Log.d("LIST_SIZE",String.valueOf(responseModel.size()));
+        return responseModel.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

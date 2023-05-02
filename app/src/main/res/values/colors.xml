@@ -123,7 +123,7 @@
 
 
 
-
+<!--  ===================================================================  UI theming with new naming and =====================================================  -->
 
 
 
@@ -136,7 +136,7 @@
 
     <color name="sendMessageCardFiller">#f7f7f7</color>
 
-
+    <color name="gifPreviewSearch">#232833</color>
 
 
 </resources>

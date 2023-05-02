@@ -5,17 +5,14 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Transaction;
 
-import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
-import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
+
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
@@ -105,16 +102,17 @@ public interface AppDao {
 
 
 
-    // -------------------------------------------------------------------- Channel Dashboard Response Data -----------------------------------------------------
+    // -------------------------------------------------------------------- Dashboard Response Data -----------------------------------------------------
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertChannelDashboardData(ChannelDashboardDataModel channelResponseModel);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDashboardData(List<DashboardListEntity> dashboardResponseModel);
 
-    @Query("delete from channel_dashboard_data")
-    void delete_channel_dashboard_data();
+    @Query("delete from dashboard_data")
+    void delete_dashboard_data();
 
-    @Query("select * from  channel_dashboard_data")
-    LiveData<List<ChannelDashboardDataModel>> getDashboardChannelData();
+    @Query("select * from  dashboard_data where dashboardType = :dashboardType")
+    LiveData<List<DashboardListEntity>> getDashboardData(String dashboardType);
+
 
 
 
@@ -123,15 +121,15 @@ public interface AppDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertChannelChatHeaderData(ChannelChatHeaderDbEntity chatHeaderDbEntity);
+    void insertChannelChatHeaderData(GroupChannelChatHeaderDbEntity chatHeaderDbEntity);
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertChannelChatBodyData(List<ChannelChatBodyDbEntity> chatBodyDb);
+    void insertChannelChatBodyData(List<GroupChannelChatBodyDbEntity> chatBodyDb);
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertChannelChatRowBodyData(ChannelChatBodyDbEntity chatBodyDb);
+    void insertChannelChatRowBodyData(GroupChannelChatBodyDbEntity chatBodyDb);
 
 
     @Query("delete from channel_chat_header")
@@ -142,7 +140,7 @@ public interface AppDao {
 
 
     @Query("select * from  channel_chat_body JOIN channel_chat_header ON channel_chat_header.groupChannelID = channel_chat_body.groupChannelId where channel_chat_body.groupChannelId = :id ORDER BY CASE WHEN :isAsc = 1 THEN channel_chat_body.groupChatID END DESC")
-    LiveData<ChannelChatDbEntity> getChannelChatData(String id, int isAsc);
+    LiveData<GroupChannelChatDbEntity> getChannelChatData(String id, int isAsc);
 
 
 
@@ -201,7 +199,7 @@ public interface AppDao {
 
 
 
-
+/*
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGroupDashboardData(GroupDashboardDataModel groupResponseModel);
 
@@ -209,7 +207,7 @@ public interface AppDao {
     void delete_group_dashboard_data();
 
     @Query("select * from  group_dashboard_data")
-    LiveData<List<GroupDashboardDataModel>> getGroupDashboardData();
+    LiveData<List<GroupDashboardDataModel>> getGroupDashboardData();*/
 
 
 

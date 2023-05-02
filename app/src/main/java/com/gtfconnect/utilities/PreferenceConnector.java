@@ -50,6 +50,12 @@ public class PreferenceConnector {
 
 
 
+
+    public static final String GROUP_DATA = "group_chat_data";
+
+    public static final String CHANNEL_DATA = "channel_chat_data";
+
+
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();
     }

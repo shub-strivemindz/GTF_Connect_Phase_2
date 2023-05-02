@@ -10,17 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
-import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
+
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
+import java.util.List;
+
 public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.ViewHolder> {
 
-    private ChannelResponseModel responseModel;
+    private List<DashboardListEntity> responseModel;
     private Context context;
 
-    public  ChannelViewAdapter(Context context, ChannelResponseModel responseModel){
+    public  ChannelViewAdapter(Context context, List<DashboardListEntity> responseModel){
         this.responseModel = responseModel;
         this.context = context;
     }
@@ -36,22 +39,22 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
 
         final int index = position;
 
-        holder.binding.title.setText(responseModel.getData().get(index).getGroup().getName());
+        holder.binding.title.setText(responseModel.get(index).getGroup().getName());
 
-        if (responseModel.getData().get(index).getGroup().getMessage() != null && !responseModel.getData().get(index).getGroup().getMessage().isEmpty()) {
-            if (responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage() != null)
-                holder.binding.subTitle.setText(responseModel.getData().get(index).getGroup().getMessage().get(0).getMessage());
+        if (responseModel.get(index).getGroup().getMessage() != null && !responseModel.get(index).getGroup().getMessage().isEmpty()) {
+            if (responseModel.get(index).getGroup().getMessage().get(0).getMessage() != null)
+                holder.binding.subTitle.setText(responseModel.get(index).getGroup().getMessage().get(0).getMessage());
 
 
-            holder.binding.time.setText(Utils.getHeaderDate(responseModel.getData().get(index).getGroup().getMessage().get(0).getUpdatedAt()));
+            holder.binding.time.setText(Utils.getHeaderDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
         }
 
 
 
 
 
-        if (responseModel.getData().get(index).getUnreadcount() != null && !responseModel.getData().get(index).getUnreadcount().isEmpty()){
-            holder.binding.notificationCount.setText(responseModel.getData().get(index).getUnreadcount());
+        if (responseModel.get(index).getUnreadcount() != null && !responseModel.get(index).getUnreadcount().isEmpty()){
+            holder.binding.notificationCount.setText(responseModel.get(index).getUnreadcount());
         }
 
 
@@ -64,11 +67,11 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
                 Intent intent = new Intent(context, ChannelChatsScreen.class);
 
 
-                PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.getData().get(index).getGCMemberID());
-                PreferenceConnector.writeString(context,PreferenceConnector.GC_CHANNEL_ID,responseModel.getData().get(index).getGroupChannelID().toString());
-                PreferenceConnector.writeString(context,PreferenceConnector.GC_NAME,responseModel.getData().get(index).getGroup().getName());
+                PreferenceConnector.writeString(context,PreferenceConnector.GC_MEMBER_ID,responseModel.get(index).getGCMemberID());
+                PreferenceConnector.writeString(context,PreferenceConnector.GC_CHANNEL_ID,responseModel.get(index).getGroupChannelID().toString());
+                PreferenceConnector.writeString(context,PreferenceConnector.GC_NAME,responseModel.get(index).getGroup().getName());
 
-                //PreferenceConnector.writeString(context,PreferenceConnector.connect_userID,responseModel.getData().get(index).getUserID());
+                //PreferenceConnector.writeString(context,PreferenceConnector.connect_userID,responseModel.get(index).getUserID());
                 context.startActivity(intent);
             }
         });
@@ -76,7 +79,7 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
 
     @Override
     public int getItemCount() {
-        return responseModel.getData().size();
+        return responseModel.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

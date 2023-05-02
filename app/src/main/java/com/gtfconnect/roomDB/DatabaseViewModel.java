@@ -8,15 +8,11 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
-import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
-import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
-import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupDashboardDataModel;
-import com.gtfconnect.models.groupDashboardModels.GroupResponseModel;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
+
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
@@ -92,12 +88,12 @@ public class DatabaseViewModel extends AndroidViewModel {
 
 
 
-    public void insertChannels(ChannelDashboardDataModel result) {
-        repo.insertChannelDashboardData(result);
+    public void insertDashboardData(List<DashboardListEntity> result) {
+        repo.insertDashboardData(result);
     }
 
-    public LiveData<List<ChannelDashboardDataModel>> getChannels() {
-        return repo.getChannelDashboardData();
+    public LiveData<List<DashboardListEntity>> getDashboardList(String dashboardType) {
+        return repo.getDashboardData(dashboardType);
     }
 
 
@@ -109,6 +105,7 @@ public class DatabaseViewModel extends AndroidViewModel {
         return repo.getChannelChatData();
     }*/
 
+/*
 
     public void insertGroups(GroupDashboardDataModel result) {
         repo.insertGroupDashboardData(result);
@@ -117,6 +114,7 @@ public class DatabaseViewModel extends AndroidViewModel {
     public LiveData<List<GroupDashboardDataModel>> getGroups() {
         return repo.getGroupDashboardData();
     }
+*/
 
 
 
@@ -137,17 +135,17 @@ public class DatabaseViewModel extends AndroidViewModel {
 
 
 
-    public void insertChannelChatData(ChannelChatDbEntity result) {
+    public void insertChannelChatData(GroupChannelChatDbEntity result) {
         repo.insertChannelChatData(result);
     }
 
 
-    public void insertChannelChatRowData(ChannelChatBodyDbEntity channelRowListDataModel){
+    public void insertChannelChatRowData(GroupChannelChatBodyDbEntity channelRowListDataModel){
         repo.insertChannelRowData(channelRowListDataModel);
     }
 
 
-    public LiveData<ChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
+    public LiveData<GroupChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
         Log.d("run","twice");
         return repo.getChannelChatData(groupChannelID,isAsc);
     }

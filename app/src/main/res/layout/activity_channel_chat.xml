@@ -556,7 +556,7 @@
                                 android:layout_marginHorizontal="@dimen/_8sdp"
                                 android:layout_gravity="center_vertical"/>
 
-                            <EditText
+                            <com.gtfconnect.utilities.CustomEditText
                                 android:id="@+id/type"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"

@@ -148,7 +148,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 holder.binding.userName.setText("Bot");
             } else {
 
-                Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
+                //Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
 
                 int userId= Integer.parseInt(list.get(position).getUser().getUserID());
                 if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){

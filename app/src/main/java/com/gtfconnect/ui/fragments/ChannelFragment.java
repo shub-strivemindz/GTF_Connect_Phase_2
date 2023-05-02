@@ -19,12 +19,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentChannelViewBinding;
-import com.gtfconnect.models.channelDashboardModels.ChannelDashboardDataModel;
-import com.gtfconnect.models.channelDashboardModels.ChannelResponseModel;
 import com.gtfconnect.roomDB.AppDao;
 import com.gtfconnect.roomDB.AppDatabase;
 import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
+import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardResponseModel;
 import com.gtfconnect.ui.adapters.ChannelViewAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -32,6 +33,9 @@ import com.gtfconnect.utilities.Utils;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import io.socket.client.Ack;
 
@@ -39,7 +43,9 @@ public class ChannelFragment extends Fragment {
 
     private FragmentChannelViewBinding binding;
 
-    private ChannelResponseModel responseModel;
+    private DashboardResponseModel responseModel;
+
+    private List<DashboardListEntity> gcList;
 
     private JSONObject jsonRawObject;
     private int userId;
@@ -57,12 +63,12 @@ public class ChannelFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         binding = FragmentChannelViewBinding.inflate(inflater, container, false);
 
-        userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
-
         init();
+
+        userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
+        Log.d("USER ID ",String.valueOf(userId));
 
         messageReceived();
 
@@ -82,18 +88,22 @@ public class ChannelFragment extends Fragment {
 
     private void loadLocalData()
     {
-        databaseViewModel.getChannels().observe(requireActivity(), channelResponseModel -> {
-            if (channelResponseModel != null && !channelResponseModel.isEmpty()) {
+
+        databaseViewModel.getDashboardList("channel").observe(requireActivity(), channelResponseList -> {
+            if (channelResponseList != null && !channelResponseList.isEmpty()) {
 
 
-                    localDBDataSize = channelResponseModel.size();
+                    localDBDataSize = channelResponseList.size();
 
-                    responseModel = new ChannelResponseModel();
-                    responseModel.setData(channelResponseModel);
+                    gcList = new ArrayList<>();
+                    gcList.addAll(channelResponseList);
+
+                    /*responseModel = new ChannelResponseModel();
+                    responseModel.setData(channelResponseModel);*/
 
                     loadDataToAdapter();
 
-                    Log.d("Channel_TABLE",channelResponseModel.toString());
+                    Log.d("Channel_TABLE",channelResponseList.toString());
 
                     updateChannelDashboardSocket();
                 } else {
@@ -110,10 +120,10 @@ public class ChannelFragment extends Fragment {
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<ChannelResponseModel>() {
+        type = new TypeToken<DashboardResponseModel>() {
         }.getType();
 
-        responseModel = new ChannelResponseModel();
+        responseModel = new DashboardResponseModel();
 
 
         try {
@@ -151,11 +161,57 @@ public class ChannelFragment extends Fragment {
                             Log.d("authenticateUserAndFetchData -- ", String.valueOf(responseData));
 
                             getActivity().runOnUiThread(() -> {
-                                if (responseModel.getData() != null) {
-                                    if (localDBDataSize != responseModel.getData().size()) {
+                                if (responseModel.getData() != null && responseModel.getData().getGcData() != null) {
+
+                                    /*if (localDBDataSize != responseModel.getData().size()) {
                                         for (int i = 0; i < responseModel.getData().size(); i++) {
                                             databaseViewModel.insertChannels(responseModel.getData().get(i));
                                         }
+                                    }*/
+
+                                    if (gcList != null && !gcList.isEmpty()) {
+                                        if (responseModel.getData().getGcData().size() > gcList.size() || responseModel.getData().getGcData().size() < gcList.size()) {
+                                            for (int i = 0; i < responseModel.getData().getGcData().size(); i++) {
+
+                                                if (responseModel.getData().getGcImageBasePath() != null) {
+                                                    responseModel.getData().getGcData().get(i).setBaseUrl(responseModel.getData().getGcImageBasePath());
+                                                }
+                                                responseModel.getData().getGcData().get(i).setDashboardType("channel");
+                                            }
+
+                                            databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
+                                        } else {
+                                            for (int i = 0; i < gcList.size(); i++) {
+
+                                                boolean isIDFound = false;
+                                                for (int j = 0; j < responseModel.getData().getGcData().size(); j++) {
+                                                    if (Objects.equals(gcList.get(i).getGroupChannelID(), responseModel.getData().getGcData().get(j).getGroupChannelID())) {
+                                                        isIDFound = true;
+                                                    }
+                                                }
+                                                if (!isIDFound) {
+                                                    for (int k = 0; k < responseModel.getData().getGcData().size(); k++) {
+
+                                                        if (responseModel.getData().getGcImageBasePath() != null) {
+                                                            responseModel.getData().getGcData().get(k).setBaseUrl(responseModel.getData().getGcImageBasePath());
+                                                        }
+                                                        responseModel.getData().getGcData().get(k).setDashboardType("channel");
+                                                    }
+
+                                                    databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        for (int i = 0; i < responseModel.getData().getGcData().size(); i++) {
+
+                                            if (responseModel.getData().getGcImageBasePath() != null) {
+                                                responseModel.getData().getGcData().get(i).setBaseUrl(responseModel.getData().getGcImageBasePath());
+                                            }
+                                            responseModel.getData().getGcData().get(i).setDashboardType("channel");
+                                        }
+
+                                        databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
                                     }
                                 }
                             });
@@ -175,12 +231,12 @@ public class ChannelFragment extends Fragment {
 
     private void loadDataToAdapter()
     {
-        Log.d("Group Data ----"," reposne -----"+responseModel);
+        //Log.d("Group Data ----"," reposne -----"+responseModel);
 
-        ChannelViewAdapter groupViewAdapter= new ChannelViewAdapter(getActivity(),responseModel);
+        ChannelViewAdapter channelViewAdapter= new ChannelViewAdapter(getActivity(),gcList);
         binding.channelViewList.setHasFixedSize(true);
         binding.channelViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.channelViewList.setAdapter(groupViewAdapter);
+        binding.channelViewList.setAdapter(channelViewAdapter);
     }
 
     @Override
@@ -202,6 +258,6 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        socketInstance.off("messageReceived");
+        //socketInstance.off("messageReceived");
     }
 }

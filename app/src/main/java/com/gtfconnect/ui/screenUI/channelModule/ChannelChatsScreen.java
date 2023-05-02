@@ -49,6 +49,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -89,14 +90,17 @@ import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatBodyDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatDbEntity;
-import com.gtfconnect.roomDB.dbEntities.channelChatDbEntities.ChannelChatHeaderDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.AudioPlayUtil;
+import com.gtfconnect.utilities.Constants;
+import com.gtfconnect.utilities.CustomEditText;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -143,16 +147,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private final int GET_GROUP_CHANNEL_INFO = 5;
 
     private int requestType;
-
-    private final int SELECT_VIDEO_REQUEST_CODE = 1964;
-
-    private final int SELECT_PICTURE_REQUEST_CODE = 1965;
-
-    private final int SELECT_DOCUMENT_REQUEST_CODE = 1966;
-
-    private final int CAPTURE_IMAGE_REQUEST_CODE = 1967;
-
-    private final int RECORD_AUDIO_REQUEST_CODE = 1968;
 
     private ArrayList<ImagePreviewModel> multipleImageUri;
 
@@ -259,7 +253,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private String audioFilePath = "";
 
-    private ChannelChatDbEntity databaseEntity;
+    private GroupChannelChatDbEntity databaseEntity;
 
     private boolean isDataLoadedOnce = false;
 
@@ -273,6 +267,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private InfoDbEntity infoDbEntity;
 
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -282,6 +278,31 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         binding = ActivityChannelChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+
+        // Setting GIF | Image Insertion in Search EditText
+        binding.type.setKeyBoardInputCallbackListener(new CustomEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(InputContentInfoCompat inputContentInfo,
+                                        int flags, Bundle opts) {
+
+                //you will get your gif/png/jpg here in inputContentInfo
+                // You can use a webView or ImageView to load the gif
+
+                Uri linkUri = inputContentInfo.getLinkUri();
+
+                Intent intent = new Intent(ChannelChatsScreen.this, GifPreviewScreen.class);
+                intent.putExtra("gif",linkUri.toString());
+                startForActivityResultLauncher.launch(intent);
+
+                //mWebView.loadUrl(linkUri != null ? linkUri.toString() : "null");
+
+            }
+        });
+
+
+        list = new ArrayList<>();
+        receivedMessageList = new ArrayList<>();
 
         searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
 
@@ -295,15 +316,19 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         binding.userName.setText(userName);
 
 
-        //if (!isListenersInitialized){
-            Log.d("Message_Received_Listener","Listener Initialization Check");
+        userTypingListener();
+        messageReceivedListener();
+        updateLikeListener();
+        deletePostListener();
+        commentReceiver();
+
+
+
+
+        loadLocalData();
+
 
             //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
-            userTypingListener();
-            messageReceivedListener();
-            updateLikeListener();
-            deletePostListener();
-            commentReceiver();
             //deleteCommentListener();
             //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
 
@@ -312,8 +337,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
          /*   isListenersInitialized = true;
         }*/
 
+
+
         // list = new ArrayList<>();
-        databaseEntity = new ChannelChatDbEntity();
+        databaseEntity = new GroupChannelChatDbEntity();
 
         binding.quoteContainer.setVisibility(View.GONE);
         binding.attachmentContainer.setVisibility(View.GONE);
@@ -331,9 +358,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         receivedMessageList = new ArrayList<>();
 
         getReactionAndInitializeViewModel();
-
-      /*  currentPage = 1;
-        refreshGroupChatSocket();*/
 
         initiateClickListeners();
         sendMessageAndAudioRecorderEvents();
@@ -394,7 +418,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     isScrolling = false;
 
-                    currentPage = databaseEntity.getChatBodyDbEntitiesLists().get(0).getPage();
+                    //currentPage = databaseEntity.getChatBodyDbEntitiesLists().get(0).getPage();
 
                     currentPage++;
 
@@ -402,11 +426,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     //binding.loader.setVisibility(View.VISIBLE);
 
-                    updateChannelChatSocketData();
+                    updateChannelChatSocket(true);
 
                 } else {
                     if (!channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
-                        Log.d("Chip Date = ", "" + channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()));
+                        //Log.d("Chip Date = ", "" + channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()));
                         binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
                     } else {
                         binding.chipDateContainer.setVisibility(View.GONE);
@@ -480,8 +504,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
 
+
+
     public void insertDataInDB(ChannelChatResponseModel responseModel) {
-        ChannelChatHeaderDbEntity headerDb = new ChannelChatHeaderDbEntity();
+        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
 
         if (responseModel.getData().getChatData().getCount() != null) {
             headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
@@ -491,11 +517,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
         headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
 
-        List<ChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
 
         for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
 
-            ChannelChatBodyDbEntity bodyDbEntity = new ChannelChatBodyDbEntity();
+            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
             bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
             bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
             bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
@@ -505,7 +531,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }
 
 
-        ChannelChatDbEntity channelChatDb = new ChannelChatDbEntity();
+        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
         channelChatDb.setChatHeaderDbEntity(headerDb);
         channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
         Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
@@ -661,7 +687,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 attachmentFileList.add(audioFile);
                 isAnyFileAttached = true;
 
-                attachment_request_code = RECORD_AUDIO_REQUEST_CODE;
+                attachment_request_code = Constants.RECORD_AUDIO_REQUEST_CODE;
                 callAttachmentApi();
 
                 binding.footerSearchContainer.setVisibility(View.VISIBLE);
@@ -756,13 +782,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     //give below permission for audio capture
     private void RequestPermission() {
         ActivityCompat.requestPermissions(this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, Constants.RECORD_AUDIO_REQUEST_CODE);
     }
 
 
     private void getReactionAndInitializeViewModel() {
-
-        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
         // Getting API data fetch
         rest = new Rest(this, false, true);
@@ -822,13 +846,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void loadLocalData() {
 
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
         databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
-            if(infoDbEntity != null){
+            if (infoDbEntity != null) {
                 this.infoDbEntity = infoDbEntity;
             }
         });
 
-        databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
+        /*databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
 
             databaseEntity = channelChatDbEntities;
             list = new ArrayList<>();
@@ -882,7 +908,42 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             } else {
                 refreshGroupChatSocket();
             }
-        });
+        });*/
+
+
+        String chat_data = PreferenceConnector.readString(ChannelChatsScreen.this, PreferenceConnector.CHANNEL_DATA + "/" + channelID, "");
+
+        Gson gson = new Gson();
+        responseModel = new ChannelChatResponseModel();
+        responseModel = gson.fromJson(chat_data, ChannelChatResponseModel.class);
+
+
+        if (responseModel != null) {
+            list = new ArrayList<>();
+
+            if (responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                subscribers = responseModel.getData().getSubscriptionCount();
+                binding.userSubscribers.setText(String.valueOf(subscribers));
+
+                list.addAll(responseModel.getData().getChatData().getRows());
+                postBaseUrl = responseModel.getData().getBaseUrl();
+                loadDataToAdapter();
+
+                /*currentPage = 1;
+                refreshChannelChatSocket();*/
+            }
+        }
+            /*else{
+
+                currentPage = 1;
+                refreshChannelChatSocket();
+            }
+        }
+        else{
+
+            currentPage = 1;
+            refreshChannelChatSocket();
+        }*/
     }
 
 
@@ -945,10 +1006,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
-
-    private void refreshGroupChatSocket() {
-
-
+    private void refreshChannelChatSocket() {
         Gson gson = new Gson();
         Type type;
 
@@ -956,6 +1014,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }.getType();
 
         responseModel = new ChannelChatResponseModel();
+        list = new ArrayList<>();
 
         try {
             jsonRawObject = new JSONObject();
@@ -964,62 +1023,40 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             jsonRawObject.put("userId", userID);
             jsonRawObject.put("page", currentPage);
 
-            Log.d("Chat list params --", "Refresh = " + jsonRawObject.toString());
+            Log.d("Chat list params --", jsonRawObject.toString());
 
-            Log.d("Message_Received_Listener","Refresh Fragment");
-
-            //if (!isListLoadedOnce)
-            //runOnUiThread(() -> rest.ShowDialogue());
+      /*      if (!isListLoadedOnce)
+                runOnUiThread(() -> rest.ShowDialogue());*/
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
                 runOnUiThread(() -> rest.dismissProgressdialog());
 
                 JSONObject responseData = (JSONObject) args[0];
-                Log.d("Channel Chat Data ----", responseData.toString());
+                Log.d("Group Chat Data ----", responseData.toString());
 
                 JsonParser jsonParser = new JsonParser();
                 JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
 
                 responseModel = gson.fromJson(gsonObject, type);
 
+                if(currentPage == 1){
+                    Gson loadData = new Gson();
+                    String convertedData = loadData.toJson(responseModel);
+                    PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
+                }
 
                 runOnUiThread(() -> {
 
-                    //binding.loader.setVisibility(View.GONE);
-
-
-                    if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
-
-                        if (responseModel.getData().getSubscriptionCount() != null) {
-                            subscribers = responseModel.getData().getSubscriptionCount();
-                        }
-
+                    if(responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                        subscribers = responseModel.getData().getSubscriptionCount();
                         binding.userSubscribers.setText(String.valueOf(subscribers));
 
-                        Log.d("ChannelChatDataChatDB", "Update" + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
+                        //binding.loader.setVisibility(View.GONE);
 
-                        if (databaseEntity != null && databaseEntity.getChatBodyDbEntitiesLists() != null && !databaseEntity.getChatBodyDbEntitiesLists().isEmpty()) {
-
-                            //boolean isDataInserted = false;
-
-                            int lastIndex = databaseEntity.getChatBodyDbEntitiesLists().size() - 1;
-                            lastLocalGroupChatID = "" + databaseEntity.getChatBodyDbEntitiesLists().get(lastIndex).getGroupChatID();
-
-                            if (!lastLocalGroupChatID.equalsIgnoreCase(responseModel.getData().getChatData().getRows().get(0).getGroupChatID())) {
-                                insertDataInDB(responseModel);
-                            }
-
-                            Log.d("ChannelChatDataChatDB", "local chat ID = " + lastLocalGroupChatID);
-                            Log.d("ChannelChatDataChatDB", "response chat ID = " + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
-                            Log.d("ChannelChatDataChatDB", "response = " + responseModel.getData().getChatData().getRows().size());
-
-
-                        } else {
-                            insertDataInDB(responseModel);
-                        }
-
+                        list.addAll(responseModel.getData().getChatData().getRows());
                         postBaseUrl = responseModel.getData().getBaseUrl();
+                        loadDataToAdapter();
                     }
                 });
 
@@ -1029,10 +1066,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             Log.d("JsonException ---", e.toString());
         }
     }
-
-
-
-
 
   /*  private void getChannelChatSocketData() {
         isListLoadedOnce = true;
@@ -1117,8 +1150,90 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }
     }*/
 
+    /*private void refreshChatSocket() {
 
-    private void updateChannelChatSocketData() {
+
+        Gson gson = new Gson();
+        Type type;
+
+        type = new TypeToken<ChannelChatResponseModel>() {
+        }.getType();
+
+        responseModel = new ChannelChatResponseModel();
+
+        try {
+            jsonRawObject = new JSONObject();
+            jsonRawObject.put("GCMemberID", gcMemberID);
+            jsonRawObject.put("GroupChannelID", channelID);
+            jsonRawObject.put("userId", userID);
+            jsonRawObject.put("page", currentPage);
+
+            Log.d("Chat list params --", "Refresh = " + jsonRawObject.toString());
+
+            Log.d("Message_Received_Listener","Refresh Fragment");
+
+            //if (!isListLoadedOnce)
+            //runOnUiThread(() -> rest.ShowDialogue());
+
+            socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
+
+                runOnUiThread(() -> rest.dismissProgressdialog());
+
+                JSONObject responseData = (JSONObject) args[0];
+                Log.d("Channel Chat Data ----", responseData.toString());
+
+                JsonParser jsonParser = new JsonParser();
+                JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
+
+                responseModel = gson.fromJson(gsonObject, type);
+
+
+                runOnUiThread(() -> {
+
+                    //binding.loader.setVisibility(View.GONE);
+
+
+                    if (responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
+
+                        if (responseModel.getData().getSubscriptionCount() != null) {
+                            subscribers = responseModel.getData().getSubscriptionCount();
+                        }
+
+                        binding.userSubscribers.setText(String.valueOf(subscribers));
+
+                        Log.d("ChannelChatDataChatDB", "Update" + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
+
+                        if (databaseEntity != null && databaseEntity.getChatBodyDbEntitiesLists() != null && !databaseEntity.getChatBodyDbEntitiesLists().isEmpty()) {
+
+                            //boolean isDataInserted = false;
+
+                            int lastIndex = databaseEntity.getChatBodyDbEntitiesLists().size() - 1;
+                            lastLocalGroupChatID = "" + databaseEntity.getChatBodyDbEntitiesLists().get(lastIndex).getGroupChatID();
+
+                            if (!lastLocalGroupChatID.equalsIgnoreCase(responseModel.getData().getChatData().getRows().get(0).getGroupChatID())) {
+                                insertDataInDB(responseModel);
+                            }
+
+                            Log.d("ChannelChatDataChatDB", "local chat ID = " + lastLocalGroupChatID);
+                            Log.d("ChannelChatDataChatDB", "response chat ID = " + responseModel.getData().getChatData().getRows().get(0).getGroupChatID());
+                            Log.d("ChannelChatDataChatDB", "response = " + responseModel.getData().getChatData().getRows().size());
+
+
+                        } else {
+                            insertDataInDB(responseModel);
+                        }
+
+                        postBaseUrl = responseModel.getData().getBaseUrl();
+                    }
+                });
+
+
+            });
+        } catch (Exception e) {
+            Log.d("JsonException ---", e.toString());
+        }
+    }*/
+    /*private void updateChannelChatSocketData() {
 
         Gson gson = new Gson();
         Type type;
@@ -1142,8 +1257,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
-           /*     if (!isScrolling)
-                    runOnUiThread(() -> rest.dismissProgressdialog());*/
+           *//*     if (!isScrolling)
+                    runOnUiThread(() -> rest.dismissProgressdialog());*//*
 
 
                 JSONObject responseData = (JSONObject) args[0];
@@ -1174,7 +1289,81 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         } catch (Exception e) {
             Log.d("JsonException ---", e.toString());
         }
+    }*/
+
+
+
+    private void updateChannelChatSocket(boolean isScrolling) {
+        isListLoadedOnce = true;
+
+        Gson gson = new Gson();
+        Type type;
+
+        type = new TypeToken<ChannelChatResponseModel>() {
+        }.getType();
+
+        responseModel = new ChannelChatResponseModel();
+
+        try {
+            jsonRawObject = new JSONObject();
+            jsonRawObject.put("GCMemberID", gcMemberID);
+            jsonRawObject.put("GroupChannelID", channelID);
+            jsonRawObject.put("userId", userID);
+            jsonRawObject.put("page", currentPage);
+
+            Log.d("Chat list params --", jsonRawObject.toString());
+
+            /*if (!isScrolling && !isListLoadedOnce)
+                runOnUiThread(() -> rest.ShowDialogue());*/
+
+            socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
+
+                if (!isScrolling)
+                    runOnUiThread(() -> rest.dismissProgressdialog());
+
+                JSONObject responseData = (JSONObject) args[0];
+                Log.d("Group Chat Data ----", responseData.toString());
+
+                JsonParser jsonParser = new JsonParser();
+                JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
+
+                responseModel = gson.fromJson(gsonObject, type);
+
+
+                if (responseData == null) {
+                    Utils.showSnackMessage(this, binding.getRoot(), "No Data Found");
+                    Log.d("authenticateUserAndFetchData -- ", "Error");
+                } else {
+
+                    runOnUiThread(() -> {
+
+                        subscribers = responseModel.getData().getSubscriptionCount();
+                        binding.userSubscribers.setText(String.valueOf(subscribers));
+
+                        //binding.loader.setVisibility(View.GONE);
+
+                        /*for (int i=0;i<responseModel.getData().getChatData().getRows().size();i++){
+                            responseModel.getData().getChatData().getRows().get(i).setShowPostSelection(showPostSelectionCheckBox);
+                        }*/
+
+                        list.addAll(responseModel.getData().getChatData().getRows());
+
+                        postBaseUrl = responseModel.getData().getBaseUrl();
+                        loadDataToAdapter();
+                    });
+                }
+
+            });
+        } catch (Exception e) {
+            Log.d("JsonException ---", e.toString());
+        }
     }
+
+
+
+
+
+
 
 
     private void userTypingListener() {
@@ -1309,7 +1498,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     isAttachmentSend = false;
 
                     currentPage = 1;
-                    refreshGroupChatSocket();
+                    refreshChannelChatSocket();
                             /*if (isMsgSent) {
                                 Log.d("Msg sent ", "successfully");
                                 //scrollToFirstPosition();
@@ -1368,7 +1557,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
                     try {
-                        ChannelChatHeaderDbEntity headerDb = new ChannelChatHeaderDbEntity();
+                        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
 
                         if (responseModel.getData().getChatData().getCount() != null) {
                             headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
@@ -1378,15 +1567,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         headerDb.setBaseUrl(postBaseUrl);
                         headerDb.setSubscriptionCount("" + subscribers);
 
-                        List<ChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+                        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
 
-                        ChannelChatBodyDbEntity chatBodyDbEntity = new ChannelChatBodyDbEntity();
+                        GroupChannelChatBodyDbEntity chatBodyDbEntity = new GroupChannelChatBodyDbEntity();
                         chatBodyDbEntity.setGroupChatID(Integer.parseInt(rowData.getGroupChatID()));
                         chatBodyDbEntity.setGroupChannelID(rowData.getGroupChannelID().toString());
                         chatBodyDbEntity.setRows(rowData);
 
 
-                        ChannelChatDbEntity channelChatDb = new ChannelChatDbEntity();
+                        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
                         channelChatDb.setChatHeaderDbEntity(headerDb);
                         channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
                         Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
@@ -1776,7 +1965,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         List<MultipartBody.Part> files = new ArrayList<>();
 
-        if (attachment_request_code == CAPTURE_IMAGE_REQUEST_CODE) {
+        if (attachment_request_code == Constants.CAPTURE_IMAGE_REQUEST_CODE) {
 
             RequestBody part =
                     RequestBody.create(
@@ -1786,7 +1975,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
             files.add(attachment);
-        } else if (attachment_request_code == SELECT_VIDEO_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.SELECT_VIDEO_REQUEST_CODE) {
 
             RequestBody part =
                     RequestBody.create(
@@ -1796,7 +1985,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
             files.add(attachment);
-        } else if (attachment_request_code == SELECT_DOCUMENT_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
 
             RequestBody part =
                     RequestBody.create(
@@ -1807,7 +1996,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
             files.add(attachment);
 
-        } else if (attachment_request_code == SELECT_PICTURE_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.SELECT_PICTURE_REQUEST_CODE) {
             for (int i = 0; i < attachmentFileList.size(); i++) {
                 RequestBody part =
                         RequestBody.create(
@@ -1818,7 +2007,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(i).getName(), part);
                 files.add(attachment);
             }
-        } else if (attachment_request_code == RECORD_AUDIO_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.RECORD_AUDIO_REQUEST_CODE) {
             RequestBody part =
                     RequestBody.create(
                             MediaType.parse("audio/*"),
@@ -1898,7 +2087,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         //i.setAction(Intent.ACTION_PICK);
         i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         i.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), Constants.SELECT_PICTURE_REQUEST_CODE);
     }
 
     private void accessMediaVideo() {
@@ -1906,7 +2095,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Intent i = new Intent();
         i.setType("video/*");
         i.setAction(Intent.ACTION_PICK);
-        startActivityForResult(i, SELECT_VIDEO_REQUEST_CODE);
+        startActivityForResult(i, Constants.SELECT_VIDEO_REQUEST_CODE);
     }
 
     private void accessCamera() {
@@ -1920,7 +2109,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         Intent cameraIntent = AttachmentUploadUtils.takePhotoFromCamera(this);
         selectedMedia = new File(Objects.requireNonNull(cameraIntent.getStringExtra("image_path")));
-        startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST_CODE);
+        startActivityForResult(cameraIntent, Constants.CAPTURE_IMAGE_REQUEST_CODE);
 
     }
 
@@ -1951,7 +2140,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                 openAttachmentDialog();
             }
-        } else if (requestCode == RECORD_AUDIO_REQUEST_CODE) {
+        } else if (requestCode == Constants.RECORD_AUDIO_REQUEST_CODE) {
             if (grantResults.length > 0) {
                 boolean permissionToRecord = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 boolean permissionToStore = grantResults[1] == PackageManager.PERMISSION_GRANTED;
@@ -1968,9 +2157,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == SELECT_PICTURE_REQUEST_CODE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == Constants.SELECT_PICTURE_REQUEST_CODE && resultCode == RESULT_OK && null != data) {
             isAnyFileAttached = true;
-            attachment_request_code = SELECT_PICTURE_REQUEST_CODE;
+            attachment_request_code = Constants.SELECT_PICTURE_REQUEST_CODE;
 
             multipleImageUri = new ArrayList<>();
             attachmentFileList = new ArrayList<>();
@@ -2006,9 +2195,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
 
             previewImage();
-        } else if (requestCode == CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+        } else if (requestCode == Constants.CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
-            attachment_request_code = CAPTURE_IMAGE_REQUEST_CODE;
+            attachment_request_code = Constants.CAPTURE_IMAGE_REQUEST_CODE;
 
             multipleImageUri = new ArrayList<>();
             attachmentFileList = new ArrayList<>();
@@ -2026,7 +2215,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             previewImage();
 
-        } else if (requestCode == SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
+        } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
 
 
@@ -2051,13 +2240,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 //Log.d("Video Attachment ",attachmentFileList.get(0).getAbsolutePath());
             }
         } else {
-            if (requestCode == SELECT_PICTURE_REQUEST_CODE) {
+            if (requestCode == Constants.SELECT_PICTURE_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any image", Toast.LENGTH_LONG).show();
-            } else if (requestCode == SELECT_DOCUMENT_REQUEST_CODE) {
+            } else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any document", Toast.LENGTH_LONG).show();
-            } else if (requestCode == SELECT_VIDEO_REQUEST_CODE) {
+            } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any video", Toast.LENGTH_LONG).show();
-            } else if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
+            } else if (requestCode == Constants.CAPTURE_IMAGE_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't capture image", Toast.LENGTH_LONG).show();
             }
 
@@ -2075,7 +2264,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 public void onActivityResult(ActivityResult result) {
 
                     isAnyFileAttached = true;
-                    attachment_request_code = SELECT_DOCUMENT_REQUEST_CODE;
+                    attachment_request_code = Constants.SELECT_DOCUMENT_REQUEST_CODE;
                     attachmentFileList = new ArrayList<>();
 
                     Intent data = result.getData();
@@ -2143,7 +2332,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
 
-                attachment_request_code = SELECT_VIDEO_REQUEST_CODE;
+                attachment_request_code = Constants.SELECT_VIDEO_REQUEST_CODE;
 
                 multipleImageUri = new ArrayList<>();
                 attachmentFileList = new ArrayList<>();
@@ -2221,7 +2410,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         //scrollToPosition(0);
 
         binding.type.requestFocus();
-        //Utils.softKeyboard(GroupChatsScreen.this,true,binding.type);
+        //Utils.softKeyboard(GroupChatsScreen.this,true,type);
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
@@ -2765,7 +2954,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Log.d("Lifecycle Check ", "In the onResume() event");
 
         currentPage = 1;
-        loadLocalData();
+        refreshChannelChatSocket();
 
     }
 
@@ -2802,4 +2991,24 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         super.onDestroy();
         Log.d("Lifecycle Check ", "In the onDestroy() event");
     }
+
+
+
+
+
+
+
+    // -------------------------------------------------------------- Handling all update from Other Screens -----------------------------------------------------------
+
+    ActivityResultLauncher<Intent> startForActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+
+                if (result.getResultCode() == Constants.SHARE_GIF) {
+
+                    // Todo : Share gif from here
+                } else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
+                    Utils.showSnackMessage(this,binding.getRoot(),"GIF not available");
+                }
+            });
 }
