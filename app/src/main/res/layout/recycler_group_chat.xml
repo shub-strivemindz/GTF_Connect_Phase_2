@@ -717,6 +717,7 @@ more then 1000 top most trading courses+ daily or weekly"
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="@dimen/_1sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:layout_height="match_parent"
                 android:id="@+id/green_highlight_divider"
                 app:dividerColor="@color/theme_green"/>

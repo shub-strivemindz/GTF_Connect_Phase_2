@@ -145,7 +145,7 @@ public class DatabaseViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<GroupChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
+    public LiveData<GroupChannelChatDbEntity> getGroupChannelChatData(String groupChannelID, int isAsc) {
         Log.d("run","twice");
         return repo.getChannelChatData(groupChannelID,isAsc);
     }

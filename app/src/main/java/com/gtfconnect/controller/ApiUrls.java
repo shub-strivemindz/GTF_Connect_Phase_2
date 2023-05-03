@@ -76,5 +76,7 @@ public class ApiUrls {
     public static final String URL_GET_GROUP_CHANNEL_MEMBER_PROFILE = "user-info-media";
 
 
-    public static final String URL_GET_SAVED_MESSAGES = "user/saved-message";
+    public static final String URL_SAVED_MESSAGES = "user/saved-message";
+
+    public static final String URL_DELETE_END_POINT = "delete";
 }

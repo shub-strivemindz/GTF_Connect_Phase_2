@@ -125,9 +125,6 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                 isNotificationEnabled = true;
             }
             connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
-           /* BottomSheetDialog mute_notification_dialog = new BottomSheetDialog(ChannelProfileScreen.this);
-            mute_notification_dialog.setContentView(R.layout.bottomsheet_mute_notification);
-            mute_notification_dialog.show();*/
         });
 
         binding.backClick.setOnClickListener(new View.OnClickListener() {
@@ -389,8 +386,8 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                     Glide.with(this).load(profileDetailModel.getGcInfo().getProfileImage()).
                             fitCenter().apply(requestOptions).
                             transition(DrawableTransitionOptions.withCrossFade()).into(binding.logo);
-                }
 
+                }
             }
         }
     }

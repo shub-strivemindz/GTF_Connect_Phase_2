@@ -2,6 +2,7 @@ package com.gtfconnect.controller;
 
 
 
+import com.google.android.gms.common.api.Api;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.gtfconnect.models.CountryResponse;
@@ -289,12 +290,53 @@ public interface RestService {
 
 
 
-    @GET(ApiUrls.URL_GET_SAVED_MESSAGES)
+    @GET(ApiUrls.URL_SAVED_MESSAGES)
     Observable<JsonElement> get_saved_messages(@Header ("Authorization") String api_token,
                                                @Header("DeviceType") String device_type,
                                                @Header("DeviceToken") String device_token,
                                                @Query("per_page") int per_page,
                                                @Query("page") int page);
+
+
+    /**
+     *  Save message from group or channel
+     */
+
+    @FormUrlEncoded
+    @POST(ApiUrls.URL_SAVED_MESSAGES)
+    Observable<JsonElement> save_group_channel_message(@Header ("Authorization") String api_token,
+                                               @Header("DeviceType") String device_type,
+                                               @Header("DeviceToken") String device_token,
+                                               @Field("GroupChannelID") int groupChannelID,
+                                               @Field("Action") String action,
+                                               @FieldMap Map<String,Object> params);
+
+
+
+
+
+    /**
+     *  Save message personally
+     */
+
+    @Multipart
+    @POST(ApiUrls.URL_SAVED_MESSAGES)
+    Observable<JsonElement> save_personal_message(@Header ("Authorization") String api_token,
+                                                       @Header("DeviceType") String device_type,
+                                                       @Header("DeviceToken") String device_token,
+                                                       @Query("Content") String message,
+                                                       @Query("Action") String action,
+                                                       @Part List<MultipartBody.Part> files);
+
+
+
+
+
+    @DELETE(ApiUrls.URL_SAVED_MESSAGES + "/" + "{id}" + "/" + ApiUrls.URL_DELETE_END_POINT)
+    Observable<JsonElement> delete_saved_message(@Path("id") int id,
+                                                 @Header ("Authorization") String api_token,
+                                                 @Header("DeviceType") String device_type,
+                                                 @Header("DeviceToken") String device_token);
 }
 
 

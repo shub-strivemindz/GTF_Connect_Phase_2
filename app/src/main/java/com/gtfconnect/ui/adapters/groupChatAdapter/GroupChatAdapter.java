@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -46,7 +47,7 @@ import java.util.ArrayList;
 
 public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.ViewHolder> {
 
-    private ArrayList<GroupChatResponseModel.Row> list;
+    private ArrayList<ChannelRowListDataModel> list;
     private Context context;
 
     private GroupChatResponseModel.Row item;
@@ -78,7 +79,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-    public GroupChatAdapter(Context context, ArrayList<GroupChatResponseModel.Row> list, String userID, String post_base_url, GroupChatListener groupChatListener) {
+    public GroupChatAdapter(Context context, ArrayList<ChannelRowListDataModel> list, String userID, String post_base_url, GroupChatListener groupChatListener) {
         this.list = list;
         this.context = context;
         this.userID = userID;
@@ -90,7 +91,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         selectedPostCount = 0;
     }
 
-    public void updateList(ArrayList<GroupChatResponseModel.Row> list)
+    public void updateList(ArrayList<ChannelRowListDataModel> list)
     {
         this.list = list;
         notifyDataSetChanged();
@@ -146,6 +147,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             }
 
 
+
+
+            Log.d("groupChatIDList","list ids = "+list.get(position).getUserID());
+            Log.d("groupChatIDList","list ids = "+list.get(position).getUserID());
 
 
             if (userID.equalsIgnoreCase(String.valueOf(list.get(position).getUserID()))){
@@ -1664,6 +1669,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         Glide.with(context).load(imageFilePath).
                 fitCenter().apply(requestOptions).
+                diskCacheStrategy(DiskCacheStrategy.ALL).
                 transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
     }
 

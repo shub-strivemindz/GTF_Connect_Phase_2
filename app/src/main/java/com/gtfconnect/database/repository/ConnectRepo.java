@@ -7,9 +7,11 @@ import com.gtfconnect.controller.RestAdapter;
 import com.gtfconnect.controller.RestService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 
 public class ConnectRepo {
 
@@ -103,4 +105,22 @@ public class ConnectRepo {
     public Observable<JsonElement> get_saved_messages(String api_token,String device_type, String device_token,int per_page,int page) {
         return restService.get_saved_messages(api_token,device_type,device_token,per_page,page);
     }
+
+
+
+
+    public Observable<JsonElement> save_group_channel_message(String api_token,String device_type, String device_token,int channelID,String action,Map<String,Object> chatIDList) {
+        return restService.save_group_channel_message(api_token,device_type,device_token,channelID,action,chatIDList);
+    }
+
+    public Observable<JsonElement> save_personal_message(String api_token, String device_type, String device_token, String message, String action, List<MultipartBody.Part> files) {
+        return restService.save_personal_message(api_token,device_type,device_token,message,action,files);
+    }
+
+
+
+    public Observable<JsonElement> delete_saved_message(int id,String api_token,String device_type, String device_token) {
+        return restService.delete_saved_message(id,api_token,device_type,device_token);
+    }
+
 }

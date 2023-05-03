@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentSavedMessageBinding;
+import com.gtfconnect.databinding.RecyclerGroupChatBinding;
 import com.gtfconnect.models.savedMessageModels.SavedMessageResponseModel;
 
 public class SavedMessageAdapter extends RecyclerView.Adapter<SavedMessageAdapter.ViewHolder> {
@@ -23,11 +24,12 @@ public class SavedMessageAdapter extends RecyclerView.Adapter<SavedMessageAdapte
         @NonNull
         @Override
         public SavedMessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-                return new SavedMessageAdapter.ViewHolder(FragmentSavedMessageBinding.inflate(LayoutInflater.from(viewGroup.getContext()), viewGroup, false));
+                return new SavedMessageAdapter.ViewHolder(RecyclerGroupChatBinding.inflate(LayoutInflater.from(viewGroup.getContext()), viewGroup, false));
         }
 
         @Override
         public void onBindViewHolder(SavedMessageAdapter.ViewHolder holder, int position) {
+
 
         }
 
@@ -38,9 +40,9 @@ public class SavedMessageAdapter extends RecyclerView.Adapter<SavedMessageAdapte
 
         static class ViewHolder extends RecyclerView.ViewHolder {
 
-                FragmentSavedMessageBinding binding;
+                RecyclerGroupChatBinding binding;
 
-                ViewHolder(@NonNull FragmentSavedMessageBinding binding) {
+                ViewHolder(@NonNull RecyclerGroupChatBinding binding) {
                         super(binding.getRoot());
                         this.binding = binding;
 

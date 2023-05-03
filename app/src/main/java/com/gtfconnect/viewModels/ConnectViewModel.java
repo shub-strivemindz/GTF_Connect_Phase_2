@@ -11,6 +11,7 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.database.repository.ConnectRepo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,6 +19,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MultipartBody;
 
 public class ConnectViewModel extends AndroidViewModel {
 
@@ -384,6 +386,59 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
+    public void save_group_channel_message(String api_token,String device_type, String device_token,int channelID,Map<String,Object> params) {
+
+        final String action = "WithGcChat";
+
+        disposables.add(repo.save_group_channel_message(api_token, device_type, device_token,channelID,action,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+    public void save_personal_message(String api_token, String device_type, String device_token, String message, List<MultipartBody.Part> files) {
+
+        final String action = "Manually";
+
+        disposables.add(repo.save_personal_message(api_token, device_type, device_token,message,action,files).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
 
 
 
@@ -412,6 +467,31 @@ public class ConnectViewModel extends AndroidViewModel {
             }
         }));
     }
+
+
+
+
+
+    public void delete_saved_message(int id,String api_token,String device_type, String device_token) {
+        disposables.add(repo.delete_saved_message(id,api_token, device_type, device_token).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
 
 
 

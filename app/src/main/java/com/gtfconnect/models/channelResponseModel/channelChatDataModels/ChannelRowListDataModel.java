@@ -98,6 +98,16 @@ public class ChannelRowListDataModel {
     private boolean isAudioDownloaded = false;
 
 
+    private boolean postSelected = false;
+
+    public boolean isPostSelected() {
+        return postSelected;
+    }
+
+    public void setPostSelected(boolean postSelected) {
+        this.postSelected = postSelected;
+    }
+
     public boolean isShowPostSelection() {
         return showPostSelection;
     }

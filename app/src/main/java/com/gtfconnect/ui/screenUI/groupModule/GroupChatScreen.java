@@ -84,8 +84,11 @@ import com.gtfconnect.models.EmojiListModel;
 import com.gtfconnect.models.ImagePreviewModel;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.models.SendAttachmentResponseModel;
+import com.gtfconnect.models.channelResponseModel.ChannelCommentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
+import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
+import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.groupResponseModel.GetDummyUserModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
@@ -93,6 +96,9 @@ import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
+import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
@@ -169,16 +175,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private int localSavedChatCount = 0;
 
-    private GroupMessageReceivedModel receivedMessage;
+    private ChannelMessageReceivedModel receivedMessage;
 
     private boolean isScrollDownHighlighted = false;
 
     private boolean enableSearchScroll = false;
     private int typeCount = 0;
 
-    private GroupChatResponseModel responseModel;
+    private ChannelChatResponseModel responseModel;
 
-    private GroupChatResponseModel localResponseModel;
+    private ChannelChatResponseModel localResponseModel;
 
     private boolean isMessageNotFound = true;
 
@@ -191,7 +197,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private int currentPage = 1;
 
     ArrayList<GroupMessageReceivedModel> receivedMessageList;
-    private ArrayList<GroupChatResponseModel.Row> list;
+    private ArrayList<ChannelRowListDataModel> list;
 
     private boolean isScrolling = false;
 
@@ -235,7 +241,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private int pinMessageCount = 0;
 
-    private GroupCommentResponseModel commentResponseModel;
+    private ChannelCommentResponseModel commentResponseModel;
 
     // creating a variable for media recorder object class.
     private MediaRecorder mRecorder;
@@ -271,6 +277,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private MediaRecorder mMediaRecorder;
 
     private String audioFilePath = "";
+
+    private GroupChannelChatDbEntity databaseEntity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -323,6 +331,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         gcMemberID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_MEMBER_ID, ""));
         userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
 
+        loadDataToAdapter();
 
         Log.d("data_channel_id",""+channelID);
 
@@ -783,48 +792,45 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
 
-    private void loadLocalData(){
+    private void loadLocalData() {
+
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
         databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
-            if(infoDbEntity != null){
+            if (infoDbEntity != null) {
                 this.infoDbEntity = infoDbEntity;
-
-                // Todo ================================ Need to add below functionality
-
-                /**
-                 * Below conditional checks are to check for any changes done by admin or expiry of subscription plan
-                 * Check 1 ======== Reactions enabled or not
-                 * Check 2 ======== AllowMemberOnly
-                 * Check 3 ======== AllowDiscussion
-                 * ===================================== Yet to be implemented
-                 */
-
             }
         });
 
-
-
-        String chat_data = PreferenceConnector.readString(GroupChatScreen.this, PreferenceConnector.CHANNEL_DATA + "/" + channelID, "");
-
-        Gson gson = new Gson();
-        localResponseModel = new GroupChatResponseModel();
-        localResponseModel = gson.fromJson(chat_data, GroupChatResponseModel.class);
-
-
-        if (localResponseModel != null) {
+        databaseViewModel.getGroupChannelChatData(String.valueOf(channelID), 1).observe(this, groupChannelChatDbEntities -> {
+            databaseEntity = groupChannelChatDbEntities;
             list = new ArrayList<>();
 
-            if (localResponseModel != null && localResponseModel.getData() != null && localResponseModel.getData().getChatData() != null && localResponseModel.getData().getChatData().getRows() != null) {
-                subscribers = localResponseModel.getData().getSubscriptionCount();
-                binding.userSubscribers.setText(String.valueOf(subscribers));
+            if (groupChannelChatDbEntities != null) {
+                if (groupChannelChatDbEntities.getChatBodyDbEntitiesLists() != null) {
+                    Log.d("run", " times3");
 
-                list.addAll(localResponseModel.getData().getChatData().getRows());
-                postBaseUrl = localResponseModel.getData().getBaseUrl();
-                loadDataToAdapter();
+                    Log.d("ChannelChatDataChatDB", "last entered message id =" + groupChannelChatDbEntities.getChatBodyDbEntitiesLists().get(groupChannelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1).getGroupChatID());
 
+                    for (int i = groupChannelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1; i >= 0; i--) {
 
+                        list.add(groupChannelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getRows());
+                        groupViewAdapter.updateList(list);
+                    }
+                    if (groupChannelChatDbEntities.getChatHeaderDbEntity() != null) {
+                        if (groupChannelChatDbEntities.getChatHeaderDbEntity().getBaseUrl() != null) {
+                            postBaseUrl = groupChannelChatDbEntities.getChatHeaderDbEntity().getBaseUrl();
+                        }
+                        if (groupChannelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount() != null) {
+                            subscribers = Integer.parseInt(groupChannelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount());
+                            binding.userSubscribers.setText(String.valueOf(subscribers));
+                        }
+                    }
+                    //channelViewAdapter.updatePostBaseUrl(postBaseUrl);
+                }
             }
-        }
+        });
+        refreshGroupChatSocket();
     }
 
 
@@ -880,19 +886,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
     private void scrollToPosition(int position,boolean isMessageQuoted) {
-        /*RecyclerView.SmoothScroller smoothScroller = new
-                LinearSmoothScroller(GroupChatScreen.this) {
-                    @Override
-                    protected int getVerticalSnapPreference() {
-                        return LinearSmoothScroller.SNAP_TO_START;
-                    }
-                };
 
-
-        smoothScroller.setTargetPosition(position);
-        mLayoutManager.startSmoothScroll(smoothScroller);*/
-
-        /*binding.chats.smoothScrollBy(0,0);*/
         mLayoutManager.scrollToPosition(position);
 
         new Handler().postDelayed(new Runnable() {
@@ -935,15 +929,15 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     // -------------------------------------------------------------------Socket  Implementation --------------------------------------------------------------------
 
+
     private void refreshGroupChatSocket() {
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupChatResponseModel>() {
+        type = new TypeToken<ChannelChatResponseModel>() {
         }.getType();
 
-        responseModel = new GroupChatResponseModel();
-        list = new ArrayList<>();
+        responseModel = new ChannelChatResponseModel();
 
         try {
             jsonRawObject = new JSONObject();
@@ -953,9 +947,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             jsonRawObject.put("page", currentPage);
 
             Log.d("Chat list params --", jsonRawObject.toString());
-
-      /*      if (!isListLoadedOnce)
-                runOnUiThread(() -> rest.ShowDialogue());*/
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
@@ -969,27 +960,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 responseModel = gson.fromJson(gsonObject, type);
 
-                if(currentPage == 1){
-
-                    localResponseModel = new GroupChatResponseModel();
-                    localResponseModel = gson.fromJson(gsonObject,type);
-
-                    Gson loadData = new Gson();
-                    String convertedData = loadData.toJson(localResponseModel);
-                    PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
-                }
-
                 runOnUiThread(() -> {
 
                     if(responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
-                        subscribers = responseModel.getData().getSubscriptionCount();
-                        binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                        //binding.loader.setVisibility(View.GONE);
-
-                        list.addAll(responseModel.getData().getChatData().getRows());
-                        postBaseUrl = responseModel.getData().getBaseUrl();
-                        loadDataToAdapter();
+                        insertDataInDB(responseModel);
                     }
                 });
 
@@ -1006,10 +980,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupChatResponseModel>() {
+        type = new TypeToken<ChannelChatResponseModel>() {
         }.getType();
 
-        responseModel = new GroupChatResponseModel();
+        responseModel = new ChannelChatResponseModel();
 
         try {
             jsonRawObject = new JSONObject();
@@ -1019,9 +993,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             jsonRawObject.put("page", currentPage);
 
             Log.d("Chat list params --", jsonRawObject.toString());
-
-            /*if (!isScrolling && !isListLoadedOnce)
-                runOnUiThread(() -> rest.ShowDialogue());*/
 
             socketInstance.emit("chatList", jsonRawObject, (Ack) args -> {
 
@@ -1043,30 +1014,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 } else {
 
                     runOnUiThread(() -> {
-
-                        subscribers = responseModel.getData().getSubscriptionCount();
-                        binding.userSubscribers.setText(String.valueOf(subscribers));
-
-                        //binding.loader.setVisibility(View.GONE);
-
-                        for (int i=0;i<responseModel.getData().getChatData().getRows().size();i++){
-                            responseModel.getData().getChatData().getRows().get(i).setShowPostSelection(showPostSelectionCheckBox);
-                        }
-
-                        if(currentPage == 1){
-
-                            localResponseModel = new GroupChatResponseModel();
-                            localResponseModel = gson.fromJson(gsonObject,type);
-
-                            Gson loadData = new Gson();
-                            String convertedData = loadData.toJson(localResponseModel);
-                            PreferenceConnector.writeString(GroupChatScreen.this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
-                        }
-
-                        list.addAll(responseModel.getData().getChatData().getRows());
-
-                        postBaseUrl = responseModel.getData().getBaseUrl();
-                        loadDataToAdapter();
+                        insertDataInDB(responseModel);
                     });
                 }
 
@@ -1075,6 +1023,43 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             Log.d("JsonException ---", e.toString());
         }
     }
+
+
+
+    public void insertDataInDB(ChannelChatResponseModel responseModel) {
+        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
+
+        if (responseModel.getData().getChatData().getCount() != null) {
+            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
+        }
+
+        headerDb.setGroupChannelID(responseModel.getData().getChatData().getRows().get(0).getGroupChannelID().toString());
+        headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
+        headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
+
+        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+
+        for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
+
+            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+            bodyDbEntity.setPage(currentPage);
+            chatBodyDbEntityList.add(bodyDbEntity);
+
+        }
+
+
+        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
+        channelChatDb.setChatHeaderDbEntity(headerDb);
+        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
+        /*Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
+        Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());*/
+        databaseViewModel.insertChannelChatData(channelChatDb);
+    }
+
+
 
     private void userTypingListener() {
         socketInstance.on("userTyping", new Emitter.Listener() {
@@ -1249,24 +1234,27 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private void messageReceivedListener() {
 
-        receivedMessage = new GroupMessageReceivedModel();
-
-        Gson gson = new Gson();
-        Type type;
-
-        type = new TypeToken<GroupMessageReceivedModel>() {
-        }.getType();
-
+        Log.d("socket_connection>>", "" + socketInstance.connected());
+        Log.d("Message_Received_Listener","Channel Message Listener Method");
 
         socketInstance.on("messageReceived", args -> {
+
+            Log.d("Message_Received_Listener", "Message Received");
+
+            receivedMessage = new ChannelMessageReceivedModel();
+
+            Gson gson = new Gson();
+            Type type;
+
+            type = new TypeToken<ChannelMessageReceivedModel>() {
+            }.getType();
 
             isScrollDownHighlighted = true;
 
 
-
             JSONObject data = (JSONObject) args[0];
             Log.d("Message Received Data :", data.toString());
-
+            Log.d("Message Received", "Listener");
 
             JsonParser jsonParser = new JsonParser();
             JsonObject gsonObject = (JsonObject) jsonParser.parse(data.toString());
@@ -1277,46 +1265,69 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
 
-            GroupChatResponseModel.Row rowData = receivedMessage.getSaveMsg().getGetData();
+            //ChannelRowListDataModel rowData = receivedMessage.getSaveMsg().getGetData();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
 
-                        if(currentPage == 1) {
+                    refreshGroupChatSocket();
 
-                            localResponseModel.getData().getChatData().getRows().set(0,rowData);
+                    /*try {
+                        if (rowData.getUserID() != null) {
+                            if (!Objects.equals(userID, rowData.getUserID())){
 
-                            Gson loadData = new Gson();
-                            String convertedData = loadData.toJson(localResponseModel);
-                            PreferenceConnector.writeString(GroupChatScreen.this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
-                        }
+                                GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
 
-                        /*if (responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null){
-                            GroupChatResponseModel.Row data = rowData;
-                            responseModel.getData().getChatData().getRows().set(0,data);
-                        }*/
+                                if(databaseEntity != null && databaseEntity.getChatHeaderDbEntity() != null){
 
-                        if (rowData != null && rowData.getUser() != null && rowData.getUser().getUserID() != null){
+                                    if (databaseEntity.getChatHeaderDbEntity().getCount() != null) {
+                                        headerDb.setCount(databaseEntity.getChatHeaderDbEntity().getCount());
+                                    }
 
-                            if(!rowData.getUser().getUserID().equalsIgnoreCase(userID.toString())){
+                                    headerDb.setGroupChannelID(channelID+"");
 
-                                if(currentPage == 1) {
+                                    if (databaseEntity.getChatHeaderDbEntity().getBaseUrl() != null) {
+                                        headerDb.setBaseUrl(databaseEntity.getChatHeaderDbEntity().getBaseUrl());
+                                    }
 
-                                    localResponseModel.getData().getChatData().getRows().set(0,rowData);
-
-                                    Gson loadData = new Gson();
-                                    String convertedData = loadData.toJson(localResponseModel);
-                                    PreferenceConnector.writeString(GroupChatScreen.this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
+                                    if (databaseEntity.getChatHeaderDbEntity().getSubscriptionCount() != null) {
+                                        headerDb.setSubscriptionCount(databaseEntity.getChatHeaderDbEntity().getSubscriptionCount());
+                                    }
+                                }
+                                else{
+                                    headerDb.setCount("");
+                                    headerDb.setGroupChannelID(channelID+"");
+                                    headerDb.setBaseUrl("");
+                                    headerDb.setSubscriptionCount("");
                                 }
 
-                                list.add(0, rowData);
-                                groupViewAdapter.updateList(list);
+                                List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+
+                                for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
+
+                                    GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                    bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                    bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                    bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                    bodyDbEntity.setPage(currentPage);
+
+                                    chatBodyDbEntityList.add(bodyDbEntity);
+
+                                }
+
+
+                                GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
+                                channelChatDb.setChatHeaderDbEntity(headerDb);
+                                channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
+                                Log.d("DB_chat_data", channelChatDb.getChatBodyDbEntitiesLists().get(0).getGroupChatID()+"");
+                                Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());
+                                databaseViewModel.insertChannelChatData(channelChatDb);
                             }
                         }
+
                     } catch (Exception e) {
                         Log.d("Typing header exception --", e.toString());
-                    }
+                    }*/
                 }
             });
         });
@@ -1328,7 +1339,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         Type type;
 
         Log.d("Like Listener :::: ", "Called");
-        type = new TypeToken<GroupChatResponseModel.Row>() {
+        type = new TypeToken<ChannelRowListDataModel>() {
         }.getType();
 
 
@@ -1353,7 +1364,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         JsonParser jsonParser = new JsonParser();
                         JsonObject gsonObject = (JsonObject) jsonParser.parse(response.toString());
 
-                        GroupChatResponseModel.Row like_response = gson.fromJson(gsonObject, type);
+                        ChannelRowListDataModel like_response = gson.fromJson(gsonObject, type);
                         Log.d("Like response from model", String.valueOf(like_response.getLike().get(0).getIsLike()));
 
 
@@ -1405,12 +1416,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
     private void commentReceiver() {
-        commentResponseModel = new GroupCommentResponseModel();
+        commentResponseModel = new ChannelCommentResponseModel();
 
         Gson gson = new Gson();
         Type type;
 
-        type = new TypeToken<GroupCommentResponseModel>() {
+        type = new TypeToken<ChannelCommentResponseModel>() {
         }.getType();
 
 
@@ -1528,10 +1539,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             if (loadSearchData) {
                 Gson gson = new Gson();
                 Type type;
-                type = new TypeToken<GroupChatResponseModel>() {
+                type = new TypeToken<ChannelChatResponseModel>() {
                 }.getType();
 
-                responseModel = new GroupChatResponseModel();
+                responseModel = new ChannelChatResponseModel();
 
 
                 try {
@@ -1564,8 +1575,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    list.addAll(responseModel.getData().getChatData().getRows());
-                                    loadDataToAdapter();
+
+                                    insertDataInDB(responseModel);
                                     loadSearchData = false;
                                     currentPage++;
 
@@ -1614,11 +1625,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 public void run() {
                                     if (commentDeleteResponseModel.getCommentData() != null) {
                                         list.get(searchedTillPosition).setCommentData(commentDeleteResponseModel.getCommentData());
-                                        groupViewAdapter.updateList(list);
+                                        channelViewAdapter.updateList(list);
                                     }
                                     else {
                                         list.get(searchedTillPosition).setCommentCount(0);
-                                        groupViewAdapter.updateList(list);
+                                        channelViewAdapter.updateList(list);
                                     }
                                 }
                             });
@@ -1628,7 +1639,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         }*/
                         else {
                             scrollToPosition(i,true);
-                            //rest.dismissProgressdialog();
+                            rest.dismissProgressdialog();
                             isMessageNotFound = false;
                             break;
                         }
@@ -2281,7 +2292,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     @Override
-    public void updateChatList(ArrayList<GroupChatResponseModel.Row> list) {
+    public void updateChatList(ArrayList<ChannelRowListDataModel> list) {
         this.list = list;
     }
 
@@ -2656,9 +2667,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
         currentPage = 1;
-        refreshGroupChatSocket();
-
-
         loadLocalData();
     }
 

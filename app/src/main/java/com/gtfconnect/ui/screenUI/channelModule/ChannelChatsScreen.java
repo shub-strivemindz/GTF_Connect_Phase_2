@@ -304,8 +304,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         list = new ArrayList<>();
         receivedMessageList = new ArrayList<>();
 
-        loadDataToAdapter();
-
         searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
 
         //destroyListeners();
@@ -316,6 +314,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
+
+
+
+        loadDataToAdapter();
 
 
         userTypingListener();
@@ -835,7 +837,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
 
-        databaseViewModel.getChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
+        databaseViewModel.getGroupChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
             databaseEntity = channelChatDbEntities;
             list = new ArrayList<>();
 
@@ -955,12 +957,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
 
                 responseModel = gson.fromJson(gsonObject, type);
-
-                if(currentPage == 1){
-                    Gson loadData = new Gson();
-                    String convertedData = loadData.toJson(responseModel);
-                    PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_DATA+"/"+channelID,convertedData);
-                }
 
                 runOnUiThread(() -> {
 
@@ -1785,7 +1781,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void accessDocument() {
 
-        String[] mimeTypes =
+        /*String[] mimeTypes =
                 {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
                         "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
                         "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
@@ -1794,7 +1790,16 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         "application/zip"};
 
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-        i.setType("*/*");
+
+        i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        i.addCategory(Intent.CATEGORY_OPENABLE);*/
+//i.setType("*/*");
+
+
+        String[] mimeTypes = {"application/pdf"};
+
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.setType("pdf/*");
         i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         i.addCategory(Intent.CATEGORY_OPENABLE);
 

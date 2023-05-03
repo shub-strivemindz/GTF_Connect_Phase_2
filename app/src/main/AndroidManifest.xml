@@ -121,6 +121,9 @@
         <activity android:name=".ui.screenUI.mentorModule.MentorChatScreen"/>
 
         <activity android:name=".ui.screenUI.groupModule.MultiPreviewImage"/>
+
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.GifPreviewScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.ImagePreviewScreen"/>
     </application>
 
 </manifest>
