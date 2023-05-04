@@ -2350,7 +2350,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         Log.d("api_token",api_token);
 
         requestType = UPDATE_DUMMY_USER;
-        connectViewModel.update_dummy_user_list(channelID,api_token,"android","test",param);
+        connectViewModel.update_dummy_user_list(channelID,api_token,param);
 
         Log.d("request_type","2 = "+requestType);
     }
@@ -2510,7 +2510,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
             requestType = GET_GROUP_CHANNEL_INFO;
-            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""),"android","test");
+            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
         }
         else if (requestType == GET_GROUP_CHANNEL_INFO) {
             gson = new Gson();

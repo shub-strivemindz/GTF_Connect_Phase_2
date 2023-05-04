@@ -655,10 +655,18 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
             RecyclerView personList = (RecyclerView) forward_dialog.findViewById(R.id.forward_person_list_recycler);
 
-            ForwardPersonListAdapter forwardPersonListAdapter = new ForwardPersonListAdapter(context);
+            int channelID = list.get(position).getGroupChannelID();
+            int chatID = Integer.parseInt(list.get(position).getGroupChatID());
+
+            ForwardPersonListAdapter forwardPersonListAdapter = new ForwardPersonListAdapter(context,channelID,chatID);
             personList.setHasFixedSize(true);
             personList.setLayoutManager(new LinearLayoutManager(context));
             personList.setAdapter(forwardPersonListAdapter);
+
+            forwardPersonListAdapter.setOnSaveMessageClickListener(chatID1 -> {
+                channelChatListener.saveMessage(chatID1);
+                forward_dialog.dismiss();
+            });
 
             forward_dialog.show();
         });
@@ -853,4 +861,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         }
     }
+
+
+
+
 }

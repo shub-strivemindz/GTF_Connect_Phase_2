@@ -36,4 +36,6 @@ public interface ChannelChatListener {
 
     void forwardMultiplePost(int selectedCount);
 
+
+    void saveMessage(int chatID);
 }

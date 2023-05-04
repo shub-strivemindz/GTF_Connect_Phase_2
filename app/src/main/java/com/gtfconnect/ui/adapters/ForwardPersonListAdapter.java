@@ -22,8 +22,17 @@ public class ForwardPersonListAdapter extends RecyclerView.Adapter<ForwardPerson
 
     private Context context;
 
-    public  ForwardPersonListAdapter(Context context){
+    private int channelID;
+
+    private int chatID;
+
+    private ForwardPersonListAdapter.OnItemClickListener listener;
+
+
+    public  ForwardPersonListAdapter(Context context,int channelID,int chatID){
         this.context= context;
+        this.channelID = channelID;
+        this.chatID = chatID;
     }
 
     @NonNull
@@ -46,6 +55,14 @@ public class ForwardPersonListAdapter extends RecyclerView.Adapter<ForwardPerson
             holder.binding.saveImage.setVisibility(View.GONE);
         }
 
+
+
+        holder.binding.getRoot().setOnClickListener(v -> {
+            if (position == 0){
+                listener.OnSaveMessage(chatID);
+            }
+        });
+
     }
 
     @Override
@@ -62,6 +79,16 @@ public class ForwardPersonListAdapter extends RecyclerView.Adapter<ForwardPerson
             this.binding = binding;
 
         }
+    }
+
+
+    public void setOnSaveMessageClickListener(ForwardPersonListAdapter.OnItemClickListener listener){
+        this.listener = listener;
+    }
+
+
+    public interface OnItemClickListener{
+        void OnSaveMessage(int chatID);
     }
 }
 

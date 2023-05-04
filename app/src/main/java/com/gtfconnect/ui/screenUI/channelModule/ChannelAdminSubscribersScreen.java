@@ -69,7 +69,7 @@ public class ChannelAdminSubscribersScreen extends AppCompatActivity implements 
 
         int channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
         String api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
-        connectViewModel.get_group_channel_manage_subscriber_list(channelID,api_token,"android","test",1,10);
+        connectViewModel.get_group_channel_manage_subscriber_list(channelID,api_token,1,10);
 
     }
 

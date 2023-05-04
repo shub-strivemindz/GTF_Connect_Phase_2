@@ -19,4 +19,8 @@ public class Constants {
     public static final int RECORD_AUDIO_REQUEST_CODE = 1907;
 
     public static final int SAVE_MESSAGE_REQUEST_CODE = 1908;
+
+    public static final int GET_SAVED_MESSAGE = 1909;
+
+    public static final int DELETE_SAVED_MESSAGE = 1910;
 }

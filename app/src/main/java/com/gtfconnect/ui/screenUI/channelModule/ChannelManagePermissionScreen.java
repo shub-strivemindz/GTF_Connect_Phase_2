@@ -96,7 +96,7 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             params.put("SlowMode",slowModeTime);
 
             requestType = UPDATE_DATA;
-            connectViewModel.update_groupChannel_permission_settings(channelID,api_token,"android","test",params);
+            connectViewModel.update_groupChannel_permission_settings(channelID,api_token,params);
         });
     }
 
@@ -154,11 +154,11 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             if (b){
                 params.put("RestrictSharingContent",1);
                 Toast.makeText(this, String.valueOf(channelID), Toast.LENGTH_SHORT).show();
-                connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+                connectViewModel.update_groupChannel_settings(channelID,api_token,params);
             }
             else{
                 params.put("RestrictSharingContent",0);
-                connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+                connectViewModel.update_groupChannel_settings(channelID,api_token,params);
             }
         });
 

@@ -5,6 +5,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -266,7 +267,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private InfoDbEntity infoDbEntity;
 
-
+    private String api_token;
 
 
     @Override
@@ -311,6 +312,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
 
         channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
+
+        api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
@@ -790,10 +793,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
 
-        String api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
-
         requestType = REQUEST_EMOJI_LIST;
-        connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token, "android", "test", currentPage, 25, 1);
+        connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
     }
 
 
@@ -887,6 +888,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
         mLayoutManager.scrollToPosition(position);
+
+        //ObjectAnimator.ofInt(mLayoutManager, "translationY",  position).setDuration(300).start();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -2346,6 +2349,17 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
+    public void saveMessage(int chatID) {
+
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("GroupChatID[]",chatID);
+
+        requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
+        connectViewModel.save_group_channel_message(api_token,channelID,params);
+    }
+
+    @Override
     public void imagePreviewListener(int index, ArrayList<ImagePreviewModel> uriList) {
         selectedImageUriIndex = index;
         binding.imagePreview.setImageURI(uriList.get(index).getUri());
@@ -2384,7 +2398,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     @Override
     public void onLoading() {
-        //rest.ShowDialogue();
+        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE){
+            rest.ShowDialogue();
+        }
     }
 
     @Override
@@ -2526,7 +2542,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 isDataLoadedFirstTime = false;*/
 
             requestType = GET_GROUP_CHANNEL_INFO;
-            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""),"android","test");
+            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
 
         }
         else if (requestType == GET_GROUP_CHANNEL_INFO) {
@@ -2583,7 +2599,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             isAnyFileAttached = false;
             isAttachmentSend = true;
             validateSendMessage("Audio Test", binding.type);
-        } else if (requestType == PINNED_MESSAGE_COUNT) {
+
+        }
+        else if (requestType == PINNED_MESSAGE_COUNT) {
             PinnedMessagesModel pinnedMessagesModel = new PinnedMessagesModel();
             Type type = new TypeToken<PinnedMessagesModel>() {
             }.getType();
@@ -2597,6 +2615,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.pinnedMessageCountContainer.setVisibility(View.GONE);
                 pinMessageCount = 0;
             }
+        } else if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE) {
+            Toast.makeText(this, jsonObject.get("message").toString(), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -88,24 +88,6 @@
             android:alpha=".2"/>
 
         <TextView
-            android:id="@+id/forward"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_35sdp"
-            android:text="Forward"
-            android:textColor="@color/theme_green"
-            android:gravity="center"
-            android:textSize="@dimen/_13sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:textFontWeight="500"
-            android:fontFamily="@font/open_sans"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:alpha=".2"/>
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
             android:text="Enable Discussion"

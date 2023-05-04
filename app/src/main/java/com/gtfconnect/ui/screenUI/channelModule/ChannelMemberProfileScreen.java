@@ -194,7 +194,7 @@ public class ChannelMemberProfileScreen extends AppCompatActivity implements Api
         int channel_id = Integer.parseInt(PreferenceConnector.readString(this,PreferenceConnector.GC_CHANNEL_ID,""));
         String api_token = PreferenceConnector.readString(this,PreferenceConnector.API_GTF_TOKEN_,"");
 
-        connectViewModel.get_group_channel_member_media(channel_id,api_token,"android","test",gc_member_id);
+        connectViewModel.get_group_channel_member_media(channel_id,api_token,gc_member_id);
     }
 
 

@@ -43,6 +43,7 @@ public class SavedMessageResponseModel {
 
 
 
+
     public class Data {
 
         @SerializedName("list")
@@ -124,6 +125,7 @@ public class SavedMessageResponseModel {
         }
 
     }
+
     public class ListData {
 
         @SerializedName("SavedMessageID")
@@ -153,9 +155,15 @@ public class SavedMessageResponseModel {
         @SerializedName("GroupChatID")
         @Expose
         private Integer groupChatID;
+        @SerializedName("ChatUserID")
+        @Expose
+        private Object chatUserID;
         @SerializedName("saved_message_media")
         @Expose
         private java.util.List<SavedMessageMedium> savedMessageMedia;
+        @SerializedName("user")
+        @Expose
+        private User user;
 
         public Integer getSavedMessageID() {
             return savedMessageID;
@@ -229,6 +237,14 @@ public class SavedMessageResponseModel {
             this.groupChatID = groupChatID;
         }
 
+        public Object getChatUserID() {
+            return chatUserID;
+        }
+
+        public void setChatUserID(Object chatUserID) {
+            this.chatUserID = chatUserID;
+        }
+
         public java.util.List<SavedMessageMedium> getSavedMessageMedia() {
             return savedMessageMedia;
         }
@@ -237,7 +253,16 @@ public class SavedMessageResponseModel {
             this.savedMessageMedia = savedMessageMedia;
         }
 
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
     }
+
     public class SavedMessageMedium {
 
         @SerializedName("ID")
@@ -374,6 +399,55 @@ public class SavedMessageResponseModel {
         }
 
     }
+    public class User {
+
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("Firstname")
+        @Expose
+        private String firstname;
+        @SerializedName("Lastname")
+        @Expose
+        private String lastname;
+        @SerializedName("ProfileImage")
+        @Expose
+        private Object profileImage;
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
+
+        public void setLastname(String lastname) {
+            this.lastname = lastname;
+        }
+
+        public Object getProfileImage() {
+            return profileImage;
+        }
+
+        public void setProfileImage(Object profileImage) {
+            this.profileImage = profileImage;
+        }
+
+    }
 }
+
 
 

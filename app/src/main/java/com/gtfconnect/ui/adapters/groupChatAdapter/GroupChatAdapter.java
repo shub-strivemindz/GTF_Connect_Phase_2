@@ -170,10 +170,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 holder.binding.selectPost.setVisibility(View.GONE);
             }
         }
-
-
     }
-
 
 
     private void sentMessageView(ViewHolder holder,int position){
@@ -624,7 +621,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             forward_dialog.show();
         });*/
     }
-
 
 
     private void receivedMessageView(ViewHolder holder,int position){
@@ -1133,12 +1129,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         chat_options_dialog.show();
     }
-
-
-
-
-
-
 
 
 

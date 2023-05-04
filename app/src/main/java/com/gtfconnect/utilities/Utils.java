@@ -898,6 +898,44 @@ public class Utils {
     }
 
 
+    public static String getSavedMessageChipDate(String chipDate){
+        String tempChatDate = chipDate;
+        String serverCurrentDate = "";
+        String currentDate = "";
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(chipDate);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMM, hh:mm aa"); //this format changeable
+            //dateFormatter.setTimeZone(TimeZone.getDefault());
+            chipDate = dateFormatter.format(value);
+
+
+            //current date
+            String OurDate = chipDate;
+            String[] separated = OurDate.split(",");
+            serverCurrentDate = separated[0];
+            String ServerCurrentDate1 = separated[1];
+            currentDate = new SimpleDateFormat("dd MMM", Locale.getDefault()).format(new Date());
+            yesterdayDate();
+            if (currentDate.equalsIgnoreCase(serverCurrentDate)) {
+                chipDate = "Today";
+            } else if (serverCurrentDate.equalsIgnoreCase(yesterdayDate())) {
+                chipDate = "Yesterday";
+            }
+            else{
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM");
+                chipDate = format.format(value);
+            }
+        } catch (Exception e) {
+            chipDate = "00-00-0000 00:00";
+        }
+        return chipDate;
+    }
+
+
     public static String getChipDate(String chipDate){
         String tempChatDate = chipDate;
         String serverCurrentDate = "";

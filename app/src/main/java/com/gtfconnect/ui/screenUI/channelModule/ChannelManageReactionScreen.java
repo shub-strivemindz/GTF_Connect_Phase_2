@@ -108,7 +108,7 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
                     Map<String, Object> params = new HashMap<>();
                     params.put("EnableReactions",0);
                     requestType = UPDATE_GC_REACTION_STATUS;
-                    connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+                    connectViewModel.update_groupChannel_settings(channelID,api_token,params);
                 }
             }
         });
@@ -130,7 +130,7 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
 
                 Log.d("params :",params.toString());
                 requestType = UPDATE_GC_REACTION_LIST;
-                connectViewModel.update_group_channel_reaction_list(channelID,api_token,"android","test",params);
+                connectViewModel.update_group_channel_reaction_list(channelID,api_token,params);
             }
             else{
                 Utils.showSnackMessage(ChannelManageReactionScreen.this,binding.getRoot(),"Please select at least one reaction to update!");
@@ -201,7 +201,7 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
 
     private void getReactionFromList(){
         requestType = GET_GC_REACTION_LIST;
-        connectViewModel.get_group_channel_manage_reaction_list(channelID,api_token,"android","test",currentPage,25,0);
+        connectViewModel.get_group_channel_manage_reaction_list(channelID,api_token,currentPage,25,0);
     }
 
 

@@ -124,7 +124,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                 params.put("IsNotification", 1);
                 isNotificationEnabled = true;
             }
-            connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+            connectViewModel.update_groupChannel_settings(channelID,api_token,params);
         });
 
         binding.backClick.setOnClickListener(new View.OnClickListener() {
@@ -345,7 +345,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         });
 
         requestType = GET_GROUP_CHANNEL_INFO;
-        connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
+        connectViewModel.get_group_channel_info(channelID,api_token);
 
     }
 
@@ -500,7 +500,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         else if (requestType == UPDATE_GC_SETTING) {
 
             requestType = GET_UPDATED_GC_SETTING;
-            connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
+            connectViewModel.get_group_channel_info(channelID,api_token);
 
 
         }
@@ -524,7 +524,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         } else if (requestType == UPDATE_GC_REACTION_SETTING) {
 
             requestType = UPDATED_GC_REACTION_SETTING;
-            connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
+            connectViewModel.get_group_channel_info(channelID,api_token);
 
         } else if (requestType == UPDATED_GC_REACTION_SETTING) {
 
@@ -561,7 +561,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         else{
             params.put("AccessType","public");
         }
-        connectViewModel.update_groupChannel_profile(channelID,api_token,"android","test",params);
+        connectViewModel.update_groupChannel_profile(channelID,api_token,params);
     }
 
     @Override
@@ -569,7 +569,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
         params.put("SignedMsg",status);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
     }
 
     @Override
@@ -577,7 +577,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
         params.put("AllowDiscussion",status);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
     }
 
     @Override
@@ -585,7 +585,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
         params.put("ChatHistoryIsEnable",status);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
     }
 
     @Override
@@ -594,7 +594,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         params = new HashMap<>();
         params.put("EnableManipulateViews", status);
         params.put("ManipulateViewsPercent", percent);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,"android","test",params);
+        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
     }
 
     @Override
@@ -604,7 +604,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
             requestType = UPDATE_GC_REACTION_SETTING;
             params = new HashMap<>();
             params.put("EnableReactions", status);
-            connectViewModel.update_groupChannel_settings(channelID, api_token, "android", "test", params);
+            connectViewModel.update_groupChannel_settings(channelID, api_token,  params);
         }
         else{
 
@@ -629,7 +629,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                     binding.tabLayout.getTabAt(3).select();
 
                     requestType = GET_GROUP_CHANNEL_INFO;
-                    connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
+                    connectViewModel.get_group_channel_info(channelID,api_token);
                 }
                 else if (result.getResultCode() == GC_REFRESH_UPDATED_REACTION_CODE) {
 
@@ -637,7 +637,7 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
                     requestType = GET_GROUP_CHANNEL_INFO;
                     isReactionsUpdated = true;
-                    connectViewModel.get_group_channel_info(channelID,api_token,"android","test");
+                    connectViewModel.get_group_channel_info(channelID,api_token);
                 }
             });
 }

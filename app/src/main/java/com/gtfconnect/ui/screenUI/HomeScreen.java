@@ -526,7 +526,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
             Log.d("api_called","exclusive");
             requestType = GET_EXCLUSIVE_OFFER;
-            connectViewModel.get_exclusive_offers(PreferenceConnector.readString(this,PreferenceConnector.API_GTF_TOKEN_,""),"android","test","",1);
+            connectViewModel.get_exclusive_offers(PreferenceConnector.readString(this,PreferenceConnector.API_GTF_TOKEN_,""),"",1);
 
         }
         else if (requestType == GET_EXCLUSIVE_OFFER) {
