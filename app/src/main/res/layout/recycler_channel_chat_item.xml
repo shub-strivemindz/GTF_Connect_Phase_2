@@ -12,14 +12,6 @@
         android:background="@color/channelBackgroundColor"
         android:layout_height="@dimen/_35sdp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_centerInParent="true"
-        android:layout_width="@dimen/_70sdp"
-        android:layout_height="@dimen/_20sdp"
-        app:cardCornerRadius="@dimen/_16sdp"
-        android:alpha=".8"
-        app:cardBackgroundColor="@color/chatHeaderDateBackgroundColor">
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -30,7 +22,6 @@
             android:gravity="center"
             android:id="@+id/current_date"/>
 
-    </com.google.android.material.card.MaterialCardView>
 
     </RelativeLayout>
 

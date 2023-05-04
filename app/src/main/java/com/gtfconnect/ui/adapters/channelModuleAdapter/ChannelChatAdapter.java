@@ -1,5 +1,6 @@
 package com.gtfconnect.ui.adapters.channelModuleAdapter;
 
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,11 +20,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -295,6 +298,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
+            Log.d("chatID","========= "+list.get(position).getGroupChatID()+" channelID ="+list.get(position).getGroupChannelID().toString());
+
             //List<ChannelMediaResponseModel> mediaResponseModel = list.get(position).getMedia();
 
             String fileType = Utils.checkFileType(list.get(position).getMedia().get(0).getMimeType());
@@ -405,13 +410,90 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             holder.binding.postImageContainer.setVisibility(View.GONE);
         }*/
 
+
+
+        // Todo =============
+
+        holder.binding.message.setOnClickListener(view -> {
+            if(isMessageClicked){
+                //This will shrink textview to 2 lines if it is expanded.
+                holder.binding.message.setMaxLines(3);
+                isMessageClicked = false;
+            } else {
+                //This will expand the textview if it is of 2 lines
+                holder.binding.message.setMaxLines(Integer.MAX_VALUE);
+                isMessageClicked = true;
+            }
+        });
+
+
+
+
         if (list.get(position).getMessage() != null) {
             message = list.get(position).getMessage();
             holder.binding.message.setText(list.get(position).getMessage());
+
+/*
+            holder.binding.message.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    if (holder.binding.message.getLineCount() > 3) {
+                        holder.binding.expandMessage.setVisibility(View.VISIBLE);
+                        ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 3);
+                        animation.setDuration(0).start();
+                    }
+
+                }
+            });*/
+
+            //Utils.makeTextViewResizable(holder.binding.message,3,"See More",true);
         } else {
             message = "No message found";
             holder.binding.message.setText("No message found");
         }
+
+
+
+
+        holder.binding.expandMessage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                if (!isMessageClicked) {
+                    isMessageClicked = true;
+                    ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 40);
+                    animation.setDuration(100).start();
+
+                    holder.binding.expandMessage.setText("See More");
+
+                    //btnSeeMore.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_collapse));/
+                } else {
+                    isMessageClicked = false;
+                    ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 4);
+                    animation.setDuration(100).start();
+
+                    holder.binding.expandMessage.setText("See Less");
+
+                    //btnSeeMore.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_expand));
+                }
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         if (list.get(position).getCreatedAt() != null) {
             time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
@@ -483,17 +565,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 //                holder.binding.expandMessage.setVisibility(View.GONE);
 //            }
 
-        holder.binding.message.setOnClickListener(view -> {
-            if(isMessageClicked){
-                //This will shrink textview to 2 lines if it is expanded.
-                holder.binding.message.setMaxLines(3);
-                isMessageClicked = false;
-            } else {
-                //This will expand the textview if it is of 2 lines
-                holder.binding.message.setMaxLines(Integer.MAX_VALUE);
-                isMessageClicked = true;
-            }
-        });
 
 
       /*  holder.binding.viewComment.setOnClickListener(view -> {
@@ -825,6 +896,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         else{
             for (int i=0;i< list.size();i++){
                 list.get(i).setShowPostSelection(false);
+                list.get(i).setPostSelected(false);
             }
         }
         notifyDataSetChanged();

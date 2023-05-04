@@ -1,13 +1,22 @@
 package com.gtfconnect.utilities;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class LocalGalleryUtil {
 
@@ -36,8 +45,6 @@ public class LocalGalleryUtil {
     }
 
 
-
-
     // Convert Drawable to Bitmap in android
     private static Bitmap convertDrawableToBitmap(Drawable resource){
         Bitmap bitmap = Bitmap.createBitmap(resource.getIntrinsicWidth(),
@@ -47,9 +54,6 @@ public class LocalGalleryUtil {
         resource.draw(canvas);
         return bitmap;
     }
-
-
-
 
 
 
@@ -69,4 +73,60 @@ public class LocalGalleryUtil {
         return BitmapFactory.decodeByteArray(blobImageData,0,blobImageData.length);
     }
 
+
+
+
+
+
+    public static boolean saveImageToGallery(Context context, Drawable drawable){
+
+        Bitmap bitmap = convertDrawableToBitmap(drawable);
+
+        FileOutputStream outStream = null;
+
+        File file = getGroupChannelImagePath();
+
+        try {
+
+            outStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+            outStream.flush();
+            outStream.close();
+
+
+            Toast.makeText(context, "Image saved successfully!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        catch (Exception e){
+            Log.d("Exception while saving image",e.toString());
+            return false;
+        }
+    }
+
+
+    private static File getGroupChannelImagePath()
+    {
+        File filePath;
+
+        String fileName = "Profile"+new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())+".jpg";
+
+        String downloadPath = "/" + "connect_files" + "/" +
+                fileName;
+
+        String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS) + downloadPath;
+
+        filePath = new File(fileDownloadPath);
+
+        try{
+            if (!filePath.getParentFile().exists()){
+                filePath.getParentFile().mkdirs();
+            }
+        }
+        catch (Exception e){
+            Log.d("Exception while saving image",e.toString());
+        }
+
+        return filePath;
+    }
 }

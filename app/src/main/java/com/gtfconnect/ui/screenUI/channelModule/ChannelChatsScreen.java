@@ -602,6 +602,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 endTypingListener();
                 messageText = binding.type.getText().toString().trim();
 
+                Log.d("SendMessage","Button Clicked");
+                Log.d("SendMessage","isAnyFileAttached = "+isAnyFileAttached);
+
                 if (isAnyFileAttached) {
                     if (messageText != null && !messageText.equalsIgnoreCase("")) {
                         callAttachmentApi();
@@ -616,6 +619,29 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 }
             } else {
 
+                messageText = binding.type.getText().toString().trim();
+
+                Log.d("SendMessage","Button Clicked");
+                Log.d("SendMessage","isAnyFileAttached = "+isAnyFileAttached);
+
+                if (isAnyFileAttached) {
+
+                    binding.sendMessage.setVisibility(View.VISIBLE);
+                    binding.recordButton.setVisibility(View.GONE);
+
+                    callAttachmentApi();
+
+                    /*if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        callAttachmentApi();
+                    } else {
+                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                        isAnyFileAttached = false;
+                        isAttachmentSend = false;
+                    }*/
+                } /*else {
+                    validateSendMessage(messageText, binding.type);
+                }*/
             }
         });
 
@@ -1625,6 +1651,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     // -------------------------------------------------------------- Api Calls -----------------------------------------------------------------------------
 
     private void callAttachmentApi() {
+
         Map<String, Object> params = new HashMap<>();
         params.put("GCMemberID", gcMemberID);
         params.put("GroupChannelID", channelID);

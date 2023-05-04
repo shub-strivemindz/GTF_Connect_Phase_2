@@ -44,6 +44,7 @@ import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.LinkAdapte
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.MediaAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.SettingAdapter;
 import com.gtfconnect.ui.screenUI.HomeScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ImagePreviewScreen;
 import com.gtfconnect.ui.screenUI.groupModule.GroupEditProfileScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
@@ -110,6 +111,17 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
         binding.editProfile.setOnClickListener(view -> startActivity(new Intent(ChannelProfileScreen.this, GroupEditProfileScreen.class)));
 
         binding.title2.setOnClickListener(view -> startActivity(new Intent(ChannelProfileScreen.this,ChannelAdminSubscribersScreen.class)));
+
+        binding.logo.setOnClickListener(v -> {
+            Intent intent = new Intent(ChannelProfileScreen.this, ImagePreviewScreen.class);
+
+            if (profileDetailModel != null && profileDetailModel.getGcInfo() != null) {
+                if (profileDetailModel.getGcInfo().getProfileImage() != null && !profileDetailModel.getGcInfo().getProfileImage().isEmpty()) {
+                    intent.putExtra("image", profileDetailModel.getGcInfo().getProfileImage());
+                    startActivity(intent);
+                }
+            }
+        });
 
         binding.muteNotification.setOnClickListener(view -> {
 
@@ -386,7 +398,6 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
                     Glide.with(this).load(profileDetailModel.getGcInfo().getProfileImage()).
                             fitCenter().apply(requestOptions).
                             transition(DrawableTransitionOptions.withCrossFade()).into(binding.logo);
-
                 }
             }
         }
