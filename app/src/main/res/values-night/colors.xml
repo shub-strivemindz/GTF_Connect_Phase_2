@@ -94,4 +94,65 @@
 
     <color name="locationPickerBg">#000000</color>
 
+    <color name="authBackButtonColor">#fff</color>
+
+    <color name="authTextView2">#fff</color>
+
+
+
+
+
+
+    <!--======================================================================= Usr Profile Module ==========================================================================-->
+
+
+    <color name="userProfileActionBar">#232833</color>
+
+    <color name="userProfileBgColor">#0E1118</color>
+
+    <color name="userProfileActionBarHeaderColor">#fff</color>
+
+    <color name="savedMessageActionBarBgColor">#232833</color>
+
+    <color name="savedMessageBgColor">#0E1118</color>
+
+    <color name="savedMessageActionBarTextColor">#fff</color>
+
+    <color name="contactUsCardBackgroundColor">#222E3C</color>
+
+
+
+    <!--======================================================================= Send Message Dialog ==========================================================================-->
+
+
+    <color name="sendMessageDialogBackgroundColor">#232833</color>
+
+    <color name="sendMessageEditTextBackgroundColor">#0E1118</color>
+
+    <color name="sendMessageIconColor">#707C8A</color>
+
+    <color name="sendMessageEmojiColor">#666666</color>
+
+    <color name="sendMessageTextColor">#B5BABE</color>
+
+
+
+    <!--======================================================================= Simple BottomSheet Dialog ==========================================================================-->
+
+    <color name="sBottomSheetTextColor">#fff</color>
+
+    <color name="sBottomSheetBackgroundColor">#252C3C</color>
+
+    <color name="sBottomSheetHeaderColor">#9eaad6</color>
+
+    <color name="sBottomSheetLightTextColor">#fff</color>
+
+
+
+    <!--======================================================================= Dashboard UI ==========================================================================-->
+
+    <color name="dashboardListItemBackgroundColor">#222E3C</color>
+
+    <color name="dashboardListItemTextColor">#9EAAD6</color>
+
 </resources>

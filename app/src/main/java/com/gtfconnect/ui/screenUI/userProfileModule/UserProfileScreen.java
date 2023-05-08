@@ -142,7 +142,7 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
         binding.contactUs.setOnClickListener(view -> startActivity(new Intent(UserProfileScreen.this, ContactUsScreen.class)));
 
         // Navigate to Previous Screen :
-        binding.back.setOnClickListener(view -> startActivity(new Intent(UserProfileScreen.this, HomeScreen.class)));
+        binding.back.setOnClickListener(view -> finish());
 
 
         // Dialog for Sign Out  :

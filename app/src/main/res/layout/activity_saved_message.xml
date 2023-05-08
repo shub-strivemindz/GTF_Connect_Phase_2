@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/savedMessageBgColor"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
+        android:background="@color/savedMessageActionBarBgColor"
         android:layout_height="@dimen/_45sdp"
         android:orientation="horizontal">
 
@@ -18,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/back2"
             android:layout_marginStart="@dimen/_24sdp"
-            app:tint="@color/theme_green"/>
+            app:tint="@color/savedMessageActionBarTextColor"/>
 
         <TextView
             android:layout_gravity="center"
@@ -27,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Saved Messages"
-            android:textColor="@color/theme_green"
+            android:textColor="@color/savedMessageActionBarTextColor"
             android:fontFamily="@font/poppins500"
             android:textSize="@dimen/_15ssp"/>
 
@@ -53,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_50sdp"
         android:elevation="@dimen/_8sdp"
-        android:background="@color/white"
+        android:background="@color/sendMessageDialogBackgroundColor"
         android:orientation="horizontal">
 
         <com.example.audiorecorder.RecordView
@@ -78,6 +79,7 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_alignParentEnd="true"
             android:scaleType="centerInside"
+            app:tint="@color/sendMessageIconColor"
             app:mic_icon="@drawable/microphone" />
 
         <ImageView
@@ -126,7 +128,6 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-
             </RelativeLayout>
 
             <com.google.android.material.card.MaterialCardView
@@ -137,7 +138,7 @@
                 android:layout_marginStart="@dimen/_12sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
                 app:cardCornerRadius="@dimen/_12sdp"
-                app:cardBackgroundColor="@color/sendMessageCardFiller"
+                app:cardBackgroundColor="@color/sendMessageEditTextBackgroundColor"
                 android:layout_height="match_parent">
 
                 <RelativeLayout
@@ -150,16 +151,25 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
+                        <ImageView
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/smile"
+                            app:tint="@color/sendMessageEmojiColor"
+                            android:layout_marginHorizontal="@dimen/_6sdp"/>
+
                         <com.gtfconnect.utilities.CustomEditText
                             android:id="@+id/type"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="match_parent"
                             android:hint="Message"
-                            android:paddingStart="@dimen/_8sdp"
                             android:fontFamily="@font/poppins"
                             android:textSize="@dimen/_10ssp"
-                            android:background="@android:color/transparent"/>
+                            android:paddingStart="@dimen/_6sdp"
+                            android:textColor="@color/sendMessageTextColor"
+                            android:textColorHint="@color/sendMessageTextColor"
+                            android:background="@color/sendMessageEditTextBackgroundColor"/>
 
                     </LinearLayout>
 
@@ -173,6 +183,7 @@
                 android:layout_marginHorizontal="@dimen/_4sdp"
                 android:layout_width="@dimen/_17sdp"
                 android:layout_height="match_parent"
+                app:tint="@color/sendMessageIconColor"
                 android:src="@drawable/attach_doc"/>
 
         </LinearLayout>

@@ -7,7 +7,7 @@
     android:orientation="horizontal">
 <LinearLayout
     android:layout_width="match_parent"
-    android:background="@color/background"
+    android:background="@color/dashboardListItemBackgroundColor"
     android:layout_height="@dimen/_65sdp"
     android:orientation="horizontal">
 
@@ -28,7 +28,7 @@
             android:layout_marginStart="@dimen/_10sdp"
             android:text="John Harper"
             android:textSize="@dimen/_12ssp"
-            android:textStyle="bold"
+            android:textColor="@color/dashboardListItemTextColor"
             android:fontFamily="@font/open_sans"
             android:textFontWeight="600"
             android:gravity="center_vertical"/>

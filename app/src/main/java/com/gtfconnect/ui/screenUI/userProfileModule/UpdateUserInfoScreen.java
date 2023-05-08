@@ -95,7 +95,7 @@ public class UpdateUserInfoScreen extends AppCompatActivity implements ApiRespon
 
 
         // Navigate to Previous Screen :
-        binding.back.setOnClickListener(view -> startActivity(new Intent(UpdateUserInfoScreen.this, UserProfileScreen.class)));
+        binding.back.setOnClickListener(view -> finish());
 
         binding.genderSelection.setOnClickListener(view -> {
             BottomSheetDialog gender_selection_dialog = new BottomSheetDialog(UpdateUserInfoScreen.this);

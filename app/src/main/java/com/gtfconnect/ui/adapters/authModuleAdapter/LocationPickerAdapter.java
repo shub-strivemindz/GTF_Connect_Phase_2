@@ -59,7 +59,13 @@ public class LocationPickerAdapter extends RecyclerView.Adapter<LocationPickerAd
 
         holder.binding.getRoot().setOnClickListener(v -> {
 
-            itemSelected = itemPosition;
+            if (itemSelected == itemPosition){
+                itemSelected = -1;
+                selectedLocation = new LocationPickerModel();
+            }
+            else{
+                itemSelected = itemPosition;
+            }
             notifyDataSetChanged();
         });
 
@@ -80,6 +86,12 @@ public class LocationPickerAdapter extends RecyclerView.Adapter<LocationPickerAd
             this.binding = binding;
 
         }
+    }
+
+
+    public void updateList(List<LocationPickerModel> locationPickerModelList){
+        this.locationPickerModelList = locationPickerModelList;
+        notifyDataSetChanged();
     }
 
 

@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/userProfileBgColor"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_65sdp"
+        android:background="@color/userProfileActionBar"
         android:orientation="horizontal">
 
         <ImageView
@@ -17,7 +18,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/back2"
             android:layout_marginStart="@dimen/_20sdp"
-            app:tint="@color/theme_green"/>
+            app:tint="@color/userProfileActionBarHeaderColor"/>
 
         <TextView
             android:layout_gravity="center"
@@ -26,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="My Profile"
-            android:textColor="@color/theme_green"
+            android:textColor="@color/userProfileActionBarHeaderColor"
             android:fontFamily="@font/poppins500"
             android:textSize="@dimen/_15ssp"/>
 
@@ -52,6 +53,7 @@
         android:layout_width="match_parent"
         app:cardElevation="0dp"
         android:layout_height="@dimen/_120sdp"
+        app:cardBackgroundColor="@color/authEditTextBg"
         app:cardCornerRadius="@dimen/_14sdp">
 
         <LinearLayout
@@ -181,6 +183,7 @@
                     android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat"
                     android:textFontWeight="400"
+                    android:textColor="@color/authEditText"
                     android:textSize="@dimen/_11ssp"
                     android:text="Update Password"/>
 
@@ -196,6 +199,7 @@
         android:id="@+id/saved_messages"
         app:cardElevation="0dp"
         android:layout_marginHorizontal="@dimen/_20sdp"
+        app:cardBackgroundColor="@color/authEditTextBg"
         app:cardCornerRadius="@dimen/_14sdp">
 
         <LinearLayout
@@ -222,6 +226,7 @@
             <TextView
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
+                android:textColor="@color/authEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
@@ -238,6 +243,7 @@
         android:layout_width="match_parent"
         app:cardElevation="0dp"
         android:layout_height="@dimen/_90sdp"
+        app:cardBackgroundColor="@color/authEditTextBg"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
 
@@ -276,6 +282,7 @@
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textFontWeight="400"
+                android:textColor="@color/authEditText"
                 android:textSize="@dimen/_11ssp"
                 android:text="Block List"/>
 
@@ -315,6 +322,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
+                android:textColor="@color/authEditText"
                 android:textFontWeight="400"
                 android:textSize="@dimen/_11ssp"
                 android:text="Dark Mode"/>
@@ -339,6 +347,7 @@
         android:layout_height="@dimen/_135sdp"
         app:cardElevation="0dp"
         android:layout_marginHorizontal="@dimen/_20sdp"
+        app:cardBackgroundColor="@color/authEditTextBg"
         app:cardCornerRadius="@dimen/_14sdp">
 
         <LinearLayout
@@ -376,6 +385,7 @@
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textFontWeight="400"
+                android:textColor="@color/authEditText"
                 android:textSize="@dimen/_11ssp"
                 android:text="Notifications"/>
 
@@ -423,6 +433,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
+                android:textColor="@color/authEditText"
                 android:textFontWeight="400"
                 android:textSize="@dimen/_11ssp"
                 android:text="Autoplay Gifs"/>
@@ -471,6 +482,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
+                android:textColor="@color/authEditText"
                 android:textFontWeight="400"
                 android:textSize="@dimen/_11ssp"
                 android:text="Autoplay Video"/>
@@ -493,6 +505,7 @@
         android:layout_width="match_parent"
         android:id="@+id/contact_us"
         app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/authEditTextBg"
         android:layout_height="@dimen/_45sdp"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
@@ -522,6 +535,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:layout_width="wrap_content"
+                android:textColor="@color/authEditText"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textFontWeight="400"
@@ -539,6 +553,7 @@
         android:layout_height="@dimen/_45sdp"
         app:cardElevation="0dp"
         android:layout_marginHorizontal="@dimen/_20sdp"
+        app:cardBackgroundColor="@color/authEditTextBg"
         app:cardCornerRadius="@dimen/_14sdp">
 
         <LinearLayout
@@ -566,6 +581,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:layout_width="wrap_content"
+                android:textColor="@color/authEditText"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textFontWeight="400"

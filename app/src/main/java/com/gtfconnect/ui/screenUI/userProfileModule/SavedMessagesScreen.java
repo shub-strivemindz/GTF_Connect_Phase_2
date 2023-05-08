@@ -67,7 +67,6 @@ public class SavedMessagesScreen extends AppCompatActivity implements ApiRespons
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SavedMessagesScreen.this, UserProfileScreen.class));
                 finish();
             }
         });

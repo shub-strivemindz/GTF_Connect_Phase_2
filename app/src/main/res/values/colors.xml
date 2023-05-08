@@ -147,8 +147,6 @@
 
     <color name="authEditText">#445767</color>
 
-    <color name="authTextView">#6d6f73</color>
-
     <color name="authErrorText">#cb4244</color>
 
     <color name="authCardStrokeColor">#97d9b1</color>
@@ -156,5 +154,68 @@
     <color name="authBottomSheetBg">#fff</color>
 
     <color name="locationPickerBg">#f3f6ff</color>
+
+    <color name="authBackButtonColor">#000</color>
+
+    <color name="authTextView">#6d6f73</color>
+
+    <color name="authTextView2">#000</color>
+
+
+
+    <!--======================================================================= User Profile Module ==========================================================================-->
+
+
+    <color name="userProfileActionBar">#F3F6FF</color>
+
+    <color name="userProfileBgColor">#F3F6FF</color>
+
+    <color name="userProfileActionBarHeaderColor">#2FB463</color>
+
+    <color name="savedMessageActionBarBgColor">#2FB463</color>
+
+    <color name="savedMessageBgColor">#fff</color>
+
+    <color name="savedMessageActionBarTextColor">#fff</color>
+
+    <color name="contactUsCardBackgroundColor">#F3F6FF</color>
+
+
+
+    <!--======================================================================= Send Message Dialog ==========================================================================-->
+
+
+    <color name="sendMessageDialogBackgroundColor">#fff</color>
+
+    <color name="sendMessageEditTextBackgroundColor">#F7F7F7</color>
+
+    <color name="sendMessageIconColor">#7D7D82</color>
+
+    <color name="sendMessageEmojiColor">#666666</color>
+
+    <color name="sendMessageTextColor">#7A827D</color>
+
+
+
+
+    <!--======================================================================= Simple BottomSheet Dialog ==========================================================================-->
+
+    <color name="sBottomSheetTextColor">#666666</color>
+
+    <color name="sBottomSheetBackgroundColor">#F3F6FF</color>
+
+    <color name="sBottomSheetHeaderColor">#4D4D4D</color>
+    
+    <color name="sBottomSheetLightTextColor">#696969</color>
+
+
+
+
+    <!--======================================================================= Dashboard UI ==========================================================================-->
+
+    <color name="dashboardListItemBackgroundColor">#F3F6FF</color>
+
+    <color name="dashboardListItemTextColor">#66676B</color>
+
 
 </resources>

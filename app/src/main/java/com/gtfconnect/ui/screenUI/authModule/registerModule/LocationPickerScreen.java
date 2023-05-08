@@ -2,14 +2,19 @@ package com.gtfconnect.ui.screenUI.authModule.registerModule;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
+import com.gtfconnect.R;
 import com.gtfconnect.databinding.ActivityLocationSelectorBinding;
 import com.gtfconnect.models.authResponseModels.CityResponse;
+import com.gtfconnect.models.authResponseModels.CountryData;
 import com.gtfconnect.models.authResponseModels.CountryResponse;
 import com.gtfconnect.models.authResponseModels.LocationPickerModel;
 import com.gtfconnect.models.authResponseModels.StateResponse;
@@ -25,6 +30,8 @@ public class LocationPickerScreen extends AppCompatActivity {
 
     List<LocationPickerModel> locationPickerModelList;
 
+    private boolean isSearchFocused = false;
+
     private  LocationPickerAdapter locationPickerAdapter;
 
     @Override
@@ -35,6 +42,65 @@ public class LocationPickerScreen extends AppCompatActivity {
 
         String locationType = getIntent().getStringExtra("locationType");
         getLocationData(locationType);
+
+
+
+
+
+        binding.title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b)
+                {
+                    binding.closeIcon.setImageResource(R.drawable.close);
+                    isSearchFocused = true;
+                }
+                else {
+                    binding.closeIcon.setImageResource(R.drawable.search);
+                    isSearchFocused = false;
+                }
+
+            }
+        });
+
+
+
+
+        binding.title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                List<LocationPickerModel> temp = new ArrayList();
+                for (LocationPickerModel locationPicker : locationPickerModelList) {
+                    if (locationPicker.getPlace().toLowerCase().contains(charSequence.toString())) {
+                        temp.add(locationPicker);
+                    }
+                }
+                if (temp.size() == 0) {
+                    //text_no_data_found.setVisibility(View.VISIBLE);
+                } else {
+                    //text_no_data_found.setVisibility(View.GONE);
+                }
+                locationPickerAdapter.updateList(temp);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
+
 
 
 
@@ -49,10 +115,13 @@ public class LocationPickerScreen extends AppCompatActivity {
 
                 if (locationType.equalsIgnoreCase("country")) {
                     setResult(Constants.GET_COUNTRY, intent);
+                    finish();
                 } else if (locationType.equalsIgnoreCase("state")) {
                     setResult(Constants.GET_STATE, intent);
+                    finish();
                 } else if (locationType.equalsIgnoreCase("city")) {
                     setResult(Constants.GET_CITY, intent);
+                    finish();
                 }
             }
         });

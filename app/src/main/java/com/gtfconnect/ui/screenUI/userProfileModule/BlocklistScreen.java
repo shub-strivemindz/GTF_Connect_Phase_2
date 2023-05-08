@@ -25,12 +25,7 @@ public class BlocklistScreen extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // Navigate to Previous Screen :
-        binding.back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        binding.back.setOnClickListener(view -> finish());
 
         // load blocklist data  ------
         BlockListAdapter blocklistViewAdapter= new BlockListAdapter(BlocklistScreen.this,2);

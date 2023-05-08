@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -393,6 +394,37 @@ public class Utils {
             return null;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private static boolean checkUiNightMode(Context context)
+    {
+        switch (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                return true;
+            case Configuration.UI_MODE_NIGHT_NO:
+            default:
+                return false;
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 

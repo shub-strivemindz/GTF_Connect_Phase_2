@@ -20,6 +20,7 @@
             android:layout_marginStart="@dimen/_25sdp"
             android:layout_width="@dimen/_18sdp"
             android:layout_height="@dimen/_18sdp"
+            app:tint="@color/authBackButtonColor"
             android:src="@drawable/back"/>
 
         <LinearLayout

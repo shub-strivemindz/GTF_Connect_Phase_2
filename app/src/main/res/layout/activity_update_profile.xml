@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-
+    android:background="@color/userProfileBgColor"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_55sdp"
+        android:background="@color/userProfileActionBar"
         android:orientation="horizontal">
 
         <ImageView
@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/back2"
             android:layout_marginStart="@dimen/_24sdp"
-            app:tint="@color/theme_green"/>
+            app:tint="@color/userProfileActionBarHeaderColor"/>
 
         <TextView
             android:layout_gravity="center"
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Edit Profile"
-            android:textColor="@color/theme_green"
+            android:textColor="@color/userProfileActionBarHeaderColor"
             android:fontFamily="@font/poppins500"
             android:textSize="@dimen/_15ssp"/>
 
@@ -65,7 +65,8 @@
                 android:layout_margin="@dimen/_1sdp"
                 android:layout_alignParentStart="true"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green"
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor"
                 app:cardCornerRadius="8dp">
 
                 <LinearLayout
@@ -84,6 +85,8 @@
                         android:ems="1"
                         android:inputType="text"
                         android:textSize="@dimen/_10ssp"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:hint="First Name*"
                         android:id="@+id/first_name"
                         android:fontFamily="@font/poppins"
@@ -103,7 +106,8 @@
                 android:layout_margin="@dimen/_1sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="end"
-                app:strokeColor="@color/theme_green"
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor"
                 app:cardCornerRadius="8dp">
 
                 <LinearLayout
@@ -123,6 +127,8 @@
                         android:inputType="text"
                         android:textSize="@dimen/_10ssp"
                         android:hint="Last Name*"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:id="@+id/last_name"
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="15dp"
@@ -147,7 +153,8 @@
         android:layout_marginEnd="40dp"
         app:cardCornerRadius="8dp"
         app:strokeWidth=".3dp"
-        app:strokeColor="@color/theme_green">
+        app:cardBackgroundColor="@color/authEditTextBg"
+        app:strokeColor="@color/authCardStrokeColor">
 
         <LinearLayout
             android:layout_gravity="center_vertical"
@@ -171,6 +178,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:textColor="@color/authEditText"
+                android:textColorHint="@color/authEditText"
                 android:includeFontPadding="false"
                 android:background="@android:color/transparent"/>
 
@@ -187,7 +196,8 @@
         android:layout_marginEnd="40dp"
         app:cardCornerRadius="8dp"
         app:strokeWidth=".3dp"
-        app:strokeColor="@color/theme_green">
+        app:cardBackgroundColor="@color/authEditTextBg"
+        app:strokeColor="@color/authCardStrokeColor">
 
         <LinearLayout
             android:layout_gravity="center_vertical"
@@ -211,6 +221,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:textColor="@color/authEditText"
+                android:textColorHint="@color/authEditText"
                 android:includeFontPadding="false"
                 android:background="@android:color/transparent"/>
 
@@ -226,7 +238,8 @@
         android:layout_marginEnd="40dp"
         app:cardCornerRadius="8dp"
         app:strokeWidth=".3dp"
-        app:strokeColor="@color/theme_green">
+        app:cardBackgroundColor="@color/authEditTextBg"
+        app:strokeColor="@color/authCardStrokeColor">
 
         <LinearLayout
             android:layout_gravity="center_vertical"
@@ -249,6 +262,8 @@
                 android:layout_width="0dp"
                 android:id="@+id/dob_title"
                 android:layout_height="wrap_content"
+                android:textColor="@color/authEditText"
+                android:textColorHint="@color/authEditText"
                 android:maxLines="1"
                 android:includeFontPadding="false"
                 android:layout_gravity="center_vertical"
@@ -272,7 +287,8 @@
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
 
                 <LinearLayout
                     android:layout_gravity="center_vertical"
@@ -289,6 +305,7 @@
                         android:layout_width="@dimen/_80sdp"
                         android:padding="@dimen/_1sdp"
                         android:layout_height="wrap_content"
+                        app:ccp_contentColor="@color/authEditText"
                         android:gravity="center_vertical"
                         app:ccp_countryAutoDetectionPref="NETWORK_LOCALE" />
 
@@ -308,6 +325,8 @@
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="12dp"
                         android:gravity="center_vertical"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
@@ -327,7 +346,8 @@
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
 
                 <LinearLayout
                     android:layout_gravity="center_vertical"
@@ -345,6 +365,8 @@
                         android:textSize="@dimen/_10ssp"
                         android:hint="GST Number"
                         android:id="@+id/gst_no"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:inputType="textEmailAddress"
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="15dp"
@@ -366,7 +388,8 @@
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
 
                 <LinearLayout
                     android:layout_gravity="center_vertical"
@@ -389,6 +412,8 @@
                         android:layout_marginStart="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:maxLines="1"
                         android:includeFontPadding="false"
                         android:background="@android:color/transparent"/>
@@ -405,7 +430,8 @@
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
 
                 <LinearLayout
                     android:layout_gravity="center_vertical"
@@ -427,6 +453,8 @@
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="15dp"
                         android:layout_width="match_parent"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
                         android:includeFontPadding="false"
@@ -444,7 +472,8 @@
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
 
                 <LinearLayout
                     android:layout_gravity="center_vertical"
@@ -465,6 +494,8 @@
                         android:inputType="textEmailAddress"
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="15dp"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
@@ -483,7 +514,8 @@
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
 
                 <LinearLayout
                     android:layout_gravity="center_vertical"
@@ -504,6 +536,8 @@
                         android:layout_marginStart="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:maxLines="1"
                         android:id="@+id/address"
                         android:includeFontPadding="false"
@@ -531,7 +565,8 @@
                         app:strokeWidth=".3dp"
                         android:id="@+id/choose_country"
                         android:layout_margin="@dimen/_1sdp"
-                        app:strokeColor="@color/theme_green"
+                        app:cardBackgroundColor="@color/authEditTextBg"
+                        app:strokeColor="@color/authCardStrokeColor"
                         app:cardCornerRadius="8dp">
 
                         <LinearLayout
@@ -556,6 +591,8 @@
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
                                 android:includeFontPadding="false"
+                                android:textColor="@color/authEditText"
+                                android:textColorHint="@color/authEditText"
                                 android:background="@android:color/transparent"/>
 
                         </LinearLayout>
@@ -569,7 +606,8 @@
                         android:id="@+id/choose_state"
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="end"
-                        app:strokeColor="@color/theme_green"
+                        app:cardBackgroundColor="@color/authEditTextBg"
+                        app:strokeColor="@color/authCardStrokeColor"
                         app:cardCornerRadius="8dp">
 
                         <LinearLayout
@@ -592,6 +630,8 @@
                                 android:fontFamily="@font/poppins"
                                 android:layout_marginStart="15dp"
                                 android:layout_width="match_parent"
+                                android:textColor="@color/authEditText"
+                                android:textColorHint="@color/authEditText"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
                                 android:includeFontPadding="false"
@@ -624,7 +664,8 @@
                         android:layout_marginEnd="@dimen/_1sdp"
                         android:layout_marginBottom="@dimen/_1sdp"
                         app:cardCornerRadius="8dp"
-                        app:strokeColor="@color/theme_green"
+                        app:cardBackgroundColor="@color/authEditTextBg"
+                        app:strokeColor="@color/authCardStrokeColor"
                         app:strokeWidth=".3dp">
 
                         <LinearLayout
@@ -647,6 +688,8 @@
                                 android:background="@android:color/transparent"
                                 android:fontFamily="@font/poppins"
                                 android:hint="City*"
+                                android:textColor="@color/authEditText"
+                                android:textColorHint="@color/authEditText"
                                 android:includeFontPadding="false"
                                 android:maxLines="1"
                                 android:textSize="@dimen/_10ssp" />
@@ -661,7 +704,8 @@
                         app:strokeWidth=".3dp"
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="end"
-                        app:strokeColor="@color/theme_green"
+                        app:cardBackgroundColor="@color/authEditTextBg"
+                        app:strokeColor="@color/authCardStrokeColor"
                         app:cardCornerRadius="8dp">
 
                         <LinearLayout
@@ -674,6 +718,7 @@
                             <ImageView
                                 android:layout_width="@dimen/_13sdp"
                                 android:layout_height="match_parent"
+                                app:tint="@color/theme_green"
                                 android:src="@drawable/group"/>
 
                             <EditText
@@ -683,6 +728,8 @@
                                 android:fontFamily="@font/poppins"
                                 android:layout_marginStart="15dp"
                                 android:maxLength="6"
+                                android:textColor="@color/authEditText"
+                                android:textColorHint="@color/authEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="numberSigned"
