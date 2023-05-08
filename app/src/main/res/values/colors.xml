@@ -139,4 +139,22 @@
     <color name="gifPreviewSearch">#232833</color>
 
 
+
+
+   <!--======================================================================= Auth Module ==========================================================================-->
+
+    <color name="authEditTextBg">#fff</color>
+
+    <color name="authEditText">#445767</color>
+
+    <color name="authTextView">#6d6f73</color>
+
+    <color name="authErrorText">#cb4244</color>
+
+    <color name="authCardStrokeColor">#97d9b1</color>
+
+    <color name="authBottomSheetBg">#fff</color>
+
+    <color name="locationPickerBg">#f3f6ff</color>
+
 </resources>

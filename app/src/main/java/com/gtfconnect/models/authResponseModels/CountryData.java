@@ -1,4 +1,4 @@
-package com.gtfconnect.models;
+package com.gtfconnect.models.authResponseModels;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;

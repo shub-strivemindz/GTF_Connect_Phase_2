@@ -111,6 +111,23 @@ public class RegisterScreen1 extends AppCompatActivity {
                 gender_selection_dialog.setContentView(R.layout.bottomsheet_choose_gender);
 
                 RadioGroup genderGroup = gender_selection_dialog.findViewById(R.id.gender_radio_group);
+                RadioButton maleCheck = gender_selection_dialog.findViewById(R.id.male);
+                RadioButton femaleCheck = gender_selection_dialog.findViewById(R.id.female);
+                RadioButton otherCheck = gender_selection_dialog.findViewById(R.id.others);
+
+                if (gender != null && !gender.isEmpty()){
+                    switch (gender)
+                    {
+                        case "Female":
+                            femaleCheck.setChecked(true);
+                            break;
+                        case "Others":
+                            otherCheck.setChecked(true);
+                            break;
+                        default:
+                            maleCheck.setChecked(true);
+                    }
+                }
 
                 gender_selection_dialog.show();
 

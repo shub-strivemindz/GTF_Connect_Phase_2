@@ -8,8 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentPlaceSelelctorItemBinding;
-import com.gtfconnect.models.CountryData;
-import com.gtfconnect.models.StateData;
+import com.gtfconnect.models.authResponseModels.StateData;
 
 import java.util.ArrayList;
 import java.util.List;

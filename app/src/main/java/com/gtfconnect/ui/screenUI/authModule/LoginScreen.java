@@ -1,11 +1,6 @@
 package com.gtfconnect.ui.screenUI.authModule;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,9 +24,8 @@ import com.gtfconnect.controller.Rest;
 //import com.gtfconnect.database.AppDatabase;
 import com.gtfconnect.databinding.ActivityLoginBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.models.LoginResponseModel;
+import com.gtfconnect.models.authResponseModels.LoginResponseModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
-import com.gtfconnect.services.InternetService;
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.authModule.registerModule.RegisterScreen1;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -41,7 +35,6 @@ import com.gtfconnect.viewModels.AuthViewModel;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 
 public class LoginScreen extends AppCompatActivity implements ApiResponseListener{
@@ -72,11 +65,10 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-
         binding.errorDialog.setVisibility(View.GONE);
 
         clearDatabase();
+
 
 
         // Getting API data fetch
@@ -132,6 +124,47 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
             }
         });
     }
+
+
+
+
+/*
+    private void checkThemeAndSetBoxBorders()
+    {
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                //process
+
+                binding.usernameContainer.setStrokeColor(getResources().getColor(R.color.authEditTextBg));
+                binding.passwordContainer.setStrokeColor(getResources().getColor(R.color.authEditTextBg));
+                binding.registerNow.setStrokeColor(getResources().getColor(R.color.authEditTextBg));
+
+                binding.usernameContainer.invalidate();
+                binding.passwordContainer.invalidate();
+                binding.registerNow.invalidate();
+
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                // process
+
+
+
+                binding.usernameContainer.setStrokeColor(getResources().getColor(R.color.theme_green));
+                binding.passwordContainer.setStrokeColor(getResources().getColor(R.color.theme_green));
+                binding.registerNow.setStrokeColor(getResources().getColor(R.color.theme_green));
+
+                binding.usernameContainer.invalidate();
+                binding.passwordContainer.invalidate();
+                binding.registerNow.invalidate();
+
+                break;
+        }
+    }*/
+
+
+
+
+
 
 
     private void clearDatabase(){

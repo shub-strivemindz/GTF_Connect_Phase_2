@@ -1,0 +1,89 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/locationPickerBg"
+    app:cardCornerRadius="@dimen/_12sdp">
+
+    <LinearLayout
+        android:layout_above="@id/close"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            app:strokeWidth=".3dp"
+            app:strokeColor="@color/authCardStrokeColor"
+            app:cardBackgroundColor="@color/locationPickerBg"
+            android:layout_marginTop="@dimen/_25sdp">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:background="@android:color/transparent"
+                android:id="@+id/title"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textColorHint="@color/authEditText"
+                android:textColor="@color/authEditText"
+                android:layout_height="@dimen/_40sdp"
+                android:fontFamily="@font/poppins"
+                android:hint="Search Here....."
+                android:textSize="@dimen/_12ssp"
+                />
+
+            <ImageView
+                android:id="@+id/close_icon"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="match_parent"
+                app:tint="@color/theme_green"
+                android:src="@drawable/search"/>
+        </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="@dimen/_14sdp"
+            android:id="@+id/place_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_marginBottom="@dimen/_30sdp"
+        android:id="@+id/close"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginHorizontal="@dimen/_40sdp"
+        app:strokeWidth=".3dp"
+        app:cardElevation="0dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/authEditTextBg"
+        app:strokeColor="@color/authCardStrokeColor"
+        app:cardCornerRadius="@dimen/_12sdp">
+
+        <TextView
+            android:textColor="@color/theme_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/poppins500"
+            android:textStyle="bold"
+            android:text="Close"
+            android:includeFontPadding="false"/>
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

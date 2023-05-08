@@ -269,6 +269,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private String api_token;
 
+    private Thread checkLocalDatabaseThread;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -490,42 +492,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
         }
 
-    }
-
-
-
-
-    public void insertDataInDB(ChannelChatResponseModel responseModel) {
-        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
-
-        if (responseModel.getData().getChatData().getCount() != null) {
-            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
-        }
-
-        headerDb.setGroupChannelID(responseModel.getData().getChatData().getRows().get(0).getGroupChannelID().toString());
-        headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
-        headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
-
-        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
-
-        for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
-
-            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-            bodyDbEntity.setPage(currentPage);
-            chatBodyDbEntityList.add(bodyDbEntity);
-
-        }
-
-
-        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
-        channelChatDb.setChatHeaderDbEntity(headerDb);
-        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
-        /*Log.d("DB_chat_data", channelChatDb.chatBodyDbEntitiesLists.toString());
-        Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());*/
-        databaseViewModel.insertChannelChatData(channelChatDb);
     }
 
 
@@ -951,12 +917,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
 
-//    private void
-
-    // -------------------------------------------------------------------Socket  Implementation --------------------------------------------------------------------
-
-
-
     private void refreshChannelChatSocket() {
         Gson gson = new Gson();
         Type type;
@@ -1054,7 +1014,277 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
+    /**
+     *   Conditional checks of room db
+     */
 
+
+    /*private void checkLocalDatabase(ChannelChatResponseModel responseModel){
+
+      checkLocalDatabaseThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (databaseEntity != null && databaseEntity.getChatBodyDbEntitiesLists() != null && !databaseEntity.getChatBodyDbEntitiesLists().isEmpty()){
+
+                    List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+                    List<Integer> deletedPostChatIds = new ArrayList<>();
+                    // ========================================================= Case 1 ====================================================================
+
+                    if(responseModel.getData().getChatData().getRows().size() > databaseEntity.getChatBodyDbEntitiesLists().size()){
+
+                        for (int i=0; i< responseModel.getData().getChatData().getRows().size();i++){
+
+                            boolean isMessageFound = false;
+
+                            int responseGroupChatID = Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID());
+
+                            for (int j=0;j<databaseEntity.getChatBodyDbEntitiesLists().size();j++){
+
+                                int databaseGroupChatID = databaseEntity.getChatBodyDbEntitiesLists().get(j).getGroupChatID();
+
+                                if (responseGroupChatID == databaseGroupChatID){
+
+                                    // ==================================== Record Found : Checking if any comment added or removed or updated ==============================
+
+                                    if (responseModel.getData().getChatData().getRows().get(i).getCommentData() != null && !responseModel.getData().getChatData().getRows().get(i).getCommentData().isEmpty()){
+
+                                        if (databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData() != null && !databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().isEmpty()){
+
+                                            int responseCommentListSize = responseModel.getData().getChatData().getRows().get(i).getCommentData().size();
+                                            int databaseCommentListSize = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().size();
+
+                                            if (responseCommentListSize > databaseCommentListSize || responseCommentListSize < databaseCommentListSize){
+
+                                                GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                                bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                                bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                                bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                                bodyDbEntity.setPage(currentPage);
+                                                chatBodyDbEntityList.add(bodyDbEntity);
+
+                                                chatBodyDbEntityList.add(bodyDbEntity);
+                                            }
+                                            else{
+
+                                                for (int k = 0; k < responseCommentListSize; k++){
+
+                                                    boolean isCommentFound = false;
+                                                    int responseCommentID = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getCommentID();
+                                                    String responseCommentMessage = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getComment();
+
+                                                    for (int l = 0; l < databaseCommentListSize; l++){
+
+                                                        int databaseCommentID = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getCommentID();
+                                                        String databaseCommentMessage = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getComment();
+
+                                                        if (responseCommentID == databaseCommentID){
+
+                                                            if (databaseCommentMessage.equalsIgnoreCase(responseCommentMessage)){
+                                                                isCommentFound = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+
+                                                    if (!isCommentFound){
+
+                                                        GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                                        bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                                        bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                                        bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                                        bodyDbEntity.setPage(currentPage);
+                                                        chatBodyDbEntityList.add(bodyDbEntity);
+
+                                                        chatBodyDbEntityList.add(bodyDbEntity);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                            bodyDbEntity.setPage(currentPage);
+                                            chatBodyDbEntityList.add(bodyDbEntity);
+
+                                            chatBodyDbEntityList.add(bodyDbEntity);
+                                        }
+                                    }
+                                    else{
+                                        if (databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData() != null && !databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().isEmpty()){
+
+                                            int responseCommentListSize = responseModel.getData().getChatData().getRows().get(i).getCommentData().size();
+                                            int databaseCommentListSize = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().size();
+
+                                            if (responseCommentListSize > databaseCommentListSize || responseCommentListSize < databaseCommentListSize){
+
+                                                GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                                bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                                bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                                bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                                bodyDbEntity.setPage(currentPage);
+                                                chatBodyDbEntityList.add(bodyDbEntity);
+
+                                                chatBodyDbEntityList.add(bodyDbEntity);
+                                            }
+                                            else{
+
+                                                for (int k = 0; k < responseCommentListSize; k++){
+
+                                                    boolean isCommentFound = false;
+                                                    int responseCommentID = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getCommentID();
+                                                    String responseCommentMessage = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getComment();
+
+                                                    for (int l = 0; l < databaseCommentListSize; l++){
+
+                                                        int databaseCommentID = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getCommentID();
+                                                        String databaseCommentMessage = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getComment();
+
+                                                        if (responseCommentID == databaseCommentID){
+
+                                                            if (databaseCommentMessage.equalsIgnoreCase(responseCommentMessage)){
+                                                                isCommentFound = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+
+                                                    if (!isCommentFound){
+
+                                                        GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                                        bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                                        bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                                        bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                                        bodyDbEntity.setPage(currentPage);
+                                                        chatBodyDbEntityList.add(bodyDbEntity);
+
+                                                        chatBodyDbEntityList.add(bodyDbEntity);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    *//**
+                                     *  Todo ============================== Need to add check condition for Like & Post View Count Update =========================
+                                     *//*
+
+                                    
+
+                                    isMessageFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isMessageFound){
+                                GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+                                bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+                                bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+                                bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+                                bodyDbEntity.setPage(currentPage);
+                                chatBodyDbEntityList.add(bodyDbEntity);
+                            }
+                        }
+                    }
+                }
+                else{
+                    insertDataInDB();
+                }
+            }
+        });
+
+      checkLocalDatabaseThread.start();
+    }
+
+
+    private void insertChat(){
+
+        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
+
+        if (responseModel.getData().getChatData().getCount() != null) {
+            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
+        }
+
+        headerDb.setGroupChannelID(responseModel.getData().getChatData().getRows().get(0).getGroupChannelID().toString());
+        headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
+        headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
+
+        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+
+        for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
+
+            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+            bodyDbEntity.setPage(currentPage);
+            chatBodyDbEntityList.add(bodyDbEntity);
+
+        }
+
+
+        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
+        channelChatDb.setChatHeaderDbEntity(headerDb);
+        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
+
+        databaseViewModel.insertChannelChatData(channelChatDb);
+    }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void insertDataInDB(ChannelChatResponseModel responseModel) {
+        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
+
+        if (responseModel.getData().getChatData().getCount() != null) {
+            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
+        }
+
+        headerDb.setGroupChannelID(responseModel.getData().getChatData().getRows().get(0).getGroupChannelID().toString());
+        headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
+        headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
+
+        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
+
+        for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
+
+            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
+            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
+            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
+            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
+            bodyDbEntity.setPage(currentPage);
+            chatBodyDbEntityList.add(bodyDbEntity);
+
+        }
+
+
+        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
+        channelChatDb.setChatHeaderDbEntity(headerDb);
+        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
+
+        databaseViewModel.insertChannelChatData(channelChatDb);
+    }
 
 
 

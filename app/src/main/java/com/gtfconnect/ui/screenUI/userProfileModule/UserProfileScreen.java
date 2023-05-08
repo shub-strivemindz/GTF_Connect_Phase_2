@@ -2,9 +2,7 @@ package com.gtfconnect.ui.screenUI.userProfileModule;
 
 import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,8 +39,6 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityUserProfileBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.models.ImagePreviewModel;
-import com.gtfconnect.models.LoginResponseModel;
 import com.gtfconnect.models.ProfileResponseModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GalleryTypeStatus;
@@ -60,7 +55,6 @@ import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.io.File;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class UserProfileScreen extends AppCompatActivity implements ApiResponseListener{

@@ -1,64 +1,38 @@
 package com.gtfconnect.ui.screenUI.authModule.registerModule;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
-import com.gtfconnect.controller.RestAdapter;
 import com.gtfconnect.databinding.ActivityRegister3Binding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.interfaces.SelectCityListener;
-import com.gtfconnect.interfaces.SelectCountryListener;
-import com.gtfconnect.interfaces.SelectStateListener;
-import com.gtfconnect.models.CityResponse;
-import com.gtfconnect.models.CountryData;
-import com.gtfconnect.models.CountryResponse;
-import com.gtfconnect.models.StateResponse;
-import com.gtfconnect.ui.adapters.GroupViewAdapter;
-import com.gtfconnect.ui.adapters.authModuleAdapter.CountryListAdapter;
+import com.gtfconnect.models.authResponseModels.CityResponse;
+import com.gtfconnect.models.authResponseModels.CountryResponse;
+import com.gtfconnect.models.authResponseModels.StateResponse;
 import com.gtfconnect.ui.screenUI.authModule.OtpVerificationScreen;
-import com.gtfconnect.ui.screenUI.userProfileModule.UserProfileScreen;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.AuthViewModel;
 
-import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class RegisterScreen3 extends AppCompatActivity implements ApiResponseListener{
@@ -123,23 +97,25 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
 
         binding.chooseState.setOnClickListener(view -> {
-            if (countryResponse == null || countryResponse.getData().isEmpty() ) {
-                Utils.showSnackMessage(this,binding.chooseCountry,"Please select country ");
-            }
-            else {
+
+            if (countryResponse != null && countryResponse.getData() != null && !countryResponse.getData().isEmpty()){
                 typeFetcher = STATE_FETCHER;
                 authViewModel.getStateList(countryCode);
+            }
+            else{
+                Utils.showSnackMessage(this,binding.chooseCountry,"Please select country ");
             }
         });
 
 
         binding.chooseCity.setOnClickListener(view -> {
-            if (stateResponse == null || stateResponse.getData().isEmpty() ) {
-                Utils.showSnackMessage(this,binding.chooseState,"Please select state ");
-            }
-            else {
+
+            if (stateResponse != null && stateResponse.getData() != null && !stateResponse.getData().isEmpty()){
                 typeFetcher = CITY_FETCHER;
                 authViewModel.getCityList(stateCode);
+            }
+            else {
+                Utils.showSnackMessage(this,binding.chooseState,"Please select state ");
             }
         });
 
@@ -254,14 +230,22 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
                 }.getType();
 
                 countryResponse = gson.fromJson(data, type);
-                Utils.Show_Select_Country_list(this, countryResponse.getData(), new SelectCountryListener() {
-                    @Override
-                    public void Select_value(int id, String name,int phoneCode) {
-                        // Set the value to Text Box.....
-                        countryCode = id;
-                        binding.country.setText(name);
-                    }
-                });
+
+                if (countryResponse != null && countryResponse.getData() != null && !countryResponse.getData().isEmpty()){
+
+                    String response = new Gson().toJson(countryResponse);
+
+                    Intent intent = new Intent(RegisterScreen3.this, LocationPickerScreen.class);
+                    intent.putExtra("response",response);
+                    intent.putExtra("locationType","country");
+
+                    startForResult.launch(intent);
+
+                }
+                else{
+                    Utils.showSnackMessage(this, binding.chooseCountry,"No country found!");
+                }
+
                 break;
             case STATE_FETCHER:
 
@@ -269,13 +253,21 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
                 }.getType();
 
                 stateResponse = gson.fromJson(data, type);
-                Utils.Show_Select_State_list(this, stateResponse.getData(), new SelectStateListener() {
-                    @Override
-                    public void Select_value(int id,String name) {
-                        stateCode = id;
-                        binding.state.setText(name);
-                    }
-                });
+
+                if (stateResponse != null && stateResponse.getData() != null && !stateResponse.getData().isEmpty()){
+
+                    String response = new Gson().toJson(stateResponse);
+
+                    Intent intent = new Intent(RegisterScreen3.this, LocationPickerScreen.class);
+                    intent.putExtra("response",response);
+                    intent.putExtra("locationType","state");
+
+                    startForResult.launch(intent);
+
+                }
+                else{
+                    Utils.showSnackMessage(this, binding.chooseState,"No state found!");
+                }
                 break;
 
             case CITY_FETCHER:
@@ -284,13 +276,21 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
                 }.getType();
 
                 cityResponse = gson.fromJson(data, type);
-                Utils.Show_Select_City_list(this, cityResponse.getData(), new SelectCityListener() {
-                    @Override
-                    public void Select_value(int id, String name) {
-                        binding.city.setText(name);
-                        cityCode = id;
-                    }
-                });
+
+                if (cityResponse != null && cityResponse.getData() != null && !cityResponse.getData().isEmpty()){
+
+                    String response = new Gson().toJson(cityResponse);
+
+                    Intent intent = new Intent(RegisterScreen3.this, LocationPickerScreen.class);
+                    intent.putExtra("response",response);
+                    intent.putExtra("locationType","city");
+
+                    startForResult.launch(intent);
+
+                }
+                else{
+                    Utils.showSnackMessage(this, binding.chooseState,"No city found!");
+                }
                 break;
 
             case REGISTRATION_LISTENER:
@@ -337,4 +337,39 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
             authViewModel.Registration("test_token",registrationData);
         }
     }
+
+
+
+
+
+    // -------------------------------------------------------------- Handling all update from Other Screens -----------------------------------------------------------
+
+    ActivityResultLauncher<Intent> startForResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+
+                if (result.getResultCode() == Constants.GET_COUNTRY) {
+
+                    int id = result.getData().getIntExtra("id",0);
+                    String place = result.getData().getStringExtra("place");
+
+                    countryCode = id;
+                    binding.country.setText(place);
+                } else if (result.getResultCode() == Constants.GET_STATE) {
+
+                    int id = result.getData().getIntExtra("id",0);
+                    String place = result.getData().getStringExtra("place");
+
+                    stateCode = id;
+                    binding.state.setText(place);
+                }
+                else if (result.getResultCode() == Constants.GET_CITY) {
+
+                    int id = result.getData().getIntExtra("id",0);
+                    String place = result.getData().getStringExtra("place");
+
+                    cityCode = id;
+                    binding.city.setText(place);
+                }
+            });
 }

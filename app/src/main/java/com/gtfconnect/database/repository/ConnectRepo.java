@@ -123,4 +123,21 @@ public class ConnectRepo {
         return restService.delete_saved_message(id,api_token,device_type,device_token);
     }
 
+
+
+
+
+    public Observable<JsonElement> leave_group_channel(int id,String api_token,String device_type, String device_token) {
+        return restService.leave_group_channel(id,api_token,device_type,device_token);
+    }
+
+
+    public Observable<JsonElement> rejoin_group_channel(int id,String api_token,String device_type, String device_token) {
+        return restService.rejoin_group_channel(id,api_token,device_type,device_token);
+    }
+
+    public Observable<JsonElement> join_group_channel(int id,String api_token,String device_type, String device_token,Map<String,Object> params) {
+        return restService.join_group_channel(id,api_token,device_type,device_token,params);
+    }
+
 }

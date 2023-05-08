@@ -1,17 +1,11 @@
 package com.gtfconnect.database.repository;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import androidx.lifecycle.LiveData;
 
 import com.google.gson.JsonElement;
 import com.gtfconnect.controller.RestAdapter;
 import com.gtfconnect.controller.RestService;
-import com.gtfconnect.models.CountryData;
 
-import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;

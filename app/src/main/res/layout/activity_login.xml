@@ -70,7 +70,6 @@
             android:textSize="@dimen/_18ssp"
             android:layout_gravity="center"
             android:text="@string/login"
-
             android:textColor="@color/theme_green"
             android:fontFamily="@font/poppins500"/>
         
@@ -79,9 +78,11 @@
             android:layout_height="50dp"
             android:layout_marginTop="30dp"
             android:layout_marginStart="40dp"
+            android:id="@+id/username_container"
             android:layout_marginEnd="40dp"
+            app:cardBackgroundColor="@color/authEditTextBg"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green"
+            app:strokeColor="@color/authCardStrokeColor"
             app:cardCornerRadius="12dp">
 
             <LinearLayout
@@ -104,6 +105,8 @@
                 android:gravity="center_vertical"
                 android:hint="john@gmail.com"
                 android:fontFamily="@font/poppins"
+                android:textColor="@color/authEditText"
+                android:textColorHint="@color/authEditText"
                 android:layout_marginStart="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -122,8 +125,10 @@
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
             app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="@color/authEditTextBg"
+            android:id="@+id/password_container"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green">
+            app:strokeColor="@color/authCardStrokeColor">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -149,6 +154,8 @@
                     android:inputType="textPassword"
                     android:id="@+id/password"
                     android:imeOptions="actionDone"
+                    android:textColor="@color/authEditText"
+                    android:textColorHint="@color/authEditText"
                     android:fontFamily="@font/poppins"
                     android:layout_marginStart="15dp"
                     android:gravity="center_vertical"
@@ -197,6 +204,7 @@
                         android:layout_marginStart="@dimen/_6sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:textColor="@color/authErrorText"
                         android:text="Oops! Wrong Password"
                         android:fontFamily="@font/poppins"
                         android:textSize="@dimen/_9ssp"
@@ -222,6 +230,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible"
                 android:textSize="@dimen/_9ssp"
+                android:textColor="@color/authTextView"
                 android:layout_marginTop="10dp"
                 android:text="@string/resend_otp"/>
 
@@ -232,6 +241,7 @@
                 android:layout_width="wrap_content"
                 android:textSize="@dimen/_9ssp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/authTextView"
                 android:layout_marginTop="10dp"
                 android:text="@string/forget_password"/>
         </RelativeLayout>
@@ -269,6 +279,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/don_t_have_an_account"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/authTextView"
             />
 
         <com.google.android.material.card.MaterialCardView
@@ -279,8 +291,9 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
+            app:cardBackgroundColor="@color/authEditTextBg"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green"
+            app:strokeColor="@color/authCardStrokeColor"
             app:cardCornerRadius="12dp">
 
             <TextView

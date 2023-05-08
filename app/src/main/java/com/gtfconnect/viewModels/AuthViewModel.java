@@ -4,16 +4,13 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.JsonElement;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.database.repository.AuthRepo;
-import com.gtfconnect.models.CountryData;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;

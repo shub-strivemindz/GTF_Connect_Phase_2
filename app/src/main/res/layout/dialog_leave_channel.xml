@@ -52,6 +52,7 @@
                 android:textColor="@color/theme_green"
                 android:textStyle="bold"
                 android:textSize="@dimen/_11sdp"
+                android:id="@+id/group_channel_name"
                 android:text="Live Market Session?"
                 android:gravity="center" />
 

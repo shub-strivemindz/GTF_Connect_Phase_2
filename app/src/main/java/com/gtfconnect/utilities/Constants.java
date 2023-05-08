@@ -2,6 +2,13 @@ package com.gtfconnect.utilities;
 
 public class Constants {
 
+
+    public static final int GET_COUNTRY = 1897;
+
+    public static final int GET_STATE = 1898;
+
+    public static final int GET_CITY = 1899;
+
     public static final int NO_IMAGE_FOUND = 1900;
 
     public static final int SHARE_GIF = 1901;
@@ -23,4 +30,8 @@ public class Constants {
     public static final int GET_SAVED_MESSAGE = 1909;
 
     public static final int DELETE_SAVED_MESSAGE = 1910;
+
+    public static final int LEAVE_GROUP_CHANNEL = 1911;
+
+    public static final int DELETE_GROUP_CHANNEL_FROM_DATABASE = 1912;
 }

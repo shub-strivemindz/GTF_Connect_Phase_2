@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_160sdp"
+    android:background="@color/authBottomSheetBg"
     android:orientation="vertical">
 
     <TextView
@@ -39,7 +40,8 @@
             android:text="Male"
             android:drawableEnd="@drawable/male"
             android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/tab_grey"
+            android:textColor="@color/authTextView"
+            android:buttonTint="@color/authTextView"
             android:fontFamily="@font/poppins"
             android:paddingStart="@dimen/_12sdp"
             android:textSize="@dimen/_10ssp"
@@ -60,7 +62,8 @@
             android:text="Female"
             android:drawableEnd="@drawable/female"
             android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/tab_grey"
+            android:textColor="@color/authTextView"
+            android:buttonTint="@color/authTextView"
             android:fontFamily="@font/poppins"
             android:textFontWeight="400"
             android:paddingStart="@dimen/_12sdp"
@@ -81,7 +84,8 @@
             android:text="Others"
             android:drawableEnd="@drawable/others"
             android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/tab_grey"
+            android:textColor="@color/authTextView"
+            android:buttonTint="@color/authTextView"
             android:fontFamily="@font/poppins"
             android:paddingStart="@dimen/_12sdp"
             android:textSize="@dimen/_10ssp"

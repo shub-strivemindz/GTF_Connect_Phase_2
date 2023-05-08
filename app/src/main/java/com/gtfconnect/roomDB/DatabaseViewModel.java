@@ -152,11 +152,14 @@ public class DatabaseViewModel extends AndroidViewModel {
 
 
 
+    public void remove_chat_from_database(int groupChatID){
+        repo.remove_chat_from_database(groupChatID);
+    }
 
 
-
-
-
+    public void remove_group_channel_from_database(int groupChannelD){
+        repo.remove_group_channel_from_database(groupChannelD);
+    }
 
 
 

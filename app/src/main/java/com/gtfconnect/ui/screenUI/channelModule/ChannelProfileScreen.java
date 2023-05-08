@@ -1,5 +1,6 @@
 package com.gtfconnect.ui.screenUI.channelModule;
 
+
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -46,8 +47,11 @@ import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.SettingAda
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ImagePreviewScreen;
 import com.gtfconnect.ui.screenUI.groupModule.GroupEditProfileScreen;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
+
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -148,59 +152,35 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
 
         // Dialog for Leave Channel  :
-        binding.leaveChannel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Dialog leave_channel_dialog = new Dialog(ChannelProfileScreen.this);
+        binding.leaveChannel.setOnClickListener(view -> {
+            Dialog leave_channel_dialog = new Dialog(ChannelProfileScreen.this);
 
-                leave_channel_dialog.setContentView(R.layout.dialog_leave_channel);
-                leave_channel_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                leave_channel_dialog.setCancelable(false);
-                leave_channel_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            leave_channel_dialog.setContentView(R.layout.dialog_leave_channel);
+            leave_channel_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            leave_channel_dialog.setCancelable(false);
+            leave_channel_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                TextView leave = leave_channel_dialog.findViewById(R.id.sign_out);
-                TextView cancel = leave_channel_dialog.findViewById(R.id.cancel);
+            TextView group_channel_name = leave_channel_dialog.findViewById(R.id.group_channel_name);
+            TextView leave = leave_channel_dialog.findViewById(R.id.sign_out);
+            TextView cancel = leave_channel_dialog.findViewById(R.id.cancel);
 
-                leave.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        //  Dialog for Leave Channel  :
-                        leave_channel_dialog.dismiss();
-
-                        Dialog leave_dialog = new Dialog(ChannelProfileScreen.this);
-
-                        leave_dialog.setContentView(R.layout.dialog_left_channel);
-                        leave_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        leave_dialog.setCancelable(false);
-                        leave_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        leave_dialog.show();
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(2000);
-                                leave_dialog.dismiss();
-                                startActivity(new Intent(ChannelProfileScreen.this, HomeScreen.class));
-                                finish();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        }).start();
-
-                    }
-                });
-
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        leave_channel_dialog.dismiss();
-                    }
-                });
-
-                leave_channel_dialog.show();
+            if (profileDetailModel != null && profileDetailModel.getGcInfo() != null) {
+                group_channel_name.setText(profileDetailModel.getGcInfo().getName());
             }
+
+            leave.setOnClickListener(v -> {
+
+                leave_channel_dialog.dismiss();
+
+                requestType = Constants.LEAVE_GROUP_CHANNEL;
+                connectViewModel.leave_group_channel(profileDetailModel.getGcMemberInfo().getGCMemberID(),api_token);
+
+
+            });
+
+            cancel.setOnClickListener(v -> leave_channel_dialog.dismiss());
+
+            leave_channel_dialog.show();
         });
 
 
@@ -436,12 +416,13 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
 
     @Override
     public void onLoading() {
-        if (requestType ==GET_GROUP_CHANNEL_INFO) {
+        if (requestType ==GET_GROUP_CHANNEL_INFO ) {
             if (profileDetailModel == null) {
                 rest.ShowDialogue();
             }
-        }
-        else{
+        } else if (requestType == Constants.LEAVE_GROUP_CHANNEL) {
+            rest.ShowDialogue();
+        } else{
             rest.ShowDialogue();
         }
     }
@@ -544,6 +525,31 @@ public class ChannelProfileScreen extends AppCompatActivity implements ApiRespon
             String data = gson.toJson(profileDetailModel);
             intent.putExtra("data",data);
             startForResult.launch(intent);
+        }
+        else if (requestType == Constants.LEAVE_GROUP_CHANNEL) {
+
+            //  Dialog for Leave Channel  :
+
+            Dialog leave_dialog = new Dialog(ChannelProfileScreen.this);
+
+            leave_dialog.setContentView(R.layout.dialog_left_channel);
+            leave_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            leave_dialog.setCancelable(false);
+            leave_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            leave_dialog.show();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1500);
+                    leave_dialog.dismiss();
+                    startActivity(new Intent(ChannelProfileScreen.this, HomeScreen.class));
+                    finishAffinity();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }).start();
+
         }
     }
 

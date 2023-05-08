@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,7 +13,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
@@ -29,51 +27,37 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.gtfconnect.R;
-import com.gtfconnect.interfaces.ChannelChatListener;
-import com.gtfconnect.interfaces.ImageAttachmentListener;
 import com.gtfconnect.interfaces.SelectCityListener;
 import com.gtfconnect.interfaces.SelectCountryListener;
 import com.gtfconnect.interfaces.SelectEmoteReaction;
 import com.gtfconnect.interfaces.SelectStateListener;
-import com.gtfconnect.models.CityData;
-import com.gtfconnect.models.CountryData;
-import com.gtfconnect.models.EmojiListModel;
-import com.gtfconnect.models.StateData;
+import com.gtfconnect.models.authResponseModels.CityData;
+import com.gtfconnect.models.authResponseModels.CountryData;
+import com.gtfconnect.models.authResponseModels.StateData;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.ui.adapters.EmojiReactionListAdapter;
-import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
-import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.authModuleAdapter.CityListAdapter;
 import com.gtfconnect.ui.adapters.authModuleAdapter.CountryListAdapter;
-import com.gtfconnect.ui.adapters.authModuleAdapter.StateListAdapter;
 
 
 import java.io.File;
@@ -81,7 +65,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -563,76 +546,7 @@ public class Utils {
         /*BottomSheetDialog place_selection_dialog = new BottomSheetDialog(RegisterScreen3.this);
         place_selection_dialog.setContentView(R.layout.bottomsheet_place_selector);*/
 
-            RecyclerView placeRecycler = place_selection_dialog.findViewById(R.id.place_recycler);
-            EditText title = place_selection_dialog.findViewById(R.id.title);
-            ImageView close_icon = place_selection_dialog.findViewById(R.id.close_icon);
 
-            StateListAdapter stateListAdapter= new StateListAdapter(context,arrayList);
-            placeRecycler.setHasFixedSize(true);
-            placeRecycler.setLayoutManager(new LinearLayoutManager(context));
-            placeRecycler.setAdapter(stateListAdapter);
-
-            stateListAdapter.setOnRecyclerViewItemClickListener((id,item_name) -> {
-                place_selection_dialog.dismiss();
-                listener.Select_value(id,item_name);
-
-            });
-
-            close_icon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (isSearchFocused)
-                        place_selection_dialog.dismiss();
-                }
-            });
-
-
-            title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean b) {
-                    if (b)
-                    {
-                        close_icon.setImageResource(R.drawable.close);
-                        isSearchFocused = true;
-                    }
-                    else {
-                        close_icon.setImageResource(R.drawable.search);
-                        isSearchFocused = false;
-                    }
-
-                }
-            });
-
-            title.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    List<StateData> temp = new ArrayList();
-                    for (StateData state : arrayList) {
-                        if (state.getStateName().toLowerCase().contains(charSequence.toString())) {
-                            temp.add(state);
-                        }
-                    }
-                    if (temp.size() == 0) {
-                        //text_no_data_found.setVisibility(View.VISIBLE);
-                    } else {
-                        //text_no_data_found.setVisibility(View.GONE);
-                    }
-                    stateListAdapter.updateList(temp);
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
 
             place_selection_dialog.show();
 

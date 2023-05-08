@@ -98,8 +98,9 @@
             android:layout_width="130dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
+            app:cardBackgroundColor="@color/authEditTextBg"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green"
+            app:strokeColor="@color/authCardStrokeColor"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
@@ -123,6 +124,8 @@
                     android:hint="First Name*"
                     android:fontFamily="@font/poppins"
                     android:layout_marginStart="15dp"
+                    android:textColorHint="@color/authEditText"
+                    android:textColor="@color/authEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
@@ -137,8 +140,9 @@
                 android:layout_height="match_parent"
                 app:strokeWidth=".3dp"
                 android:layout_alignParentEnd="true"
+                app:cardBackgroundColor="@color/authEditTextBg"
                 android:layout_gravity="end"
-                app:strokeColor="@color/theme_green"
+                app:strokeColor="@color/authCardStrokeColor"
                 app:cardCornerRadius="8dp">
 
                 <LinearLayout
@@ -154,6 +158,8 @@
                         android:inputType="text"
                         android:textSize="@dimen/_10ssp"
                         android:hint="Last Name*"
+                        android:textColorHint="@color/authEditText"
+                        android:textColor="@color/authEditText"
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="15dp"
                         android:layout_width="match_parent"
@@ -177,7 +183,8 @@
             android:layout_marginEnd="40dp"
             app:cardCornerRadius="8dp"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green">
+            app:cardBackgroundColor="@color/authEditTextBg"
+            app:strokeColor="@color/authCardStrokeColor">
 
             <LinearLayout
                 android:layout_gravity="center_vertical"
@@ -196,6 +203,8 @@
                     android:id="@+id/gender"
                     android:textSize="@dimen/_10ssp"
                     android:hint="Select Gender*"
+                    android:textColorHint="@color/authEditText"
+                    android:textColor="@color/authEditText"
                     android:fontFamily="@font/poppins"
                     android:layout_marginStart="15dp"
                     android:layout_width="match_parent"
@@ -217,7 +226,8 @@
             android:layout_marginEnd="40dp"
             app:cardCornerRadius="8dp"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green">
+            app:cardBackgroundColor="@color/authEditTextBg"
+            app:strokeColor="@color/authCardStrokeColor">
 
             <LinearLayout
                 android:layout_gravity="center_vertical"
@@ -238,6 +248,8 @@
                     android:inputType="textEmailAddress"
                     android:textSize="@dimen/_10ssp"
                     android:hint="Email*"
+                    android:textColorHint="@color/authEditText"
+                    android:textColor="@color/authEditText"
                     android:fontFamily="@font/poppins"
                     android:layout_marginStart="15dp"
                     android:layout_width="match_parent"
@@ -258,7 +270,8 @@
             android:layout_marginEnd="40dp"
             app:cardCornerRadius="8dp"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green">
+            app:cardBackgroundColor="@color/authEditTextBg"
+            app:strokeColor="@color/authCardStrokeColor">
 
             <LinearLayout
                 android:layout_gravity="center_vertical"
@@ -272,6 +285,12 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/date"/>
 
+                <LinearLayout
+                    android:id="@+id/open_date_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/dob"
                     android:textSize="@dimen/_10ssp"
@@ -282,16 +301,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
+                    android:textColorHint="@color/authEditText"
+                    android:textColor="@color/authEditText"
                     android:includeFontPadding="false"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:background="@android:color/transparent"/>
 
                 <ImageView
-                    android:id="@+id/open_date_picker"
                     android:layout_width="@dimen/_14sdp"
                     android:layout_height="match_parent"
                     android:src="@drawable/forward"/>
+
+                </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -304,7 +326,8 @@
             android:layout_marginEnd="40dp"
             app:cardCornerRadius="8dp"
             app:strokeWidth=".3dp"
-            app:strokeColor="@color/theme_green">
+            app:cardBackgroundColor="@color/authEditTextBg"
+            app:strokeColor="@color/authCardStrokeColor">
 
             <LinearLayout
                 android:layout_gravity="center_vertical"
@@ -320,6 +343,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_width="@dimen/_80sdp"
                     android:padding="@dimen/_1sdp"
+                    app:ccp_contentColor="@color/authEditText"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     app:ccp_countryAutoDetectionPref="NETWORK_LOCALE" />
@@ -336,6 +360,8 @@
                     android:ems="1"
                     android:textSize="14sp"
                     android:hint="*********"
+                    android:textColorHint="@color/authEditText"
+                    android:textColor="@color/authEditText"
                     android:inputType="number"
                     android:fontFamily="@font/poppins"
                     android:layout_marginStart="12dp"

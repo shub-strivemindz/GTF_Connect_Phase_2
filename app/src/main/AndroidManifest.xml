@@ -124,6 +124,7 @@
 
         <activity android:name=".ui.screenUI.commonGroupChannelModule.GifPreviewScreen"/>
         <activity android:name=".ui.screenUI.commonGroupChannelModule.ImagePreviewScreen"/>
+        <activity android:name=".ui.screenUI.authModule.registerModule.LocationPickerScreen"/>
     </application>
 
 </manifest>

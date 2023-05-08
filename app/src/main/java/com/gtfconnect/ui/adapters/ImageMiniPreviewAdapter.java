@@ -1,7 +1,6 @@
 package com.gtfconnect.ui.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,19 +8,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gtfconnect.R;
-import com.gtfconnect.databinding.FragmentBlocklistItemBinding;
 import com.gtfconnect.databinding.RecyclerImagePreviewItemBinding;
-import com.gtfconnect.interfaces.GroupChatListener;
 import com.gtfconnect.interfaces.ImagePreviewListener;
-import com.gtfconnect.models.CityData;
 import com.gtfconnect.models.ImagePreviewModel;
-import com.gtfconnect.ui.adapters.authModuleAdapter.CityListAdapter;
-import com.gtfconnect.ui.adapters.userProfileAdapter.BlockListAdapter;
-import com.gtfconnect.utilities.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ImageMiniPreviewAdapter extends RecyclerView.Adapter<ImageMiniPreviewAdapter.ViewHolder> {
 

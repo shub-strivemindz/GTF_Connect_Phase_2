@@ -145,6 +145,19 @@ public interface AppDao {
 
 
 
+    @Query("delete from channel_chat_body where groupChatID = :groupChatID")
+    void remove_chat_from_database(int groupChatID);
+
+
+
+    @Query("delete from channel_chat_body where groupChannelId = :groupChannelID")
+    void remove_group_channel_body_from_database(String groupChannelID);
+
+    @Query("delete from channel_chat_header where groupChannelID = :groupChannelID")
+    void remove_group_channel_header_from_database(int groupChannelID);
+
+
+
     //@Query("DELETE FROM channel_chat_body where  NOT IN (SELECT id from tableName ORDER BY id DESC LIMIT 20)")
 
 

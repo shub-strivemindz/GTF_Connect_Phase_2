@@ -65,4 +65,33 @@
 
     <color name="theme_dark">#1C1C1E</color>
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--======================================================================= Auth Module ==========================================================================-->
+
+
+    <color name="authTextView">#dde1ea</color>
+
+    <color name="authEditTextBg">#222e3c</color>
+
+    <color name="authEditText">#9eaad6</color>
+
+    <color name="authErrorText">#cb4244</color>
+
+    <color name="authCardStrokeColor">#222e3c</color>
+
+    <color name="authBottomSheetBg">#000000</color>
+
+    <color name="locationPickerBg">#000000</color>
+
 </resources>

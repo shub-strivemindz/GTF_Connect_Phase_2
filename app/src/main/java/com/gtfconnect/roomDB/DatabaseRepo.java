@@ -303,4 +303,20 @@ public class DatabaseRepo {
     public LiveData<GroupChannelChatDbEntity> getChannelChatData(String groupChannelID, int isAsc) {
         return appDao.getChannelChatData(groupChannelID,isAsc);
     }
+
+
+
+
+
+
+    public void remove_chat_from_database(int groupChatID){
+        appDao.remove_chat_from_database(groupChatID);
+    }
+
+
+    public void remove_group_channel_from_database(int groupChatID){
+
+        appDao.remove_group_channel_header_from_database(groupChatID);
+        appDao.remove_group_channel_body_from_database(groupChatID+"");
+    }
 }
