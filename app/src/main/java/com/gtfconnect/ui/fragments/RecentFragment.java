@@ -89,8 +89,8 @@ public class RecentFragment extends Fragment {
             String action = intent.getAction();
             if (action.equals("send_exclusive")) {
 
-                Log.i("chat","I am in BroadCastReceiver");
-                boolean msg = intent.getBooleanExtra("value",false);
+                Log.d("chat","I am in BroadCastReceiver");
+                //boolean msg = intent.getBooleanExtra("value",false);
 
 
             }

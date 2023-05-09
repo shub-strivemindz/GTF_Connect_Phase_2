@@ -42,6 +42,7 @@ public class ProfileResponseModel {
     }
 
 
+
     public class CityList {
 
         @SerializedName("CityID")
@@ -148,7 +149,7 @@ public class ProfileResponseModel {
         private UserRoleInfo userRoleInfo;
         @SerializedName("user_permission")
         @Expose
-        private UserPermission userPermission;
+        private List<Object> userPermission;
         @SerializedName("user_setting")
         @Expose
         private List<UserSetting> userSetting;
@@ -169,11 +170,11 @@ public class ProfileResponseModel {
             this.userRoleInfo = userRoleInfo;
         }
 
-        public UserPermission getUserPermission() {
+        public List<Object> getUserPermission() {
             return userPermission;
         }
 
-        public void setUserPermission(UserPermission userPermission) {
+        public void setUserPermission(List<Object> userPermission) {
             this.userPermission = userPermission;
         }
 
@@ -186,6 +187,7 @@ public class ProfileResponseModel {
         }
 
     }
+
     public class Permission {
 
         @SerializedName("PermissionID")
@@ -368,13 +370,13 @@ public class ProfileResponseModel {
         @SerializedName("ProfileThumbnail")
         @Expose
         private String profileThumbnail;
-        @SerializedName("country")
+        @SerializedName("countryList")
         @Expose
         private CountryList countryList;
-        @SerializedName("state")
+        @SerializedName("stateList")
         @Expose
         private StateList stateList;
-        @SerializedName("city")
+        @SerializedName("cityList")
         @Expose
         private CityList cityList;
 
@@ -791,10 +793,6 @@ public class ProfileResponseModel {
         public void setStateCode(String stateCode) {
             this.stateCode = stateCode;
         }
-
-    }
-    public class UserPermission {
-
 
     }
     public class UserRoleInfo {

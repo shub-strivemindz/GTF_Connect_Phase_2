@@ -545,8 +545,10 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
 
                     Intent intent = new Intent();
-                    intent.setAction("send_exclusive");
                     intent.putExtra("value",true);
+                    intent.setAction("send_exclusive");
+
+
 
 
                    /* Bundle bundle = new Bundle();
