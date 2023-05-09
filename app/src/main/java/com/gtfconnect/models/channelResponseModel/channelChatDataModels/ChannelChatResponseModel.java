@@ -62,6 +62,13 @@ public class ChannelChatResponseModel {
             @SerializedName("baseUrl")
             @Expose
             private String baseUrl;
+
+
+            @SerializedName("mediaUrl")
+            @Expose
+            private String mediaUrl;
+
+
             @SerializedName("subscriptionCount")
             @Expose
             private Integer subscriptionCount;
@@ -69,7 +76,16 @@ public class ChannelChatResponseModel {
             @Expose
             private ChatData chatData;
 
-            public String getBaseUrl() {
+
+        public String getMediaUrl() {
+            return mediaUrl;
+        }
+
+        public void setMediaUrl(String mediaUrl) {
+            this.mediaUrl = mediaUrl;
+        }
+
+        public String getBaseUrl() {
                 return baseUrl;
             }
 

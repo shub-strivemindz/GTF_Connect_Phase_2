@@ -106,9 +106,10 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         selectedPostCount = 0;
     }
 
-    public void updateList(List<ChannelRowListDataModel> list)
+    public void updateList(List<ChannelRowListDataModel> list,String postBaseUrl)
     {
         this.list = list;
+        this.post_base_url = postBaseUrl;
         notifyDataSetChanged();
     }
 

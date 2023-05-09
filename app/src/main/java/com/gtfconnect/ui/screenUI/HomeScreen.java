@@ -52,6 +52,7 @@ import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GalleryTypeSta
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.services.SocketService;
+import com.gtfconnect.ui.fragments.RecentFragment;
 import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.ui.screenUI.userProfileModule.UserProfileScreen;
 import com.gtfconnect.utilities.LocalGalleryUtil;
@@ -538,90 +539,23 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
             ExclusiveOfferResponseModel exclusiveOfferResponseModel = gson.fromJson(jsonObject,type);
 
-
-            // =================================================== Just to check and update Exclusive Offer List =====================================================
-
-            /***
-             * In Below code ======= Data of both list must be in sorted form for Conditional checks
-             * Conditional checks for new Exclusive offer entry in the list.
-             * Check 1 = IF New entry has been made.
-             * Check 2 = IF any entry removed.
-             */
-
-            exclusive_inserted_row_ids = new ArrayList<>();
-
-            if (exclusiveOfferDataModels != null && !exclusiveOfferDataModels.isEmpty()){
-                if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData()!=null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
-
-                    Log.d("Exclusive","Exclusive Response Size = "+exclusiveOfferResponseModel.getData().getList().size()+" Exclusive DB size = "+exclusiveOfferDataModels.size());
-
-                    // Check 1 =========
-                    if (exclusiveOfferResponseModel.getData().getList().size() > exclusiveOfferDataModels.size()){
-                        for (int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++) {
-                            boolean checkFlag = true;
-
-                            for (int j = 0; j < exclusiveOfferDataModels.size(); j++) {
-
-                                if (!Objects.equals(exclusiveOfferDataModels.get(j).getGroupChannelID(), exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID())){
-                                    checkFlag = false;
-                                    break;
-                                }
-                            }
-                            if (!checkFlag){
-                                Log.d("Exclusive","Insertion Flag Check Called");
-                                //exclusive_inserted_row_ids.add(databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList()));
-                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList());
-                            }
-                        }
-                    }
-                    // Check 2 =============
-                    else if (exclusiveOfferResponseModel.getData().getList().size() < exclusiveOfferDataModels.size()) {
-
-                        for (int i = 0; i < exclusiveOfferDataModels.size(); i++) {
-                            boolean checkFlag = true;
-
-                            for (int j = 0; j < exclusiveOfferResponseModel.getData().getList().size(); j++) {
-
-                                if (!Objects.equals(exclusiveOfferDataModels.get(i).getGroupChannelID(), exclusiveOfferResponseModel.getData().getList().get(j).getGroupChannelID())) {
-                                    checkFlag = false;
-                                    break;
-                                }
-                            }
-                            if (!checkFlag) {
-                                databaseViewModel.deleteExclusiveOffer(exclusiveOfferDataModels.get(i).getGroupChannelID());
-                            }
-                        }
-                    }
-                    else {
-                        for (int i=0;i<exclusiveOfferResponseModel.getData().getList().size();i++) {
-                            boolean checkFlag = true;
-
-                            for (int j = 0; j < exclusiveOfferDataModels.size(); j++) {
-
-                                if (!Objects.equals(exclusiveOfferDataModels.get(j).getGroupChannelID(), exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID())){
-                                    checkFlag = false;
-                                    break;
-                                }
-                            }
-                            if (!checkFlag){
-                                //exclusive_inserted_row_ids.add(databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i)));
-                                databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList());
-                            }
-                        }
-                    }
-                }
-            }
-            else {
                 if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData() != null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
-                    for (int i = 0; i < exclusiveOfferResponseModel.getData().getList().size(); i++) {
-                        Log.d("Exclusive_data", "2 ===== " + exclusiveOfferResponseModel.getData().getList().get(i).getGroupChannelID());
-                        //exclusive_inserted_row_ids.add(databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList().get(i)));
-                        databaseViewModel.insertExclusiveOffer(exclusiveOfferResponseModel.getData().getList());
-                    }
+                    String response = new Gson().toJson(exclusiveOfferResponseModel);
+                    PreferenceConnector.writeString(this,PreferenceConnector.DASHBOARD_DATA+"/exclusive",response);
+
+
+                    Intent intent = new Intent();
+                    intent.setAction("send_exclusive");
+                    intent.putExtra("value",true);
+
+
+                   /* Bundle bundle = new Bundle();
+                    bundle.putBoolean("value", true);
+
+                    RecentFragment recentFragment = new RecentFragment();
+                    recentFragment.setArguments(bundle);*/
                 }
             }
-        }
-
     }
 
 

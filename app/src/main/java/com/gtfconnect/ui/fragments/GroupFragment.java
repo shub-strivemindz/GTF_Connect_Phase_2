@@ -62,6 +62,7 @@ public class GroupFragment extends Fragment {
 
     private int localDBDataSize = 0;
 
+    private GroupViewAdapter groupViewAdapter;
 
 
     @Nullable
@@ -77,6 +78,11 @@ public class GroupFragment extends Fragment {
 
         //updateGroupDashboardSocket();
         messageReceived();
+
+        responseModel = new DashboardResponseModel();
+
+        gcList = new ArrayList<>();
+        loadDataToAdapter();
 
         return binding.getRoot();
     }
@@ -95,23 +101,18 @@ public class GroupFragment extends Fragment {
 
     private void loadLocalData()
     {
-        // Get list :
-        databaseViewModel.getDashboardList("group").observe(requireActivity(), recentResponseList -> {
-            if (recentResponseList != null && !recentResponseList.isEmpty()) {
+        String response2 = PreferenceConnector.readString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/group","");
+        Type type2 = new TypeToken<DashboardResponseModel>(){}.getType();
+        responseModel = new Gson().fromJson(response2,type2);
 
 
-                localDBDataSize = recentResponseList.size();
+        if (responseModel != null && responseModel.getData() != null && responseModel.getData().getGcData() != null && !responseModel.getData().getGcData().isEmpty()){
+            gcList = new ArrayList<>();
+            gcList.addAll(responseModel.getData().getGcData());
 
-                gcList = new ArrayList<>();
-                gcList.addAll(recentResponseList);
-
-                loadDataToAdapter();
-
-                updateGroupDashboardSocket();
-            } else {
-                updateGroupDashboardSocket();
-            }
-        });
+            groupViewAdapter.updateList(gcList);
+        }
+        updateGroupDashboardSocket();
     }
 
 
@@ -165,60 +166,13 @@ public class GroupFragment extends Fragment {
                             getActivity().runOnUiThread(() -> {
                                 if (responseModel.getData() != null && responseModel.getData().getGcData() != null) {
 
-                                    /*if (localDBDataSize != responseModel.getData().size()) {
-                                        for (int i = 0; i < responseModel.getData().size(); i++) {
-                                            databaseViewModel.insertGroups(responseModel.getData().get(i));
-                                        }
-                                    }*/
+                                    String response = new Gson().toJson(responseModel);
+                                    PreferenceConnector.writeString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/"+"group",response);
 
+                                    gcList = new ArrayList<>();
+                                    gcList.addAll(responseModel.getData().getGcData());
 
-
-                                    if(gcList != null && !gcList.isEmpty()){
-                                        if (responseModel.getData().getGcData().size() > gcList.size() || responseModel.getData().getGcData().size() < gcList.size()){
-                                            for (int i=0;i<responseModel.getData().getGcData().size(); i++){
-
-                                                if (responseModel.getData().getGcImageBasePath() != null) {
-                                                    responseModel.getData().getGcData().get(i).setBaseUrl(responseModel.getData().getGcImageBasePath());
-                                                }
-                                                responseModel.getData().getGcData().get(i).setDashboardType("group");
-                                            }
-
-                                            databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
-                                        }
-                                        else{
-                                            for (int i=0;i<gcList.size();i++){
-
-                                                boolean isIDFound = false;
-                                                for (int j=0;j<responseModel.getData().getGcData().size();j++){
-                                                    if (Objects.equals(gcList.get(i).getGroupChannelID(), responseModel.getData().getGcData().get(j).getGroupChannelID())){
-                                                        isIDFound = true;
-                                                    }
-                                                }
-                                                if (!isIDFound){
-                                                    for (int k=0;k<responseModel.getData().getGcData().size(); k++){
-
-                                                        if (responseModel.getData().getGcImageBasePath() != null) {
-                                                            responseModel.getData().getGcData().get(k).setBaseUrl(responseModel.getData().getGcImageBasePath());
-                                                        }
-                                                        responseModel.getData().getGcData().get(k).setDashboardType("group");
-                                                    }
-
-                                                    databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else{
-                                        for (int i=0;i<responseModel.getData().getGcData().size(); i++){
-
-                                            if (responseModel.getData().getGcImageBasePath() != null) {
-                                                responseModel.getData().getGcData().get(i).setBaseUrl(responseModel.getData().getGcImageBasePath());
-                                            }
-                                            responseModel.getData().getGcData().get(i).setDashboardType("group");
-                                        }
-
-                                        databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
-                                    }
+                                    groupViewAdapter.updateList(gcList);
                                 }
                             });
                         }
@@ -237,7 +191,7 @@ public class GroupFragment extends Fragment {
 
     private void loadDataToAdapter()
     {
-        GroupViewAdapter groupViewAdapter= new GroupViewAdapter(getActivity(),gcList);
+        groupViewAdapter= new GroupViewAdapter(getActivity(),gcList);
         binding.groupViewList.setHasFixedSize(true);
         binding.groupViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.groupViewList.setAdapter(groupViewAdapter);

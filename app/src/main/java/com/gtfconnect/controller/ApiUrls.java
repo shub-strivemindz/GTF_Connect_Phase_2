@@ -15,7 +15,9 @@ public class ApiUrls {
 
     public static final String GET_CONNECT_BASE_URL = "https://gtf-connect.strivemindz.com/api/";
 
-    public static final String GET_CONNECT_V1_BASE_URL = "https://gtfconnect-api.strivemindz.com/api/v1/";
+    //public static final String GET_CONNECT_V1_BASE_URL = "https://gtfconnect-api.strivemindz.com/api/v1/";
+
+    public static final String GET_CONNECT_V1_BASE_URL = "http://gtfconnect-api.strivemindz.com:9002/api/v1/";
 
 
     public static final String UPDATE_PROFILE_DATA = "updateprofile";

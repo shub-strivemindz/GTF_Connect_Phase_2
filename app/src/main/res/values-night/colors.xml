@@ -155,4 +155,38 @@
 
     <color name="dashboardListItemTextColor">#9EAAD6</color>
 
+    <color name="dashboardBackgroundColor">#0E1118</color>
+
+
+    <!--======================================================================= Group | Channel UI ==========================================================================-->
+
+    <color name="groupChannelBackgroundColor">#252C3C</color>
+
+    <color name="groupChannelActionBarBackgroundColor">#232833</color>
+
+    <color name="groupChannelActionBarTextColor">#fff</color>
+
+    <color name="groupChannelPinMessageBackgroundColor">#0E1118</color>
+
+
+    <!--==================== Pin Message =============================-->
+
+    <color name="messagePinColor">#696969</color>
+
+    <color name="messagePinTextHeaderColor">#2FB463</color>
+
+    <color name="messagePinTextColor">#5C7488</color>
+
+
+    <!--==================== Chat Message =============================-->
+
+
+    <color name="messageChatTextColor">#DDE1EA</color>
+
+    <color name="messageChatTimeColor">#74808E</color>
+
+    <color name="messageChatDateChipColor">#DDE1EA</color>
+
+    <color name="messageChatOptionIconColor">#74808E</color>
+
 </resources>

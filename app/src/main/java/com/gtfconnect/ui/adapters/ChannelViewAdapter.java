@@ -92,5 +92,10 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
 
         }
     }
+
+    public void updateList(List<DashboardListEntity> responseModel){
+        this.responseModel = responseModel;
+        notifyDataSetChanged();
+    }
 }
 

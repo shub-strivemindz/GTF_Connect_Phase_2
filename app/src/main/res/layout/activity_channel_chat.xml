@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/channelBackgroundColor"
+    android:background="@color/groupChannelBackgroundColor"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -13,7 +13,7 @@
     <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_alignParentTop="true"
-        android:background="@color/theme_green"
+        android:background="@color/groupChannelActionBarBackgroundColor"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
         android:paddingHorizontal="@dimen/_16sdp"
@@ -23,6 +23,7 @@
             android:id="@+id/back_click"
             android:layout_width="@dimen/_18sdp"
             android:layout_height="match_parent"
+            app:tint="@color/groupChannelActionBarTextColor"
             android:src="@drawable/back2" />
 
         <RelativeLayout
@@ -66,7 +67,7 @@
                 android:textSize="@dimen/_11ssp"
                 android:textFontWeight="600"
                 android:text="Live Market Session"
-                android:textColor="@color/white"
+                android:textColor="@color/groupChannelActionBarTextColor"
 
                 />
 
@@ -79,7 +80,7 @@
                 android:fontFamily="@font/open_sans"
                 android:textSize="@dimen/_10ssp"
                 android:textFontWeight="400"
-                android:textColor="@color/white"/>
+                android:textColor="@color/groupChannelActionBarTextColor"/>
 
             <TextView
                 android:id="@+id/subscriber_subtitle"
@@ -92,75 +93,130 @@
                 android:textFontWeight="400"
                 android:textSize="@dimen/_10ssp"
                 android:text="subscribers"
-                android:textColor="@color/white"/>
+                android:textColor="@color/groupChannelActionBarTextColor"/>
 
         </RelativeLayout>
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/pin"
-            android:gravity="center"
-            android:layout_alignParentEnd="true"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent">
+
 
         <ImageView
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/pin_image"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
-            android:src="@drawable/pinned"/>
+            android:layout_centerVertical="true"
+            app:tint="@color/groupChannelActionBarTextColor"
+            android:id="@+id/search"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/search"/>
+    </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/pinned_message_count_container"
-                android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:background="@color/groupChannelPinMessageBackgroundColor"
+            android:id="@+id/pin_message_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:visibility="gone"
+            android:layout_below="@id/toolbar"
+            android:orientation="horizontal">
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="@dimen/_2sdp"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:layout_height="match_parent"
-                android:gravity="center">
+                android:id="@+id/pin_divider_decorator"
+                android:layout_alignParentStart="true"
+                android:layout_marginVertical="@dimen/_6sdp"
+                app:dividerColor="@color/theme_green"
+                android:layout_gravity="center_vertical"/>
 
             <LinearLayout
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:layout_marginStart="@dimen/_16sdp"
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="@dimen/_16sdp"
-                android:backgroundTint="@color/notification_yellow"
-                android:background="@drawable/notification_circle"
-                android:gravity="center">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@id/pin"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_toEndOf="@id/pin_divider_decorator"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_9ssp"
+                    android:text="Pinned Message"
+                    android:id="@+id/last_pin_user"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/messagePinTextHeaderColor"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:id="@+id/pinned_message_count"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_10ssp"
+                    android:id="@+id/last_pin_message"
+                    android:text="EPFO APFC new batch,Post : Assistant Co..."
                     android:fontFamily="@font/open_sans"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_7ssp"/>
+                    android:textColor="@color/messagePinTextColor"/>
+
             </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/pin"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/pin_image"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    app:tint="@color/messagePinColor"
+                    android:src="@drawable/pinned"/>
+
+                <RelativeLayout
+                    android:id="@+id/pinned_message_count_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:backgroundTint="@color/notification_yellow"
+                        android:background="@drawable/notification_circle"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:id="@+id/pinned_message_count"
+                            android:fontFamily="@font/open_sans"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_7ssp"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
             </RelativeLayout>
 
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_centerVertical="true"
-            app:tint="@color/white"
-            android:id="@+id/search"
-            android:layout_marginEnd="@dimen/_6sdp"
-            android:layout_toStartOf="@id/pin"
-            android:src="@drawable/search"/>
-    </RelativeLayout>
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/pin_message_container"
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_20sdp"
-            android:visibility="gone"
             android:id="@+id/chip_date_container"
             app:cardCornerRadius="@dimen/_16sdp"
             android:alpha=".8"
@@ -483,7 +539,8 @@
             android:id="@+id/search_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
-            android:background="@color/white"
+            android:elevation="@dimen/_8sdp"
+            android:background="@color/sendMessageDialogBackgroundColor"
             android:orientation="horizontal">
 
             <com.example.audiorecorder.RecordView
@@ -508,6 +565,7 @@
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_alignParentEnd="true"
                 android:scaleType="centerInside"
+                app:tint="@color/sendMessageIconColor"
                 app:mic_icon="@drawable/microphone" />
 
             <ImageView
@@ -527,15 +585,46 @@
                 android:layout_marginEnd="@dimen/_32sdp"
                 android:orientation="horizontal">
 
+                <RelativeLayout
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:id="@+id/dummy_user_container"
+                    android:visibility="gone"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/dummyUsers"
+                        app:cardCornerRadius="@dimen/_100sdp"
+                        app:cardBackgroundColor="@color/dummy_user_background_color">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="RE"
+                            android:id="@+id/dummy_user_initials"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/poppins"
+                            android:textSize="@dimen/_8ssp"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:gravity="center"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
+
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     app:cardElevation="0dp"
                     android:layout_marginVertical="@dimen/_10sdp"
-                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     app:cardCornerRadius="@dimen/_12sdp"
-                    app:cardBackgroundColor="@color/sendMessageCardFiller"
+                    app:cardBackgroundColor="@color/sendMessageEditTextBackgroundColor"
                     android:layout_height="match_parent">
 
                     <RelativeLayout
@@ -549,12 +638,11 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:id="@+id/emoji"
                                 android:layout_width="@dimen/_16sdp"
-                                android:layout_height="@dimen/_16sdp"
+                                android:layout_height="match_parent"
                                 android:src="@drawable/smile"
-                                android:layout_marginHorizontal="@dimen/_8sdp"
-                                android:layout_gravity="center_vertical"/>
+                                app:tint="@color/sendMessageEmojiColor"
+                                android:layout_marginHorizontal="@dimen/_6sdp"/>
 
                             <com.gtfconnect.utilities.CustomEditText
                                 android:id="@+id/type"
@@ -562,10 +650,12 @@
                                 android:layout_weight="1"
                                 android:layout_height="match_parent"
                                 android:hint="Message"
-                                android:paddingStart="@dimen/_8sdp"
                                 android:fontFamily="@font/poppins"
                                 android:textSize="@dimen/_10ssp"
-                                android:background="@android:color/transparent"/>
+                                android:paddingStart="@dimen/_6sdp"
+                                android:textColor="@color/sendMessageTextColor"
+                                android:textColorHint="@color/sendMessageTextColor"
+                                android:background="@color/sendMessageEditTextBackgroundColor"/>
 
                         </LinearLayout>
 
@@ -579,6 +669,7 @@
                     android:layout_marginHorizontal="@dimen/_4sdp"
                     android:layout_width="@dimen/_17sdp"
                     android:layout_height="match_parent"
+                    app:tint="@color/sendMessageIconColor"
                     android:src="@drawable/attach_doc"/>
 
             </LinearLayout>

@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:id="@+id/toolbar"
-        android:background="@color/theme_green"
+        android:background="@color/groupChannelActionBarBackgroundColor"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_55sdp"
         android:paddingHorizontal="@dimen/_16sdp"

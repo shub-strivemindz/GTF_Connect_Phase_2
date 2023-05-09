@@ -10,11 +10,14 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -63,7 +66,7 @@ public class LocalGalleryUtil {
 
     public static byte[] getBytesFromImage(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         return stream.toByteArray();
     }
 
@@ -74,6 +77,62 @@ public class LocalGalleryUtil {
     }
 
 
+
+    private static File getGroupChannelImagePath()
+    {
+        File filePath;
+
+        String fileName = "Profile"+new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())+".jpg";
+
+        String downloadPath = "/" + "connect_files" + "/" +
+                fileName;
+
+        String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS) + downloadPath;
+
+        filePath = new File(fileDownloadPath);
+
+        try{
+            if (!filePath.getParentFile().exists()){
+                filePath.getParentFile().mkdirs();
+            }
+        }
+        catch (Exception e){
+            Log.d("Exception while saving image",e.toString());
+        }
+
+        return filePath;
+    }
+
+
+
+
+
+    private static File getGroupChannelGifPath()
+    {
+        File filePath;
+
+        String fileName = "Profile"+new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())+".gif";
+
+        String downloadPath = "/" + "connect_files" + "/" +
+                fileName;
+
+        String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS) + downloadPath;
+
+        filePath = new File(fileDownloadPath);
+
+        try{
+            if (!filePath.getParentFile().exists()){
+                filePath.getParentFile().mkdirs();
+            }
+        }
+        catch (Exception e){
+            Log.d("Exception while saving image",e.toString());
+        }
+
+        return filePath;
+    }
 
 
 
@@ -104,29 +163,29 @@ public class LocalGalleryUtil {
     }
 
 
-    private static File getGroupChannelImagePath()
-    {
-        File filePath;
 
-        String fileName = "Profile"+new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())+".jpg";
 
-        String downloadPath = "/" + "connect_files" + "/" +
-                fileName;
+    public static File saveGifToGallery(Context context, GifDrawable gifDrawable){
 
-        String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS) + downloadPath;
 
-        filePath = new File(fileDownloadPath);
+        ByteBuffer byteBuffer = gifDrawable.getBuffer();
+        File gifFile = getGroupChannelGifPath();
+
+        FileOutputStream outStream = null;
 
         try{
-            if (!filePath.getParentFile().exists()){
-                filePath.getParentFile().mkdirs();
-            }
+            outStream = new FileOutputStream(gifFile);
+
+            byte[] bytes = new byte[byteBuffer.capacity()];
+            ((ByteBuffer) byteBuffer.duplicate().clear()).get(bytes);
+
+            outStream.write(bytes, 0, bytes.length);
+            outStream.close();
         }
         catch (Exception e){
-            Log.d("Exception while saving image",e.toString());
+            Log.d("Gif Exception",e.toString());
         }
 
-        return filePath;
+        return gifFile;
     }
 }

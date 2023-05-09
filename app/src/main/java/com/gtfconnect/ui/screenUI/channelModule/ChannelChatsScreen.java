@@ -5,7 +5,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -575,13 +574,20 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     if (messageText != null && !messageText.equalsIgnoreCase("")) {
                         callAttachmentApi();
                     } else {
+                        messageText = "";
+                        callAttachmentApi();
+                    }
+                } else {
+
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        validateSendMessage(messageText, binding.type);
+                        messageText = null;
+                    } else {
                         Utils.showSnackMessage(this, binding.type, "Type Message !");
                         binding.imagePreviewLayout.setVisibility(View.GONE);
                         isAnyFileAttached = false;
                         isAttachmentSend = false;
                     }
-                } else {
-                    validateSendMessage(messageText, binding.type);
                 }
             } else {
 
@@ -596,18 +602,18 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     binding.recordButton.setVisibility(View.GONE);
 
                     callAttachmentApi();
-
-                    /*if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                        callAttachmentApi();
+                }
+                else{
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        validateSendMessage(messageText, binding.type);
+                        messageText = null;
                     } else {
                         Utils.showSnackMessage(this, binding.type, "Type Message !");
                         binding.imagePreviewLayout.setVisibility(View.GONE);
                         isAnyFileAttached = false;
                         isAttachmentSend = false;
-                    }*/
-                } /*else {
-                    validateSendMessage(messageText, binding.type);
-                }*/
+                    }
+                }
             }
         });
 
@@ -830,37 +836,28 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
 
-        databaseViewModel.getGroupChannelChatData(String.valueOf(channelID), 1).observe(this, channelChatDbEntities -> {
-            databaseEntity = channelChatDbEntities;
-            list = new ArrayList<>();
+        list = new ArrayList<>();
 
-            if (channelChatDbEntities != null) {
-                if (channelChatDbEntities.getChatBodyDbEntitiesLists() != null) {
-                    Log.d("run", " times3");
+        String chatData = PreferenceConnector.readString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,"");
+        Type type = new TypeToken<ChannelChatResponseModel>(){}.getType();
+        responseModel = new Gson().fromJson(chatData,type);
 
-                    Log.d("ChannelChatDataChatDB", "last entered message id =" + channelChatDbEntities.getChatBodyDbEntitiesLists().get(channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1).getGroupChatID());
+        if(responseModel != null && responseModel.getData() != null) {
 
-                    for (int i = channelChatDbEntities.getChatBodyDbEntitiesLists().size() - 1; i >= 0; i--) {
-
-                        Log.d("ChannelChatDataChatDB", "message id = " + channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getGroupChatID());
-                        Log.d("ChannelChatDataChatDB", "Size = " + channelChatDbEntities.getChatBodyDbEntitiesLists().size());
-
-                        list.add(channelChatDbEntities.getChatBodyDbEntitiesLists().get(i).getRows());
-                        channelViewAdapter.updateList(list);
-                    }
-                    if (channelChatDbEntities.getChatHeaderDbEntity() != null) {
-                        if (channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl() != null) {
-                            postBaseUrl = channelChatDbEntities.getChatHeaderDbEntity().getBaseUrl();
-                        }
-                        if (channelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount() != null) {
-                            subscribers = Integer.parseInt(channelChatDbEntities.getChatHeaderDbEntity().getSubscriptionCount());
-                            binding.userSubscribers.setText(String.valueOf(subscribers));
-                        }
-                    }
-                    //channelViewAdapter.updatePostBaseUrl(postBaseUrl);
-                }
+            if (responseModel.getData().getMediaUrl() != null){
+                postBaseUrl = responseModel.getData().getMediaUrl();
             }
-        });
+
+            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                list.addAll(responseModel.getData().getChatData().getRows());
+
+                channelViewAdapter.updateList(list,postBaseUrl);
+            }
+            if (responseModel.getData().getSubscriptionCount() != null) {
+                subscribers = responseModel.getData().getSubscriptionCount();
+                binding.userSubscribers.setText(String.valueOf(subscribers));
+            }
+        }
         refreshChannelChatSocket();
     }
 
@@ -949,8 +946,33 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 runOnUiThread(() -> {
 
-                    if(responseModel != null && responseModel.getData() != null && responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
-                        insertDataInDB(responseModel);
+
+                    if(responseModel != null && responseModel.getData() != null) {
+
+                        if (responseModel.getData().getMediaUrl() != null){
+                            postBaseUrl = responseModel.getData().getMediaUrl();
+                        }
+
+                        if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+
+                            if (currentPage == 1){
+                                String response = new Gson().toJson(responseModel);
+                                PreferenceConnector.writeString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,response);
+
+                                list = new ArrayList<>();
+                                list.addAll(responseModel.getData().getChatData().getRows());
+
+                            }
+                            else{
+                                list.addAll(responseModel.getData().getChatData().getRows());
+                            }
+
+                            channelViewAdapter.updateList(list,postBaseUrl);
+                        }
+                        if (responseModel.getData().getSubscriptionCount() != null) {
+                            subscribers = responseModel.getData().getSubscriptionCount();
+                            binding.userSubscribers.setText(String.valueOf(subscribers));
+                        }
                     }
                 });
 
@@ -1001,7 +1023,35 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 } else {
 
                     runOnUiThread(() -> {
-                        insertDataInDB(responseModel);
+
+                        if(responseModel != null && responseModel.getData() != null) {
+
+                            if (responseModel.getData().getMediaUrl() != null) {
+                                postBaseUrl = responseModel.getData().getMediaUrl();
+                            }
+
+                            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+
+                                if (currentPage == 1){
+                                    String response = new Gson().toJson(responseModel);
+                                    PreferenceConnector.writeString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,response);
+
+                                    list = new ArrayList<>();
+                                    list.addAll(responseModel.getData().getChatData().getRows());
+
+                                }
+                                else{
+                                    list.addAll(responseModel.getData().getChatData().getRows());
+                                }
+
+                                channelViewAdapter.updateList(list,postBaseUrl);
+                            }
+                            if (responseModel.getData().getSubscriptionCount() != null) {
+                                subscribers = responseModel.getData().getSubscriptionCount();
+                                binding.userSubscribers.setText(String.valueOf(subscribers));
+                            }
+
+                        }
                     });
                 }
 
@@ -1011,280 +1061,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         }
     }
 
-
-
-
-    /**
-     *   Conditional checks of room db
-     */
-
-
-    /*private void checkLocalDatabase(ChannelChatResponseModel responseModel){
-
-      checkLocalDatabaseThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                if (databaseEntity != null && databaseEntity.getChatBodyDbEntitiesLists() != null && !databaseEntity.getChatBodyDbEntitiesLists().isEmpty()){
-
-                    List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
-                    List<Integer> deletedPostChatIds = new ArrayList<>();
-                    // ========================================================= Case 1 ====================================================================
-
-                    if(responseModel.getData().getChatData().getRows().size() > databaseEntity.getChatBodyDbEntitiesLists().size()){
-
-                        for (int i=0; i< responseModel.getData().getChatData().getRows().size();i++){
-
-                            boolean isMessageFound = false;
-
-                            int responseGroupChatID = Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID());
-
-                            for (int j=0;j<databaseEntity.getChatBodyDbEntitiesLists().size();j++){
-
-                                int databaseGroupChatID = databaseEntity.getChatBodyDbEntitiesLists().get(j).getGroupChatID();
-
-                                if (responseGroupChatID == databaseGroupChatID){
-
-                                    // ==================================== Record Found : Checking if any comment added or removed or updated ==============================
-
-                                    if (responseModel.getData().getChatData().getRows().get(i).getCommentData() != null && !responseModel.getData().getChatData().getRows().get(i).getCommentData().isEmpty()){
-
-                                        if (databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData() != null && !databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().isEmpty()){
-
-                                            int responseCommentListSize = responseModel.getData().getChatData().getRows().get(i).getCommentData().size();
-                                            int databaseCommentListSize = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().size();
-
-                                            if (responseCommentListSize > databaseCommentListSize || responseCommentListSize < databaseCommentListSize){
-
-                                                GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                                bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                                bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                                bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                                bodyDbEntity.setPage(currentPage);
-                                                chatBodyDbEntityList.add(bodyDbEntity);
-
-                                                chatBodyDbEntityList.add(bodyDbEntity);
-                                            }
-                                            else{
-
-                                                for (int k = 0; k < responseCommentListSize; k++){
-
-                                                    boolean isCommentFound = false;
-                                                    int responseCommentID = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getCommentID();
-                                                    String responseCommentMessage = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getComment();
-
-                                                    for (int l = 0; l < databaseCommentListSize; l++){
-
-                                                        int databaseCommentID = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getCommentID();
-                                                        String databaseCommentMessage = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getComment();
-
-                                                        if (responseCommentID == databaseCommentID){
-
-                                                            if (databaseCommentMessage.equalsIgnoreCase(responseCommentMessage)){
-                                                                isCommentFound = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-
-                                                    if (!isCommentFound){
-
-                                                        GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                                        bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                                        bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                                        bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                                        bodyDbEntity.setPage(currentPage);
-                                                        chatBodyDbEntityList.add(bodyDbEntity);
-
-                                                        chatBodyDbEntityList.add(bodyDbEntity);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        else{
-                                            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                            bodyDbEntity.setPage(currentPage);
-                                            chatBodyDbEntityList.add(bodyDbEntity);
-
-                                            chatBodyDbEntityList.add(bodyDbEntity);
-                                        }
-                                    }
-                                    else{
-                                        if (databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData() != null && !databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().isEmpty()){
-
-                                            int responseCommentListSize = responseModel.getData().getChatData().getRows().get(i).getCommentData().size();
-                                            int databaseCommentListSize = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().size();
-
-                                            if (responseCommentListSize > databaseCommentListSize || responseCommentListSize < databaseCommentListSize){
-
-                                                GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                                bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                                bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                                bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                                bodyDbEntity.setPage(currentPage);
-                                                chatBodyDbEntityList.add(bodyDbEntity);
-
-                                                chatBodyDbEntityList.add(bodyDbEntity);
-                                            }
-                                            else{
-
-                                                for (int k = 0; k < responseCommentListSize; k++){
-
-                                                    boolean isCommentFound = false;
-                                                    int responseCommentID = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getCommentID();
-                                                    String responseCommentMessage = responseModel.getData().getChatData().getRows().get(i).getCommentData().get(k).getComment();
-
-                                                    for (int l = 0; l < databaseCommentListSize; l++){
-
-                                                        int databaseCommentID = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getCommentID();
-                                                        String databaseCommentMessage = databaseEntity.getChatBodyDbEntitiesLists().get(j).getRows().getCommentData().get(l).getComment();
-
-                                                        if (responseCommentID == databaseCommentID){
-
-                                                            if (databaseCommentMessage.equalsIgnoreCase(responseCommentMessage)){
-                                                                isCommentFound = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-
-                                                    if (!isCommentFound){
-
-                                                        GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                                        bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                                        bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                                        bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                                        bodyDbEntity.setPage(currentPage);
-                                                        chatBodyDbEntityList.add(bodyDbEntity);
-
-                                                        chatBodyDbEntityList.add(bodyDbEntity);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    *//**
-                                     *  Todo ============================== Need to add check condition for Like & Post View Count Update =========================
-                                     *//*
-
-                                    
-
-                                    isMessageFound = true;
-                                    break;
-                                }
-                            }
-
-                            if (!isMessageFound){
-                                GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                bodyDbEntity.setPage(currentPage);
-                                chatBodyDbEntityList.add(bodyDbEntity);
-                            }
-                        }
-                    }
-                }
-                else{
-                    insertDataInDB();
-                }
-            }
-        });
-
-      checkLocalDatabaseThread.start();
-    }
-
-
-    private void insertChat(){
-
-        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
-
-        if (responseModel.getData().getChatData().getCount() != null) {
-            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
-        }
-
-        headerDb.setGroupChannelID(responseModel.getData().getChatData().getRows().get(0).getGroupChannelID().toString());
-        headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
-        headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
-
-        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
-
-        for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
-
-            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-            bodyDbEntity.setPage(currentPage);
-            chatBodyDbEntityList.add(bodyDbEntity);
-
-        }
-
-
-        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
-        channelChatDb.setChatHeaderDbEntity(headerDb);
-        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
-
-        databaseViewModel.insertChannelChatData(channelChatDb);
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void insertDataInDB(ChannelChatResponseModel responseModel) {
-        GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
-
-        if (responseModel.getData().getChatData().getCount() != null) {
-            headerDb.setCount(responseModel.getData().getChatData().getCount().toString());
-        }
-
-        headerDb.setGroupChannelID(responseModel.getData().getChatData().getRows().get(0).getGroupChannelID().toString());
-        headerDb.setBaseUrl(responseModel.getData().getBaseUrl());
-        headerDb.setSubscriptionCount(responseModel.getData().getSubscriptionCount().toString());
-
-        List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
-
-        for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
-
-            GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-            bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-            bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-            bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-            bodyDbEntity.setPage(currentPage);
-            chatBodyDbEntityList.add(bodyDbEntity);
-
-        }
-
-
-        GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
-        channelChatDb.setChatHeaderDbEntity(headerDb);
-        channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
-
-        databaseViewModel.insertChannelChatData(channelChatDb);
-    }
 
 
 
@@ -1362,7 +1138,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         String userID = this.userID.toString();
 
         if (message != null) {
-            if (!message.equalsIgnoreCase("")) {
 
                 try {
                     jsonRawObject = new JSONObject();
@@ -1394,12 +1169,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 } catch (Exception e) {
                     Log.d("sendMessage Exception ----", e.toString());
                 }
-            } else {
-                isMessageQuoted = false;
-                isAttachmentSend = false;
-                Toast.makeText(this, "Type message!", Toast.LENGTH_SHORT).show();
             }
-        } else {
+         else {
             isMessageQuoted = false;
             isAttachmentSend = false;
             Toast.makeText(this, "Type message!", Toast.LENGTH_SHORT).show();
@@ -1468,69 +1239,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
 
-            //ChannelRowListDataModel rowData = receivedMessage.getSaveMsg().getGetData();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
                     refreshChannelChatSocket();
 
-                    /*try {
-                        if (rowData.getUserID() != null) {
-                            if (!Objects.equals(userID, rowData.getUserID())){
-
-                                GroupChannelChatHeaderDbEntity headerDb = new GroupChannelChatHeaderDbEntity();
-
-                                if(databaseEntity != null && databaseEntity.getChatHeaderDbEntity() != null){
-
-                                    if (databaseEntity.getChatHeaderDbEntity().getCount() != null) {
-                                        headerDb.setCount(databaseEntity.getChatHeaderDbEntity().getCount());
-                                    }
-
-                                    headerDb.setGroupChannelID(channelID+"");
-
-                                    if (databaseEntity.getChatHeaderDbEntity().getBaseUrl() != null) {
-                                        headerDb.setBaseUrl(databaseEntity.getChatHeaderDbEntity().getBaseUrl());
-                                    }
-
-                                    if (databaseEntity.getChatHeaderDbEntity().getSubscriptionCount() != null) {
-                                        headerDb.setSubscriptionCount(databaseEntity.getChatHeaderDbEntity().getSubscriptionCount());
-                                    }
-                                }
-                                else{
-                                    headerDb.setCount("");
-                                    headerDb.setGroupChannelID(channelID+"");
-                                    headerDb.setBaseUrl("");
-                                    headerDb.setSubscriptionCount("");
-                                }
-
-                                List<GroupChannelChatBodyDbEntity> chatBodyDbEntityList = new ArrayList<>();
-
-                                for (int i = 0; i < responseModel.getData().getChatData().getRows().size(); i++) {
-
-                                    GroupChannelChatBodyDbEntity bodyDbEntity = new GroupChannelChatBodyDbEntity();
-                                    bodyDbEntity.setGroupChatID(Integer.parseInt(responseModel.getData().getChatData().getRows().get(i).getGroupChatID()));
-                                    bodyDbEntity.setRows(responseModel.getData().getChatData().getRows().get(i));
-                                    bodyDbEntity.setGroupChannelID(responseModel.getData().getChatData().getRows().get(i).getGroupChannelID().toString());
-                                    bodyDbEntity.setPage(currentPage);
-
-                                    chatBodyDbEntityList.add(bodyDbEntity);
-
-                                }
-
-
-                                GroupChannelChatDbEntity channelChatDb = new GroupChannelChatDbEntity();
-                                channelChatDb.setChatHeaderDbEntity(headerDb);
-                                channelChatDb.setChatBodyDbEntitiesLists(chatBodyDbEntityList);
-                                Log.d("DB_chat_data", channelChatDb.getChatBodyDbEntitiesLists().get(0).getGroupChatID()+"");
-                                Log.d("DB_chat_data", channelChatDb.chatHeaderDbEntity.toString());
-                                databaseViewModel.insertChannelChatData(channelChatDb);
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        Log.d("Typing header exception --", e.toString());
-                    }*/
                 }
             });
         });
@@ -1586,18 +1300,18 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                                                     if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
-                                                        channelViewAdapter.updateList(list);
+                                                        channelViewAdapter.updateList(list,postBaseUrl);
                                                         break;
                                                     } else {
                                                         list.get(i).getLike().get(0).setIsLike(1);
-                                                        channelViewAdapter.updateList(list);
+                                                        channelViewAdapter.updateList(list,postBaseUrl);
                                                         break;
                                                     }
                                                 } else {
                                                     list.get(i).getLike().add(0, like_response.getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    channelViewAdapter.updateList(list);
+                                                    channelViewAdapter.updateList(list,postBaseUrl);
                                                     break;
                                                 }
                                             }
@@ -1768,16 +1482,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                             isDataAvailable = false;
                         } else {
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            runOnUiThread(() -> {
 
-                                    insertDataInDB(responseModel);
-                                    loadSearchData = false;
-                                    currentPage++;
+                                list.addAll(responseModel.getData().getChatData().getRows());
+                                channelViewAdapter.updateList(list,postBaseUrl);
+                                loadSearchData = false;
+                                currentPage++;
 
-                                    searchMessageInList(groupChatId, hasPostDeleted, commentSearch, commentDeleteSearch);
-                                }
+                                searchMessageInList(groupChatId, hasPostDeleted, commentSearch, commentDeleteSearch);
                             });
 
                         }
@@ -1797,7 +1509,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.remove(searchedTillPosition);
-                                    channelViewAdapter.updateList(list);
+                                    channelViewAdapter.updateList(list,postBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1808,7 +1520,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    channelViewAdapter.updateList(list);
+                                    channelViewAdapter.updateList(list,postBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1936,6 +1648,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             RequestBody part =
                     RequestBody.create(
                             MediaType.parse("audio/*"),
+                            attachmentFileList.get(0)
+                    );
+
+            MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
+            files.add(attachment);
+        } else if (attachment_request_code == Constants.SHARE_GIF) {
+            RequestBody part =
+                    RequestBody.create(
+                            MediaType.parse("image/gif"),
                             attachmentFileList.get(0)
                     );
 
@@ -2855,21 +2576,69 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             binding.attachmentContainer.setVisibility(View.GONE);
             isAnyFileAttached = false;
             isAttachmentSend = true;
-            validateSendMessage("Audio Test", binding.type);
+
+
+            if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                validateSendMessage(messageText, binding.type);
+                messageText = null;
+            } else {
+                messageText = "";
+                validateSendMessage(messageText, binding.type);
+                messageText = null;
+            }
+
 
         }
         else if (requestType == PINNED_MESSAGE_COUNT) {
-            PinnedMessagesModel pinnedMessagesModel = new PinnedMessagesModel();
             Type type = new TypeToken<PinnedMessagesModel>() {
             }.getType();
 
-            pinnedMessagesModel = gson.fromJson(jsonObject, type);
-            if (pinnedMessagesModel.getData() != null && !pinnedMessagesModel.getData().isEmpty()) {
+            PinnedMessagesModel pinnedMessagesModel = gson.fromJson(jsonObject, type);
+
+            if (pinnedMessagesModel!= null && pinnedMessagesModel.getData() != null && !pinnedMessagesModel.getData().isEmpty()) {
                 pinMessageCount = pinnedMessagesModel.getData().size();
                 binding.pinnedMessageCount.setText(String.valueOf(pinMessageCount));
-                binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
+
+                String username = "";
+
+                if (pinnedMessagesModel.getData().get(0).getChat() != null && pinnedMessagesModel.getData().get(0).getChat().getMessage() != null){
+
+                    binding.lastPinMessage.setText(pinnedMessagesModel.getData().get(0).getChat().getMessage());
+
+                    if (pinnedMessagesModel.getData().get(0).getChat().getUser() != null)
+                    {
+                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname() != null){
+                            username = pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname();
+                        }
+                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname() != null){
+                            username += pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname();
+                        }
+                        binding.lastPinUser.setText(username);
+                    }
+                }
+                else{
+
+                    // Todo : Add condition in case of media attached
+
+
+                    if (pinnedMessagesModel.getData().get(0).getChat().getUser() != null)
+                    {
+                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname() != null){
+                            username = pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname();
+                        }
+                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname() != null){
+                            username += pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname();
+                        }
+                        binding.lastPinUser.setText(username);
+                    }
+                }
+
+
+
+                binding.pinMessageContainer.setVisibility(View.VISIBLE);
             } else {
-                binding.pinnedMessageCountContainer.setVisibility(View.GONE);
+
+                binding.pinMessageContainer.setVisibility(View.GONE);
                 pinMessageCount = 0;
             }
         } else if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE) {
@@ -2884,6 +2653,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         socketInstance.off("messageReceived");
         socketInstance.off("likeUpdate");
         socketInstance.off("postDeleteData");
+
+
 
     }
 
@@ -2948,7 +2719,17 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 if (result.getResultCode() == Constants.SHARE_GIF) {
 
-                    // Todo : Share gif from here
+                    attachment_request_code = Constants.SHARE_GIF;
+
+                    File pictureFile = (File)result.getData().getExtras().get("gif");
+
+                    attachmentFileList = new ArrayList<>();
+                    attachmentFileList.add(pictureFile);
+
+                    isAnyFileAttached = true;
+                    callAttachmentApi();
+
+
                 } else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
                     Utils.showSnackMessage(this,binding.getRoot(),"GIF not available");
                 }

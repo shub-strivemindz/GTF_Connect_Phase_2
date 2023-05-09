@@ -33,10 +33,15 @@ public class PreferenceConnector {
     public static final String REGISTRATION_ONE_TIME_EMAIL = "registration_email";
 
 
-    // Group OR Channel Data History values ----
-    public static final String GROUP_HISTORY = "group_history";
 
-    public static final String CHANNEL_HISTORY = "channel_history";
+
+    // Group OR Channel Data History values ----
+    public static final String CHAT_DATA = "chat_data";
+
+
+    public static final String DASHBOARD_DATA = "dashboard_data";
+
+
 
 
     // Group OR Channel Key values ----
@@ -51,9 +56,8 @@ public class PreferenceConnector {
 
 
 
-    public static final String GROUP_DATA = "group_chat_data";
 
-    public static final String CHANNEL_DATA = "channel_chat_data";
+
 
 
     public static void writeBoolean(Context context, String key, boolean value) {

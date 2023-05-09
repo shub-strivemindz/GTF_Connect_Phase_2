@@ -57,7 +57,7 @@ public class ChannelFragment extends Fragment {
 
     private int localDBDataSize = 0;
 
-
+    ChannelViewAdapter channelViewAdapter;
 
 
     @Nullable
@@ -72,8 +72,10 @@ public class ChannelFragment extends Fragment {
 
         messageReceived();
 
-        // Todo : Unset count to real data
-        //unreadMessageListener.getUnreadCount(0);
+        responseModel = new DashboardResponseModel();
+
+        gcList = new ArrayList<>();
+        loadDataToAdapter();
 
         return binding.getRoot();
     }
@@ -89,27 +91,18 @@ public class ChannelFragment extends Fragment {
     private void loadLocalData()
     {
 
-        databaseViewModel.getDashboardList("channel").observe(requireActivity(), channelResponseList -> {
-            if (channelResponseList != null && !channelResponseList.isEmpty()) {
+        String response2 = PreferenceConnector.readString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/channel","");
+        Type type2 = new TypeToken<DashboardResponseModel>(){}.getType();
+        responseModel = new Gson().fromJson(response2,type2);
 
 
-                    localDBDataSize = channelResponseList.size();
+        if (responseModel != null && responseModel.getData() != null && responseModel.getData().getGcData() != null && !responseModel.getData().getGcData().isEmpty()){
+            gcList = new ArrayList<>();
+            gcList.addAll(responseModel.getData().getGcData());
 
-                    gcList = new ArrayList<>();
-                    gcList.addAll(channelResponseList);
-
-                    /*responseModel = new ChannelResponseModel();
-                    responseModel.setData(channelResponseModel);*/
-
-                    loadDataToAdapter();
-
-                    Log.d("Channel_TABLE",channelResponseList.toString());
-
-                    updateChannelDashboardSocket();
-                } else {
-                    updateChannelDashboardSocket();
-                }
-        });
+            channelViewAdapter.updateList(gcList);
+        }
+        updateChannelDashboardSocket();
     }
 
 
@@ -163,56 +156,13 @@ public class ChannelFragment extends Fragment {
                             getActivity().runOnUiThread(() -> {
                                 if (responseModel.getData() != null && responseModel.getData().getGcData() != null) {
 
-                                    /*if (localDBDataSize != responseModel.getData().size()) {
-                                        for (int i = 0; i < responseModel.getData().size(); i++) {
-                                            databaseViewModel.insertChannels(responseModel.getData().get(i));
-                                        }
-                                    }*/
+                                    String response = new Gson().toJson(responseModel);
+                                    PreferenceConnector.writeString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/"+"channel",response);
 
-                                    if (gcList != null && !gcList.isEmpty()) {
-                                        if (responseModel.getData().getGcData().size() > gcList.size() || responseModel.getData().getGcData().size() < gcList.size()) {
-                                            for (int i = 0; i < responseModel.getData().getGcData().size(); i++) {
+                                    gcList = new ArrayList<>();
+                                    gcList.addAll(responseModel.getData().getGcData());
 
-                                                if (responseModel.getData().getGcImageBasePath() != null) {
-                                                    responseModel.getData().getGcData().get(i).setBaseUrl(responseModel.getData().getGcImageBasePath());
-                                                }
-                                                responseModel.getData().getGcData().get(i).setDashboardType("channel");
-                                            }
-
-                                            databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
-                                        } else {
-                                            for (int i = 0; i < gcList.size(); i++) {
-
-                                                boolean isIDFound = false;
-                                                for (int j = 0; j < responseModel.getData().getGcData().size(); j++) {
-                                                    if (Objects.equals(gcList.get(i).getGroupChannelID(), responseModel.getData().getGcData().get(j).getGroupChannelID())) {
-                                                        isIDFound = true;
-                                                    }
-                                                }
-                                                if (!isIDFound) {
-                                                    for (int k = 0; k < responseModel.getData().getGcData().size(); k++) {
-
-                                                        if (responseModel.getData().getGcImageBasePath() != null) {
-                                                            responseModel.getData().getGcData().get(k).setBaseUrl(responseModel.getData().getGcImageBasePath());
-                                                        }
-                                                        responseModel.getData().getGcData().get(k).setDashboardType("channel");
-                                                    }
-
-                                                    databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        for (int i = 0; i < responseModel.getData().getGcData().size(); i++) {
-
-                                            if (responseModel.getData().getGcImageBasePath() != null) {
-                                                responseModel.getData().getGcData().get(i).setBaseUrl(responseModel.getData().getGcImageBasePath());
-                                            }
-                                            responseModel.getData().getGcData().get(i).setDashboardType("channel");
-                                        }
-
-                                        databaseViewModel.insertDashboardData(responseModel.getData().getGcData());
-                                    }
+                                    channelViewAdapter.updateList(gcList);
                                 }
                             });
                         }
@@ -231,9 +181,9 @@ public class ChannelFragment extends Fragment {
 
     private void loadDataToAdapter()
     {
-        //Log.d("Group Data ----"," reposne -----"+responseModel);
 
-        ChannelViewAdapter channelViewAdapter= new ChannelViewAdapter(getActivity(),gcList);
+        channelViewAdapter = new ChannelViewAdapter(getActivity(),gcList);
+
         binding.channelViewList.setHasFixedSize(true);
         binding.channelViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.channelViewList.setAdapter(channelViewAdapter);

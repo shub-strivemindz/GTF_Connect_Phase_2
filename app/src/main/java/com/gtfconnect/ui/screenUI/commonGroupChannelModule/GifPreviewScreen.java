@@ -21,6 +21,7 @@ import com.bumptech.glide.request.target.Target;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.ActivityGifPreviewBinding;
 import com.gtfconnect.utilities.Constants;
+import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.Utils;
 
 import java.io.BufferedInputStream;
@@ -34,6 +35,8 @@ import java.nio.ByteBuffer;
 public class GifPreviewScreen extends AppCompatActivity {
 
     ActivityGifPreviewBinding binding;
+
+    private File gifFile ;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,14 +61,24 @@ public class GifPreviewScreen extends AppCompatActivity {
         binding.sendMessage.setOnClickListener(v -> {
 
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("message",binding.type.getText().toString().trim());
 
-            // Todo : Send gif
+            String message = binding.type.getText().toString().trim();
+            if (message != null){
+                resultIntent.putExtra("message",message);
+            }
+            else{
+                resultIntent.putExtra("message","");
+            }
+            if (gifFile != null){
+                resultIntent.putExtra("gif",gifFile);
 
-
-
-            setResult(Constants.NO_GIF_FOUND,resultIntent);
-            finish();
+                setResult(Constants.SHARE_GIF,resultIntent);
+                finish();
+            }
+            else{
+                setResult(Constants.NO_GIF_FOUND,resultIntent);
+                finish();
+            }
         });
     }
 
@@ -95,7 +108,7 @@ public class GifPreviewScreen extends AppCompatActivity {
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         try {
-                            //saveGifImage(context, getBytesFromFile(resource), createName(url));
+                            gifFile = LocalGalleryUtil.saveGifToGallery(GifPreviewScreen.this,(GifDrawable) resource);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

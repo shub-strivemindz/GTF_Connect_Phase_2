@@ -95,5 +95,11 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
         }
     }
 
+
+
+    public void updateList(List<DashboardListEntity> responseModel){
+        this.responseModel = responseModel;
+        notifyDataSetChanged();
+    }
 }
 

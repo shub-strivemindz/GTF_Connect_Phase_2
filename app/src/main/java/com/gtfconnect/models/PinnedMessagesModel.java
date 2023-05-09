@@ -41,6 +41,138 @@ public class PinnedMessagesModel {
         this.data = data;
     }
 
+    public class Datum {
+
+        @SerializedName("pinmessagesID")
+        @Expose
+        private Integer pinmessagesID;
+        @SerializedName("GroupChannelID")
+        @Expose
+        private Integer groupChannelID;
+        @SerializedName("GCMemberID")
+        @Expose
+        private Integer gCMemberID;
+        @SerializedName("GroupChatID")
+        @Expose
+        private Integer groupChatID;
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("status")
+        @Expose
+        private Integer status;
+        @SerializedName("CreatedAt")
+        @Expose
+        private String createdAt;
+        @SerializedName("UpdatedAt")
+        @Expose
+        private String updatedAt;
+        @SerializedName("chat")
+        @Expose
+        private Chat chat;
+        @SerializedName("group")
+        @Expose
+        private Group group;
+
+        private boolean audioDownloaded = false;
+
+        public Integer getgCMemberID() {
+            return gCMemberID;
+        }
+
+        public void setgCMemberID(Integer gCMemberID) {
+            this.gCMemberID = gCMemberID;
+        }
+
+        public boolean isAudioDownloaded() {
+            return audioDownloaded;
+        }
+
+        public void setAudioDownloaded(boolean audioDownloaded) {
+            this.audioDownloaded = audioDownloaded;
+        }
+
+        public Integer getPinmessagesID() {
+            return pinmessagesID;
+        }
+
+        public void setPinmessagesID(Integer pinmessagesID) {
+            this.pinmessagesID = pinmessagesID;
+        }
+
+        public Integer getGroupChannelID() {
+            return groupChannelID;
+        }
+
+        public void setGroupChannelID(Integer groupChannelID) {
+            this.groupChannelID = groupChannelID;
+        }
+
+        public Integer getGCMemberID() {
+            return gCMemberID;
+        }
+
+        public void setGCMemberID(Integer gCMemberID) {
+            this.gCMemberID = gCMemberID;
+        }
+
+        public Integer getGroupChatID() {
+            return groupChatID;
+        }
+
+        public void setGroupChatID(Integer groupChatID) {
+            this.groupChatID = groupChatID;
+        }
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public Integer getStatus() {
+            return status;
+        }
+
+        public void setStatus(Integer status) {
+            this.status = status;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Chat getChat() {
+            return chat;
+        }
+
+        public void setChat(Chat chat) {
+            this.chat = chat;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+
+        public void setGroup(Group group) {
+            this.group = group;
+        }
+
+    }
 
     public class Chat {
 
@@ -252,139 +384,6 @@ public class PinnedMessagesModel {
 
         public void setMedia(List<Medium> media) {
             this.media = media;
-        }
-
-    }
-
-    public class Datum {
-
-        @SerializedName("pinmessagesID")
-        @Expose
-        private Integer pinmessagesID;
-        @SerializedName("GroupChannelID")
-        @Expose
-        private Integer groupChannelID;
-        @SerializedName("GCMemberID")
-        @Expose
-        private Integer gCMemberID;
-        @SerializedName("GroupChatID")
-        @Expose
-        private Integer groupChatID;
-        @SerializedName("UserID")
-        @Expose
-        private Integer userID;
-        @SerializedName("status")
-        @Expose
-        private Integer status;
-        @SerializedName("CreatedAt")
-        @Expose
-        private String createdAt;
-        @SerializedName("UpdatedAt")
-        @Expose
-        private String updatedAt;
-        @SerializedName("chat")
-        @Expose
-        private Chat chat;
-        @SerializedName("group")
-        @Expose
-        private Group group;
-
-        private boolean audioDownloaded = false;
-
-        public Integer getgCMemberID() {
-            return gCMemberID;
-        }
-
-        public void setgCMemberID(Integer gCMemberID) {
-            this.gCMemberID = gCMemberID;
-        }
-
-        public boolean isAudioDownloaded() {
-            return audioDownloaded;
-        }
-
-        public void setAudioDownloaded(boolean audioDownloaded) {
-            this.audioDownloaded = audioDownloaded;
-        }
-
-        public Integer getPinmessagesID() {
-            return pinmessagesID;
-        }
-
-        public void setPinmessagesID(Integer pinmessagesID) {
-            this.pinmessagesID = pinmessagesID;
-        }
-
-        public Integer getGroupChannelID() {
-            return groupChannelID;
-        }
-
-        public void setGroupChannelID(Integer groupChannelID) {
-            this.groupChannelID = groupChannelID;
-        }
-
-        public Integer getGCMemberID() {
-            return gCMemberID;
-        }
-
-        public void setGCMemberID(Integer gCMemberID) {
-            this.gCMemberID = gCMemberID;
-        }
-
-        public Integer getGroupChatID() {
-            return groupChatID;
-        }
-
-        public void setGroupChatID(Integer groupChatID) {
-            this.groupChatID = groupChatID;
-        }
-
-        public Integer getUserID() {
-            return userID;
-        }
-
-        public void setUserID(Integer userID) {
-            this.userID = userID;
-        }
-
-        public Integer getStatus() {
-            return status;
-        }
-
-        public void setStatus(Integer status) {
-            this.status = status;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Chat getChat() {
-            return chat;
-        }
-
-        public void setChat(Chat chat) {
-            this.chat = chat;
-        }
-
-        public Group getGroup() {
-            return group;
-        }
-
-        public void setGroup(Group group) {
-            this.group = group;
         }
 
     }

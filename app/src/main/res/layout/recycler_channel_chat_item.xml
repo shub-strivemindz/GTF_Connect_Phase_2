@@ -9,14 +9,14 @@
     <RelativeLayout
         android:id="@+id/current_header_date"
         android:layout_width="match_parent"
-        android:background="@color/channelBackgroundColor"
+        android:background="@color/groupChannelBackgroundColor"
         android:layout_height="@dimen/_35sdp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Feb, 24 2023"
-            android:textColor="@color/textGreyDateColor"
+            android:textColor="@color/messageChatDateChipColor"
             android:fontFamily="@font/roboto_regular"
             android:textSize="@dimen/_9ssp"
             android:gravity="center"
@@ -81,7 +81,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="27 Feb 2023"
-                    android:textColor="@color/textDashboardMessageColor"
+                    android:textColor="@color/messageChatTimeColor"
                     android:textSize="@dimen/_8ssp"
                     android:fontFamily="@font/open_sans"/>
 
@@ -123,7 +123,7 @@
             android:layout_width="wrap_content"
             android:textStyle="bold"
             android:layout_height="match_parent"
-            android:textColor="@color/textDashboardMessageColor"
+            android:textColor="@color/messageChatTimeColor"
             android:text="70"/>
 
         <ImageView
@@ -131,6 +131,7 @@
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_width="@dimen/_13sdp"
             android:layout_height="match_parent"
+            app:tint="@color/messageChatOptionIconColor"
             android:src="@drawable/dots"/>
 
         </LinearLayout>
@@ -161,7 +162,7 @@
             android:gravity="center_vertical"
             android:fontFamily="@font/open_sans"
             android:textSize="@dimen/_10ssp"
-            android:textColor="@color/textDashboardMessageColor"
+            android:textColor="@color/messageChatTextColor"
             android:text="half join and then pay full Regarding Primium Membership in Lowest price,
 more then 1000 top most trading courses+ daily or weekly"
             android:maxLines="3"
@@ -566,6 +567,7 @@ more then 1000 top most trading courses+ daily or weekly"
                 android:layout_gravity="center_vertical"
                 android:layout_width="@dimen/_14sdp"
                 android:layout_height="@dimen/_14sdp"
+                app:tint="@color/messageChatTimeColor"
                 android:src="@drawable/like_thumb"
                 android:layout_marginStart="@dimen/_16sdp"/>
 
@@ -574,7 +576,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_height="match_parent"
                     android:text="Like"
                     android:gravity="center_vertical"
-                    android:textColor="@color/textDashboardMessageColor"
+                    android:textColor="@color/messageChatTimeColor"
                     android:fontFamily="@font/open_sans"
                     android:textSize="@dimen/_10ssp"
                     android:paddingStart="@dimen/_6sdp"/>
@@ -595,6 +597,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_gravity="center_vertical"
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
+                    app:tint="@color/messageChatTimeColor"
                     android:src="@drawable/comment" />
 
                 <TextView
@@ -602,7 +605,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_height="match_parent"
                     android:text="Comment"
                     android:gravity="center_vertical"
-                    android:textColor="@color/textDashboardMessageColor"
+                    android:textColor="@color/messageChatTimeColor"
                     android:fontFamily="@font/open_sans"
                     android:textSize="@dimen/_10ssp"
                     android:paddingStart="@dimen/_6sdp"/>
@@ -620,6 +623,7 @@ more then 1000 top most trading courses+ daily or weekly"
                 <ImageView
                     android:layout_gravity="center_vertical"
                     android:layout_width="@dimen/_14sdp"
+                    app:tint="@color/messageChatTimeColor"
                     android:layout_height="@dimen/_14sdp"
                     android:src="@drawable/reply" />
 
@@ -628,7 +632,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_height="match_parent"
                     android:text="Forward"
                     android:gravity="center_vertical"
-                    android:textColor="@color/textDashboardMessageColor"
+                    android:textColor="@color/messageChatTimeColor"
                     android:fontFamily="@font/open_sans"
                     android:textSize="@dimen/_10ssp"
                     android:paddingStart="@dimen/_6sdp"/>
