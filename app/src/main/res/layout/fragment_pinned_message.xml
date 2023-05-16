@@ -1,461 +1,276 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:background="@color/chat_background2"
-android:orientation="vertical">
-
-<LinearLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_45sdp"
-    android:orientation="horizontal">
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_gravity="center_vertical"
-        android:layout_width="@dimen/_26sdp"
-        android:layout_height="@dimen/_26sdp"
-        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-        android:background="#fff"
-        android:src="@drawable/bot2"/>
+    android:background="@color/pinMessageBackgroundColor"
+    android:id="@+id/channel_post_container"
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_marginStart="@dimen/_14sdp"
-        android:gravity="center_vertical"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:background="@color/channelChatBackgroundColor"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/firstName"
-                android:layout_gravity="start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lina"
-                android:textFontWeight="500"
-                android:textColor="@color/theme_green"
-                android:textSize="@dimen/_11ssp"
-                android:fontFamily="@font/montserrat"/>
-
-
-            <TextView
-                android:id="@+id/lastName"
-                android:layout_gravity="start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Harper"
-                android:layout_marginStart="@dimen/_3sdp"
-                android:textFontWeight="500"
-                android:textColor="@color/theme_green"
-                android:textSize="@dimen/_11ssp"
-                android:fontFamily="@font/montserrat"/>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/time"
-            android:layout_gravity="start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/_3sdp"
-            android:text="Today 10.30 am"
-            android:textSize="@dimen/_9ssp"
-            android:textColor="@color/text_view2"
-            android:fontFamily="@font/montserrat"
-            android:gravity="center" />
-
-    </LinearLayout>
-
-</LinearLayout>
-
-<com.google.android.material.divider.MaterialDivider
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/_1sdp"
-    android:alpha=".2"
-    android:id="@+id/header_divider"
-    android:layout_marginHorizontal="@dimen/_16sdp"/>
-
-<TextView
-    android:id="@+id/message"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:gravity="center_vertical"
-    android:fontFamily="@font/poppins"
-    android:textSize="@dimen/_10ssp"
-    android:textColor="#666666"
-    android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-    android:layout_marginEnd="@dimen/_16sdp"
-    android:layout_marginVertical="@dimen/_10sdp"
-    android:layout_marginStart="@dimen/_16sdp"/>
-
-    <RelativeLayout
-        android:id="@+id/post_image_container"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_160sdp"
-        android:layout_marginHorizontal="@dimen/_16sdp">
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/single_post_image_container"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="@dimen/_6sdp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/post_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/no_preview_available"
-                    android:scaleType="centerCrop"
-                    />
-
-                <ImageView
-                    android:id="@+id/play_video"
-                    android:layout_width="@dimen/_40sdp"
-                    android:layout_height="@dimen/_40sdp"
-                    android:src="@drawable/play_circle"
-                    android:layout_centerInParent="true"/>
-
-            </RelativeLayout>
-
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/dual_post_image_container"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="@dimen/_6sdp">
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:id="@+id/member_container"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/dual_post1"
-                        android:background="@drawable/no_preview_available"
-                        android:scaleType="centerCrop"
-                        />
-
-                    <ImageView
-                        android:id="@+id/play_video1"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:src="@drawable/play_circle"
-                        android:layout_centerInParent="true"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/dual_post2"
-                        android:background="@drawable/no_preview_available"
-                        android:scaleType="centerCrop"
-                        />
-
-                    <ImageView
-                        android:id="@+id/play_video2"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:src="@drawable/play_circle"
-                        android:layout_centerInParent="true"/>
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/multi_post_image_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="@dimen/_6sdp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_weight="1">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:id="@+id/multi_post1"
-                        android:background="@drawable/no_preview_available"
-                        android:scaleType="centerCrop"
-                        />
-
-                    <ImageView
-                        android:id="@+id/play_video3"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:src="@drawable/play_circle"
-                        android:layout_centerInParent="true"/>
-
-                </RelativeLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:orientation="vertical">
+                    android:id="@+id/member_profile_container"
+                    android:orientation="horizontal">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_gravity="center_vertical"
+                        app:cardCornerRadius="@dimen/_80sdp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:id="@+id/user_icon"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:id="@+id/multi_post2"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/no_preview_available"
-                            android:scaleType="centerCrop"
-                            />
-
-                        <ImageView
-                            android:id="@+id/play_video4"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:src="@drawable/play_circle"
-                            android:layout_centerInParent="true"/>
-                    </RelativeLayout>
-
-                    <com.google.android.material.divider.MaterialDivider
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_10sdp"
-                        app:dividerColor="@color/white"/>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/multi_post3"
-                            android:background="@drawable/no_preview_available"
-                            android:scaleType="centerCrop"
-                            />
-
-                        <ImageView
-                            android:id="@+id/play_video5"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:src="@drawable/play_circle"
-                            android:layout_centerInParent="true"/>
-
-                        <TextView
-                            android:visibility="gone"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="+1"
-                            android:textColor="@color/white"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/_24ssp"
-                            android:gravity="center"
-                            android:id="@+id/additional_image_count"
-                            android:background="#4D2FB463"/>
-
-                    </RelativeLayout>
+                        android:ellipsize="end"
+                        android:text="Lina Harper"
+                        android:gravity="center_vertical"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:textColor="@color/theme_green"
+                        android:textSize="@dimen/_11ssp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/open_sans"/>
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="27 Feb 2023"
+                    android:textColor="@color/channelMessage2Color"
+                    android:textSize="@dimen/_9ssp"
+                    android:fontFamily="@font/open_sans"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".2"
+            android:layout_below="@id/header"
+            android:id="@+id/header_divider"
+            android:layout_marginHorizontal="@dimen/_16sdp"/>
+
+        <RelativeLayout
+            android:layout_below="@id/header_divider"
+            android:id="@+id/message_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:fontFamily="@font/open_sans"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/pinMessageTextColor"
+                android:text="half join and then pay full Regarding Primium Membership in Lowest price,
+more then 1000 top most trading courses+ daily or weekly"
+                android:maxLines="3"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/expand_message"
+                android:text="See More"
+                android:visibility="gone"
+                android:layout_below="@id/message"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/theme_green"
+                android:fontFamily="@font/montserrat"
+                android:textSize="@dimen/_8ssp"
+                android:layout_gravity="end"
+                />
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/media_recycler"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_below="@id/message_container"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/audio_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_50sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/card_light_grey"
+            app:cardCornerRadius="@dimen/_4sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/download_file"
+                        app:tint="@color/audioPlayTint"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:id="@+id/download_audio"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/_14sdp"
+                        android:layout_height="@dimen/_14sdp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/play"
+                        android:visibility="gone"
+                        app:tint="@color/audioPlayTint"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:id="@+id/play_pause_recorded_audio"/>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:visibility="gone"
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/downloader_loader"/>
+
+                </RelativeLayout>
+
+                <com.example.audiowaveform.WaveformSeekBar
+                    android:layout_width="0dp"
+                    android:layout_marginHorizontal="@dimen/_4sdp"
+                    android:layout_weight="1"
+                    app:waveProgressColor="@color/theme_green"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/waveForm"/>
+
+                <LinearLayout
+                    android:id="@+id/audio_time_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="00"
+                        android:id="@+id/start_time_counter"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/_9ssp"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="/01:30"
+                        android:id="@+id/total_audio_time"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/_9ssp"
+                        android:textColor="@color/black"
+                        android:layout_marginEnd="@dimen/_10sdp"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/volume"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:id="@+id/volume_switch"/>
+
+
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-    </RelativeLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/audio_container"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginStart="@dimen/_50sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/card_light_grey"
-        app:cardCornerRadius="@dimen/_4sdp">
-
-        <LinearLayout
+        <RelativeLayout
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:background="@android:color/transparent">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-
-                <ImageView
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/download_file"
-                    app:tint="@color/audioPlayTint"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:id="@+id/download_audio"/>
-
-                <ImageView
-                    android:layout_width="@dimen/_14sdp"
-                    android:layout_height="@dimen/_14sdp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/play"
-                    android:visibility="gone"
-                    app:tint="@color/audioPlayTint"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:id="@+id/play_pause_recorded_audio"/>
-
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/download_circular_shape"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:indeterminate="false"
-                    android:visibility="gone"
-                    android:progressDrawable="@drawable/download_audio_progress_bar"
-                    android:textAlignment="center" />
-
-            </RelativeLayout>
-
-            <com.example.audiowaveform.WaveformSeekBar
-                android:layout_width="0dp"
-                android:layout_marginHorizontal="@dimen/_4sdp"
-                android:layout_weight="1"
-                app:waveProgressColor="@color/theme_green"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_height="match_parent"
-                android:id="@+id/waveForm"/>
-
-            <LinearLayout
-                android:id="@+id/audio_time_container"
+            <TextView
+                android:layout_alignParentStart="true"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="00"
-                    android:id="@+id/start_time_counter"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textSize="@dimen/_9ssp"
-                    android:textColor="@color/black"/>
+                android:text="Go to message"
+                android:id="@+id/go_to_message"
+                android:textStyle="bold"
+                android:textColor="@color/pinMessageTextHighlightColor"
+                android:fontFamily="@font/open_sans"
+                android:textSize="@dimen/_10ssp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="/01:30"
-                    android:id="@+id/total_audio_time"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textSize="@dimen/_9ssp"
-                    android:textColor="@color/black"
-                    android:layout_marginEnd="@dimen/_10sdp"/>
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="@dimen/_20sdp"
+            <TextView
+                android:id="@+id/remove_message"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical|end"
+                android:layout_gravity="center_vertical|end"
+                android:fontFamily="@font/open_sans"
+                android:textSize="@dimen/_10ssp"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
                 android:layout_height="match_parent"
-                android:src="@drawable/volume"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:id="@+id/volume_switch"/>
+                android:textColor="@color/pinMessageRedColor"
+                android:text="Remove"/>
 
+        </RelativeLayout>
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_width="match_parent"
+            android:alpha=".3"
+            app:dividerColor="@color/pinMessageDividerColor"
+            android:layout_height="@dimen/_4sdp"/>
 
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_1sdp"
-        android:alpha=".2"
-        android:layout_marginHorizontal="@dimen/_16sdp"/>
-
-<RelativeLayout
-    android:layout_gravity="center_vertical"
-    android:gravity="center_vertical"
-    android:layout_marginTop="@dimen/_8sdp"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/_35sdp"
-    android:layout_marginHorizontal="@dimen/_16sdp"
-    android:background="@android:color/transparent">
-
-    <TextView
-        android:layout_alignParentStart="true"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="Go to message"
-        android:id="@+id/go_to_message"
-        android:textStyle="bold"
-        android:textColor="#99666666"
-        android:fontFamily="@font/open_sans"
-        android:textSize="@dimen/_10ssp"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"/>
-
-    <TextView
-        android:id="@+id/remove_message"
-        android:layout_alignParentEnd="true"
-        android:gravity="center_vertical|end"
-        android:layout_gravity="center_vertical|end"
-        android:fontFamily="@font/open_sans"
-        android:textSize="@dimen/_10ssp"
-        android:layout_width="wrap_content"
-        android:textStyle="bold"
-        android:layout_height="match_parent"
-        android:textColor="@color/theme_red"
-        android:text="Remove"/>
+    </LinearLayout>
 
 </RelativeLayout>
-
-<com.google.android.material.divider.MaterialDivider
-    android:layout_marginTop="@dimen/_8sdp"
-    android:layout_width="match_parent"
-    android:alpha=".3"
-    android:layout_height="@dimen/_4sdp"/>
-
-</LinearLayout>

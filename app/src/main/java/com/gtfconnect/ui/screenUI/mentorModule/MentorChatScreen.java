@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.gtfconnect.databinding.ActivityMentorChatBinding;
 import com.gtfconnect.ui.adapters.mentorModuleAdapter.MentorChatAdapter;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelPinnedMessageScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class MentorChatScreen extends AppCompatActivity {
         binding.pin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MentorChatScreen.this, ChannelPinnedMessageScreen.class));
+                startActivity(new Intent(MentorChatScreen.this, PinnedMessageScreen.class));
             }
         });
 

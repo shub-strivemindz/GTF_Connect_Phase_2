@@ -2,6 +2,7 @@ package com.gtfconnect.ui.fragments;
 
 import static com.gtfconnect.services.SocketService.socketInstance;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -23,9 +25,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentGroupViewBinding;
 import com.gtfconnect.databinding.FragmentRecentViewBinding;
+import com.gtfconnect.interfaces.ApiResponseListener;
+import com.gtfconnect.interfaces.DashboardMessageCountListener;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferResponseModel;
@@ -36,8 +41,12 @@ import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardResponseModel;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.GroupViewAdapter;
+import com.gtfconnect.ui.adapters.dashboardAdapters.RecentViewAdapter;
+import com.gtfconnect.ui.screenUI.HomeScreen;
+import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
+import com.gtfconnect.viewModels.ConnectViewModel;
 
 import org.json.JSONObject;
 
@@ -48,7 +57,7 @@ import java.util.Objects;
 
 import io.socket.client.Ack;
 
-public class RecentFragment extends Fragment {
+public class RecentFragment extends Fragment implements ApiResponseListener {
 
     private FragmentRecentViewBinding binding;
 
@@ -74,14 +83,22 @@ public class RecentFragment extends Fragment {
 
     private ExclusiveOfferAdapter exclusiveOfferAdapter;
 
-    private GroupViewAdapter recentViewAdapter;
+    private RecentViewAdapter recentViewAdapter;
+
+    private ConnectViewModel connectViewModel;
+
+    private ApiResponseListener listener;
+
+    private String profileImageBaseUrl = "";
+
+    private DashboardMessageCountListener dashboardMessageCountListener;
 
     private boolean isExclusiveDataUpdated;
 
-    private IntentFilter filter1;
+    //private IntentFilter filter1;
 
 
-    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    /*public BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -95,7 +112,22 @@ public class RecentFragment extends Fragment {
 
             }
         }
-    };
+    };*/
+
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            dashboardMessageCountListener = (DashboardMessageCountListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
+        }
+    }
+
+
+
 
 
 
@@ -106,16 +138,17 @@ public class RecentFragment extends Fragment {
         binding = FragmentRecentViewBinding.inflate(inflater, container, false);
         rest = new Rest(getContext(),false,false);
 
-        filter1 = new IntentFilter();
+        /*filter1 = new IntentFilter();
         filter1.addAction("send_exclusive");
-        getContext().registerReceiver(mReceiver, filter1);
+        Objects.requireNonNull(requireActivity()).registerReceiver(mReceiver, filter1);*/
+
 
         init();
 
         binding.searchView.setVisibility(View.GONE);
 
 
-        binding.searchIcon.setOnClickListener(view -> {
+        /*binding.searchIcon.setOnClickListener(view -> {
             binding.searchView.setVisibility(View.VISIBLE);
             binding.container.setVisibility(View.GONE);
             isSearchClicked = true;
@@ -125,7 +158,7 @@ public class RecentFragment extends Fragment {
             binding.searchView.setVisibility(View.GONE);
             binding.container.setVisibility(View.VISIBLE);
             isSearchClicked = false;
-        });
+        });*/
 
 
         gcList = new ArrayList<>();
@@ -147,6 +180,32 @@ public class RecentFragment extends Fragment {
     private void init()
     {
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
+        boolean isExclusiveRefreshed = PreferenceConnector.readBoolean(getContext(),PreferenceConnector.IS_EXCLUSIVE_REFRESHED,false);
+
+
+        if (!isExclusiveRefreshed){
+
+            rest = new Rest(getContext(),false,false);
+            listener = this;
+
+            connectViewModel = new ViewModelProvider(this).get(ConnectViewModel.class);
+            connectViewModel.getResponseLiveData().observe(requireActivity(), new Observer<ApiResponse>() {
+                @Override
+                public void onChanged(ApiResponse apiResponse) {
+
+                    Log.d("Profile Listener Called ---", "onChanged: " + new Gson().toJson(apiResponse));
+                    if (apiResponse != null) {
+
+                        //listener.putResponse(apiResponse, auth_rest);
+                        listener.putResponse(apiResponse, rest);
+                    }
+
+                }
+            });
+
+            connectViewModel.get_exclusive_offers(PreferenceConnector.readString(getContext(),PreferenceConnector.API_GTF_TOKEN_,""),"",1);
+        }
     }
 
 
@@ -159,7 +218,15 @@ public class RecentFragment extends Fragment {
 
         ExclusiveOfferResponseModel exclusiveOfferResponseModel = new Gson().fromJson(response,type);
 
-        /*exclusiveOfferDataModels.addAll(exclusiveOfferResponseModel.getData().getList());*/
+        if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData() != null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
+            binding.exclusiveTitle.setText("Exclusive");
+            binding.recentContainer.setVisibility(View.VISIBLE);
+            exclusiveOfferDataModels.addAll(exclusiveOfferResponseModel.getData().getList());
+        }
+        else{
+            binding.recentContainer.setVisibility(View.GONE);
+            binding.exclusiveTitle.setText("Recent");
+        }
 
         exclusiveOfferAdapter = new ExclusiveOfferAdapter(getActivity(),exclusiveOfferDataModels);
         binding.exclusiveViewList.setHasFixedSize(true);
@@ -182,7 +249,13 @@ public class RecentFragment extends Fragment {
             gcList = new ArrayList<>();
             gcList.addAll(responseModel.getData().getGcData());
 
-            recentViewAdapter.updateList(gcList);
+            if (responseModel.getData().getGcImageBasePath() != null) {
+                profileImageBaseUrl = responseModel.getData().getGcImageBasePath();
+            }
+
+
+
+            recentViewAdapter.updateList(gcList,profileImageBaseUrl);
         }
         updateGroupDashboardSocket();
     }
@@ -240,12 +313,34 @@ public class RecentFragment extends Fragment {
                                 if (responseModel.getData() != null && responseModel.getData().getGcData() != null) {
 
                                     String response = new Gson().toJson(responseModel);
-                                    PreferenceConnector.writeString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/"+"recent",response);
+
+                                    if (isAdded()) {
+                                        PreferenceConnector.writeString(getContext(), PreferenceConnector.DASHBOARD_DATA + "/" + "recent", response);
+
+                                        int notificationCount = 0;
+                                        for (int i=0;i<responseModel.getData().getGcData().size();i++){
+                                            if (responseModel.getData().getGcData().get(i).getUnreadcount() != null){
+                                                int count = Integer.parseInt(responseModel.getData().getGcData().get(i).getUnreadcount());
+                                                notificationCount+=count;
+                                            }
+                                        }
+
+                                        PreferenceConnector.writeInteger(getContext(),"recent/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,notificationCount);
+                                        dashboardMessageCountListener.getMessageRecentCount(notificationCount);
+                                    }
 
                                     gcList = new ArrayList<>();
                                     gcList.addAll(responseModel.getData().getGcData());
 
-                                    recentViewAdapter.updateList(gcList);
+
+                                    // Todo
+
+
+                                    if (responseModel.getData().getGcImageBasePath() != null) {
+                                        profileImageBaseUrl = responseModel.getData().getGcImageBasePath();
+                                    }
+
+                                    recentViewAdapter.updateList(gcList,profileImageBaseUrl);
                                 }
                             });
                         }
@@ -264,7 +359,7 @@ public class RecentFragment extends Fragment {
 
     private void loadDataToAdapter()
     {
-        recentViewAdapter = new GroupViewAdapter(getActivity(),gcList);
+        recentViewAdapter = new RecentViewAdapter(getActivity(),gcList,profileImageBaseUrl);
         binding.recentViewList.setHasFixedSize(true);
         binding.recentViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.recentViewList.setAdapter(recentViewAdapter);
@@ -289,7 +384,7 @@ public class RecentFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        getContext().unregisterReceiver(mReceiver);
+            //Objects.requireNonNull(requireActivity()).unregisterReceiver(mReceiver);
         //socketInstance.off("messageReceived");
     }
 
@@ -297,5 +392,85 @@ public class RecentFragment extends Fragment {
   /*  public void exclusiveDataUpdate(boolean isExclusiveDataUpdated){
         this.isExclusiveDataUpdated = isExclusiveDataUpdated;
     }*/
+
+
+
+
+
+
+    @Override
+    public void onLoading() {
+        // rest.ShowDialogue();
+    }
+
+    @Override
+    public void onDataRender(JsonObject jsonObject) {
+        renderResponse(jsonObject);
+        //Toast.makeText(this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResponseRender(JsonObject jsonObject) {
+        renderResponse(jsonObject);
+
+    }
+
+    @Override
+    public void onAuthFailure(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onServerFailure(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onForbidden(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLaunchFailure(JsonObject jsonObject) {
+        Toast.makeText(getContext(), jsonObject.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onOtherFailure(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    private void renderResponse(JsonObject jsonObject){
+        Log.d("exclusive_response",jsonObject.toString());
+
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ExclusiveOfferResponseModel>(){}.getType();
+
+        ExclusiveOfferResponseModel exclusiveOfferResponseModel = gson.fromJson(jsonObject,type);
+
+        if (exclusiveOfferResponseModel != null && exclusiveOfferResponseModel.getData() != null && exclusiveOfferResponseModel.getData().getList() != null && !exclusiveOfferResponseModel.getData().getList().isEmpty()) {
+            String response = new Gson().toJson(exclusiveOfferResponseModel);
+            PreferenceConnector.writeString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/exclusive",response);
+
+            PreferenceConnector.writeBoolean(getContext(),PreferenceConnector.IS_EXCLUSIVE_REFRESHED,true);
+            exclusiveOfferAdapter.updateOfferList(exclusiveOfferResponseModel.getData().getList());
+
+            binding.recentContainer.setVisibility(View.VISIBLE);
+            binding.exclusiveTitle.setText("Exclusive");
+
+                   /* Bundle bundle = new Bundle();
+                    bundle.putBoolean("value", true);
+
+                    RecentFragment recentFragment = new RecentFragment();
+                    recentFragment.setArguments(bundle);*/
+        }
+        else{
+            binding.recentContainer.setVisibility(View.GONE);
+            binding.exclusiveTitle.setText("Recent");
+        }
+    }
 }
 

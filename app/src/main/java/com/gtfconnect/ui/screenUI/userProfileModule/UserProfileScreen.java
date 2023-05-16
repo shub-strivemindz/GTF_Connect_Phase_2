@@ -3,6 +3,7 @@ package com.gtfconnect.ui.screenUI.userProfileModule;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,12 +13,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
@@ -98,7 +101,22 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
         gtf_user_id = PreferenceConnector.readInteger(this, PreferenceConnector.GTF_USER_ID, 0);
 
+        checkTheme();
+
         init();
+
+
+
+
+        binding.uiMode.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+            else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
+
 
         binding.updateProfilePic.setOnClickListener(v -> {
             BottomSheetDialog media_type = new BottomSheetDialog(this);
@@ -170,6 +188,28 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
             sign_out_dialog.show();
         });
     }
+
+
+
+
+    private void checkTheme()
+    {
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                //process
+
+                binding.uiMode.setChecked(true);
+
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                // process
+
+                binding.uiMode.setChecked(false);
+
+                break;
+        }
+    }
+
 
 
 
@@ -497,7 +537,7 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
                         // Saving Image
 
-                        databaseViewModel.insertImageInGallery(LocalGalleryUtil.saveImage("Profile", GalleryTypeStatus.PROFILE.name(),resource,profileResponseModel.getData().getProfileInfo().getProfileImage(),profileResponseModel.getData().getProfileInfo().getProfileThumbnail(),0,0));
+                        databaseViewModel.insertImageInGallery(LocalGalleryUtil.saveImage("Profile", GalleryTypeStatus.PROFILE.name(),resource,profileResponseModel.getData().getProfileInfo().getProfileImage(),profileResponseModel.getData().getProfileInfo().getProfileThumbnail(),0));
                         return false;
                     }
                 }).

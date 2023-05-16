@@ -1,10 +1,9 @@
-package com.gtfconnect.models.channelResponseModel.channelChatDataModels;
+package com.gtfconnect.models.groupChannelModels;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-
-public class ChannelMediaResponseModel {
+public class MediaListModel {
 
     @SerializedName("GroupChatMediaID")
     @Expose

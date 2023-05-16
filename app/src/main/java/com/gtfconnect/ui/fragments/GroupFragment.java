@@ -2,6 +2,7 @@ package com.gtfconnect.ui.fragments;
 
 import static com.gtfconnect.services.SocketService.socketInstance;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentGroupViewBinding;
+import com.gtfconnect.interfaces.DashboardMessageCountListener;
 import com.gtfconnect.interfaces.UnreadCountHeaderListener;
 import com.gtfconnect.roomDB.AppDao;
 import com.gtfconnect.roomDB.AppDatabase;
@@ -64,6 +66,22 @@ public class GroupFragment extends Fragment {
 
     private GroupViewAdapter groupViewAdapter;
 
+    private String profileImageBaseUrl = "";
+
+    private DashboardMessageCountListener dashboardMessageCountListener;
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            dashboardMessageCountListener = (DashboardMessageCountListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
+        }
+    }
+
+
 
     @Nullable
     @Override
@@ -73,7 +91,7 @@ public class GroupFragment extends Fragment {
         init();
 
         // Todo : un comment when implemented all 4 tabs socket
-        userId = PreferenceConnector.readInteger(requireContext(),PreferenceConnector.GTF_USER_ID,0);
+        userId = PreferenceConnector.readInteger(getActivity(),PreferenceConnector.GTF_USER_ID,0);
         Log.d("USER ID ",String.valueOf(userId));
 
         //updateGroupDashboardSocket();
@@ -101,7 +119,7 @@ public class GroupFragment extends Fragment {
 
     private void loadLocalData()
     {
-        String response2 = PreferenceConnector.readString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/group","");
+        String response2 = PreferenceConnector.readString(requireContext(),PreferenceConnector.DASHBOARD_DATA+"/group","");
         Type type2 = new TypeToken<DashboardResponseModel>(){}.getType();
         responseModel = new Gson().fromJson(response2,type2);
 
@@ -110,7 +128,17 @@ public class GroupFragment extends Fragment {
             gcList = new ArrayList<>();
             gcList.addAll(responseModel.getData().getGcData());
 
-            groupViewAdapter.updateList(gcList);
+            if (responseModel.getData().getGcImageBasePath() != null) {
+                profileImageBaseUrl = responseModel.getData().getGcImageBasePath();
+            }
+
+            if (PreferenceConnector.readInteger(getContext(),"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0) > 0){
+                dashboardMessageCountListener.getMessageGroupCount(PreferenceConnector.readInteger(getContext(),"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+
+                Log.d("notification_count","Fragment = "+PreferenceConnector.readInteger(getContext(),"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+            }
+
+            groupViewAdapter.updateList(gcList,profileImageBaseUrl);
         }
         updateGroupDashboardSocket();
     }
@@ -167,12 +195,29 @@ public class GroupFragment extends Fragment {
                                 if (responseModel.getData() != null && responseModel.getData().getGcData() != null) {
 
                                     String response = new Gson().toJson(responseModel);
-                                    PreferenceConnector.writeString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/"+"group",response);
+
+                                    if (isAdded()) {
+                                        PreferenceConnector.writeString(requireActivity(), PreferenceConnector.DASHBOARD_DATA + "/" + "group", response);
+
+                                        int notificationCount = 0;
+                                        for (int i=0;i<responseModel.getData().getGcData().size();i++){
+                                            if (responseModel.getData().getGcData().get(i).getUnreadcount() != null){
+                                                int count = Integer.parseInt(responseModel.getData().getGcData().get(i).getUnreadcount());
+                                                notificationCount+=count;
+                                            }
+                                        }
+                                        PreferenceConnector.writeInteger(getContext(),"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,notificationCount);
+                                        dashboardMessageCountListener.getMessageGroupCount(notificationCount);
+                                    }
 
                                     gcList = new ArrayList<>();
                                     gcList.addAll(responseModel.getData().getGcData());
 
-                                    groupViewAdapter.updateList(gcList);
+                                    if (responseModel.getData().getGcImageBasePath() != null) {
+                                        profileImageBaseUrl = responseModel.getData().getGcImageBasePath();
+                                    }
+
+                                    groupViewAdapter.updateList(gcList,profileImageBaseUrl);
                                 }
                             });
                         }
@@ -191,7 +236,7 @@ public class GroupFragment extends Fragment {
 
     private void loadDataToAdapter()
     {
-        groupViewAdapter= new GroupViewAdapter(getActivity(),gcList);
+        groupViewAdapter= new GroupViewAdapter(getActivity(),gcList,profileImageBaseUrl);
         binding.groupViewList.setHasFixedSize(true);
         binding.groupViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.groupViewList.setAdapter(groupViewAdapter);

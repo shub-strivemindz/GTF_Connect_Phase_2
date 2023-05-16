@@ -157,6 +157,14 @@
 
     <color name="dashboardBackgroundColor">#0E1118</color>
 
+    <color name="dashboardTextColor">#fff</color>
+
+    <color name="dashboardIconColor">#8497A7</color>
+
+    <color name="dashboardText2Color">#8497A7</color>
+
+    <color name="dashboardTabIconColor">#fff</color>
+
 
     <!--======================================================================= Group | Channel UI ==========================================================================-->
 
@@ -166,16 +174,62 @@
 
     <color name="groupChannelActionBarTextColor">#fff</color>
 
-    <color name="groupChannelPinMessageBackgroundColor">#0E1118</color>
+    <color name="groupChannelPinMessageBackgroundColor">#222E3C</color>
+
+    <!--==================== Channel Chat Box =============================-->
+
+
+    <color name="channelChatBackgroundColor">#0E1118</color>
+
+    <color name="channelMessageColor">#DDE1EA</color>
+
+    <color name="channelMessage2Color">#74808E</color>
+
+    <color name="channelOptionColor">#74808E</color>
+
+    <!--==================== Channel Quote Box =============================-->
+
+    <color name="channelQuoteBackgroundColor">#222E3C</color>
+
+    <color name="channelQuoteIconColor">#8497A7</color>
+
+    <color name="channelQuoteTextColor">#DDE1EA</color>
+
+    <color name="channelQuoteUserColor">#DDDDDD</color>
+
+    <color name="channelQuoteTimeStampColor">#666666</color>
+
+
+    <!--==================== Channel Quote Dialog =============================-->
+
+    <color name="channelQuoteDialogBackgroundColor">#242B3A</color>
+
+    <color name="channelQuoteDialogUserTimeStampColor">#74808E</color>
+
+    <color name="channelQuoteDialogTextColor">#DDE1EA</color>
+
+
+    <!--==================== Channel Comment Box =============================-->
+
+
+    <color name="channelCommentBackgroundColor">#222E3C</color>
+
+    <color name="channelCommentTimeStampColor">#74808E</color>
+
+    <color name="channelCommentUserColor">#fff</color>
+
+    <color name="channelCommentTextColor">#DDE1EA</color>
+
+    <color name="channelCommentUpdate">#fff</color>
 
 
     <!--==================== Pin Message =============================-->
 
-    <color name="messagePinColor">#696969</color>
+    <color name="messagePinColor">#fff</color>
 
     <color name="messagePinTextHeaderColor">#2FB463</color>
 
-    <color name="messagePinTextColor">#5C7488</color>
+    <color name="messagePinTextColor">#fff</color>
 
 
     <!--==================== Chat Message =============================-->
@@ -188,5 +242,37 @@
     <color name="messageChatDateChipColor">#DDE1EA</color>
 
     <color name="messageChatOptionIconColor">#74808E</color>
+
+
+
+
+    <!--======================================================================= Pinned Message UI ==========================================================================-->
+
+    <color name="pinMessageActionBarColor">#232833</color>
+
+    <color name="pinMessageBackgroundColor">#0E1118</color>
+
+    <color name="pinMessageDividerColor">#252C3C</color>
+
+    <color name="pinMessageTextColor">#DDE1EA</color>
+
+    <color name="pinMessageTextHighlightColor">#74808E</color>
+
+    <color name="pinMessageTextHighlight2Color">#DDE1EA</color>
+
+    <color name="pinMessageRedColor">#CB3610</color>
+
+    <color name="pinMessageIconColor">#74808E</color>
+
+
+
+
+
+    <color name="bottomSheetAttachmentBackgroundColor">#252C3C</color>
+
+    <color name="bottomSheetAttachmentCardBackgroundColor">#232833</color>
+
+    <color name="bottomSheetAttachmentTextColor">#fff</color>
+
 
 </resources>

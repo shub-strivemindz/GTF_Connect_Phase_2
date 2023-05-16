@@ -241,7 +241,7 @@ public class Utils {
         String videoFilePath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS) + "/" + "connect_audio" + "_"
                 + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())
-                + ".mp3";
+                + ".MP4";
 
         return videoFilePath;
     }
@@ -333,6 +333,19 @@ public class Utils {
 
         return fileType;
     }
+
+
+
+    public static boolean isFileTypeGif(String mimeType){
+
+        String arr[] = mimeType.split("/", 2);
+
+        String fileType = arr[0];
+        String theRest = arr[1];
+
+        return theRest.equalsIgnoreCase("gif");
+    }
+
 
 
 

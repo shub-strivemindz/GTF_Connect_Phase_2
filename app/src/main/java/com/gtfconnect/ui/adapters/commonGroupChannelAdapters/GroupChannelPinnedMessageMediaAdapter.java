@@ -1,4 +1,4 @@
-package com.gtfconnect.ui.adapters.channelModuleAdapter;
+package com.gtfconnect.ui.adapters.commonGroupChannelAdapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,11 +27,13 @@ import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;
 import com.gtfconnect.models.groupChannelModels.MediaListModel;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
+import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.Utils;
 
+import java.io.PushbackReader;
 import java.util.List;
 
-public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     List<MediaListModel> mediaList;
@@ -42,17 +44,17 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     ExoPlayer simpleExoPlayer;
 
+    boolean isSelf ;
+
     ImageView btFullScreen, rewind, forward;
 
-    private String user_name;
-
-    public  ChannelMediaAdapter(Context context,RecyclerView recyclerRootView,List<MediaListModel> mediaList,String postBaseUrl,String userID, String user_name){
+    public  GroupChannelPinnedMessageMediaAdapter(Context context, List<MediaListModel> mediaList, String postBaseUrl, String userID, boolean isSelf){
         this.context= context;
         this.mediaList = mediaList;
         this.postBaseUrl = postBaseUrl;
         this.userID = userID;
 
-        this.user_name = user_name;
+        this.isSelf = isSelf;
     }
 
     @NonNull
@@ -70,10 +72,10 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return new YourViewHolder(view);*/
 
         if (viewType == 1){
-            return new ChannelMediaAdapter.SingleMediaItemViewHolder(RecyclerSingleChatMediaItemBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false));
+            return new GroupChannelPinnedMessageMediaAdapter.SingleMediaItemViewHolder(RecyclerSingleChatMediaItemBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false));
         }
         else{
-            return new ChannelMediaAdapter.MultiMediaItemViewHolder(RecyclerChatMediaItemBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false));
+            return new GroupChannelPinnedMessageMediaAdapter.MultiMediaItemViewHolder(RecyclerChatMediaItemBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false));
         }
     }
 
@@ -86,7 +88,7 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         if (mediaList.size() == 1){
-            ChannelMediaAdapter.SingleMediaItemViewHolder holder1 = (ChannelMediaAdapter.SingleMediaItemViewHolder) holder;
+            GroupChannelPinnedMessageMediaAdapter.SingleMediaItemViewHolder holder1 = (SingleMediaItemViewHolder) holder;
             holder1.binding.progressBar.setVisibility(View.GONE);
             holder1.binding.playerView.setVisibility(View.GONE);
 
@@ -121,9 +123,10 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.putExtra("mediaList",mediaData);
                 intent.putExtra("base_url",postBaseUrl);
 
+                String title = "Pinned Messages";
 
-                intent.putExtra("title",user_name);
-
+                intent.putExtra("title",title);
+                intent.putExtra("isSelf",isSelf);
                 context.startActivity(intent);
 
             });
@@ -140,6 +143,13 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.docContainer.setVisibility(View.GONE);
 
                 loadImageFile(post_path,holder1.binding.postImage);
+
+                if (Utils.isFileTypeGif(mediaList.get(position).getMimeType())){
+                    loadImageFile(post_path,holder1.binding.postImage);
+                }
+                else{
+                    GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
+                }
             }
             else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
@@ -179,63 +189,63 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 //holder1.binding.headerContainer.setVisibility(View.GONE);
                 //holder1.binding.playerContainer.setVisibility(View.VISIBLE);
 
-            simpleExoPlayer = new ExoPlayer.Builder(context).build();
-            holder1.binding.playerView.setPlayer(simpleExoPlayer);
-            holder1.binding.playerView.setKeepScreenOn(true);
+                simpleExoPlayer = new ExoPlayer.Builder(context).build();
+                holder1.binding.playerView.setPlayer(simpleExoPlayer);
+                holder1.binding.playerView.setKeepScreenOn(true);
 
-            MediaItem mediaItem = MediaItem.fromUri(post_path);
-            simpleExoPlayer.addMediaItem(mediaItem);
-            simpleExoPlayer.setPlayWhenReady(true);
+                MediaItem mediaItem = MediaItem.fromUri(post_path);
+                simpleExoPlayer.addMediaItem(mediaItem);
+                simpleExoPlayer.setPlayWhenReady(true);
 
-            //Log.v("playerSetup",isFirstTime+" "+watchTime);
+                //Log.v("playerSetup",isFirstTime+" "+watchTime);
 
           /*  if (!pageType.equalsIgnoreCase("my_web_series") && isFirstTime) {
                 simpleExoPlayer.seekTo(simpleExoPlayer.getCurrentMediaItemIndex(), watchTime * 1000L);
                 isFirstTime = false;
             }*/
 
-            simpleExoPlayer.prepare();
-            simpleExoPlayer.play();
+                simpleExoPlayer.prepare();
+                simpleExoPlayer.play();
 
-            simpleExoPlayer.addListener(new Player.Listener() {
+                simpleExoPlayer.addListener(new Player.Listener() {
 
 
-                @Override
-                public void onPlaybackStateChanged(@Player.State int state) {
-                    if (state == Player.STATE_BUFFERING) {
-                        holder1.binding.progressBar.setVisibility(View.VISIBLE);
-                    } else if (state == Player.STATE_READY) {
-                        holder1.binding.progressBar.setVisibility(View.GONE);
+                    @Override
+                    public void onPlaybackStateChanged(@Player.State int state) {
+                        if (state == Player.STATE_BUFFERING) {
+                            holder1.binding.progressBar.setVisibility(View.VISIBLE);
+                        } else if (state == Player.STATE_READY) {
+                            holder1.binding.progressBar.setVisibility(View.GONE);
+                        }
                     }
-                }
 
-                @Override
-                public void onRepeatModeChanged(int repeatMode) {
+                    @Override
+                    public void onRepeatModeChanged(int repeatMode) {
 
-                }
+                    }
 
-                @Override
-                public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+                    @Override
+                    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
 
-                }
+                    }
 
-                @Override
-                public void onPlayerError(PlaybackException error) {
-                    Player.Listener.super.onPlayerError(error);
-                    Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
-                    MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-                    simpleExoPlayer.addMediaItem(mediaItem);
-                    simpleExoPlayer.setPlayWhenReady(true);
-                    simpleExoPlayer.prepare();
-                    simpleExoPlayer.play();
-                }
-            });
+                    @Override
+                    public void onPlayerError(PlaybackException error) {
+                        Player.Listener.super.onPlayerError(error);
+                        Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
+                        MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+                        simpleExoPlayer.addMediaItem(mediaItem);
+                        simpleExoPlayer.setPlayWhenReady(true);
+                        simpleExoPlayer.prepare();
+                        simpleExoPlayer.play();
+                    }
+                });
 
             });
         }
         else{
 
-            ChannelMediaAdapter.MultiMediaItemViewHolder holder1 = (ChannelMediaAdapter.MultiMediaItemViewHolder) holder;
+            GroupChannelPinnedMessageMediaAdapter.MultiMediaItemViewHolder holder1 = (MultiMediaItemViewHolder) holder;
 
             holder1.binding.postMediaContainer.setOnClickListener(view -> {
 
@@ -244,6 +254,20 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 previewDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 previewDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                ImageView preview =(ImageView) previewDialog.findViewById(R.id.preview);
+                loadImageFile(post_path,preview);
+
+
+
+                ImageView close = (ImageView) previewDialog.findViewById(R.id.close);
+                ImageView download_media = (ImageView) previewDialog.findViewById(R.id.download_media);
+
+                close.setOnClickListener(view1 -> previewDialog.dismiss());
+                download_media.setOnClickListener(view1 -> {
+
+                });
+
                 previewDialog.show();*/
 
 
@@ -255,8 +279,9 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.putExtra("mediaList",mediaData);
                 intent.putExtra("base_url",postBaseUrl);
 
-
-                intent.putExtra("title",user_name);
+                String title = "Pinned Messages";
+                intent.putExtra("isSelf",isSelf);
+                intent.putExtra("title",title);
 
                 context.startActivity(intent);
             });
@@ -271,7 +296,12 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.GONE);
                 holder1.binding.docContainer.setVisibility(View.GONE);
 
-                loadImageFile(post_path,holder1.binding.postImage);
+                if (Utils.isFileTypeGif(mediaList.get(position).getMimeType())){
+                    loadImageFile(post_path,holder1.binding.postImage);
+                }
+                else{
+                    GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
+                }
             }
             else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 

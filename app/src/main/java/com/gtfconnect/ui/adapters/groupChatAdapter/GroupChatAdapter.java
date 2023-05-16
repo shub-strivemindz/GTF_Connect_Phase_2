@@ -16,28 +16,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
-import com.gtfconnect.databinding.RecyclerChannelChatItemBinding;
 import com.gtfconnect.databinding.RecyclerGroupChatBinding;
 import com.gtfconnect.interfaces.GroupChatListener;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
-import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
-import com.gtfconnect.ui.adapters.GroupChannel_MediaAdapter;
-import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
-import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelMediaAdapter;
-import com.gtfconnect.ui.screenUI.groupModule.GroupCommentScreen;
-import com.gtfconnect.ui.screenUI.groupModule.MultiPreviewImage;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
+import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
@@ -91,9 +80,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         selectedPostCount = 0;
     }
 
-    public void updateList(ArrayList<ChannelRowListDataModel> list)
+    public void updateList(ArrayList<ChannelRowListDataModel> list,String postBaseUrl)
     {
         this.list = list;
+        this.post_base_url = postBaseUrl;
         notifyDataSetChanged();
     }
 
@@ -463,7 +453,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             Gson gson1  = new Gson();
             String mediaData =  gson1.toJson(list.get(position).getMedia());
 
-            Intent intent = new Intent(context, MultiPreviewImage.class);
+            Intent intent = new Intent(context, MultiPreviewScreen.class);
             intent.putExtra("mediaList",mediaData);
             intent.putExtra("base_url",post_base_url);
 
@@ -935,7 +925,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             Gson gson1  = new Gson();
             String mediaData =  gson1.toJson(list.get(position).getMedia());
 
-            Intent intent = new Intent(context, MultiPreviewImage.class);
+            Intent intent = new Intent(context, MultiPreviewScreen.class);
             intent.putExtra("mediaList",mediaData);
             intent.putExtra("base_url",post_base_url);
 
@@ -1159,7 +1149,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     Log.d("Post Main Url", post_path);
 
                     holder.binding.playVideo01.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.postImage);
+                    GlideUtils.loadImage(context,holder.binding.postImage,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
@@ -1189,7 +1179,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo11.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.dualPost11);
+                    GlideUtils.loadImage(context,holder.binding.dualPost11,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo11.setVisibility(View.GONE);
@@ -1210,7 +1200,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo21.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.dualPost21);
+                    GlideUtils.loadImage(context,holder.binding.dualPost21,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo21.setVisibility(View.GONE);
@@ -1241,7 +1231,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo31.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost11);
+                    GlideUtils.loadImage(context,holder.binding.multiPost11,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo31.setVisibility(View.GONE);
@@ -1262,7 +1252,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo41.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost21);
+
+                    GlideUtils.loadImage(context,holder.binding.multiPost21,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo41.setVisibility(View.GONE);
@@ -1283,7 +1274,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo51.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost31);
+                    GlideUtils.loadImage(context,holder.binding.multiPost31,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo51.setVisibility(View.GONE);
@@ -1328,7 +1319,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo31.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost11);
+
+                    GlideUtils.loadImage(context,holder.binding.multiPost11,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo31.setVisibility(View.GONE);
@@ -1349,7 +1341,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo41.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost21);
+                    GlideUtils.loadImage(context,holder.binding.multiPost21,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo41.setVisibility(View.GONE);
@@ -1370,7 +1362,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo51.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost31);
+                    GlideUtils.loadImage(context,holder.binding.multiPost31,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo51.setVisibility(View.GONE);
@@ -1414,7 +1406,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     Log.d("Post Main Url", post_path);
 
                     holder.binding.playVideo.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.postImage);
+                    GlideUtils.loadImage(context,holder.binding.postImage,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
@@ -1444,7 +1436,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo1.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.dualPost1);
+
+                    GlideUtils.loadImage(context,holder.binding.dualPost2,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo1.setVisibility(View.GONE);
@@ -1465,7 +1458,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo2.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.dualPost2);
+
+                    GlideUtils.loadImage(context,holder.binding.dualPost2,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo2.setVisibility(View.GONE);
@@ -1496,7 +1490,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo3.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost1);
+                    GlideUtils.loadImage(context,holder.binding.multiPost1,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo3.setVisibility(View.GONE);
@@ -1517,7 +1511,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo4.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost2);
+                    GlideUtils.loadImage(context,holder.binding.multiPost2,post_path);
+
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo4.setVisibility(View.GONE);
@@ -1538,7 +1533,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo5.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost3);
+                    GlideUtils.loadImage(context,holder.binding.multiPost3,post_path);
+
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo5.setVisibility(View.GONE);
@@ -1583,7 +1579,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo3.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost1);
+                    GlideUtils.loadImage(context,holder.binding.multiPost1,post_path);
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo3.setVisibility(View.GONE);
@@ -1604,7 +1600,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo4.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost2);
+                    GlideUtils.loadImage(context,holder.binding.multiPost2,post_path);
+
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo4.setVisibility(View.GONE);
@@ -1625,7 +1622,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 {
                     Log.d("Post Main Url", post_path);
                     holder.binding.playVideo5.setVisibility(View.GONE);
-                    loadImageFile(post_path,holder.binding.multiPost3);
+
+                    GlideUtils.loadImage(context,holder.binding.multiPost3,post_path);
+
                 }
                 else if (fileType.equalsIgnoreCase("document")) {
                     holder.binding.playVideo5.setVisibility(View.GONE);
@@ -1643,7 +1642,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-    private void loadImageFile(String imageFilePath, ImageView imageView)
+   /* private void loadImageFile(String imageFilePath, ImageView imageView)
     {
         //Setting up loader on post
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
@@ -1662,7 +1661,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 diskCacheStrategy(DiskCacheStrategy.ALL).
                 transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
     }
-
+*/
     private void loadVideoFile(String videoFilePath, ImageView imageView)
     {
         /*context.startActivity(new Intent(context, VideoActivity.class)

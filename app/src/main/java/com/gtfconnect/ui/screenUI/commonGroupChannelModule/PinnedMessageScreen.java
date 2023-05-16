@@ -1,4 +1,4 @@
-package com.gtfconnect.ui.screenUI.groupModule;
+package com.gtfconnect.ui.screenUI.commonGroupChannelModule;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.example.audiowaveform.WaveformSeekBar;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +30,7 @@ import com.gtfconnect.databinding.ActivityPinnedMessageBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.PinnedMessageListener;
 import com.gtfconnect.models.PinnedMessagesModel;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupPinnedMessageAdapter;
+import com.gtfconnect.ui.adapters.commonGroupChannelAdapters.GroupChannelPinnedMessageAdapter;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -37,7 +40,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiResponseListener, PinnedMessageListener {
+public class PinnedMessageScreen extends AppCompatActivity implements ApiResponseListener, PinnedMessageListener {
 
     ActivityPinnedMessageBinding binding;
 
@@ -56,9 +59,11 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
 
     private PinnedMessagesModel pinnedMessagesModel;
 
-    private GroupPinnedMessageAdapter pinnedMessageViewAdapter;
+    private GroupChannelPinnedMessageAdapter pinnedMessageViewAdapter;
 
     private String postBaseUrl = "";
+
+    private String profileBaseUrl = "";
 
     Integer userId;
 
@@ -71,6 +76,7 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
         userId = PreferenceConnector.readInteger(this,PreferenceConnector.CONNECT_USER_ID,0);
 
         postBaseUrl = getIntent().getStringExtra("post_base_url");
+        profileBaseUrl = getIntent().getStringExtra("profile_base_url");
 
         init();
 
@@ -149,12 +155,12 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
 
     private void loadDataToAdapter()
     {
-        binding.messageCount.setText(String.valueOf(pinnedMessagesModel.getData().size()));
+        binding.messageCount.setText(String.valueOf(pinnedMessagesModel.getData().getAllPinData().size()));
 
 // Loading pinned message data ------
-        pinnedMessageViewAdapter= new GroupPinnedMessageAdapter(this,pinnedMessagesModel.getData(),this,postBaseUrl);
+        pinnedMessageViewAdapter= new GroupChannelPinnedMessageAdapter(this,pinnedMessagesModel.getData().getAllPinData(),this,postBaseUrl,profileBaseUrl);
         binding.pinnedMessageRecycler.setHasFixedSize(true);
-        binding.pinnedMessageRecycler.setLayoutManager(new LinearLayoutManager(GroupPinnedMessageScreen.this));
+        binding.pinnedMessageRecycler.setLayoutManager(new LinearLayoutManager(PinnedMessageScreen.this));
         binding.pinnedMessageRecycler.setAdapter(pinnedMessageViewAdapter);
     }
 
@@ -171,12 +177,27 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
 
     @Override
     public void gotoMessage(String groupChatId) {
-        Intent intent = new Intent(GroupPinnedMessageScreen.this, ChannelChatsScreen.class);
+        Intent intent = new Intent(PinnedMessageScreen.this, ChannelChatsScreen.class);
         intent.putExtra("searchPinMessage",true);
         intent.putExtra("groupChatId",groupChatId);
 
         startActivity(new Intent(intent));
         finish();
+    }
+
+    @Override
+    public void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, LottieAnimationView progressBar, ImageView downloadPlayPic) {
+
+    }
+
+    @Override
+    public void playAudio(String audioPostUrl, WaveformSeekBar seekBar, long duration) {
+
+    }
+
+    @Override
+    public void viewMemberProfile(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
+
     }
 
 
@@ -258,7 +279,7 @@ public class GroupPinnedMessageScreen extends AppCompatActivity implements ApiRe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(GroupPinnedMessageScreen.this, ChannelChatsScreen.class));
+        startActivity(new Intent(PinnedMessageScreen.this, ChannelChatsScreen.class));
         finish();
     }
 }

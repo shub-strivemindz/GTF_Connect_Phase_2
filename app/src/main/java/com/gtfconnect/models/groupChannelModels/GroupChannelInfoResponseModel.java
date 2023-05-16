@@ -42,7 +42,14 @@ public class GroupChannelInfoResponseModel {
         this.status = status;
     }
 
-
 }
+
+
+
+
+
+
+
+
 
 

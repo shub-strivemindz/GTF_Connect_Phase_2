@@ -65,9 +65,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/open_sans"
                         android:text="Hello!"
+                        android:textFontWeight="700"
                         android:textStyle="bold"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_13sdp"
+                        android:textSize="@dimen/_13ssp"
                         />
 
                 </LinearLayout>
@@ -142,6 +143,9 @@
         app:tabIndicatorFullWidth="false"
         app:tabTextAppearance="@style/tabTextAppearance"
         app:tabIndicator="@drawable/tab_indicator"
+        app:tabTextColor="@color/dashboardTabIconColor"
+        app:tabRippleColor="@color/theme_green"
+        app:tabIconTint="@color/dashboardTabIconColor"
         android:paddingBottom="@dimen/_8sdp"
         android:layout_height="@dimen/_60sdp" >
 
@@ -167,6 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/mentor"
+            android:backgroundTint="@color/white"
             android:text="Mentor"/>
 
     </com.google.android.material.tabs.TabLayout>
@@ -186,6 +191,7 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:id="@+id/recent_notification_container"
                 android:visibility="invisible"
                 android:layout_height="match_parent">
 
@@ -202,6 +208,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="13242"
+                        android:id="@+id/recent_notification_count"
                         android:maxLines="1"
                         android:gravity="center"
                         android:textColor="@color/white"
@@ -213,6 +220,7 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:id="@+id/channel_notification_container"
                 android:visibility="invisible"
                 android:layout_height="match_parent">
 
@@ -229,6 +237,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="13242"
+                        android:id="@+id/channel_notification_count"
                         android:maxLines="1"
                         android:gravity="center"
                         android:textColor="@color/white"
@@ -240,6 +249,7 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:id="@+id/group_notification_container"
                 android:layout_height="match_parent">
 
                 <LinearLayout
@@ -255,6 +265,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="13242"
+                        android:id="@+id/group_notification_count"
                         android:maxLines="1"
                         android:gravity="center"
                         android:textColor="@color/white"
@@ -267,6 +278,7 @@
                 android:visibility="invisible"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:id="@+id/mentor_notification_container"
                 android:layout_height="match_parent">
 
                 <LinearLayout
@@ -282,6 +294,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="13242"
+                        android:id="@+id/mentor_notification_count"
                         android:maxLines="1"
                         android:gravity="center"
                         android:textColor="@color/white"

@@ -41,7 +41,6 @@ public class InfoDbEntity {
     @Expose
     private List<GcSubscriptionPlan> gcSubscriptionPlan;
 
-
     public int getGroupChannelID() {
         return groupChannelID;
     }
@@ -129,7 +128,7 @@ public class InfoDbEntity {
         private Integer count;
         @SerializedName("list")
         @Expose
-        private List<String> list;
+        private List<ListData> list;
 
         public Integer getCount() {
             return count;
@@ -139,11 +138,11 @@ public class InfoDbEntity {
             this.count = count;
         }
 
-        public List<String> getList() {
+        public List<ListData> getList() {
             return list;
         }
 
-        public void setList(List<String> list) {
+        public void setList(List<ListData> list) {
             this.list = list;
         }
 
@@ -426,6 +425,83 @@ public class InfoDbEntity {
     }
     public class GcMemberSubscriptionPlan {
 
+        @SerializedName("MemberSubscriptionID")
+        @Expose
+        private Integer memberSubscriptionID;
+        @SerializedName("GCSubscriptionPlanID")
+        @Expose
+        private Integer gCSubscriptionPlanID;
+        @SerializedName("SubscriptionStartDate")
+        @Expose
+        private String subscriptionStartDate;
+        @SerializedName("SubscriptionEndDate")
+        @Expose
+        private String subscriptionEndDate;
+        @SerializedName("SubscriptionPlanID")
+        @Expose
+        private Integer subscriptionPlanID;
+        @SerializedName("Name")
+        @Expose
+        private String name;
+        @SerializedName("isExpired")
+        @Expose
+        private Integer isExpired;
+
+        public Integer getMemberSubscriptionID() {
+            return memberSubscriptionID;
+        }
+
+        public void setMemberSubscriptionID(Integer memberSubscriptionID) {
+            this.memberSubscriptionID = memberSubscriptionID;
+        }
+
+        public Integer getGCSubscriptionPlanID() {
+            return gCSubscriptionPlanID;
+        }
+
+        public void setGCSubscriptionPlanID(Integer gCSubscriptionPlanID) {
+            this.gCSubscriptionPlanID = gCSubscriptionPlanID;
+        }
+
+        public String getSubscriptionStartDate() {
+            return subscriptionStartDate;
+        }
+
+        public void setSubscriptionStartDate(String subscriptionStartDate) {
+            this.subscriptionStartDate = subscriptionStartDate;
+        }
+
+        public String getSubscriptionEndDate() {
+            return subscriptionEndDate;
+        }
+
+        public void setSubscriptionEndDate(String subscriptionEndDate) {
+            this.subscriptionEndDate = subscriptionEndDate;
+        }
+
+        public Integer getSubscriptionPlanID() {
+            return subscriptionPlanID;
+        }
+
+        public void setSubscriptionPlanID(Integer subscriptionPlanID) {
+            this.subscriptionPlanID = subscriptionPlanID;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getIsExpired() {
+            return isExpired;
+        }
+
+        public void setIsExpired(Integer isExpired) {
+            this.isExpired = isExpired;
+        }
 
     }
     public class GcPermission {
@@ -658,7 +734,7 @@ public class InfoDbEntity {
         private Integer subscriptionPlanID;
         @SerializedName("Badge")
         @Expose
-        private String badge;
+        private Object badge;
         @SerializedName("subscription_plan")
         @Expose
         private SubscriptionPlan subscriptionPlan;
@@ -687,11 +763,11 @@ public class InfoDbEntity {
             this.subscriptionPlanID = subscriptionPlanID;
         }
 
-        public String getBadge() {
+        public Object getBadge() {
             return badge;
         }
 
-        public void setBadge(String badge) {
+        public void setBadge(Object badge) {
             this.badge = badge;
         }
 
@@ -701,6 +777,65 @@ public class InfoDbEntity {
 
         public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
             this.subscriptionPlan = subscriptionPlan;
+        }
+
+    }
+    public class ListData {
+
+        @SerializedName("GCMemberID")
+        @Expose
+        private Integer gCMemberID;
+        @SerializedName("GroupChannelID")
+        @Expose
+        private Integer groupChannelID;
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("IsAdmin")
+        @Expose
+        private Integer isAdmin;
+        @SerializedName("user")
+        @Expose
+        private User user;
+
+        public Integer getGCMemberID() {
+            return gCMemberID;
+        }
+
+        public void setGCMemberID(Integer gCMemberID) {
+            this.gCMemberID = gCMemberID;
+        }
+
+        public Integer getGroupChannelID() {
+            return groupChannelID;
+        }
+
+        public void setGroupChannelID(Integer groupChannelID) {
+            this.groupChannelID = groupChannelID;
+        }
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public Integer getIsAdmin() {
+            return isAdmin;
+        }
+
+        public void setIsAdmin(Integer isAdmin) {
+            this.isAdmin = isAdmin;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
         }
 
     }
@@ -720,7 +855,7 @@ public class InfoDbEntity {
         private Integer value;
         @SerializedName("SubValue")
         @Expose
-        private String subValue;
+        private Object subValue;
         @SerializedName("Name")
         @Expose
         private String name;
@@ -741,7 +876,7 @@ public class InfoDbEntity {
         private String categoryText;
         @SerializedName("MuteTillDate")
         @Expose
-        private String muteTillDate;
+        private Object muteTillDate;
 
         public Integer getGCMemberSettingID() {
             return gCMemberSettingID;
@@ -775,11 +910,11 @@ public class InfoDbEntity {
             this.value = value;
         }
 
-        public String getSubValue() {
+        public Object getSubValue() {
             return subValue;
         }
 
-        public void setSubValue(String subValue) {
+        public void setSubValue(Object subValue) {
             this.subValue = subValue;
         }
 
@@ -831,11 +966,11 @@ public class InfoDbEntity {
             this.categoryText = categoryText;
         }
 
-        public String getMuteTillDate() {
+        public Object getMuteTillDate() {
             return muteTillDate;
         }
 
-        public void setMuteTillDate(String muteTillDate) {
+        public void setMuteTillDate(Object muteTillDate) {
             this.muteTillDate = muteTillDate;
         }
 
@@ -860,6 +995,12 @@ public class InfoDbEntity {
         @SerializedName("TotalPrice")
         @Expose
         private String totalPrice;
+        @SerializedName("ApplePayPrice")
+        @Expose
+        private String applePayPrice;
+        @SerializedName("Benefit")
+        @Expose
+        private Object benefit;
         @SerializedName("SubscriptionType")
         @Expose
         private String subscriptionType;
@@ -919,6 +1060,22 @@ public class InfoDbEntity {
 
         public void setTotalPrice(String totalPrice) {
             this.totalPrice = totalPrice;
+        }
+
+        public String getApplePayPrice() {
+            return applePayPrice;
+        }
+
+        public void setApplePayPrice(String applePayPrice) {
+            this.applePayPrice = applePayPrice;
+        }
+
+        public Object getBenefit() {
+            return benefit;
+        }
+
+        public void setBenefit(Object benefit) {
+            this.benefit = benefit;
         }
 
         public String getSubscriptionType() {
@@ -988,6 +1145,54 @@ public class InfoDbEntity {
 
         public void setValueInDays(Integer valueInDays) {
             this.valueInDays = valueInDays;
+        }
+
+    }
+    public class User {
+
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("Firstname")
+        @Expose
+        private String firstname;
+        @SerializedName("Lastname")
+        @Expose
+        private String lastname;
+        @SerializedName("ProfileImage")
+        @Expose
+        private String profileImage;
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
+
+        public void setLastname(String lastname) {
+            this.lastname = lastname;
+        }
+
+        public String getProfileImage() {
+            return profileImage;
+        }
+
+        public void setProfileImage(String profileImage) {
+            this.profileImage = profileImage;
         }
 
     }

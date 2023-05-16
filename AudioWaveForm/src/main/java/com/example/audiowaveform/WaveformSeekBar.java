@@ -563,7 +563,7 @@ public class WaveformSeekBar extends View {
             mIsTracking = false;
 
             if (mCallback != null) {
-                mCallback.onStopTrackingTouch(this);
+                // mCallback.onStopTrackingTouch(this);
             }
 
             ViewParent parent = getParent();
@@ -580,7 +580,7 @@ public class WaveformSeekBar extends View {
             mIsTracking = true;
 
             if (mCallback != null) {
-                mCallback.onStartTrackingTouch(this);
+                // mCallback.onStartTrackingTouch(this);
             }
 
             ViewParent parent = getParent();
@@ -593,7 +593,7 @@ public class WaveformSeekBar extends View {
 
         // Finding the touched wave position
         float percent = getPercentageForX(x);
-        setProgressInPercentageInternal(percent, true);
+        // setProgressInPercentageInternal(percent, true);
 
       //  if (DEBUG) Log.d(LOG_TAG, "Tracked to percent: " + percent);
 

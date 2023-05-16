@@ -70,6 +70,8 @@ public class AudioPlayUtil {
                 isAudioPlaying = false;
             }
         });
+
+
         animator.start();
     }
 

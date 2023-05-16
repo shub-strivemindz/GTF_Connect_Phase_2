@@ -2,6 +2,7 @@ package com.gtfconnect.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.gtfconnect.models.groupChannelModels.MediaListModel;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class PinnedMessagesModel {
     private String message;
     @SerializedName("data")
     @Expose
-    private List<Datum> data;
+    private Data data;
 
     public Integer getStatus() {
         return status;
@@ -33,15 +34,16 @@ public class PinnedMessagesModel {
         this.message = message;
     }
 
-    public List<Datum> getData() {
+    public Data getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(Data data) {
         this.data = data;
     }
 
-    public class Datum {
+
+    public class AllPinDatum {
 
         @SerializedName("pinmessagesID")
         @Expose
@@ -75,22 +77,6 @@ public class PinnedMessagesModel {
         private Group group;
 
         private boolean audioDownloaded = false;
-
-        public Integer getgCMemberID() {
-            return gCMemberID;
-        }
-
-        public void setgCMemberID(Integer gCMemberID) {
-            this.gCMemberID = gCMemberID;
-        }
-
-        public boolean isAudioDownloaded() {
-            return audioDownloaded;
-        }
-
-        public void setAudioDownloaded(boolean audioDownloaded) {
-            this.audioDownloaded = audioDownloaded;
-        }
 
         public Integer getPinmessagesID() {
             return pinmessagesID;
@@ -172,8 +158,14 @@ public class PinnedMessagesModel {
             this.group = group;
         }
 
-    }
+        public boolean isAudioDownloaded() {
+            return audioDownloaded;
+        }
 
+        public void setAudioDownloaded(boolean audioDownloaded) {
+            this.audioDownloaded = audioDownloaded;
+        }
+    }
     public class Chat {
 
         @SerializedName("GroupChatID")
@@ -232,7 +224,18 @@ public class PinnedMessagesModel {
         private User user;
         @SerializedName("media")
         @Expose
-        private List<Medium> media;
+        private List<MediaListModel> media;
+
+
+        private boolean isAudioDownloaded = false;
+
+        public boolean isAudioDownloaded() {
+            return isAudioDownloaded;
+        }
+
+        public void setAudioDownloaded(boolean audioDownloaded) {
+            isAudioDownloaded = audioDownloaded;
+        }
 
         public String getGroupChatID() {
             return groupChatID;
@@ -378,16 +381,41 @@ public class PinnedMessagesModel {
             this.user = user;
         }
 
-        public List<Medium> getMedia() {
+        public List<MediaListModel> getMedia() {
             return media;
         }
 
-        public void setMedia(List<Medium> media) {
+        public void setMedia(List<MediaListModel> media) {
             this.media = media;
         }
 
     }
+    public class Data {
 
+        @SerializedName("baseUrl")
+        @Expose
+        private String baseUrl;
+        @SerializedName("allPinData")
+        @Expose
+        private List<AllPinDatum> allPinData;
+
+        public String getBaseUrl() {
+            return baseUrl;
+        }
+
+        public void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+
+        public List<AllPinDatum> getAllPinData() {
+            return allPinData;
+        }
+
+        public void setAllPinData(List<AllPinDatum> allPinData) {
+            this.allPinData = allPinData;
+        }
+
+    }
     public class Group {
 
         @SerializedName("GroupChannelID")
@@ -546,7 +574,6 @@ public class PinnedMessagesModel {
         }
 
     }
-
     public class Medium {
 
         @SerializedName("GroupChatMediaID")
@@ -570,6 +597,9 @@ public class PinnedMessagesModel {
         @SerializedName("StorageType")
         @Expose
         private String storageType;
+        @SerializedName("StorageService")
+        @Expose
+        private String storageService;
         @SerializedName("MediaTypeId")
         @Expose
         private Object mediaTypeId;
@@ -651,6 +681,14 @@ public class PinnedMessagesModel {
             this.storageType = storageType;
         }
 
+        public String getStorageService() {
+            return storageService;
+        }
+
+        public void setStorageService(String storageService) {
+            this.storageService = storageService;
+        }
+
         public Object getMediaTypeId() {
             return mediaTypeId;
         }
@@ -716,7 +754,6 @@ public class PinnedMessagesModel {
         }
 
     }
-
     public class User {
 
         @SerializedName("UserID")
@@ -842,5 +879,4 @@ public class PinnedMessagesModel {
         }
 
     }
-
 }

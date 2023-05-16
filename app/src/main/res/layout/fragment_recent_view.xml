@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/dashboardBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -126,7 +126,8 @@
             android:textColor="@color/theme_green"
             android:text="Exclusive"
             android:fontFamily="@font/open_sans"
-            android:textSize="@dimen/_10ssp"
+            android:id="@+id/exclusive_title"
+            android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             android:gravity="center_vertical" />
 
@@ -160,7 +161,7 @@
             android:textColor="@color/theme_green"
             android:text="Recent"
             android:fontFamily="@font/open_sans"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             android:gravity="center_vertical" />
 

@@ -1,11 +1,9 @@
 package com.gtfconnect.ui.adapters.userProfileAdapter;
 
-import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.util.Log;
@@ -26,13 +24,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
-import com.gtfconnect.databinding.FragmentSavedMessageBinding;
-import com.gtfconnect.databinding.RecyclerGroupChatBinding;
 import com.gtfconnect.databinding.RecyclerSavedMessageListBinding;
 import com.gtfconnect.interfaces.SavedMessageListener;
 import com.gtfconnect.models.savedMessageModels.SavedMessageResponseModel;
-import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
-import com.gtfconnect.ui.screenUI.groupModule.MultiPreviewImage;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
@@ -234,7 +229,7 @@ public class SavedMessageAdapter extends RecyclerView.Adapter<SavedMessageAdapte
                         Gson gson1  = new Gson();
                         String mediaData =  gson1.toJson(list.get(position).getSavedMessageMedia());
 
-                        Intent intent = new Intent(context, MultiPreviewImage.class);
+                        Intent intent = new Intent(context, MultiPreviewScreen.class);
                         intent.putExtra("mediaList",mediaData);
                         intent.putExtra("base_url",post_base_url);
 

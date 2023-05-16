@@ -32,8 +32,7 @@ public class LocalGalleryUtil {
                                                       Drawable image,
                                                       String imageUrl,
                                                       String imageThumbnailUrl,
-                                                      int gc_id,
-                                                      int gc_member_id){
+                                                      int gc_id){
 
         galleryEntity = new GroupChannelGalleryEntity();
         galleryEntity.setImageName(imageName);
@@ -42,7 +41,6 @@ public class LocalGalleryUtil {
         galleryEntity.setImageUrl(imageUrl);
         galleryEntity.setImageThumbnailUrl(imageThumbnailUrl);
         galleryEntity.setGC_ID(gc_id);
-        galleryEntity.setGC_MEMBER_ID(gc_member_id);
 
         return galleryEntity;
     }

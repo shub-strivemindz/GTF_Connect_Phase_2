@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/chat_item"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="@color/dashboardBackgroundColor"
     android:layout_height="@dimen/_60sdp"
     android:orientation="vertical">
 
@@ -27,13 +27,13 @@
             app:cardCornerRadius="@dimen/_100sdp">
 
             <ImageView
-                android:id="@+id/user_avatar"
+                android:id="@+id/group_channel_icon"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentBottom="true"
                 android:scaleType="fitXY"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bot5" />
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -53,10 +53,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Live Market Session"
-            android:textColor="@color/black"
+            android:textColor="@color/dashboardTextColor"
             android:textSize="@dimen/_11ssp"
             android:ellipsize="end"
             android:textStyle="bold"
+            android:maxLines="1"
             android:fontFamily="@font/open_sans"
             android:gravity="bottom"/>
 
@@ -80,7 +81,7 @@
             android:id="@+id/sub_title"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_width="match_parent"
-            android:textColor="@color/textDashboardMessageColor"
+            android:textColor="@color/dashboardText2Color"
             android:layout_height="match_parent"
             android:ellipsize="end"
             android:singleLine="true"
@@ -109,7 +110,7 @@
             android:layout_weight="1"
             android:text="Today 10:25AM"
             android:layout_gravity="end"
-            android:textColor="@color/text_view1"
+            android:textColor="@color/dashboardText2Color"
             android:textSize="@dimen/_9ssp"
             android:fontFamily="@font/open_sans"
             android:gravity="bottom|end"/>

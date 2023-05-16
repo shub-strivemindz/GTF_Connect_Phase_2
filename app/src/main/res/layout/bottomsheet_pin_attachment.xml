@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/theme_light_shadow"
+    app:cardBackgroundColor="@color/bottomSheetAttachmentBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -39,6 +39,7 @@
             android:id="@+id/media"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
+            app:cardBackgroundColor="@color/bottomSheetAttachmentCardBackgroundColor"
             android:layout_marginHorizontal="@dimen/_22sdp">
 
             <LinearLayout
@@ -68,6 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Share photos and videos"
+                    android:textColor="@color/bottomSheetAttachmentTextColor"
                     android:fontFamily="@font/montserrat"
                     android:textSize="@dimen/_10ssp" />
 
@@ -76,8 +78,9 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                app:cardBackgroundColor="@color/theme_blue"
+                app:cardBackgroundColor="@color/card_light_blue"
                 android:layout_marginHorizontal="@dimen/_12sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
                 android:layout_gravity="center_vertical">
 
                 <ImageView
@@ -97,6 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
             android:id="@+id/document"
+            app:cardBackgroundColor="@color/bottomSheetAttachmentCardBackgroundColor"
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginHorizontal="@dimen/_22sdp">
 
@@ -127,6 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Share pdfs and word files"
+                        android:textColor="@color/bottomSheetAttachmentTextColor"
                         android:fontFamily="@font/montserrat"
                         android:textSize="@dimen/_10ssp" />
 
@@ -137,6 +142,7 @@
                     android:layout_height="@dimen/_32sdp"
                     app:cardBackgroundColor="@color/contact_orange"
                     android:layout_marginHorizontal="@dimen/_12sdp"
+                    app:cardCornerRadius="@dimen/_10sdp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -156,6 +162,7 @@
             android:layout_height="@dimen/_50sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:id="@+id/camera"
+            app:cardBackgroundColor="@color/bottomSheetAttachmentCardBackgroundColor"
             android:layout_marginBottom="@dimen/_30sdp"
             android:layout_marginHorizontal="@dimen/_22sdp">
 
@@ -187,6 +194,7 @@
                         android:layout_height="wrap_content"
                         android:text="Upload photo from mobile camera"
                         android:fontFamily="@font/montserrat"
+                        android:textColor="@color/bottomSheetAttachmentTextColor"
                         android:textSize="@dimen/_10ssp" />
 
                 </LinearLayout>
@@ -194,8 +202,9 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="@dimen/_32sdp"
                     android:layout_height="@dimen/_32sdp"
-                    app:cardBackgroundColor="@color/theme_blue"
+                    app:cardBackgroundColor="@color/card_dark_blue"
                     android:layout_marginHorizontal="@dimen/_12sdp"
+                    app:cardCornerRadius="@dimen/_10sdp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView

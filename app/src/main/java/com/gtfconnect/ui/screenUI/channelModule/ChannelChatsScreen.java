@@ -97,11 +97,13 @@ import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntit
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.CustomEditText;
 import com.gtfconnect.utilities.FetchPath;
+import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
@@ -222,6 +224,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private String messageText = "";
 
     private String postBaseUrl = "";
+
+    private String profileBaseUrl = "" ;
 
     private boolean searchPinnedMessageEnabled = false;
 
@@ -511,8 +515,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             if (pinMessageCount == 0) {
                 Utils.showSnackMessage(ChannelChatsScreen.this, binding.pin, "No Pinned Message Found!");
             } else {
-                Intent i = new Intent(ChannelChatsScreen.this, ChannelPinnedMessageScreen.class);
+                Intent i = new Intent(ChannelChatsScreen.this, PinnedMessageScreen.class);
                 i.putExtra("post_base_url", postBaseUrl);
+                i.putExtra("profile_base_url",profileBaseUrl);
                 startActivity(i);
                 finish();
             }
@@ -838,7 +843,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         list = new ArrayList<>();
 
-        String chatData = PreferenceConnector.readString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,"");
+        String chatData = PreferenceConnector.readString(this,PreferenceConnector.CHANNEL_CHAT_DATA+"/"+channelID,"");
         Type type = new TypeToken<ChannelChatResponseModel>(){}.getType();
         responseModel = new Gson().fromJson(chatData,type);
 
@@ -848,15 +853,21 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 postBaseUrl = responseModel.getData().getMediaUrl();
             }
 
+
+            if (responseModel.getData().getBaseUrl() != null){
+                profileBaseUrl = responseModel.getData().getBaseUrl();
+            }
+
             if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
                 list.addAll(responseModel.getData().getChatData().getRows());
 
-                channelViewAdapter.updateList(list,postBaseUrl);
+                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
             }
             if (responseModel.getData().getSubscriptionCount() != null) {
                 subscribers = responseModel.getData().getSubscriptionCount();
                 binding.userSubscribers.setText(String.valueOf(subscribers));
             }
+
         }
         refreshChannelChatSocket();
     }
@@ -904,7 +915,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
         // Load Comments List Data -----
-        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
+        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,this);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(channelViewAdapter);
@@ -949,6 +960,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     if(responseModel != null && responseModel.getData() != null) {
 
+
+                        if (responseModel.getData().getBaseUrl() != null){
+                            profileBaseUrl = responseModel.getData().getBaseUrl();
+                        }
+
                         if (responseModel.getData().getMediaUrl() != null){
                             postBaseUrl = responseModel.getData().getMediaUrl();
                         }
@@ -957,17 +973,20 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                             if (currentPage == 1){
                                 String response = new Gson().toJson(responseModel);
-                                PreferenceConnector.writeString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,response);
+                                PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_CHAT_DATA+"/"+channelID,response);
 
                                 list = new ArrayList<>();
                                 list.addAll(responseModel.getData().getChatData().getRows());
 
+                                readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
+
+                                scrollToPosition(0);
                             }
                             else{
                                 list.addAll(responseModel.getData().getChatData().getRows());
                             }
 
-                            channelViewAdapter.updateList(list,postBaseUrl);
+                            channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                         }
                         if (responseModel.getData().getSubscriptionCount() != null) {
                             subscribers = responseModel.getData().getSubscriptionCount();
@@ -1030,21 +1049,26 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 postBaseUrl = responseModel.getData().getMediaUrl();
                             }
 
+                            if (responseModel.getData().getBaseUrl() != null){
+                                profileBaseUrl = responseModel.getData().getBaseUrl();
+                            }
+
                             if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
 
                                 if (currentPage == 1){
                                     String response = new Gson().toJson(responseModel);
-                                    PreferenceConnector.writeString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,response);
+                                    PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_CHAT_DATA+"/"+channelID,response);
 
                                     list = new ArrayList<>();
                                     list.addAll(responseModel.getData().getChatData().getRows());
 
+                                    readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
                                 }
                                 else{
                                     list.addAll(responseModel.getData().getChatData().getRows());
                                 }
 
-                                channelViewAdapter.updateList(list,postBaseUrl);
+                                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                             }
                             if (responseModel.getData().getSubscriptionCount() != null) {
                                 subscribers = responseModel.getData().getSubscriptionCount();
@@ -1300,18 +1324,18 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                                                     if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
-                                                        channelViewAdapter.updateList(list,postBaseUrl);
+                                                        channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
                                                     } else {
                                                         list.get(i).getLike().get(0).setIsLike(1);
-                                                        channelViewAdapter.updateList(list,postBaseUrl);
+                                                        channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
                                                     }
                                                 } else {
                                                     list.get(i).getLike().add(0, like_response.getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    channelViewAdapter.updateList(list,postBaseUrl);
+                                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                     break;
                                                 }
                                             }
@@ -1407,6 +1431,47 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
+
+
+
+
+    private void readMessages(int lastChatMessage)
+    {
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                jsonRawObject = new JSONObject();
+
+                Log.d("read_message","Entered Method");
+
+                try{
+                    jsonRawObject.put("GroupChannelID",channelID);
+                    jsonRawObject.put("UserID",userID);
+                    jsonRawObject.put("GroupChatID",lastChatMessage);
+
+                    Log.d("read_message","params = "+jsonRawObject.toString());
+                }
+                catch (Exception e){
+                    Log.d("json_exception","read message exception"+e);
+                }
+
+
+
+                socketInstance.emit("readMessage", jsonRawObject, (Ack) args -> {
+                        //boolean isMsgSent = (boolean) args[0];
+                    Log.d("read_message","Entered socket method");
+                    });
+            }
+        });
+    }
+
+
+
+
+
     /*private void deleteCommentListener()
     {
         Gson gson = new Gson();
@@ -1485,7 +1550,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                             runOnUiThread(() -> {
 
                                 list.addAll(responseModel.getData().getChatData().getRows());
-                                channelViewAdapter.updateList(list,postBaseUrl);
+                                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                 loadSearchData = false;
                                 currentPage++;
 
@@ -1509,7 +1574,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.remove(searchedTillPosition);
-                                    channelViewAdapter.updateList(list,postBaseUrl);
+                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1520,7 +1585,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    channelViewAdapter.updateList(list,postBaseUrl);
+                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1647,7 +1712,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         } else if (attachment_request_code == Constants.RECORD_AUDIO_REQUEST_CODE) {
             RequestBody part =
                     RequestBody.create(
-                            MediaType.parse("audio/*"),
+                            MediaType.parse("audio/webm;codecs=opus"),
                             attachmentFileList.get(0)
                     );
 
@@ -1784,7 +1849,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         i.addCategory(Intent.CATEGORY_OPENABLE);
 
-        resultLauncher.launch(i);
+        startActivityForResult(i,Constants.SELECT_DOCUMENT_REQUEST_CODE);
+        //resultLauncher.launch(i);
 
     }
 
@@ -1829,6 +1895,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     model.setUri(imageUri);
                     multipleImageUri.add(i, model);
                     attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this, imageUri))));
+
+
+                    Log.d("file_name",attachmentFileList.get(0).getName());
                     Log.d("Uri Data", imageUri.toString());
                 }
 
@@ -1844,6 +1913,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 try {
                     attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this, imageUri))));
+                    Log.d("file_name",attachmentFileList.get(0).getName());
                 } catch (Exception e) {
                     Log.d("Image error", e.toString());
                 }
@@ -1863,12 +1933,29 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this, selected_camera_uri))));
 
+            Log.d("file_name",attachmentFileList.get(0).getName());
+
             ImagePreviewModel model = new ImagePreviewModel();
             model.setUri(selected_camera_uri);
             model.setActive(false);
             multipleImageUri.add(model);
 
             previewImage();
+
+        } else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
+
+            isAnyFileAttached = true;
+
+            attachment_request_code = Constants.SELECT_DOCUMENT_REQUEST_CODE;
+            attachmentFileList = new ArrayList<>();
+
+            if (data != null) {
+                Uri sUri = data.getData();
+                attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this,sUri))));
+
+
+                callAttachmentApi();
+            }
 
         } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
@@ -1927,11 +2014,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     if (data != null) {
                         Uri sUri = data.getData();
                         attachmentFileList.add(new File(copyFileToInternalStorage(sUri, "GTF_Document")));
+                        callAttachmentApi();
 
-
-                        binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.document));
-                        binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
-                        binding.attachmentContainer.setVisibility(View.VISIBLE);
+                        //binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.document));
+                        //binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
+                        //binding.attachmentContainer.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -2042,12 +2129,29 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     // ---------------------------------------------------------------Interface Listeners ----------------------------------------------------------------
 
     @Override
-    public void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time) {
+    public void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time,int mediaCount,String previewUrl) {
 
         Log.d("Quote Listener Data ---", groupChatId + "     " + oldMessage + "     " + username + "     " + time);
 
 
         isMessageQuoted = true;
+
+        if (mediaCount > 0 ){
+
+            binding.quoteMediaContainer.setVisibility(View.VISIBLE);
+            GlideUtils.loadImage(this,binding.quoteMediaPreview,previewUrl);
+
+            if (mediaCount > 1){
+                binding.quoteMediaCount.setVisibility(View.VISIBLE);
+                binding.quoteMediaCount.setText("+ "+mediaCount);
+            }
+            else{
+                binding.quoteMediaCount.setVisibility(View.GONE);
+            }
+        }
+        else{
+            binding.quoteMediaContainer.setVisibility(View.GONE);
+        }
 
         binding.quoteContainer.setVisibility(View.VISIBLE);
 
@@ -2490,6 +2594,17 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         text.setText(message);
 
         pin_dialog.show();
+
+
+        requestType = PINNED_MESSAGE_COUNT;
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("GroupChannelID", PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, "0"));
+        param.put("UserID", PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0));
+
+        chatViewModel.getPinnedMessages(param);
+
+
         new Handler().postDelayed(pin_dialog::dismiss, 2000);
     }
 
@@ -2595,49 +2710,90 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             PinnedMessagesModel pinnedMessagesModel = gson.fromJson(jsonObject, type);
 
-            if (pinnedMessagesModel!= null && pinnedMessagesModel.getData() != null && !pinnedMessagesModel.getData().isEmpty()) {
-                pinMessageCount = pinnedMessagesModel.getData().size();
+            if (pinnedMessagesModel!= null && pinnedMessagesModel.getData() != null && pinnedMessagesModel.getData().getAllPinData() != null && !pinnedMessagesModel.getData().getAllPinData().isEmpty()) {
+
+                binding.pinMessageContainer.setVisibility(View.VISIBLE);
+                binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
+
+                pinMessageCount = pinnedMessagesModel.getData().getAllPinData().size();
                 binding.pinnedMessageCount.setText(String.valueOf(pinMessageCount));
 
                 String username = "";
 
-                if (pinnedMessagesModel.getData().get(0).getChat() != null && pinnedMessagesModel.getData().get(0).getChat().getMessage() != null){
+                if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat() != null) {
 
-                    binding.lastPinMessage.setText(pinnedMessagesModel.getData().get(0).getChat().getMessage());
+                    if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMessage() != null && !pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMessage().trim().isEmpty()) {
 
-                    if (pinnedMessagesModel.getData().get(0).getChat().getUser() != null)
-                    {
-                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname() != null){
-                            username = pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname();
+                        binding.pinMediaContainer.setVisibility(View.GONE);
+
+                        binding.lastPinMessage.setText(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMessage());
+
+                        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser() != null) {
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname() != null) {
+                                username = pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname();
+                            }
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname() != null) {
+                                username += " " + pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname();
+                            }
+                            binding.lastPinUser.setText(username);
                         }
-                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname() != null){
-                            username += pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname();
+                    } else {
+
+                        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia() != null && !pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().isEmpty()){
+
+                            binding.pinMediaContainer.setVisibility(View.VISIBLE);
+
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType() != null){
+
+                                if (Utils.checkFileType(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType()).equalsIgnoreCase("image")){
+                                    if (Utils.isFileTypeGif(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType())){
+                                        binding.lastPinMessage.setText("GIF");
+                                        loadFile(pinnedMessagesModel,"gif");
+                                    }
+                                    else{
+                                        binding.lastPinMessage.setText("IMAGE");
+                                        loadFile(pinnedMessagesModel,"image");
+                                    }
+                                }
+                                else if (Utils.checkFileType(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType()).equalsIgnoreCase("video")){
+                                    binding.lastPinMessage.setText("VIDEO");
+                                    loadFile(pinnedMessagesModel,"video");
+                                }
+                                else{
+                                    binding.lastPinMessage.setText("DOCUMENT");
+                                    loadFile(pinnedMessagesModel,"document");
+                                }
+                            }
+
+                            int mediaCount = pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().size();
+
+                            if (mediaCount > 1){
+                                binding.pinMediaCount.setVisibility(View.VISIBLE);
+                                binding.pinMediaCount.setText("+ "+mediaCount);
+
+                            }
+                            else{
+                                binding.pinMediaCount.setVisibility(View.GONE);
+                            }
+
                         }
-                        binding.lastPinUser.setText(username);
+
+                        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser() != null) {
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname() != null) {
+                                username = pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname();
+                            }
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname() != null) {
+                                username += " " + pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname();
+                            }
+                            binding.lastPinUser.setText(username);
+                        }
                     }
                 }
-                else{
 
-                    // Todo : Add condition in case of media attached
-
-
-                    if (pinnedMessagesModel.getData().get(0).getChat().getUser() != null)
-                    {
-                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname() != null){
-                            username = pinnedMessagesModel.getData().get(0).getChat().getUser().getFirstname();
-                        }
-                        if (pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname() != null){
-                            username += pinnedMessagesModel.getData().get(0).getChat().getUser().getLastname();
-                        }
-                        binding.lastPinUser.setText(username);
-                    }
-                }
-
-
-
-                binding.pinMessageContainer.setVisibility(View.VISIBLE);
-            } else {
-
+                Log.d("pin_message","messageCount = "+pinMessageCount);
+            }
+            else {
+                Log.d("pin_message","messageCount = "+pinMessageCount);
                 binding.pinMessageContainer.setVisibility(View.GONE);
                 pinMessageCount = 0;
             }
@@ -2645,6 +2801,32 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             Toast.makeText(this, jsonObject.get("message").toString(), Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
+
+    private void loadFile(PinnedMessagesModel pinnedMessagesModel,String fileType){
+        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getStoragePath() != null &&
+                pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getFileName() != null) {
+
+            String imageUrl = postBaseUrl + pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getStoragePath() +
+                    pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getFileName();
+
+            Log.d("image_path_url",imageUrl);
+            if (fileType.equalsIgnoreCase("image") || fileType.equalsIgnoreCase("gif")) {
+                GlideUtils.loadImage(this, binding.pinMediaPreview, imageUrl);
+            }
+            else if (fileType.equalsIgnoreCase("video")) {
+                // Todo : Add condition in case of Video
+            }
+            else{
+                // Todo : Add condition in case of Document
+            }
+        }
+    }
+
+
+
 
     private void destroyListeners() {
         // Todo : Remove all ON listeners of socket
@@ -2721,13 +2903,20 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     attachment_request_code = Constants.SHARE_GIF;
 
-                    File pictureFile = (File)result.getData().getExtras().get("gif");
+                    if ((File)result.getData().getExtras().get("gif") != null) {
+                        File pictureFile = (File) result.getData().getExtras().get("gif");
 
-                    attachmentFileList = new ArrayList<>();
-                    attachmentFileList.add(pictureFile);
+                        attachmentFileList = new ArrayList<>();
+                        attachmentFileList.add(pictureFile);
 
-                    isAnyFileAttached = true;
-                    callAttachmentApi();
+                        isAnyFileAttached = true;
+
+                        Log.d("GIF","gif found");
+                        callAttachmentApi();
+                    }
+                    else{
+                        Log.d("GIF","No gif found");
+                    }
 
 
                 } else if (result.getResultCode() == Constants.NO_GIF_FOUND) {

@@ -36,7 +36,9 @@ public class PreferenceConnector {
 
 
     // Group OR Channel Data History values ----
-    public static final String CHAT_DATA = "chat_data";
+    public static final String CHANNEL_CHAT_DATA = "channel_chat_data";
+
+    public static final String GROUP_CHAT_DATA = "group_chat_data";
 
 
     public static final String DASHBOARD_DATA = "dashboard_data";
@@ -49,9 +51,13 @@ public class PreferenceConnector {
     public static final String GC_CHANNEL_ID = "group_channel_id";
     public static final String GC_NAME = "group_name";
 
+    public static final String IS_EXCLUSIVE_REFRESHED = "is_exclusive_offer_refreshed";
+
+
     public static final String MEDIA_LIST = "mediaList";
 
 
+    public static final String TOTAL_UNREAD_NOTIFICATION_COUNT = "total_unread_notification_count";
 
 
 

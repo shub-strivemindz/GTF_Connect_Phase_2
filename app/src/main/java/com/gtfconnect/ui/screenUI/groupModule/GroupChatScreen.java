@@ -58,8 +58,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.audiorecorder.OnBasketAnimationEnd;
-import com.example.audiorecorder.OnRecordClickListener;
 import com.example.audiorecorder.OnRecordListener;
 import com.example.flyingreactionanim.Directions;
 import com.example.flyingreactionanim.ZeroGravityAnimation;
@@ -91,22 +89,18 @@ import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelC
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.groupResponseModel.GetDummyUserModel;
-import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
-import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
-import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
-import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.CustomEditText;
@@ -380,7 +374,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             if (pinMessageCount == 0) {
                 Utils.showSnackMessage(GroupChatScreen.this, binding.pin, "No Pinned Message Found!");
             } else {
-                Intent i = new Intent(GroupChatScreen.this, GroupPinnedMessageScreen.class);
+                Intent i = new Intent(GroupChatScreen.this, PinnedMessageScreen.class);
                 i.putExtra("post_base_url", postBaseUrl);
                 startActivity(i);
                 finish();
@@ -802,17 +796,26 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
+        list = new ArrayList<>();
+
+        String chatData = PreferenceConnector.readString(this,PreferenceConnector.GROUP_CHAT_DATA+"/"+channelID,"");
+        Type type = new TypeToken<ChannelChatResponseModel>(){}.getType();
+        responseModel = new Gson().fromJson(chatData,type);
+
         if(responseModel != null && responseModel.getData() != null) {
+
+            if (responseModel.getData().getMediaUrl() != null){
+                postBaseUrl = responseModel.getData().getMediaUrl();
+            }
+
             if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
                 list.addAll(responseModel.getData().getChatData().getRows());
-                groupViewAdapter.updateList(list);
+
+                groupViewAdapter.updateList(list,postBaseUrl);
             }
             if (responseModel.getData().getSubscriptionCount() != null) {
                 subscribers = responseModel.getData().getSubscriptionCount();
                 binding.userSubscribers.setText(String.valueOf(subscribers));
-            }
-            if (responseModel.getData().getMediaUrl() != null) {
-                postBaseUrl = responseModel.getData().getMediaUrl();
             }
         }
         refreshGroupChatSocket();
@@ -948,28 +951,31 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 runOnUiThread(() -> {
 
                     if(responseModel != null && responseModel.getData() != null) {
+
+                        if (responseModel.getData().getMediaUrl() != null){
+                            postBaseUrl = responseModel.getData().getMediaUrl();
+                        }
+
                         if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
 
                             if (currentPage == 1){
                                 String response = new Gson().toJson(responseModel);
-                                PreferenceConnector.writeString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,response);
+                                PreferenceConnector.writeString(this,PreferenceConnector.GROUP_CHAT_DATA+"/"+channelID,response);
 
                                 list = new ArrayList<>();
                                 list.addAll(responseModel.getData().getChatData().getRows());
 
+                                readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
                             }
                             else{
                                 list.addAll(responseModel.getData().getChatData().getRows());
                             }
 
-                            groupViewAdapter.updateList(list);
+                            groupViewAdapter.updateList(list,postBaseUrl);
                         }
                         if (responseModel.getData().getSubscriptionCount() != null) {
                             subscribers = responseModel.getData().getSubscriptionCount();
                             binding.userSubscribers.setText(String.valueOf(subscribers));
-                        }
-                        if (responseModel.getData().getMediaUrl() != null) {
-                            postBaseUrl = responseModel.getData().getMediaUrl();
                         }
                     }
                 });
@@ -1023,29 +1029,33 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     runOnUiThread(() -> {
 
                         if(responseModel != null && responseModel.getData() != null) {
+
+                            if (responseModel.getData().getMediaUrl() != null) {
+                                postBaseUrl = responseModel.getData().getMediaUrl();
+                            }
+
                             if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
 
                                 if (currentPage == 1){
                                     String response = new Gson().toJson(responseModel);
-                                    PreferenceConnector.writeString(this,PreferenceConnector.CHAT_DATA+"/"+channelID,response);
+                                    PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_CHAT_DATA+"/"+channelID,response);
 
                                     list = new ArrayList<>();
                                     list.addAll(responseModel.getData().getChatData().getRows());
 
+                                    readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
                                 }
                                 else{
                                     list.addAll(responseModel.getData().getChatData().getRows());
                                 }
 
-                                groupViewAdapter.updateList(list);
+                                groupViewAdapter.updateList(list,postBaseUrl);
                             }
                             if (responseModel.getData().getSubscriptionCount() != null) {
                                 subscribers = responseModel.getData().getSubscriptionCount();
                                 binding.userSubscribers.setText(String.valueOf(subscribers));
                             }
-                            if (responseModel.getData().getMediaUrl() != null) {
-                                postBaseUrl = responseModel.getData().getMediaUrl();
-                            }
+
                         }
                     });
                 }
@@ -1303,18 +1313,18 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                                                     if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
-                                                        groupViewAdapter.updateList(list);
+                                                        groupViewAdapter.updateList(list,postBaseUrl);
                                                         break;
                                                     } else {
                                                         list.get(i).getLike().get(0).setIsLike(1);
-                                                        groupViewAdapter.updateList(list);
+                                                        groupViewAdapter.updateList(list,postBaseUrl);
                                                         break;
                                                     }
                                                 } else {
                                                     list.get(i).getLike().add(0, like_response.getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    groupViewAdapter.updateList(list);
+                                                    groupViewAdapter.updateList(list,postBaseUrl);
                                                     break;
                                                 }
                                             }
@@ -1453,6 +1463,47 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }*/
 
 
+
+
+
+    private void readMessages(int lastChatMessage)
+    {
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                jsonRawObject = new JSONObject();
+
+                Log.d("read_message","Entered Method");
+
+                try{
+                    jsonRawObject.put("GroupChannelID",channelID);
+                    jsonRawObject.put("UserID",userID);
+                    jsonRawObject.put("GroupChatID",lastChatMessage);
+
+                    Log.d("read_message","params = "+jsonRawObject.toString());
+                }
+                catch (Exception e){
+                    Log.d("json_exception","read message exception"+e);
+                }
+
+
+
+                socketInstance.emit("readMessage", jsonRawObject, (Ack) args -> {
+                    //boolean isMsgSent = (boolean) args[0];
+                    Log.d("read_message","Entered socket method");
+                });
+            }
+        });
+    }
+
+
+
+
+
+
     private void searchMessageInList(String groupChatId, boolean hasPostDeleted, boolean commentSearch, boolean commentDeleteSearch) {
 
         if (isMessageNotFound) {
@@ -1497,7 +1548,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 public void run() {
 
                                     list.addAll(responseModel.getData().getChatData().getRows());
-                                    groupViewAdapter.updateList(list);
+                                    groupViewAdapter.updateList(list,postBaseUrl);
                                     loadSearchData = false;
                                     currentPage++;
 
@@ -1522,7 +1573,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 @Override
                                 public void run() {
                                     list.remove(searchedTillPosition);
-                                    groupViewAdapter.updateList(list);
+                                    groupViewAdapter.updateList(list,postBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1533,7 +1584,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 @Override
                                 public void run() {
                                     list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    groupViewAdapter.updateList(list);
+                                    groupViewAdapter.updateList(list,postBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -2520,9 +2571,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }.getType();
 
             pinnedMessagesModel = gson.fromJson(jsonObject, type);
-            if(pinnedMessagesModel.getData()!=null && !pinnedMessagesModel.getData().isEmpty())
+            if(pinnedMessagesModel.getData()!=null && !pinnedMessagesModel.getData().getAllPinData().isEmpty())
             {
-                pinMessageCount = pinnedMessagesModel.getData().size();
+                pinMessageCount = pinnedMessagesModel.getData().getAllPinData().size();
                 binding.pinnedMessageCount.setText(String.valueOf(pinMessageCount));
                 binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
             }

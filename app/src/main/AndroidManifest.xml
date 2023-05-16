@@ -101,7 +101,6 @@
 
         <activity android:name=".ui.screenUI.channelModule.ChannelMemberProfileScreen"/>
 
-        <activity android:name=".ui.screenUI.channelModule.ChannelPinnedMessageScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelBlocklistScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManagePermissionScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManageReactionScreen"/>
@@ -111,7 +110,7 @@
         <activity android:name=".ui.screenUI.groupModule.GroupBlocklistScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelChatsScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupManagePermissionScreen"/>
-        <activity android:name=".ui.screenUI.groupModule.GroupPinnedMessageScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.PinnedMessageScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelProfileScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupEditProfileScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupCommentScreen"
@@ -120,11 +119,11 @@
 
         <activity android:name=".ui.screenUI.mentorModule.MentorChatScreen"/>
 
-        <activity android:name=".ui.screenUI.groupModule.MultiPreviewImage"/>
-
         <activity android:name=".ui.screenUI.commonGroupChannelModule.GifPreviewScreen"/>
         <activity android:name=".ui.screenUI.commonGroupChannelModule.ImagePreviewScreen"/>
         <activity android:name=".ui.screenUI.authModule.registerModule.LocationPickerScreen"/>
+
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.MultiPreviewScreen"/>
     </application>
 
 </manifest>

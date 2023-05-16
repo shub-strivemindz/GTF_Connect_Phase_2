@@ -24,6 +24,7 @@ public class WelcomeScreen extends AppCompatActivity {
         activityWelcomeScreenBinding= ActivityWelcomeScreenBinding.inflate(getLayoutInflater());
         setContentView(activityWelcomeScreenBinding.getRoot());
 
+        PreferenceConnector.writeBoolean(this,PreferenceConnector.IS_EXCLUSIVE_REFRESHED,false);
 
 
         new Handler().postDelayed(() -> {

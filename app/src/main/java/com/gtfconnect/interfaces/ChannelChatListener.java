@@ -12,7 +12,7 @@ public interface ChannelChatListener {
 
     void pinMessage(int gcMemberId,int GroupChannelId,int userId,int groupChatId);
 
-    void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time);
+    void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time,int mediaCount,String previewUrl);
 
     void searchQuoteMessage(int index,String groupChatId);
 
@@ -30,7 +30,6 @@ public interface ChannelChatListener {
     void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, LottieAnimationView progressBar, ImageView downloadPlayPic);
 
     void playAudio(String audioPostUrl, WaveformSeekBar seekBar,long duration);
-
 
     void viewMemberProfile(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 

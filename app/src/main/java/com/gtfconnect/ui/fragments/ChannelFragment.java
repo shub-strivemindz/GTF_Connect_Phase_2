@@ -2,6 +2,7 @@ package com.gtfconnect.ui.fragments;
 
 import static com.gtfconnect.services.SocketService.socketInstance;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentChannelViewBinding;
+import com.gtfconnect.interfaces.DashboardMessageCountListener;
 import com.gtfconnect.roomDB.AppDao;
 import com.gtfconnect.roomDB.AppDatabase;
 import com.gtfconnect.roomDB.DatabaseViewModel;
@@ -59,6 +61,22 @@ public class ChannelFragment extends Fragment {
 
     ChannelViewAdapter channelViewAdapter;
 
+    private String profileImageBaseUrl = "";
+
+
+
+    private DashboardMessageCountListener dashboardMessageCountListener;
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            dashboardMessageCountListener = (DashboardMessageCountListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
+        }
+    }
 
     @Nullable
     @Override
@@ -100,7 +118,19 @@ public class ChannelFragment extends Fragment {
             gcList = new ArrayList<>();
             gcList.addAll(responseModel.getData().getGcData());
 
-            channelViewAdapter.updateList(gcList);
+
+            if (responseModel.getData().getGcImageBasePath() != null) {
+                profileImageBaseUrl = responseModel.getData().getGcImageBasePath();
+            }
+
+
+            if (PreferenceConnector.readInteger(getContext(),"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0) > 0){
+                dashboardMessageCountListener.getMessageChannelCount(PreferenceConnector.readInteger(getContext(),"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+
+                Log.d("notification_count","Fragment = "+PreferenceConnector.readInteger(getContext(),"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+            }
+
+            channelViewAdapter.updateList(gcList,profileImageBaseUrl);
         }
         updateChannelDashboardSocket();
     }
@@ -154,15 +184,31 @@ public class ChannelFragment extends Fragment {
                             Log.d("authenticateUserAndFetchData -- ", String.valueOf(responseData));
 
                             getActivity().runOnUiThread(() -> {
-                                if (responseModel.getData() != null && responseModel.getData().getGcData() != null) {
+                                if (responseModel != null && responseModel.getData() != null && responseModel.getData().getGcData() != null) {
 
                                     String response = new Gson().toJson(responseModel);
-                                    PreferenceConnector.writeString(getContext(),PreferenceConnector.DASHBOARD_DATA+"/"+"channel",response);
+                                    if (isAdded()){
+                                        PreferenceConnector.writeString(requireActivity(),PreferenceConnector.DASHBOARD_DATA+"/"+"channel",response);
+
+                                        int notificationCount = 0;
+                                        for (int i=0;i<responseModel.getData().getGcData().size();i++){
+                                            if (responseModel.getData().getGcData().get(i).getUnreadcount() != null){
+                                                int count = Integer.parseInt(responseModel.getData().getGcData().get(i).getUnreadcount());
+                                                notificationCount+=count;
+                                            }
+                                        }
+                                        PreferenceConnector.writeInteger(getContext(),"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,notificationCount);
+                                        dashboardMessageCountListener.getMessageChannelCount(notificationCount);
+                                    }
 
                                     gcList = new ArrayList<>();
                                     gcList.addAll(responseModel.getData().getGcData());
 
-                                    channelViewAdapter.updateList(gcList);
+                                    if (responseModel.getData().getGcImageBasePath() != null) {
+                                        profileImageBaseUrl = responseModel.getData().getGcImageBasePath();
+                                    }
+
+                                    channelViewAdapter.updateList(gcList,profileImageBaseUrl);
                                 }
                             });
                         }
@@ -182,7 +228,7 @@ public class ChannelFragment extends Fragment {
     private void loadDataToAdapter()
     {
 
-        channelViewAdapter = new ChannelViewAdapter(getActivity(),gcList);
+        channelViewAdapter = new ChannelViewAdapter(getActivity(),gcList,profileImageBaseUrl);
 
         binding.channelViewList.setHasFixedSize(true);
         binding.channelViewList.setLayoutManager(new LinearLayoutManager(getActivity()));

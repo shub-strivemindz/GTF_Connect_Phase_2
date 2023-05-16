@@ -331,6 +331,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checked="false"
+                android:id="@+id/ui_mode"
                 android:layout_marginEnd="@dimen/_14sdp"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />

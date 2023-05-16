@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-
+    android:background="@color/pinMessageBackgroundColor"
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="@color/theme_green"
+        android:background="@color/pinMessageActionBarColor"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
         android:orientation="horizontal">
@@ -29,7 +28,7 @@
             android:text="Pinned Messages"
             android:textColor="@color/white"
             android:fontFamily="@font/open_sans"
-            android:textSize="@dimen/_11ssp"/>
+            android:textSize="@dimen/_13ssp"/>
 
     </LinearLayout>
 
@@ -46,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center|start"
-            android:textColor="#B3EE1F18"
+            android:textColor="@color/pinMessageRedColor"
             android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
             android:text="Remove all"/>
@@ -56,9 +55,9 @@
             android:layout_toStartOf="@id/message_title"
             android:fontFamily="@font/open_sans"
             android:layout_width="wrap_content"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
-            android:textColor="#99666666"
+            android:textColor="@color/pinMessageTextHighlight2Color"
             android:layout_height="match_parent"
             android:gravity="center|end"/>
 
@@ -67,14 +66,21 @@
             android:layout_alignParentEnd="true"
             android:fontFamily="@font/open_sans"
             android:layout_width="wrap_content"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
-            android:textColor="#99666666"
+            android:textColor="@color/pinMessageTextHighlight2Color"
             android:layout_height="match_parent"
             android:gravity="center|end"
             android:text=" Messages"/>
 
     </RelativeLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_width="match_parent"
+        android:alpha=".3"
+        app:dividerColor="@color/pinMessageDividerColor"
+        android:layout_height="@dimen/_4sdp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="@dimen/_6sdp"

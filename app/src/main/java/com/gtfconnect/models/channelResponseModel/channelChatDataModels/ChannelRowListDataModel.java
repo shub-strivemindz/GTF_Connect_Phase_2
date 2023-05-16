@@ -2,6 +2,7 @@ package com.gtfconnect.models.channelResponseModel.channelChatDataModels;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.gtfconnect.models.groupChannelModels.MediaListModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +91,7 @@ public class ChannelRowListDataModel {
     private ChannelChatResponseModel.Quote quote;
     @SerializedName("media")
     @Expose
-    private List<ChannelMediaResponseModel> media;
+    private List<MediaListModel> media;
 
 
     private boolean showPostSelection = false;
@@ -276,11 +277,11 @@ public class ChannelRowListDataModel {
         this.quote = quote;
     }
 
-    public List<ChannelMediaResponseModel> getMedia() {
+    public List<MediaListModel> getMedia() {
         return media;
     }
 
-    public void setMedia(List<ChannelMediaResponseModel> media) {
+    public void setMedia(List<MediaListModel> media) {
         this.media = media;
     }
 

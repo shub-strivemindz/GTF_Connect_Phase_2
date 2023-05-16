@@ -2,6 +2,8 @@ package com.gtfconnect.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +13,25 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.example.medialibrary.VideoActivity;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerMediaPreviewBinding;
 import com.gtfconnect.interfaces.ImagePreviewListener;
+import com.gtfconnect.interfaces.MultiPreviewListener;
+import com.gtfconnect.models.groupChannelModels.MediaListModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.Utils;
 
 import java.util.ArrayList;
@@ -31,19 +41,26 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
     private Context context;
 
-    private List<GroupChatResponseModel.Medium> mediaList;
+    private List<MediaListModel> mediaList;
 
     private int oldPosition = 0;
 
-    private ImagePreviewListener listener;
-
     String post_base_url="";
 
-    public  ImagePreviewAdapter(Context context, ArrayList<GroupChatResponseModel.Medium> mediaList,String post_base_url){
+    private Drawable imageDrawable;
+
+    private MultiPreviewListener listener;
+
+    private String fileType = "";
+
+    private int viewPosition ;
+
+    public  ImagePreviewAdapter(Context context, List<MediaListModel> mediaList,String post_base_url,MultiPreviewListener listener){
         this.mediaList = mediaList;
         this.post_base_url = post_base_url;
         this.context = context;
 
+        this.listener = listener;
     }
 
 
@@ -59,6 +76,9 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
         final int position = index;
 
+
+        imageDrawable = null;
+
         //Setting up loader on post
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
         circularProgressDrawable.setStrokeWidth(5f);
@@ -68,7 +88,7 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(circularProgressDrawable);
         requestOptions.error(R.drawable.image_not_found);
-        requestOptions.skipMemoryCache(true);
+        requestOptions.skipMemoryCache(false);
         requestOptions.fitCenter();
 
 
@@ -77,19 +97,40 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
         if (fileType.equalsIgnoreCase("image"))
         {
-            Glide.with(context).load(post_path).fitCenter().apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.mediaPreview);
+
+            Glide.with(context).load(post_path).
+                    fitCenter().apply(requestOptions).listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            listener.imageLoading(false);
+                            return false;
+
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            listener.imageLoading(true);
+                            imageDrawable = resource;
+                            return false;
+                        }
+                    }).
+                    transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.mediaPreview);
+
             holder.binding.playVideo.setVisibility(View.GONE);
             holder.binding.mediaPreview.setVisibility(View.VISIBLE);
             holder.binding.docViewer.setVisibility(View.GONE);
             holder.binding.previewNotAvailableContainer.setVisibility(View.GONE);
         }
         else if (fileType.equalsIgnoreCase("video")) {
+
+
             holder.binding.playVideo.setVisibility(View.VISIBLE);
             holder.binding.mediaPreview.setVisibility(View.GONE);
             holder.binding.docViewer.setVisibility(View.GONE);
             holder.binding.previewNotAvailableContainer.setVisibility(View.GONE);
         }
         else {
+
             holder.binding.previewNotAvailableContainer.setVisibility(View.VISIBLE);
             holder.binding.playVideo.setVisibility(View.GONE);
             holder.binding.mediaPreview.setVisibility(View.GONE);
@@ -110,7 +151,7 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
     }
 
-    public void updateList(ArrayList<GroupChatResponseModel.Medium> mediaList)
+    public void updateList(List<MediaListModel> mediaList)
     {
         this.mediaList = mediaList;
         notifyDataSetChanged();
@@ -139,8 +180,6 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
     public class AppWebViewClients extends WebViewClient {
 
-
-
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // TODO Auto-generated method stub
@@ -155,6 +194,42 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
         }
     }
+
+
+
+
+    public void downloadAttachment(int viewPosition){
+
+        String fileType = Utils.checkFileType(mediaList.get(viewPosition).getMimeType());
+
+        Log.d("fileType",fileType);
+
+        if (fileType.equalsIgnoreCase("image")){
+            if (Utils.isFileTypeGif(mediaList.get(viewPosition).getMimeType())){
+                fileType = "gif";
+            }
+        }
+
+        switch (fileType){
+            case "gif":
+                break;
+            case "image":
+                LocalGalleryUtil.saveImageToGallery(context,imageDrawable);
+                break;
+            case "video":
+
+                String post_path = post_base_url + mediaList.get(viewPosition).getStoragePath() + mediaList.get(viewPosition).getFileName();
+                listener.downloadVideo(mediaList.get(viewPosition).getGroupChannelID().toString(),mediaList.get(viewPosition).getGroupChatID().toString(),post_path);
+                break;
+            default:
+
+        }
+    }
+
+
+
+
+
 
     @Override
     public int getItemCount() {

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -43,6 +44,7 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityHomeBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
+import com.gtfconnect.interfaces.DashboardMessageCountListener;
 import com.gtfconnect.interfaces.UnreadCountHeaderListener;
 import com.gtfconnect.models.ProfileResponseModel;
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
@@ -66,7 +68,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderListener, InternetService.ReceiverListener,ApiResponseListener {
+public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderListener, InternetService.ReceiverListener,ApiResponseListener, DashboardMessageCountListener  {
 
 
 
@@ -209,6 +211,8 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
         Utils.registerInternetReceiver(this);
         initializeSocketRunCheck();
+
+        setDefaultNotificationCount();
 
         rest = new Rest(this,false,false);
         listener = this;
@@ -547,8 +551,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                     Intent intent = new Intent();
                     intent.putExtra("value",true);
                     intent.setAction("send_exclusive");
-
-
+                    sendBroadcast(intent);
 
 
                    /* Bundle bundle = new Bundle();
@@ -592,7 +595,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
                         // Saving Image
 
-                        databaseViewModel.insertImageInGallery(LocalGalleryUtil.saveImage("Profile", GalleryTypeStatus.PROFILE.name(),resource,profileResponseModel.getData().getProfileInfo().getProfileImage(),profileResponseModel.getData().getProfileInfo().getProfileThumbnail(),0,0));
+                        databaseViewModel.insertImageInGallery(LocalGalleryUtil.saveImage("Profile", GalleryTypeStatus.PROFILE.name(),resource,profileResponseModel.getData().getProfileInfo().getProfileImage(),profileResponseModel.getData().getProfileInfo().getProfileThumbnail(),0));
                         return false;
                     }
                 }).
@@ -601,4 +604,132 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void setDefaultNotificationCount(){
+        if (PreferenceConnector.readInteger(this,"recent/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0) > 0){
+
+            int count = PreferenceConnector.readInteger(this,"recent/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0);
+            binding.recentNotificationContainer.setVisibility(View.VISIBLE);
+            binding.recentNotificationCount.setText(count+"");
+
+            Log.d("notification_count","Shared Preference = "+PreferenceConnector.readInteger(this,"recent/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+        }
+        else{
+            binding.recentNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+
+        if (PreferenceConnector.readInteger(this,"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0) > 0){
+
+            int count = PreferenceConnector.readInteger(this,"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0);
+            binding.channelNotificationContainer.setVisibility(View.VISIBLE);
+            binding.channelNotificationCount.setText(count+"");
+
+            Log.d("notification_count","Shared Preference = "+PreferenceConnector.readInteger(this,"channel/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+        }
+        else{
+            binding.channelNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+
+        if (PreferenceConnector.readInteger(this,"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0) > 0){
+
+            int count = PreferenceConnector.readInteger(this,"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0);
+            binding.groupNotificationContainer.setVisibility(View.VISIBLE);
+            binding.groupNotificationCount.setText(count+"");
+
+            Log.d("notification_count","Shared Preference = "+PreferenceConnector.readInteger(this,"group/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+        }
+        else{
+            binding.groupNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+
+        if (PreferenceConnector.readInteger(this,"mentor/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0) > 0){
+
+            int count = PreferenceConnector.readInteger(this,"mentor/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0);
+            binding.mentorNotificationContainer.setVisibility(View.VISIBLE);
+            binding.mentorNotificationCount.setText(count+"");
+
+            Log.d("notification_count","Shared Preference = "+PreferenceConnector.readInteger(this,"mentor/"+PreferenceConnector.TOTAL_UNREAD_NOTIFICATION_COUNT,0));
+        }
+        else{
+            binding.mentorNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+
+
+
+
+    @Override
+    public void getMessageRecentCount(int count) {
+        if (count <= 0){
+            Log.d("notification_count","No count found");
+
+            binding.recentNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            Log.d("notification_count",""+count);
+
+            binding.recentNotificationContainer.setVisibility(View.VISIBLE);
+            binding.recentNotificationCount.setText(count+"");
+        }
+    }
+
+    @Override
+    public void getMessageChannelCount(int count) {
+        if (count <= 0){
+            Log.d("notification_count","No count found");
+
+            binding.channelNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            Log.d("notification_count",""+count);
+
+            binding.channelNotificationContainer.setVisibility(View.VISIBLE);
+            binding.channelNotificationCount.setText(count+"");
+        }
+    }
+
+    @Override
+    public void getMessageGroupCount(int count) {
+        if (count <= 0){
+            Log.d("notification_count","No count found");
+
+
+            binding.groupNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            Log.d("notification_count",""+count);
+
+            binding.groupNotificationContainer.setVisibility(View.VISIBLE);
+            binding.groupNotificationCount.setText(String.valueOf(count));
+        }
+    }
+
+    @Override
+    public void getMessageMentorCount(int count) {
+        if (count <= 0){
+            Log.d("notification_count","No count found");
+
+            binding.mentorNotificationContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            Log.d("notification_count",""+count);
+
+            binding.mentorNotificationContainer.setVisibility(View.VISIBLE);
+            binding.mentorNotificationCount.setText(count+"");
+        }
+    }
 }
