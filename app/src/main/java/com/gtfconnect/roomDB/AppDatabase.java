@@ -15,14 +15,16 @@ import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 import com.gtfconnect.roomDB.convertors.CommonConvertor;
 import com.gtfconnect.roomDB.convertors.DashboardDataConvertor;
 import com.gtfconnect.roomDB.convertors.GroupChannelInfoConvertor;
+import com.gtfconnect.roomDB.convertors.UserProfileDataConvertor;
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGalleryEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 
-@Database(entities = {DashboardListEntity.class, GroupChannelChatHeaderDbEntity.class, GroupChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class, GroupChannelGalleryEntity.class, InfoDbEntity.class}, version = 22)
-@TypeConverters({CommonConvertor.class, GroupChannelInfoConvertor.class, DashboardDataConvertor.class})
+@Database(entities = {DashboardListEntity.class, GroupChannelChatHeaderDbEntity.class, GroupChannelChatBodyDbEntity.class, ExclusiveOfferDataModel.class, GroupChannelGalleryEntity.class, InfoDbEntity.class, UserProfileDbEntity.class}, version = 23)
+@TypeConverters({CommonConvertor.class, GroupChannelInfoConvertor.class, DashboardDataConvertor.class, UserProfileDataConvertor.class})
 
 public abstract class AppDatabase extends RoomDatabase {
 

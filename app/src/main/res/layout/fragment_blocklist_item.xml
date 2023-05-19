@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:background="@color/blocklistBackgroundColor"
+    android:layout_height="@dimen/_65sdp">
+
 <LinearLayout
     android:layout_width="match_parent"
-    android:background="@color/dashboardListItemBackgroundColor"
-    android:layout_height="@dimen/_65sdp"
+    android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <com.google.android.material.imageview.ShapeableImageView
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        app:cardCornerRadius="@dimen/_120sdp"
         android:layout_marginStart="@dimen/_22sdp"
-        android:layout_gravity="center_vertical"
-            android:layout_width="@dimen/_45sdp"
-            android:layout_height="@dimen/_45sdp"
-            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-            android:background="#fff"
+        android:layout_gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/user_image"
+            android:scaleType="fitXY"
             android:src="@drawable/gtf_logo"/>
 
+    </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="0dp"
@@ -28,7 +34,8 @@
             android:layout_marginStart="@dimen/_10sdp"
             android:text="John Harper"
             android:textSize="@dimen/_12ssp"
-            android:textColor="@color/dashboardListItemTextColor"
+            android:id="@+id/username"
+            android:textColor="@color/blocklistTitleColor"
             android:fontFamily="@font/open_sans"
             android:textFontWeight="600"
             android:gravity="center_vertical"/>
@@ -53,5 +60,6 @@
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
         android:alpha=".2"/>
-</LinearLayout>
+</RelativeLayout>

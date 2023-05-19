@@ -4,6 +4,9 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -27,8 +30,9 @@ import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChannelChatItemBinding;
 import com.gtfconnect.interfaces.ChannelChatListener;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
-import com.gtfconnect.ui.screenUI.groupModule.GroupCommentScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -37,6 +41,7 @@ import com.gtfconnect.utilities.Utils;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.zip.CheckedInputStream;
 
 public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.ViewHolder> {
 
@@ -70,23 +75,53 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     String profileBaseUrl = "";
 
+    private InfoDbEntity infoDbEntity;
+
     private MediaPlayer mediaPlayer;
 
     private boolean isAudioPlaying = false;
 
     static int likeCounter;
 
+
+
+
+    private boolean isReactionEnabled = false;
+
+    private boolean isPinMessage = false;
+
+    private boolean isAllowDiscussion = false;
+
+    private boolean isSignedMessage = false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //    private int commentCount;
 
     // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
 
-    public ChannelChatAdapter(Activity context, List<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, ChannelChatListener channelChatListener) {
+    public ChannelChatAdapter(Activity context, List<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, ChannelChatListener channelChatListener) {
         this.list = list;
         this.context = context;
         this.userID = userID;
         this.channelChatListener = channelChatListener;
         this.post_base_url = post_base_url;
         this.profileBaseUrl = profileBaseUrl;
+
+        this.infoDbEntity = infoDbEntity;
         ///this.commentCount = commentCount;
 
         selectedPostCount = 0;
@@ -99,6 +134,15 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         this.profileBaseUrl = profileBaseUrl;
         notifyDataSetChanged();
     }
+
+
+
+    public void updateChat(List<ChannelRowListDataModel> list){
+        this.list = list;
+        notifyItemInserted(0);
+    }
+
+
 
 
     public void updatePostBaseUrl(String post_base_url){
@@ -115,6 +159,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     public void onBindViewHolder(ViewHolder holder, int index) {
 
         final int position = index;
+
+        setUserPermissions();
 
         // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
@@ -452,7 +498,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-
         holder.binding.expandMessage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -476,18 +521,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -604,11 +637,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         holder.binding.commentContainer.setOnClickListener(view -> {
 
-            Intent intent = new Intent(context, GroupCommentScreen.class);
-            intent.putExtra("replyOnComment", false);
-            intent.putExtra("userDetail", data);
-            intent.putExtra("userID", userID);
-            context.startActivity(intent);
+            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+
 
         });
 
@@ -616,12 +646,17 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         // Reply into the Chat
         holder.binding.comment.setOnClickListener(view -> {
 
-
-            Intent intent = new Intent(context, GroupCommentScreen.class);
+/*
+            Intent intent = new Intent(context, GroupChannelCommentScreen.class);
             intent.putExtra("userDetail", data);
+            intent.putExtra("profileBaseUrl",profileBaseUrl);
+            intent.putExtra("postBaseUrl",post_base_url);
             intent.putExtra("replyOnComment", true);
             intent.putExtra("userID", userID);
-            context.startActivity(intent);
+            context.startActivity(intent);*/
+
+
+
 
 
             /*channelChatListener.commentMessage(position,Integer.parseInt(userID),
@@ -827,6 +862,16 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         remove.setVisibility(View.GONE);
          }
 
+
+        if (list.get(position).getMessage() != null && !list.get(position).getMessage().trim().isEmpty()){
+            copy.setVisibility(View.VISIBLE);
+        }
+        else{
+            copy.setVisibility(View.GONE);
+        }
+
+
+
         pin.setOnClickListener(view -> {
             chat_options_dialog.dismiss();
 
@@ -875,6 +920,12 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             copy_dialog.setCancelable(false);
             copy_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             copy_dialog.show();
+
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+
+            ClipData clip = ClipData.newPlainText("Post Message",list.get(position).getMessage());
+            clipboard.setPrimaryClip(clip);
+
             new Handler().postDelayed(copy_dialog::dismiss,1000);
         });
 
@@ -934,6 +985,41 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
         }
     }
+
+
+
+    public void setUserPermissions(){
+
+        if (infoDbEntity != null){
+            if (infoDbEntity.getGcInfo() != null){
+
+                if (infoDbEntity.getGcSetting() != null){
+
+                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
+                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
+
+                        }
+                        else{
+
+                        }
+                    }
+                }
+
+                if (infoDbEntity.getGcPermission() != null){
+                    if (infoDbEntity.getGcPermission().getPinMessage() != null && infoDbEntity.getGcPermission().getPinMessage() == 1){
+
+                    }
+                    else{
+
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
 
     @Override
     public int getItemCount() {

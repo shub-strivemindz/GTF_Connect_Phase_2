@@ -2,34 +2,24 @@ package com.gtfconnect.ui.adapters.commonGroupChannelAdapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
-import com.example.medialibrary.VideoActivity;
+import com.exa.ashutosh_video.VideoActivity;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentMediaListItemBinding;
 import com.gtfconnect.databinding.FragmentUserDocumentItemBinding;
-import com.gtfconnect.databinding.FragmentUserLinkItemBinding;
-import com.gtfconnect.models.groupChannelModels.GroupChannelMediaResponseModel;
-import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GalleryTypeStatus;
-import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.DocumentAdapter;
-import com.gtfconnect.utilities.LocalGalleryUtil;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MemberMediaResponseModel;
 import com.gtfconnect.utilities.Utils;
 
 public class GroupChannelMemberMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -38,7 +28,7 @@ public class GroupChannelMemberMediaAdapter extends RecyclerView.Adapter<Recycle
 
     private Context context;
 
-    private GroupChannelMediaResponseModel mediaResponseModel;
+    private MemberMediaResponseModel mediaResponseModel;
 
     private String base_url;
 
@@ -46,7 +36,7 @@ public class GroupChannelMemberMediaAdapter extends RecyclerView.Adapter<Recycle
 
     //private boolean isResponseLoaded ;
 
-    public  GroupChannelMemberMediaAdapter(Context context,int viewType,GroupChannelMediaResponseModel mediaResponseModel){
+    public  GroupChannelMemberMediaAdapter(Context context, int viewType, MemberMediaResponseModel mediaResponseModel){
 
         this.context = context;
         this.viewType = viewType;

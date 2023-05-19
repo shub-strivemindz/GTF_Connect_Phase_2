@@ -114,16 +114,24 @@ public interface RestService {
                                                           @Header("DeviceToken") String device_token);
 
 
-    @FormUrlEncoded
+    @Multipart
     @PATCH(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ ApiUrls.URL_GROUP_CHANNEL_UPDATE_PROFILE)
-    Observable<JsonElement> update_group_channel_profile(@Path("id") int id,
+    Observable<JsonElement> update_group_channel_profile_1(@Path("id") int id,
                                                          @Header ("Authorization") String api_token,
                                                          @Header("DeviceType") String device_type,
                                                          @Header("DeviceToken") String device_token,
-                                                         @FieldMap Map<String, Object> params);
+                                                         @QueryMap Map<String, Object> params,
+                                                         @Part MultipartBody.Part image);
 
 
 
+    @FormUrlEncoded
+    @PATCH(ApiUrls.URL_GROUP_CHANNEL+"/"+"{id}"+"/"+ ApiUrls.URL_GROUP_CHANNEL_UPDATE_PROFILE)
+    Observable<JsonElement> update_group_channel_profile_2(@Path("id") int id,
+                                                           @Header ("Authorization") String api_token,
+                                                           @Header("DeviceType") String device_type,
+                                                           @Header("DeviceToken") String device_token,
+                                                           @FieldMap Map<String, Object> params);
 
 
 
@@ -360,6 +368,49 @@ public interface RestService {
                                                  @Header("DeviceToken") String device_token,
                                                  @FieldMap Map<String,Object> params);
 
+
+
+
+
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL + "/" +"{id}"+ "/" + ApiUrls.URL_GROUP_CHANNEL_BLOCKLIST)
+    Observable<JsonElement> group_channel_blocklist(@Path("id") int channelID,
+                                               @Header ("Authorization") String api_token,
+                                               @Header("DeviceType") String device_type,
+                                               @Header("DeviceToken") String device_token);
+
+
+
+
+    @GET(ApiUrls.URL_GROUP_CHANNEL + "/" + ApiUrls.URL_GROUP_CHANNEL_REPORT_REASON_LIST)
+    Observable<JsonElement> group_channel_report_reason_list(@Header ("Authorization") String api_token,
+                                                             @Header("DeviceType") String device_type,
+                                                             @Header("DeviceToken") String device_token,
+                                                             @Query("page") int page,
+                                                             @Query("per_page") int per_page);
+
+
+
+
+
+    @FormUrlEncoded
+    @POST(ApiUrls.URL_GROUP_CHANNEL + "/" + ApiUrls.URL_REPORT_USER)
+    Observable<JsonElement> report_user(@Header ("Authorization") String api_token,
+                                                             @Header("DeviceType") String device_type,
+                                                             @Header("DeviceToken") String device_token,
+                                                             @FieldMap Map<String,Object> params);
+
+
+
+    @FormUrlEncoded
+    @POST(ApiUrls.URL_GROUP_CHANNEL + "/" +"{id}"+ "/" + ApiUrls.URL_REPORT_USER)
+    Observable<JsonElement> block_user(@Path("id") int channelID,
+                                        @Header ("Authorization") String api_token,
+                                        @Header("DeviceType") String device_type,
+                                        @Header("DeviceToken") String device_token,
+                                        @FieldMap Map<String,Object> params);
 }
 
 

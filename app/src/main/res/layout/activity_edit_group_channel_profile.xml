@@ -37,18 +37,27 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_30sdp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="@dimen/_70sdp"
                     android:layout_height="@dimen/_70sdp"
-                    android:id="@+id/profile_image"
-                    android:src="@drawable/bot5"
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true"/>
+                    app:cardCornerRadius="@dimen/_120sdp"
+                    android:layout_centerInParent="true">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:id="@+id/profile_image"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
 
                 <ImageView
                     android:id="@+id/edit_image"
                     android:layout_width="@dimen/_26sdp"
+                    android:elevation="@dimen/_4sdp"
                     android:layout_height="@dimen/_26sdp"
+                    android:visibility="gone"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:background="@drawable/edit_profile_pic" />
@@ -68,7 +77,7 @@
                 app:strokeColor="@color/theme_green">
 
                     <EditText
-                        android:id="@+id/gender"
+                        android:id="@+id/title"
                         android:textSize="@dimen/_10ssp"
                         android:hint="@string/gtf_finance"
                         android:maxLength="100"
@@ -111,7 +120,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_marginVertical="@dimen/_20sdp"
                 android:id="@+id/update_description"
                 android:layout_below="@id/description_container"
@@ -130,7 +139,7 @@
                     android:fontFamily="@font/poppins500"
                     android:text="UPDATE"
                     android:includeFontPadding="false"/>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </RelativeLayout>
 

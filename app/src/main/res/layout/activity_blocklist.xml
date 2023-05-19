@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/userProfileBgColor"
-
-    android:orientation="vertical">
+    android:background="@color/blocklistBackgroundColor">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
+        android:id="@+id/toolbar"
         android:background="@color/userProfileActionBar"
         android:orientation="horizontal">
 
@@ -37,11 +36,15 @@
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@id/toolbar"
+
         android:alpha=".4"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
+        android:id="@+id/search_container"
+        android:layout_below="@id/toolbar"
         android:paddingHorizontal="@dimen/_24sdp"
         android:orientation="horizontal">
 
@@ -66,6 +69,7 @@
             android:textSize="@dimen/_10ssp"
             android:textFontWeight="400"
             android:layout_height="match_parent"
+            android:id="@+id/blocked_count"
             android:text="12345"/>
 
         <ImageView
@@ -78,11 +82,26 @@
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@id/search_container"
         android:alpha=".4"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/blocklist_recycler"
         android:layout_width="match_parent"
+        android:layout_below="@id/search_container"
         android:layout_height="match_parent"/>
 
-</LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_data_found"
+        android:text="No data found"
+        android:textColor="@color/blocklistTitleColor"
+        android:fontFamily="@font/poppins"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>

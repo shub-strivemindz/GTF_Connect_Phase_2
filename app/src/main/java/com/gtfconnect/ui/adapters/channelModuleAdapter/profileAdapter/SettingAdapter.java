@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentUserSettingBinding;
 import com.gtfconnect.interfaces.ChannelSettingListener;
-import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelBlocklistScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.BlocklistScreen;
+import com.gtfconnect.utilities.Constants;
 import com.shawnlin.numberpicker.NumberPicker;
 
 public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHolder> {
@@ -34,13 +34,15 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     private int accessType = 0, discussion = 0, signMessage = 0,manipulateView = 0,manipulateViewPercent=10, viewChatHistory = 0, manageReaction = 0;
 
+    private String viewType;
 
     private ChannelSettingListener listener;
 
-    public  SettingAdapter(Context context,InfoDbEntity profileDetailModel,ChannelSettingListener listener){
+    public  SettingAdapter(Context context,InfoDbEntity profileDetailModel,ChannelSettingListener listener,String viewType){
         this.context = context;
         this.profileDetailModel = profileDetailModel;
         this.listener = listener;
+        this.viewType = viewType;
     }
 
     @NonNull
@@ -51,6 +53,15 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(SettingAdapter.ViewHolder holder, int position) {
+
+
+
+        if (viewType.equalsIgnoreCase(Constants.Group_Channel_TYPE_1)){
+            holder.binding.discussionContainer.setVisibility(View.GONE);
+            holder.binding.signMessageContainer.setVisibility(View.GONE);
+            holder.binding.viewChatHistoryContainer.setVisibility(View.GONE);
+            holder.binding.manipulateContainer.setVisibility(View.GONE);
+        }
 
 
         holder.binding.channelDescription.setOnClickListener(view -> {
@@ -194,7 +205,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
             holder.binding.channelDescription.setEnabled(false);
         });
 
-        holder.binding.blocklist.setOnClickListener(view -> context.startActivity(new Intent(context, ChannelBlocklistScreen.class)));
+        holder.binding.blocklist.setOnClickListener(view -> context.startActivity(new Intent(context, BlocklistScreen.class)));
 
 
         holder.binding.privateChannelSwitch.setOnCheckedChangeListener((compoundButton, b) -> {

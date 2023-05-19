@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/groupChannelProfileBackgroundColor"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:background="@color/theme_green"
+            android:background="@color/groupChannelProfileActionBarBackgroundColor"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_70sdp">
 
@@ -49,7 +49,7 @@
             android:layout_marginTop="@dimen/_30sdp"
             android:layout_centerHorizontal="true"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/background"
+            app:cardBackgroundColor="@color/groupChannelProfileBackgroundColor"
             app:cardCornerRadius="@dimen/_180sdp">
 
             <com.google.android.material.card.MaterialCardView
@@ -75,6 +75,7 @@
             android:layout_centerHorizontal="true"
             android:text="Live Market Session"
             android:layout_below="@id/logo_container"
+            android:textColor="@color/groupChannelProfileTitleTextColor"
             android:fontFamily="@font/open_sans"
             android:textSize="@dimen/_15ssp"
             android:textFontWeight="600"
@@ -127,6 +128,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/copy_link"
                 android:layout_weight="1"
+                app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
                 app:cardCornerRadius="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
                 android:layout_marginHorizontal="@dimen/_4sdp">
@@ -161,6 +163,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/leave_channel"
                 android:layout_weight="1"
+                app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
                 app:cardCornerRadius="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
                 android:layout_marginHorizontal="@dimen/_4sdp">
@@ -195,6 +198,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/mute_notification"
                 android:layout_weight="1"
+                app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
                 app:cardCornerRadius="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
                 android:layout_marginHorizontal="@dimen/_4sdp">
@@ -233,13 +237,15 @@
             android:id="@+id/tab_layout"
             android:layout_below="@id/group1"
             android:layout_width="match_parent"
-            android:background="@color/background"
             app:tabSelectedTextColor="@color/theme_green"
-            app:tabTextColor="@color/textSearchTextColor"
+            app:tabTextColor="@color/groupChannelProfileTabTextColor"
             app:tabIndicatorColor="@color/theme_green"
             app:tabMode="auto"
             app:tabIndicatorFullWidth="false"
+            app:tabRippleColor="@color/groupChannelProfileTabBackgroundColor"
             app:tabGravity="fill"
+            android:background="@color/groupChannelProfileTabBackgroundColor"
+            app:tabBackground="@color/groupChannelProfileTabBackgroundColor"
             app:tabTextAppearance="@style/profileTabTextAppearance"
             android:layout_height="wrap_content">
 
@@ -247,11 +253,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Document" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Links"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

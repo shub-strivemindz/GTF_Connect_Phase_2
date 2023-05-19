@@ -265,6 +265,22 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         });
 
 
+
+
+
+
+
+        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+
+            if (userProfileDbEntity != null){
+
+                // Todo Set conditions according to settings updated in api data
+            }
+        });
+
+
+
+
         // =================================================== Just to check and update Exclusive Offer List =====================================================
 
         /*exclusiveOfferDataModels = new ArrayList<>();
@@ -514,6 +530,14 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
           profileResponseModel = gson.fromJson(jsonObject,type);
 
+
+          if (profileResponseModel != null && profileResponseModel.getData() != null){
+              databaseViewModel.insertUserProfileData(profileResponseModel.getData());
+          }
+
+
+
+
             if (galleryEntity != null && galleryEntity.getImageUrl()!=null) {
                 if (!galleryEntity.getImageUrl().equalsIgnoreCase(profileResponseModel.getData().getProfileInfo().getProfileImage())) {
                     saveAndLoadImage("Condition 1");
@@ -682,8 +706,13 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         else{
             Log.d("notification_count",""+count);
 
-            binding.recentNotificationContainer.setVisibility(View.VISIBLE);
-            binding.recentNotificationCount.setText(count+"");
+            if (count > 999){
+                binding.recentNotificationCount.setText(". . .");
+            }
+            else {
+                binding.recentNotificationContainer.setVisibility(View.VISIBLE);
+                binding.recentNotificationCount.setText(count + "");
+            }
         }
     }
 
@@ -697,8 +726,14 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         else{
             Log.d("notification_count",""+count);
 
-            binding.channelNotificationContainer.setVisibility(View.VISIBLE);
-            binding.channelNotificationCount.setText(count+"");
+
+            if (count > 999){
+                binding.channelNotificationCount.setText(". . .");
+            }
+            else {
+                binding.channelNotificationContainer.setVisibility(View.VISIBLE);
+                binding.channelNotificationCount.setText(count + "");
+            }
         }
     }
 
@@ -713,8 +748,13 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         else{
             Log.d("notification_count",""+count);
 
-            binding.groupNotificationContainer.setVisibility(View.VISIBLE);
-            binding.groupNotificationCount.setText(String.valueOf(count));
+            if (count > 999){
+                binding.groupNotificationCount.setText(". . .");
+            }
+            else {
+                binding.groupNotificationContainer.setVisibility(View.VISIBLE);
+                binding.groupNotificationCount.setText(String.valueOf(count));
+            }
         }
     }
 
@@ -728,8 +768,14 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         else{
             Log.d("notification_count",""+count);
 
-            binding.mentorNotificationContainer.setVisibility(View.VISIBLE);
-            binding.mentorNotificationCount.setText(count+"");
+
+            if (count > 999){
+                binding.mentorNotificationCount.setText(". . .");
+            }
+            else {
+                binding.mentorNotificationContainer.setVisibility(View.VISIBLE);
+                binding.mentorNotificationCount.setText(count + "");
+            }
         }
     }
 }

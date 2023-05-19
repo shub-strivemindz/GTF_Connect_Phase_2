@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.database.repository.ConnectRepo;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.reflect.TypeOfKt;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class ConnectViewModel extends AndroidViewModel {
 
@@ -89,8 +92,19 @@ public class ConnectViewModel extends AndroidViewModel {
     }
 
 
-    public void update_groupChannel_profile(int id,String api_token,  Map<String,Object> params) {
-        disposables.add(repo.update_group_channel_profile(id, api_token, DEVICE_TYPE, DEVICE_TOKEN,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+    public void update_groupChannel_profile(int id,String api_token,  Map<String,Object> params,File image) {
+        MultipartBody.Part image_part = null;
+        if (image != null) {
+
+            RequestBody part =
+                    RequestBody.create(
+                            MediaType.parse("*/*"),
+                            image
+                    );
+            image_part = MultipartBody.Part.createFormData("ProfileImage", image.getName(), part);
+        }
+
+        disposables.add(repo.update_group_channel_profile(id, api_token, DEVICE_TYPE, DEVICE_TOKEN,params,image_part).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());
@@ -582,6 +596,87 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
+
+
+
+
+
+
+    public void group_channel_blocklist(int id,String api_token) {
+        disposables.add(repo.group_channel_blocklist(id,api_token, DEVICE_TYPE, DEVICE_TOKEN).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
+    public void group_channel_report_reason_list(String api_token,int page,int per_page) {
+        disposables.add(repo.group_channel_report_reason_list(api_token, DEVICE_TYPE, DEVICE_TOKEN,page,per_page).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public void block_user(int id,String api_token,Map<String,Object> params) {
+        disposables.add(repo.block_user(id,api_token, DEVICE_TYPE, DEVICE_TOKEN,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
 
 
 

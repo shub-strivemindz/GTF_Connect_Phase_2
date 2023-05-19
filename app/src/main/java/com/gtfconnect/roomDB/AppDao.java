@@ -9,6 +9,7 @@ import androidx.room.Query;
 
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
@@ -20,6 +21,25 @@ import java.util.List;
 
 @Dao
 public interface AppDao {
+
+
+
+    // -------------------------------------------------------------------- User Profile Response Data -----------------------------------------------------
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUserProfileData(UserProfileDbEntity userProfileDbEntity);
+
+
+    @Query("delete from user_profile_info_data")
+    void delete_user_profile_data();
+
+
+    @Query("select * from  user_profile_info_data")
+    LiveData<UserProfileDbEntity> getUserProfileData();
+
+
+
+
 
 
     // -------------------------------------------------------------------- Exclusive Offer Response Data -----------------------------------------------------

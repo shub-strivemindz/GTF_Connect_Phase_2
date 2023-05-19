@@ -20,7 +20,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "GTF Connect"
 include ':app'
-include ':MediaLibrary'
 include ':AudioWaveForm'
 include ':FlyingReactionAnim'
 include ':AudioRecorder'
+include ':Media_Player'

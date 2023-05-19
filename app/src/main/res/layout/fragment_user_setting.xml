@@ -3,7 +3,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/background"
+    android:background="@color/groupChannelProfileBackgroundColor"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <LinearLayout
@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         android:layout_marginHorizontal="@dimen/_24sdp"
         app:cardCornerRadius="@dimen/_8sdp">
 
@@ -50,7 +51,7 @@
                 android:layout_weight="1"
                 android:text="Channel Description"
                 android:gravity="center_vertical"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:fontFamily="@font/montserrat"/>
             
             <TextView
@@ -58,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 android:text="Edit"
                 android:layout_marginHorizontal="@dimen/_14sdp"
                 android:textColor="@color/theme_green"
@@ -78,7 +80,7 @@
             android:enabled="false"
             android:textSize="@dimen/_10ssp"
             android:maxLines="6"
-            android:textColor="@color/profileTextColor"
+            android:textColor="@color/groupChannelProfileTextColor"
             android:clickable="false"
             android:layout_marginBottom="@dimen/_8sdp"
             android:background="@android:color/transparent"
@@ -112,9 +114,10 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_135sdp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         app:cardCornerRadius="@dimen/_14sdp">
 
         <LinearLayout
@@ -124,8 +127,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_45sdp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -150,7 +152,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:fontFamily="@font/montserrat"
                     android:textSize="@dimen/_11ssp"
                     android:text="Private Channel"/>
@@ -162,7 +164,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:textStyle="bold"
                     android:textSize="@dimen/_9ssp"
                     android:text="Off"/>
@@ -186,8 +188,7 @@
             <LinearLayout
                 android:id="@+id/manage_permission"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_45sdp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -212,7 +213,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:fontFamily="@font/montserrat"
                     android:textSize="@dimen/_11ssp"
                     android:text="Manage Permissions"/>
@@ -226,8 +227,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_45sdp"
+                android:id="@+id/discussion_container"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -253,7 +254,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:textSize="@dimen/_11ssp"
                     android:text="Discussions"/>
 
@@ -264,7 +265,7 @@
                     android:id="@+id/discussion_switch_text"
                     android:gravity="center_vertical"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:textStyle="bold"
                     android:textSize="@dimen/_9ssp"
                     android:text="Off"/>
@@ -287,6 +288,7 @@
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         app:cardElevation="0dp"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
@@ -319,7 +321,7 @@
                 android:layout_weight="1"
                 android:id="@+id/manage_reaction"
                 android:layout_height="match_parent"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_11ssp"
                 android:text="Manage Reactions"/>
@@ -328,7 +330,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:gravity="center_vertical"
                 android:id="@+id/manage_reaction_switch_text"
                 android:fontFamily="@font/montserrat"
@@ -353,6 +355,7 @@
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
         android:id="@+id/blocklist"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         app:cardElevation="0dp"
         android:layout_height="@dimen/_45sdp"
         android:layout_marginHorizontal="@dimen/_20sdp"
@@ -385,7 +388,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:textSize="@dimen/_11ssp"
                 android:text="Block List"/>
 
@@ -397,7 +400,9 @@
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
         app:cardElevation="0dp"
+        android:id="@+id/sign_message_container"
         android:layout_height="@dimen/_45sdp"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
 
@@ -427,7 +432,7 @@
                 android:gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_11ssp"
@@ -439,7 +444,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
                 android:fontFamily="@font/montserrat"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:textStyle="bold"
                 android:textSize="@dimen/_9ssp"
                 android:id="@+id/sign_message_switch_text"
@@ -461,7 +466,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_90sdp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         app:cardElevation="0dp"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
@@ -473,8 +479,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_45sdp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -501,7 +506,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:textSize="@dimen/_11ssp"
                     android:text="Administrator"/>
 
@@ -512,15 +517,10 @@
                 android:alpha=".2"
                 android:layout_height="1dp"/>
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:alpha=".2"
-                android:layout_height="1dp"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="@dimen/_45sdp"
+                android:id="@+id/manipulate_container"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -547,7 +547,7 @@
                     android:id="@+id/manipulate_view_container"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:textSize="@dimen/_11ssp"
                     android:text="Manipulate Views"/>
 
@@ -558,7 +558,7 @@
                     android:gravity="center_vertical"
                     android:fontFamily="@font/montserrat"
                     android:textStyle="bold"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/groupChannelProfileHeaderTextColor"
                     android:id="@+id/manipulate_view_switch_text"
                     android:textSize="@dimen/_9ssp"
                     android:text="Off"/>
@@ -581,6 +581,8 @@
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="match_parent"
         app:cardElevation="0dp"
+        android:id="@+id/view_chat_history_container"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         android:layout_height="@dimen/_45sdp"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
@@ -614,7 +616,7 @@
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_11ssp"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:text="View Chat History"/>
 
             <TextView
@@ -624,7 +626,7 @@
                 android:gravity="center_vertical"
                 android:fontFamily="@font/montserrat"
                 android:textStyle="bold"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:id="@+id/view_chat_history_switch_text"
                 android:textSize="@dimen/_9ssp"
                 android:text="Off"/>
@@ -648,6 +650,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
         app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
         android:layout_marginHorizontal="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_14sdp">
 
@@ -677,7 +680,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_11ssp"

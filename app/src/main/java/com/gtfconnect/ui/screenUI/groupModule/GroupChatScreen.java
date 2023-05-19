@@ -3,16 +3,12 @@ package com.gtfconnect.ui.screenUI.groupModule;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
-import static com.gtfconnect.utilities.Constants.CAPTURE_IMAGE_REQUEST_CODE;
-import static com.gtfconnect.utilities.Constants.RECORD_AUDIO_REQUEST_CODE;
-import static com.gtfconnect.utilities.Constants.SELECT_DOCUMENT_REQUEST_CODE;
-import static com.gtfconnect.utilities.Constants.SELECT_PICTURE_REQUEST_CODE;
-import static com.gtfconnect.utilities.Constants.SELECT_VIDEO_REQUEST_CODE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +21,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -58,7 +55,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.audiorecorder.OnRecordListener;
+import com.example.audiowaveform.WaveformSeekBar;
 import com.example.flyingreactionanim.Directions;
 import com.example.flyingreactionanim.ZeroGravityAnimation;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -87,24 +86,28 @@ import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
-import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.groupResponseModel.GetDummyUserModel;
-import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseModels.CommentReceiveResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
-import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelProfileScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.VideoPreviewScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
+import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.CustomEditText;
 import com.gtfconnect.utilities.FetchPath;
+import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
@@ -117,7 +120,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,8 +236,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private String postBaseUrl = "";
 
-    private boolean searchPinnedMessageEnabled = false;
-
     private int pinMessageCount = 0;
 
     private ChannelCommentResponseModel commentResponseModel;
@@ -270,21 +273,28 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private MediaRecorder mMediaRecorder;
 
+    MediaPlayer mediaPlayer;
     private String audioFilePath = "";
 
     private GroupChannelChatDbEntity databaseEntity;
+
+    private String api_token = "";
+
+    private String profileBaseUrl = "";
+
+    private String userType = "";
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("Lifecycle Check ", "In the onCreate() event");
+
         binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-        channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
-
-        init();
 
 
         // Setting GIF | Image Insertion in Search EditText
@@ -307,46 +317,33 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
-        //destroyListeners();
-
-        searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
-
-        binding.quoteContainer.setVisibility(View.GONE);
-        binding.attachmentContainer.setVisibility(View.GONE);
-
-
-        rest = new Rest(this, false, false);
-
-        binding.iconContainer.setVisibility(View.GONE);
 
         list = new ArrayList<>();
         receivedMessageList = new ArrayList<>();
 
+        //destroyListeners();
         gcMemberID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_MEMBER_ID, ""));
         userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
 
-        loadDataToAdapter();
+        channelID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, ""));
 
-        Log.d("data_channel_id",""+channelID);
+        api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
 
-        //updateGroupChatSocket(false);
 
 
+        loadDataToAdapter();
 
-        //------------------------------------------------------------------------- Socket Listening Events -------------------------------------------------------------
+
         userTypingListener();
         messageReceivedListener();
         updateLikeListener();
         deletePostListener();
         commentReceiver();
 
-        //deleteCommentListener();
-        //------------------------------------------------------------------------- ------------------------ -------------------------------------------------------------
-
-
+        databaseEntity = new GroupChannelChatDbEntity();
 
         binding.quoteContainer.setVisibility(View.GONE);
         binding.attachmentContainer.setVisibility(View.GONE);
@@ -357,78 +354,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         binding.pinAttachment.setVisibility(View.VISIBLE);
 
 
+        rest = new Rest(this, false, false);
 
+        binding.iconContainer.setVisibility(View.GONE);
 
-        // Navigate for Member Chat
-        binding.memberTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(GroupChatScreen.this, ChannelProfileScreen.class));
+        receivedMessageList = new ArrayList<>();
 
-            }
-        });
+        getReactionAndInitializeViewModel();
 
-        binding.pin.setOnClickListener(view -> {
+        initiateClickListeners();
+        sendMessageAndAudioRecorderEvents();
 
-
-            if (pinMessageCount == 0) {
-                Utils.showSnackMessage(GroupChatScreen.this, binding.pin, "No Pinned Message Found!");
-            } else {
-                Intent i = new Intent(GroupChatScreen.this, PinnedMessageScreen.class);
-                i.putExtra("post_base_url", postBaseUrl);
-                startActivity(i);
-                finish();
-            }
-        });
-
-        binding.backClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-
-
-        // Bottom sheet for Mute Notifications
-        binding.pinAttachment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                // Todo..................Uncomment below condition when video can be shared
-
-                //if (!isAnyFileAttached)
-                openAttachmentDialog();
-            }
-        });
-
-        binding.iconContainer.setOnClickListener(view -> {
-            //currentPage = 1;
-
-            if (isScrollDownHighlighted) {
-                isScrollDownHighlighted = false;
-                binding.arrowIcon.setColorFilter(getResources().getColor(R.color.tab_grey));
-            }
-
-
-            scrollToPosition(0,false);
-
-            binding.iconContainer.setVisibility(View.GONE);
-
-        });
-
-        binding.closeQuoteEditor.setOnClickListener(view -> {
-
-            binding.sendMessage.setVisibility(View.GONE);
-            binding.recordButton.setVisibility(View.VISIBLE);
-            binding.pinAttachment.setVisibility(View.VISIBLE);
-
-            binding.quoteContainer.setVisibility(View.GONE);
-            isMessageQuoted = false;
-        });
-
-
-
+        currentPage = 1;
+        loadLocalData();
 
 
         binding.chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -450,8 +388,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             binding.chipDateContainer.setVisibility(View.GONE);
                         }
                     }
-                }
-                else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 
                     if (position != -1) {
                         if (!groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
@@ -459,8 +396,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         }
                     }
                     binding.chipDateContainer.setVisibility(View.GONE);
-                }
-                else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
 
                     binding.chipDateContainer.setVisibility(View.VISIBLE);
 
@@ -481,23 +417,26 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 recyclerViewState = binding.chats.getLayoutManager().onSaveInstanceState(); // save recycleView state
                 totalItem = mLayoutManager.getItemCount();
 
-
                 if (isScrolling && mLayoutManager.findLastCompletelyVisibleItemPosition() == totalItem - 1 && dy < 0) {
 
-                    Log.d("ChannelGroupChat","totalItem = "+totalItem);
+                    Log.d("ChannelGroupChat", "totalItem = " + totalItem);
                     binding.chipDateContainer.setVisibility(View.GONE);
 
                     isScrolling = false;
+
+                    //currentPage = databaseEntity.getChatBodyDbEntitiesLists().get(0).getPage();
+
                     currentPage++;
+
+                    Log.d("Page", "" + currentPage);
 
                     //binding.loader.setVisibility(View.VISIBLE);
 
-                    updateGroupChatSocket(true);
+                    updateChannelChatSocket(true);
 
-                }
-                else{
+                } else {
                     if (!groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
-                        Log.d("Chip Date = ", "" + groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()));
+                        //Log.d("Chip Date = ", "" + groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()));
                         binding.chipDate.setText(groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
                     } else {
                         binding.chipDateContainer.setVisibility(View.GONE);
@@ -531,13 +470,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 typeCount = charSequence.length();
 
                 if (typeCount == 0) {
-
                     binding.sendMessage.setVisibility(View.GONE);
                     binding.recordButton.setVisibility(View.VISIBLE);
+
                     isUserTypingMessage = false;
                     endTypingListener();
-                }
-                else {
+                } else {
                     isUserTypingMessage = true;
                     startTypingListener();
                 }
@@ -550,78 +488,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
-        binding.sendMessage.setOnClickListener(view -> {
-
-
-            if (isUserTypingMessage) {
-
-                binding.sendMessage.setVisibility(View.GONE);
-                binding.recordButton.setVisibility(View.VISIBLE);
-
-                endTypingListener();
-                messageText = binding.type.getText().toString().trim();
-
-                if (isAnyFileAttached) {
-                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                        callAttachmentApi();
-                    } else {
-                        Utils.showSnackMessage(this, binding.type, "Type Message !");
-                        binding.imagePreviewLayout.setVisibility(View.GONE);
-                        isAnyFileAttached = false;
-                        isAttachmentSend = false;
-                    }
-                } else {
-                    validateSendMessage(messageText, binding.type);
-                }
-            }
-            else{
-
-            }
-        });
-
-
-        binding.closeAttachmentContainer.setOnClickListener(view -> {
-            isAnyFileAttached = false;
-            binding.attachmentContainer.setVisibility(View.GONE);
-        });
-
-
-        if (searchPinnedMessageEnabled) {
-            String groupChatId = getIntent().getStringExtra("groupChatId");
-            searchedTillPosition = 0;
-            isMessageNotFound = true;
-            loadSearchData = false;
-            isDataAvailable = true;
-
-            //rest.ShowDialogue();
-            searchMessageInList(groupChatId, false, false, false);
-
-        }
-
         if (pinMessageCount == 0) {
             binding.pinnedMessageCountContainer.setVisibility(View.GONE);
         } else {
             binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
         }
 
-
-        binding.dummyUsers.setOnClickListener(view -> {
-            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(GroupChatScreen.this);
-            chat_options_dialog.setContentView(R.layout.bottomsheet_dummy_user_list);
-
-            RecyclerView dummy_user_recycler = chat_options_dialog.findViewById(R.id.dummy_user_list);
-
-            DummyUserListAdapter dummyUserListAdapter= new DummyUserListAdapter(GroupChatScreen.this,getDummyUserModel,this);
-            dummy_user_recycler.setHasFixedSize(true);
-            dummy_user_recycler.setLayoutManager(new LinearLayoutManager(this));
-            dummy_user_recycler.setAdapter(dummyUserListAdapter);
-
-            chat_options_dialog.show();
-        });
-
-
-        //binding.emoji.setOnClickListener(view -> Utils.showDialog(1,this,rootView,emojiListModel));
-        sendMessageAndAudioRecorderEvents();
     }
 
 
@@ -634,10 +506,132 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     }*/
 
+    private void initiateClickListeners() {
+        // Navigate for Member Chat
+        binding.memberTitle.setOnClickListener(view -> {
+            Intent intent = new Intent(GroupChatScreen.this, ProfileScreen.class);
+            intent.putExtra("viewType",Constants.Group_Channel_TYPE_1);
+            startActivity(intent);
+        });
+
+        binding.pin.setOnClickListener(view -> {
 
 
+            if (pinMessageCount == 0) {
+                Utils.showSnackMessage(GroupChatScreen.this, binding.pin, "No Pinned Message Found!");
+            } else {
+                Intent i = new Intent(GroupChatScreen.this, PinnedMessageScreen.class);
+                i.putExtra("post_base_url", postBaseUrl);
+                i.putExtra("profile_base_url",profileBaseUrl);
+                startForActivityResultLauncher.launch(i);
+            }
+        });
+
+        binding.backClick.setOnClickListener(view -> onBackPressed());
 
 
+        // Bottom sheet for Mute Notifications
+        binding.pinAttachment.setOnClickListener(view -> {
+
+
+            // Todo..................Uncomment below condition when video can be shared
+
+            //if (!isAnyFileAttached)
+            openAttachmentDialog();
+        });
+
+        binding.iconContainer.setOnClickListener(view -> {
+            //currentPage = 1;
+
+            if (isScrollDownHighlighted) {
+                isScrollDownHighlighted = false;
+                binding.arrowIcon.setColorFilter(getResources().getColor(R.color.tab_grey));
+            }
+
+
+            scrollToPosition(0);
+
+            binding.iconContainer.setVisibility(View.GONE);
+
+        });
+
+        binding.closeQuoteEditor.setOnClickListener(view -> {
+            binding.quoteContainer.setVisibility(View.GONE);
+
+            binding.sendMessage.setVisibility(View.GONE);
+            binding.recordButton.setVisibility(View.VISIBLE);
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+
+            isMessageQuoted = false;
+        });
+
+        binding.sendMessage.setOnClickListener(view -> {
+
+
+            if (isUserTypingMessage) {
+
+                binding.sendMessage.setVisibility(View.VISIBLE);
+                binding.recordButton.setVisibility(View.GONE);
+
+                endTypingListener();
+                messageText = binding.type.getText().toString().trim();
+
+                Log.d("SendMessage","Button Clicked");
+                Log.d("SendMessage","isAnyFileAttached = "+isAnyFileAttached);
+
+                if (isAnyFileAttached) {
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        callAttachmentApi();
+                    } else {
+                        messageText = "";
+                        callAttachmentApi();
+                    }
+                } else {
+
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        validateSendMessage(messageText, binding.type);
+                        messageText = null;
+                    } else {
+                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                        isAnyFileAttached = false;
+                        isAttachmentSend = false;
+                    }
+                }
+            } else {
+
+                messageText = binding.type.getText().toString().trim();
+
+                Log.d("SendMessage","Button Clicked");
+                Log.d("SendMessage","isAnyFileAttached = "+isAnyFileAttached);
+
+                if (isAnyFileAttached) {
+
+                    binding.sendMessage.setVisibility(View.VISIBLE);
+                    binding.recordButton.setVisibility(View.GONE);
+
+                    callAttachmentApi();
+                }
+                else{
+                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                        validateSendMessage(messageText, binding.type);
+                        messageText = null;
+                    } else {
+                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                        isAnyFileAttached = false;
+                        isAttachmentSend = false;
+                    }
+                }
+            }
+        });
+
+
+        binding.closeAttachmentContainer.setOnClickListener(view -> {
+            isAnyFileAttached = false;
+            binding.attachmentContainer.setVisibility(View.GONE);
+        });
+    }
 
 
     private void sendMessageAndAudioRecorderEvents() {
@@ -687,7 +681,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 attachmentFileList.add(audioFile);
                 isAnyFileAttached = true;
 
-                attachment_request_code = RECORD_AUDIO_REQUEST_CODE;
+                attachment_request_code = Constants.RECORD_AUDIO_REQUEST_CODE;
                 callAttachmentApi();
 
                 binding.footerSearchContainer.setVisibility(View.VISIBLE);
@@ -725,7 +719,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 Log.d("RecordButton", "RECORD BUTTON CLICKED");
             }
         });
-
         binding.recordView.setLockEnabled(true);
         binding.recordView.setRecordLockImageView(findViewById(R.id.record_lock));*/
     }
@@ -782,55 +775,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     //give below permission for audio capture
     private void RequestPermission() {
         ActivityCompat.requestPermissions(this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, Constants.RECORD_AUDIO_REQUEST_CODE);
     }
 
 
-    private void loadLocalData() {
-
-        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
-
-        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
-            if (infoDbEntity != null) {
-                this.infoDbEntity = infoDbEntity;
-            }
-        });
-
-        list = new ArrayList<>();
-
-        String chatData = PreferenceConnector.readString(this,PreferenceConnector.GROUP_CHAT_DATA+"/"+channelID,"");
-        Type type = new TypeToken<ChannelChatResponseModel>(){}.getType();
-        responseModel = new Gson().fromJson(chatData,type);
-
-        if(responseModel != null && responseModel.getData() != null) {
-
-            if (responseModel.getData().getMediaUrl() != null){
-                postBaseUrl = responseModel.getData().getMediaUrl();
-            }
-
-            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
-                list.addAll(responseModel.getData().getChatData().getRows());
-
-                groupViewAdapter.updateList(list,postBaseUrl);
-            }
-            if (responseModel.getData().getSubscriptionCount() != null) {
-                subscribers = responseModel.getData().getSubscriptionCount();
-                binding.userSubscribers.setText(String.valueOf(subscribers));
-            }
-        }
-        refreshGroupChatSocket();
-    }
-
-
-    public void init() {
-
-        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+    private void getReactionAndInitializeViewModel() {
 
         // Getting API data fetch
         rest = new Rest(this, false, true);
         listener = this;
-
-        //=============================================================== ConnectViewModel APIs ===========================================================
+        //appDao = AppDatabase.getInstance(getApplication()).appDao();
         connectViewModel = new ViewModelProvider(this).get(ConnectViewModel.class);
         connectViewModel.getResponseLiveData().observe(this, new Observer<ApiResponse>() {
             @Override
@@ -846,8 +800,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
+        requestType = REQUEST_EMOJI_LIST;
+        connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
+    }
 
-        //=============================================================== ChatViewModel APIs ===========================================================
+
+    public void init() {
+
+        rest = new Rest(this, false, false);
+        listener = this;
+        //appDao = AppDatabase.getInstance(getApplication()).appDao();
         chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         chatViewModel.getResponseLiveData().observe(this, new Observer<ApiResponse>() {
             @Override
@@ -863,59 +825,164 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
+        requestType = PINNED_MESSAGE_COUNT;
 
-        String api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
-        Log.d("api_token",api_token);
+        Map<String, Object> param = new HashMap<>();
+        param.put("GroupChannelID", PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, "0"));
+        param.put("UserID", PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0));
 
-        requestType = GET_DUMMY_USER;
-        connectViewModel.get_dummy_user_list(channelID,api_token,"android","test");
+        chatViewModel.getPinnedMessages(param);
     }
 
 
+    private void loadLocalData() {
 
-    private void scrollToPosition(int position,boolean isMessageQuoted) {
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+
+
+        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+            if (userProfileDbEntity != null){
+
+                if (userProfileDbEntity.getUserRoleInfo() != null && userProfileDbEntity.getUserRoleInfo().getPrimary() != null){
+                    if (userProfileDbEntity.getUserRoleInfo().getPrimary().getRole() != null && userProfileDbEntity.getUserRoleInfo().getPrimary().getRole().getSlug() != null){
+                        userType = userProfileDbEntity.getUserRoleInfo().getPrimary().getRole().getSlug();
+
+                        if (userType.equalsIgnoreCase("user")){
+
+                            // Todo ============ Uncomment Line
+                            //binding.memberTitle.setClickable(false);
+                        }
+                    }
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
+            if (infoDbEntity != null) {
+                this.infoDbEntity = infoDbEntity;
+                setProfileInfo();
+            }
+        });
+
+        list = new ArrayList<>();
+
+        String chatData = PreferenceConnector.readString(this,PreferenceConnector.CHANNEL_CHAT_DATA+"/"+channelID,"");
+        Type type = new TypeToken<ChannelChatResponseModel>(){}.getType();
+        responseModel = new Gson().fromJson(chatData,type);
+
+        if(responseModel != null && responseModel.getData() != null) {
+
+            if (responseModel.getData().getMediaUrl() != null){
+                postBaseUrl = responseModel.getData().getMediaUrl();
+            }
+
+
+            if (responseModel.getData().getBaseUrl() != null){
+                profileBaseUrl = responseModel.getData().getBaseUrl();
+            }
+
+            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                list.addAll(responseModel.getData().getChatData().getRows());
+
+                groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+            }
+            if (responseModel.getData().getSubscriptionCount() != null) {
+                subscribers = responseModel.getData().getSubscriptionCount();
+                binding.userSubscribers.setText(String.valueOf(subscribers));
+            }
+
+        }
+        refreshGroupChatSocket();
+    }
+
+
+    private void setProfileInfo(){
+
+        if (infoDbEntity != null){
+            if (infoDbEntity.getGcInfo() != null){
+                if (infoDbEntity.getGcInfo().getProfileImage() != null){
+                    GlideUtils.loadImage(this,binding.groupChannelLogo,infoDbEntity.getGcInfo().getProfileImage());
+                }
+
+                if (infoDbEntity.getGcSetting() != null){
+
+                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
+                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
+
+                        }
+                        else{
+
+                        }
+                    }
+                }
+
+                if (infoDbEntity.getGcPermission() != null){
+
+                }
+            }
+        }
+    }
+
+
+    private void scrollToPosition(int position) {
+        /*RecyclerView.SmoothScroller smoothScroller = new
+                LinearSmoothScroller(GroupChatScreen.this) {
+                    @Override
+                    protected int getVerticalSnapPreference() {
+                        return LinearSmoothScroller.SNAP_TO_START;
+                    }
+                };
+        smoothScroller.setTargetPosition(position);
+        mLayoutManager.startSmoothScroll(smoothScroller);*/
+
+        /*binding.chats.smoothScrollBy(0,0);*/
+
 
         mLayoutManager.scrollToPosition(position);
+
+        //ObjectAnimator.ofInt(mLayoutManager, "translationY",  position).setDuration(300).start();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isMessageQuoted){
+                if (isMessageQuoted) {
 
                     View getRoot = mLayoutManager.findViewByPosition(position);
+//                    View getRoot = groupViewAdapter.getSelectedView(position);
 
-                    Animation anim = new AlphaAnimation(0.1f, 1.0f);
-                    anim.setDuration(1500); //You can manage the blinking time with this parameter
-                    //anim.setStartOffset(20);
+                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                    anim.setDuration(1000); //You can manage the blinking time with this parameter
+                    anim.setStartOffset(20);
                     //anim.setRepeatMode(Animation.REVERSE);
-                    //anim.setRepeatCount(Animation.INFINITE);
+                    anim.setRepeatCount(Animation.INFINITE);
                     getRoot.startAnimation(anim);
-
                 }
             }
-        },1000);
+        }, 1000);
     }
 
     private void loadDataToAdapter() {
 
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
-
         // Load Comments List Data -----
-        groupViewAdapter = new GroupChatAdapter(this, list, String.valueOf(userID), postBaseUrl, this);
+        groupViewAdapter = new GroupChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(groupViewAdapter);
 
-
         binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);
 
     }
-
-
-//    private void
-
-    // -------------------------------------------------------------------Socket  Implementation --------------------------------------------------------------------
 
 
     private void refreshGroupChatSocket() {
@@ -950,7 +1017,13 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 runOnUiThread(() -> {
 
+
                     if(responseModel != null && responseModel.getData() != null) {
+
+
+                        if (responseModel.getData().getBaseUrl() != null){
+                            profileBaseUrl = responseModel.getData().getBaseUrl();
+                        }
 
                         if (responseModel.getData().getMediaUrl() != null){
                             postBaseUrl = responseModel.getData().getMediaUrl();
@@ -960,18 +1033,20 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                             if (currentPage == 1){
                                 String response = new Gson().toJson(responseModel);
-                                PreferenceConnector.writeString(this,PreferenceConnector.GROUP_CHAT_DATA+"/"+channelID,response);
+                                PreferenceConnector.writeString(this,PreferenceConnector.CHANNEL_CHAT_DATA+"/"+channelID,response);
 
                                 list = new ArrayList<>();
                                 list.addAll(responseModel.getData().getChatData().getRows());
 
                                 readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
+
+                                scrollToPosition(0);
                             }
                             else{
                                 list.addAll(responseModel.getData().getChatData().getRows());
                             }
 
-                            groupViewAdapter.updateList(list,postBaseUrl);
+                            groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                         }
                         if (responseModel.getData().getSubscriptionCount() != null) {
                             subscribers = responseModel.getData().getSubscriptionCount();
@@ -987,7 +1062,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         }
     }
 
-    private void updateGroupChatSocket(boolean isScrolling) {
+    private void updateChannelChatSocket(boolean isScrolling) {
         isListLoadedOnce = true;
 
         Gson gson = new Gson();
@@ -1034,6 +1109,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 postBaseUrl = responseModel.getData().getMediaUrl();
                             }
 
+                            if (responseModel.getData().getBaseUrl() != null){
+                                profileBaseUrl = responseModel.getData().getBaseUrl();
+                            }
+
                             if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
 
                                 if (currentPage == 1){
@@ -1049,7 +1128,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                     list.addAll(responseModel.getData().getChatData().getRows());
                                 }
 
-                                groupViewAdapter.updateList(list,postBaseUrl);
+                                groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                             }
                             if (responseModel.getData().getSubscriptionCount() != null) {
                                 subscribers = responseModel.getData().getSubscriptionCount();
@@ -1073,7 +1152,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             @Override
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
-                Log.d("User Typing Data :", data.toString());
+                Log.d("User Typing Data :=>", data.toString());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1129,7 +1208,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     private void validateSendMessage(String message, View view) {
-
         binding.quoteContainer.setVisibility(View.GONE);
         binding.sendMessage.setVisibility(View.GONE);
         binding.recordButton.setVisibility(View.VISIBLE);
@@ -1143,44 +1221,39 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         String userID = this.userID.toString();
 
         if (message != null) {
-            if (!message.equalsIgnoreCase("")) {
 
-                try {
-                    jsonRawObject = new JSONObject();
-                    jsonRawObject.put("GCMemberID", gcMemberID);
-                    jsonRawObject.put("GroupChannelID", channelID);
-                    jsonRawObject.put("UserID", userID);
+            try {
+                jsonRawObject = new JSONObject();
+                jsonRawObject.put("GCMemberID", gcMemberID);
+                jsonRawObject.put("GroupChannelID", channelID);
+                jsonRawObject.put("UserID", userID);
 
-                    if (isAttachmentSend) {
-                        jsonRawObject.put("ChatType", "file");
-                        jsonRawObject.put("MediaIds", mediaIDs);
+                if (isAttachmentSend) {
+                    jsonRawObject.put("ChatType", "file");
+                    jsonRawObject.put("MediaIds", mediaIDs);
 
-                        jsonRawObject.put("Message", message);
-                        sendMessage(jsonRawObject);
-                        Log.v("Send Message Params --", jsonRawObject.toString());
-                    } else {
-                        jsonRawObject.put("ChatType", "msg");
+                    jsonRawObject.put("Message", message);
+                    sendMessage(jsonRawObject);
+                    Log.v("Send Message Params --", jsonRawObject.toString());
+                } else {
+                    jsonRawObject.put("ChatType", "msg");
 
 
-                        jsonRawObject.put("Message", message);
+                    jsonRawObject.put("Message", message);
 
-                        if (isMessageQuoted) {
-                            jsonRawObject.put("GroupChatRefID", groupChatIDRef);
-                        }
-
-                        sendMessage(jsonRawObject);
-                        Log.v("Send Message Params --", jsonRawObject.toString());
+                    if (isMessageQuoted) {
+                        jsonRawObject.put("GroupChatRefID", groupChatIDRef);
                     }
 
-                } catch (Exception e) {
-                    Log.d("sendMessage Exception ----", e.toString());
+                    sendMessage(jsonRawObject);
+                    Log.v("Send Message Params --", jsonRawObject.toString());
                 }
-            } else {
-                isMessageQuoted = false;
-                isAttachmentSend = false;
-                Toast.makeText(this, "Type message!", Toast.LENGTH_SHORT).show();
+
+            } catch (Exception e) {
+                Log.d("sendMessage Exception ----", e.toString());
             }
-        } else {
+        }
+        else {
             isMessageQuoted = false;
             isAttachmentSend = false;
             Toast.makeText(this, "Type message!", Toast.LENGTH_SHORT).show();
@@ -1207,7 +1280,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 //scrollToFirstPosition();
                                 currentPage = 1;
                                 refreshGroupChatSocket();
-
                             } else {
                                 Log.d("Msg sent ", "failed");
                             }*/
@@ -1216,8 +1288,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
     }
-
-
 
     private void messageReceivedListener() {
 
@@ -1252,12 +1322,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
 
-            //ChannelRowListDataModel rowData = receivedMessage.getSaveMsg().getGetData();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
                     refreshGroupChatSocket();
+
                 }
             });
         });
@@ -1313,18 +1383,18 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                                                     if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
-                                                        groupViewAdapter.updateList(list,postBaseUrl);
+                                                        groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
                                                     } else {
                                                         list.get(i).getLike().get(0).setIsLike(1);
-                                                        groupViewAdapter.updateList(list,postBaseUrl);
+                                                        groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
                                                     }
                                                 } else {
                                                     list.get(i).getLike().add(0, like_response.getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    groupViewAdapter.updateList(list,postBaseUrl);
+                                                    groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                     break;
                                                 }
                                             }
@@ -1393,7 +1463,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 try {
                                     // Todo: Remove when live user ID has been used
 
-                                    GroupCommentResponseModel comment = new GroupCommentResponseModel();
+                                    CommentReceiveResponseModel comment = new CommentReceiveResponseModel();
 
 
                             /*if (detail.getGroupChatID() == )
@@ -1504,6 +1574,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
 
+
     private void searchMessageInList(String groupChatId, boolean hasPostDeleted, boolean commentSearch, boolean commentDeleteSearch) {
 
         if (isMessageNotFound) {
@@ -1543,17 +1614,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             isDataAvailable = false;
                         } else {
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            runOnUiThread(() -> {
 
-                                    list.addAll(responseModel.getData().getChatData().getRows());
-                                    groupViewAdapter.updateList(list,postBaseUrl);
-                                    loadSearchData = false;
-                                    currentPage++;
+                                list.addAll(responseModel.getData().getChatData().getRows());
+                                groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                loadSearchData = false;
+                                currentPage++;
 
-                                    searchMessageInList(groupChatId, hasPostDeleted, commentSearch, commentDeleteSearch);
-                                }
+                                searchMessageInList(groupChatId, hasPostDeleted, commentSearch, commentDeleteSearch);
                             });
 
                         }
@@ -1573,7 +1641,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 @Override
                                 public void run() {
                                     list.remove(searchedTillPosition);
-                                    groupViewAdapter.updateList(list,postBaseUrl);
+                                    groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1584,7 +1652,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 @Override
                                 public void run() {
                                     list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    groupViewAdapter.updateList(list,postBaseUrl);
+                                    groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1597,11 +1665,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 public void run() {
                                     if (commentDeleteResponseModel.getCommentData() != null) {
                                         list.get(searchedTillPosition).setCommentData(commentDeleteResponseModel.getCommentData());
-                                        channelViewAdapter.updateList(list);
+                                        groupViewAdapter.updateList(list);
                                     }
                                     else {
                                         list.get(searchedTillPosition).setCommentCount(0);
-                                        channelViewAdapter.updateList(list);
+                                        groupViewAdapter.updateList(list);
                                     }
                                 }
                             });
@@ -1610,7 +1678,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             break;
                         }*/
                         else {
-                            scrollToPosition(i,true);
+                            scrollToPosition(i);
                             rest.dismissProgressdialog();
                             isMessageNotFound = false;
                             break;
@@ -1656,18 +1724,17 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     // -------------------------------------------------------------- Api Calls -----------------------------------------------------------------------------
 
-    private void callAttachmentApi()
-    {
-        Map<String, Object> params = new HashMap<>();
-        params.put("GCMemberID",gcMemberID);
-        params.put("GroupChannelID",channelID);
-        params.put("UserID",this.userID.toString());
+    private void callAttachmentApi() {
 
+        Map<String, Object> params = new HashMap<>();
+        params.put("GCMemberID", gcMemberID);
+        params.put("GroupChannelID", channelID);
+        params.put("UserID", this.userID.toString());
 
 
         List<MultipartBody.Part> files = new ArrayList<>();
 
-        if (attachment_request_code == CAPTURE_IMAGE_REQUEST_CODE){
+        if (attachment_request_code == Constants.CAPTURE_IMAGE_REQUEST_CODE) {
 
             RequestBody part =
                     RequestBody.create(
@@ -1677,8 +1744,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
             files.add(attachment);
-        }
-        else if(attachment_request_code == SELECT_VIDEO_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.SELECT_VIDEO_REQUEST_CODE) {
 
             RequestBody part =
                     RequestBody.create(
@@ -1688,8 +1754,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
             files.add(attachment);
-        }
-        else if (attachment_request_code == SELECT_DOCUMENT_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
 
             RequestBody part =
                     RequestBody.create(
@@ -1700,9 +1765,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
             files.add(attachment);
 
-        } else if (attachment_request_code == SELECT_PICTURE_REQUEST_CODE) {
-            for (int i=0;i<attachmentFileList.size();i++)
-            {
+        } else if (attachment_request_code == Constants.SELECT_PICTURE_REQUEST_CODE) {
+            for (int i = 0; i < attachmentFileList.size(); i++) {
                 RequestBody part =
                         RequestBody.create(
                                 MediaType.parse("image/*"),
@@ -1712,11 +1776,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(i).getName(), part);
                 files.add(attachment);
             }
-        }
-        else if (attachment_request_code == RECORD_AUDIO_REQUEST_CODE) {
+        } else if (attachment_request_code == Constants.RECORD_AUDIO_REQUEST_CODE) {
             RequestBody part =
                     RequestBody.create(
-                            MediaType.parse("audio/*"),
+                            MediaType.parse("audio/webm;codecs=opus"),
+                            attachmentFileList.get(0)
+                    );
+
+            MultipartBody.Part attachment = MultipartBody.Part.createFormData("files", attachmentFileList.get(0).getName(), part);
+            files.add(attachment);
+        } else if (attachment_request_code == Constants.SHARE_GIF) {
+            RequestBody part =
+                    RequestBody.create(
+                            MediaType.parse("image/gif"),
                             attachmentFileList.get(0)
                     );
 
@@ -1727,7 +1799,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         attachment_request_code = 0;
         requestType = REQUEST_UPLOAD_FILE;
-        chatViewModel.attachFile(params,files);
+        chatViewModel.attachFile(params, files);
 
     }
 
@@ -1735,13 +1807,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     // -------------------------------------------------------------------Access Storage Implementation ----------------------------------------------------------------
 
 
-
-    private void openAttachmentDialog()
-    {
-        if (AttachmentUploadUtils.checkPermission(this)){
-            requestPermissions(new String[] {Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-        }
-        else {
+    private void openAttachmentDialog() {
+        if (AttachmentUploadUtils.checkPermission(this)) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+        } else {
             AttachmentUploadUtils.showPictureDialog(
                     this,
                     new AttachmentUploadListener() {
@@ -1764,8 +1833,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         }
     }
 
-    private void accessMedia()
-    {
+    private void accessMedia() {
         BottomSheetDialog media_type = new BottomSheetDialog(this);
         media_type.setContentView(R.layout.bottomsheet_select_media_type);
 
@@ -1789,8 +1857,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         media_type.show();
     }
 
-    private void accessMediaImage()
-    {
+    private void accessMediaImage() {
         // create an instance of the
         // intent of the type image
         Intent i = new Intent();
@@ -1798,20 +1865,18 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         //i.setAction(Intent.ACTION_PICK);
         i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         i.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(i, "Select Picture"),  SELECT_PICTURE_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), Constants.SELECT_PICTURE_REQUEST_CODE);
     }
 
-    private void accessMediaVideo()
-    {
+    private void accessMediaVideo() {
         // intent of the type image
         Intent i = new Intent();
         i.setType("video/*");
         i.setAction(Intent.ACTION_PICK);
-        startActivityForResult(i,  SELECT_VIDEO_REQUEST_CODE);
+        startActivityForResult(i, Constants.SELECT_VIDEO_REQUEST_CODE);
     }
 
-    private void accessCamera()
-    {
+    private void accessCamera() {
 
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
@@ -1822,28 +1887,37 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         Intent cameraIntent = AttachmentUploadUtils.takePhotoFromCamera(this);
         selectedMedia = new File(Objects.requireNonNull(cameraIntent.getStringExtra("image_path")));
-        startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST_CODE);
+        startActivityForResult(cameraIntent, Constants.CAPTURE_IMAGE_REQUEST_CODE);
 
     }
 
 
-    private void accessDocument()
-    {
+    private void accessDocument() {
 
-        String[] mimeTypes =
-                {"application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
-                        "application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
-                        "application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
+        /*String[] mimeTypes =
+                {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
+                        "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
+                        "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
                         "text/plain",
                         "application/pdf",
                         "application/zip"};
 
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-        i.setType("*/*");
+
+        i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        i.addCategory(Intent.CATEGORY_OPENABLE);*/
+//i.setType("*/*");
+
+
+        String[] mimeTypes = {"application/pdf"};
+
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.setType("pdf/*");
         i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         i.addCategory(Intent.CATEGORY_OPENABLE);
 
-        resultLauncher.launch(i);
+        startActivityForResult(i,Constants.SELECT_DOCUMENT_REQUEST_CODE);
+        //resultLauncher.launch(i);
 
     }
 
@@ -1854,7 +1928,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                 openAttachmentDialog();
             }
-        } else if (requestCode == RECORD_AUDIO_REQUEST_CODE) {
+        } else if (requestCode == Constants.RECORD_AUDIO_REQUEST_CODE) {
             if (grantResults.length > 0) {
                 boolean permissionToRecord = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 boolean permissionToStore = grantResults[1] == PackageManager.PERMISSION_GRANTED;
@@ -1871,9 +1945,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == SELECT_PICTURE_REQUEST_CODE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == Constants.SELECT_PICTURE_REQUEST_CODE && resultCode == RESULT_OK && null != data) {
             isAnyFileAttached = true;
-            attachment_request_code = SELECT_PICTURE_REQUEST_CODE;
+            attachment_request_code = Constants.SELECT_PICTURE_REQUEST_CODE;
 
             multipleImageUri = new ArrayList<>();
             attachmentFileList = new ArrayList<>();
@@ -1886,14 +1960,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                     ImagePreviewModel model = new ImagePreviewModel();
                     model.setUri(imageUri);
-                    multipleImageUri.add(i,model);
+                    multipleImageUri.add(i, model);
                     attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this, imageUri))));
-                    Log.d("Uri Data",imageUri.toString());
+
+
+                    Log.d("file_name",attachmentFileList.get(0).getName());
+                    Log.d("Uri Data", imageUri.toString());
                 }
 
 
-            }
-            else {
+            } else {
                 isAnyFileAttached = true;
                 Uri imageUri = data.getData();
 
@@ -1902,22 +1978,18 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 model.setActive(false);
                 multipleImageUri.add(model);
 
-                try{
+                try {
                     attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this, imageUri))));
-                }
-                catch (Exception e)
-                {
-                    Log.d("Image error",e.toString());
+                    Log.d("file_name",attachmentFileList.get(0).getName());
+                } catch (Exception e) {
+                    Log.d("Image error", e.toString());
                 }
             }
 
             previewImage();
-        }
-
-        else if(requestCode == CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK )
-        {
+        } else if (requestCode == Constants.CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
-            attachment_request_code = CAPTURE_IMAGE_REQUEST_CODE;
+            attachment_request_code = Constants.CAPTURE_IMAGE_REQUEST_CODE;
 
             multipleImageUri = new ArrayList<>();
             attachmentFileList = new ArrayList<>();
@@ -1928,6 +2000,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this, selected_camera_uri))));
 
+            Log.d("file_name",attachmentFileList.get(0).getName());
+
             ImagePreviewModel model = new ImagePreviewModel();
             model.setUri(selected_camera_uri);
             model.setActive(false);
@@ -1935,15 +2009,27 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             previewImage();
 
-        }
-        else if(requestCode == SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK )
-        {
+        } else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
+
+            isAnyFileAttached = true;
+
+            attachment_request_code = Constants.SELECT_DOCUMENT_REQUEST_CODE;
+            attachmentFileList = new ArrayList<>();
+
+            if (data != null) {
+                Uri sUri = data.getData();
+                attachmentFileList.add(new File(Objects.requireNonNull(FetchPath.getPath(this,sUri))));
+
+
+                callAttachmentApi();
+            }
+
+        } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
 
 
-
             Uri imageUri = data.getData();
-            if (imageUri != null ) {
+            if (imageUri != null) {
                 try {
 
 
@@ -1957,23 +2043,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             .putExtra("start_time","0")
                             .putExtra("end_time","0"));*/
                 } catch (Exception e) {
-                    Log.v("Video Fetch Error",e.toString());
+                    Log.v("Video Fetch Error", e.toString());
                 }
 
                 //Log.d("Video Attachment ",attachmentFileList.get(0).getAbsolutePath());
             }
-        }
-        else {
-            if(requestCode == SELECT_PICTURE_REQUEST_CODE) {
+        } else {
+            if (requestCode == Constants.SELECT_PICTURE_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any image", Toast.LENGTH_LONG).show();
-            }
-            else if(requestCode == SELECT_DOCUMENT_REQUEST_CODE) {
+            } else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any document", Toast.LENGTH_LONG).show();
-            }
-            else if(requestCode == SELECT_VIDEO_REQUEST_CODE) {
+            } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any video", Toast.LENGTH_LONG).show();
-            }
-            else if(requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
+            } else if (requestCode == Constants.CAPTURE_IMAGE_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't capture image", Toast.LENGTH_LONG).show();
             }
 
@@ -1991,7 +2073,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 public void onActivityResult(ActivityResult result) {
 
                     isAnyFileAttached = true;
-                    attachment_request_code = SELECT_DOCUMENT_REQUEST_CODE;
+                    attachment_request_code = Constants.SELECT_DOCUMENT_REQUEST_CODE;
                     attachmentFileList = new ArrayList<>();
 
                     Intent data = result.getData();
@@ -1999,11 +2081,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     if (data != null) {
                         Uri sUri = data.getData();
                         attachmentFileList.add(new File(copyFileToInternalStorage(sUri, "GTF_Document")));
+                        callAttachmentApi();
 
-
-                        binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.document));
-                        binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
-                        binding.attachmentContainer.setVisibility(View.VISIBLE);
+                        //binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.document));
+                        //binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
+                        //binding.attachmentContainer.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -2055,13 +2137,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
 
-
-
     ActivityResultLauncher<Intent> startForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
 
-                attachment_request_code = SELECT_VIDEO_REQUEST_CODE;
+                attachment_request_code = Constants.SELECT_VIDEO_REQUEST_CODE;
 
                 multipleImageUri = new ArrayList<>();
                 attachmentFileList = new ArrayList<>();
@@ -2086,13 +2166,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         Log.v("VIDEOSIZE", "video size in KB:  " + fileSizeInKB);
                         Log.v("VIDEOSIZE", "video size in MB:  " + fileSizeInMB);
 
-                        attachmentFileList.add(video);
+                        callPreviewVideo(video);
+
+                        /*attachmentFileList.add(video);
 
                         binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.autoplay_video));
                         binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
                         binding.attachmentContainer.setVisibility(View.VISIBLE);
-
-
+*/
 
                         //responseType = "addVideo";
                         //campaignViewModel.AddVideo(accessToken, videoName, String.valueOf(videoSectionId), video, "1", isMobileRecorded);
@@ -2100,7 +2181,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     header.put("Content-Type","application/octet-stream;");
                     header.put("accessToken",accessToken);
                     campaignViewModel.DummyAddVideo(header,videoName, String.valueOf(videoSectionId),video,"1");*/
-                    }else if (result.getResultCode() == 201){
+                    } else if (result.getResultCode() == 201) {
                         //getVideo();
                     }/*else if (result.getResultCode() == 201){
                         String videoPath = result.getData().getStringExtra("uri");
@@ -2109,21 +2190,45 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         campaignViewModel.AddVideo(accessToken, videoName, String.valueOf(videoSectionId), video, "1", isMobileRecorded);
                     }*/
                 } catch (Exception e) {
-
+                    Log.d("trim_exception",e.toString());
                 }
             });
+
+
+    private void callPreviewVideo(File savedVideoFile){
+        Intent intent = new Intent(GroupChatScreen.this, VideoPreviewScreen.class);
+        intent.putExtra("video",savedVideoFile);
+        startForActivityResultLauncher.launch(intent);
+    }
 
 
 
     // ---------------------------------------------------------------Interface Listeners ----------------------------------------------------------------
 
     @Override
-    public void sendQuotedMessage(View view,String groupChatId,String oldMessage,String username,String time) {
+    public void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time,int mediaCount,String previewUrl) {
 
-        Log.d("Quote Listener Data ---",groupChatId+"     "+oldMessage+"     "+username+"     "+time);
+        Log.d("Quote Listener Data ---", groupChatId + "     " + oldMessage + "     " + username + "     " + time);
 
 
         isMessageQuoted = true;
+
+        if (mediaCount > 0 ){
+
+            binding.quoteMediaContainer.setVisibility(View.VISIBLE);
+            GlideUtils.loadImage(this,binding.quoteMediaPreview,previewUrl);
+
+            if (mediaCount > 1){
+                binding.quoteMediaCount.setVisibility(View.VISIBLE);
+                binding.quoteMediaCount.setText("+ "+mediaCount);
+            }
+            else{
+                binding.quoteMediaCount.setVisibility(View.GONE);
+            }
+        }
+        else{
+            binding.quoteMediaContainer.setVisibility(View.GONE);
+        }
 
         binding.quoteContainer.setVisibility(View.VISIBLE);
 
@@ -2141,18 +2246,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         //scrollToPosition(0);
 
         binding.type.requestFocus();
-        //Utils.softKeyboard(GroupChatsScreen.this,true,binding.type);
+        //Utils.softKeyboard(GroupChatsScreen.this,true,type);
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.SHOW_IMPLICIT);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override
     public void likePost(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like) {
         jsonRawObject = new JSONObject();
         likeGroupChatID = groupChatId;
-
-
 
 
         try {
@@ -2163,6 +2266,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             jsonRawObject.put("isLike", like);
 
             Log.v("Like Message Params --", jsonRawObject.toString());
+            Log.v("Like Message Params --", jsonRawObject.toString());
 
             socketInstance.emit("like", jsonRawObject);
         } catch (Exception e) {
@@ -2171,24 +2275,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     @Override
-    public void likeAsEmote(int position, ImageView rootView)
-    {
-
-
+    public void likeAsEmote(int position, ImageView rootView) {
         Utils.showDialog(position, this, rootView, reactionModel, new SelectEmoteReaction() {
             @Override
             public void selectEmoteReaction(int id, String emoji_code, String emoji_name) {
-                for (int i=0;i<15;i++) {
-                    playAnimation(Utils.textAsBitmap(GroupChatScreen.this,emoji_code));
+                for (int i = 0; i < 15; i++) {
+                    playAnimation(Utils.textAsBitmap(GroupChatScreen.this, emoji_code));
                 }
             }
         });
     }
 
 
-
-    private void playAnimation(Bitmap resID)
-    {
+    private void playAnimation(Bitmap resID) {
         ZeroGravityAnimation animation = new ZeroGravityAnimation();
         animation.setCount(1);
         animation.setScalingFactor(0.2f);
@@ -2200,6 +2299,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                            public void onAnimationStart(Animation animation) {
 
                                            }
+
                                            @Override
                                            public void onAnimationEnd(Animation animation) {
 
@@ -2213,8 +2313,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         );
 
         ViewGroup container = findViewById(R.id.animation_holder);
-        animation.play(this,container);
+        animation.play(this, container);
     }
+
 
     @Override
     public void deletePost(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
@@ -2228,10 +2329,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
             socketInstance.emit("postDelete", jsonRawObject);
-        }
-        catch (Exception e)
-        {
-            Log.d("delete post exception",e.toString());
+        } catch (Exception e) {
+            Log.d("delete post exception", e.toString());
         }
 
 
@@ -2240,42 +2339,210 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         isMessageNotFound = true;
         loadSearchData = false;
         isDataAvailable = true;
-
         searchedTillPosition = 0;
-
-
         rest.ShowDialogue();
-
         searchMessageInList(String.valueOf(groupChatId));*/
     }
 
     @Override
-    public void forwardMultiplePost(int selectedPostCount,boolean showPostSelection) {
+    public void commentMessage(int position, int userID, int gcMemberId, int groupChatId, int groupChannelId) {
+        Log.d("Index_Position", "" + position);
 
-        showPostSelectionCheckBox = showPostSelection;
+        //mLayoutManager.findViewByPosition(position);
 
-        if (selectedPostCount <= 0){
+        binding.type.requestFocus();
+        Utils.softKeyboard(this, true, binding.type);
+
+
+       /* new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scrollToPosition(position);
+            }
+        },300);*/
+
+    }
+
+    @Override
+    public void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, LottieAnimationView progressBar, ImageView downloadPlayPic) {
+
+        new Thread() {
+            @Override
+            public void run() {
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isDownloading = true;
+                        progressBar.setAnimation(R.raw.round_loader);
+                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.playAnimation();
+
+                        String downloadPath = "/" + "connect_audio_files" + "/" + groupChannelID + "/" + groupChatID + "/"
+                                + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())
+                                + ".mp3";
+
+                        String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS) + downloadPath;
+
+
+                        Log.d("LocalFilePath", fileDownloadPath);
+                        Log.d("WebFilePath", audioPostUrl);
+
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(audioPostUrl));
+                        request.setDescription("Downloading");
+                        request.setMimeType("audio");
+                        request.setTitle("File :");
+                        request.allowScanningByMediaScanner();
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                                downloadPath);
+                        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                        manager.enqueue(request);
+
+
+                        DownloadManager.Query query = null;
+                        query = new DownloadManager.Query();
+                        Cursor c = null;
+                        if (query != null) {
+                            query.setFilterByStatus(DownloadManager.STATUS_FAILED | DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_SUCCESSFUL | DownloadManager.STATUS_RUNNING | DownloadManager.STATUS_PENDING);
+                        } else {
+                            //return flag;
+                        }
+
+                        while (isDownloading) {
+                            c = manager.query(query);
+
+                        /*int bytes_downloaded = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                        int bytes_total = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                        if (c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                            c = false;
+                        }*/
+
+                            if (c.moveToFirst()) {
+                                //Log.i("FLAG", "Downloading");
+                                @SuppressLint("Range") int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+
+                                if (status == DownloadManager.STATUS_RUNNING) {
+                                    @SuppressLint("Range") long totalBytes = c.getLong(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                                    if (totalBytes > 0) {
+                                        @SuppressLint("Range") long downloadedBytes = c.getLong(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                                        final int progress = (int) ((downloadedBytes * 100L) / totalBytes);
+                                        Log.d("download_status", "" + progress);
+                                        progressBar.setProgress(progress);
+                                    }
+
+
+                                    //final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
+
+                                    //progressBar.setProgress(i);
+                                }
+                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                    Log.i("FLAG", "done");
+                                    isDownloading = false;
+
+
+                                    progressBar.cancelAnimation();
+                                    progressBar.setVisibility(View.GONE);
+                                    groupViewAdapter.downloadComplete(groupChatID);
+                              /*  long duration = AudioPlayUtil.getAudioDuration(fileDownloadPath);
+                                runOnUiThread(() -> {
+                                    downloadPlayPic.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                                    AudioPlayUtil.playAudioAnimation(GroupChatScreen.this, seekBar, duration);
+                                });*/
+                                    //groupViewAdapter.playAudio(fileDownloadPath);
+
+                                }
+                            }
+                        }
+                    }
+                });
+
+            }
+        }.start();
+    }
+
+    @Override
+    public void playAudio(String audioPostPath, WaveformSeekBar seekBar, long duration) {
+
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            //here the play recording has been stop
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            AudioPlayUtil.stopPlayback(this);
+        }
+
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(audioPostPath);
+            mediaPlayer.prepare();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //play recording here
+        AudioPlayUtil.playAudioAnimation(this, seekBar, duration);
+        mediaPlayer.start();
+    }
+
+    @Override
+    public void viewMemberProfile(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
+
+        Intent intent = new Intent(GroupChatScreen.this, MemberProfileScreen.class);
+        intent.putExtra("gc_member_id",String.valueOf(gcMemberId));
+        startActivity(intent);
+
+    }
+
+    @Override
+    public void forwardMultiplePost(int selectedCount) {
+        if (selectedCount <= 0){
             binding.forwardContainer.setVisibility(View.GONE);
         }
         else{
             binding.forwardContainer.setVisibility(View.VISIBLE);
-            binding.forwardCount.setText(String.valueOf(selectedPostCount));
+            binding.forwardCount.setText(String.valueOf(selectedCount));
         }
     }
 
     @Override
-    public void updateChatList(ArrayList<ChannelRowListDataModel> list) {
-        this.list = list;
+    public void saveMessage(int chatID) {
+
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("GroupChatID[]",chatID);
+
+        requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
+        connectViewModel.save_group_channel_message(api_token,channelID,params);
     }
 
     @Override
-    public void imagePreviewListener(int index,ArrayList<ImagePreviewModel> uriList) {
+    public void updateChatList(ArrayList<ChannelRowListDataModel> list) {
+
+    }
+
+    @Override
+    public void initiateCommentScreen(String data, String profileBaseUrl, String postBaseUrl, String userID) {
+        Intent intent = new Intent(GroupChatScreen.this, GroupChannelCommentScreen.class);
+        //intent.putExtra("replyOnComment", false);
+        intent.putExtra("userDetail", data);
+        intent.putExtra("profileBaseUrl",profileBaseUrl);
+        intent.putExtra("postBaseUrl",postBaseUrl);
+        intent.putExtra("userID", userID);
+        startActivity(intent);
+    }
+
+    @Override
+    public void imagePreviewListener(int index, ArrayList<ImagePreviewModel> uriList) {
         selectedImageUriIndex = index;
         binding.imagePreview.setImageURI(uriList.get(index).getUri());
+
     }
 
     @Override
-    public void searchQuoteMessage(int index,String groupChatId) {
+    public void searchQuoteMessage(int index, String groupChatId) {
 
         isMessageNotFound = true;
         loadSearchData = false;
@@ -2285,19 +2552,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
         //rest.ShowDialogue();
-        searchMessageInList(groupChatId,false,false,false);
+        searchMessageInList(groupChatId, false, false, false);
 
     }
 
     @Override
     public void pinMessage(int gcMemberId, int GroupChannelId, int userId, int groupChatId) {
-        Map<String,Object> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
         param.put("GCMemberID", gcMemberId);
-        param.put("GroupChannelID",GroupChannelId);
-        param.put("UserID",String.valueOf(PreferenceConnector.readInteger(this,PreferenceConnector.CONNECT_USER_ID,0)));
-        param.put("GroupChatID",groupChatId);
+        param.put("GroupChannelID", GroupChannelId);
+        param.put("UserID", String.valueOf(PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0)));
+        param.put("GroupChatID", groupChatId);
 
-        Log.d("Pin Message"," Params ----"+param.toString());
+        Log.d("Pin Message", " Params ----" + param.toString());
 
         requestType = REQUEST_PIN_MESSAGE;
         chatViewModel.pinMessage(param);
@@ -2331,7 +2598,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     @Override
     public void onLoading() {
-        //rest.ShowDialogue();
+        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE || requestType == REQUEST_UPLOAD_FILE){
+            rest.ShowDialogue();
+        }
     }
 
     @Override
@@ -2374,13 +2643,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     // ------------------------------------------------------------------Required Methods --------------------------------------------------------------------
 
-    private void previewImage()
-    {
+    private void previewImage() {
         binding.pinAttachment.setVisibility(View.GONE);
         binding.sendMessage.setVisibility(View.VISIBLE);
         binding.recordButton.setVisibility(View.GONE);
 
-        ImageMiniPreviewAdapter imageMiniPreviewAdapter= new ImageMiniPreviewAdapter(this,multipleImageUri,this);
+        ImageMiniPreviewAdapter imageMiniPreviewAdapter = new ImageMiniPreviewAdapter(this, multipleImageUri, this);
         binding.miniImagePreviewRecycler.setHasFixedSize(true);
         binding.miniImagePreviewRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.miniImagePreviewRecycler.setAdapter(imageMiniPreviewAdapter);
@@ -2392,26 +2660,25 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         binding.deleteSelectedImage.setOnClickListener(view -> {
 
-            Log.d("Entered"," 2 true........................");
+            Log.d("Entered", " 2 true........................");
 
             if (SystemClock.elapsedRealtime() - mLastClickTime < 500) {
                 return;
             }
             mLastClickTime = SystemClock.elapsedRealtime();
 
-            if (multipleImageUri.size() == 1){
+            if (multipleImageUri.size() == 1) {
                 multipleImageUri.clear();
                 Toast.makeText(this, "You haven't picked any image", Toast.LENGTH_LONG).show();
-                imageMiniPreviewAdapter.updateList(multipleImageUri,0);
+                imageMiniPreviewAdapter.updateList(multipleImageUri, 0);
+                binding.imagePreviewLayout.setVisibility(View.GONE);
 
                 binding.pinAttachment.setVisibility(View.VISIBLE);
                 binding.sendMessage.setVisibility(View.GONE);
                 binding.recordButton.setVisibility(View.VISIBLE);
 
-                binding.imagePreviewLayout.setVisibility(View.GONE);
                 isAnyFileAttached = false;
-            }
-            else {
+            } else {
                 if (selectedImageUriIndex == 0) {
                     binding.imagePreview.setImageURI(multipleImageUri.get(selectedImageUriIndex + 1).getUri());
                     multipleImageUri.get(selectedImageUriIndex + 1).setActive(true);
@@ -2433,8 +2700,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
 
-    private void showBottomSheetPopUp(String message)
-    {
+    private void showBottomSheetPopUp(String message) {
         Dialog pin_dialog = new Dialog(this);
         pin_dialog.setContentView(R.layout.dialog_pinned_message);
         pin_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -2446,43 +2712,49 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         text.setText(message);
 
         pin_dialog.show();
-        new Handler().postDelayed(pin_dialog::dismiss,2000);
+
+
+        requestType = PINNED_MESSAGE_COUNT;
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("GroupChannelID", PreferenceConnector.readString(this, PreferenceConnector.GC_CHANNEL_ID, "0"));
+        param.put("UserID", PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0));
+
+        chatViewModel.getPinnedMessages(param);
+
+
+        new Handler().postDelayed(pin_dialog::dismiss, 2000);
     }
 
 
-    private void renderResponse(JsonObject jsonObject)
-    {
+    private void renderResponse(JsonObject jsonObject) {
         Gson gson = new Gson();
 
-        Log.d("request_type"," = "+requestType);
+        if (requestType == REQUEST_PIN_MESSAGE) {
+            pinMessageCount += 1;
+            binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
+            binding.pinnedMessageCount.setText(String.valueOf(pinMessageCount));
+            showBottomSheetPopUp(jsonObject.get("message").toString());
 
-        if (requestType == UPDATE_DUMMY_USER){
-
-            rest = new Rest(this, false, false);
-            listener = this;
-
-
-        }
-        else if (requestType == GET_DUMMY_USER){
-
-
-            getDummyUserModel = new GetDummyUserModel();
-            Type type = new TypeToken<GetDummyUserModel>() {
+        } else if (requestType == REQUEST_EMOJI_LIST) {
+            gson = new Gson();
+            Type type = new TypeToken<ChannelManageReactionModel>() {
             }.getType();
 
-            getDummyUserModel = gson.fromJson(jsonObject,type);
 
-            Log.d("dummy_user",jsonObject.toString());
+            reactionModel = gson.fromJson(jsonObject, type);
 
-            setDummyUserData();
-
-            rest = new Rest(this, false, false);
-            listener = this;
-            //appDao = AppDatabase.getInstance(getApplication()).appDao();
-
+               /* mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                adapter = new ManageReactionsListAdapter(this, reactionModel);
+                binding.reactionsRecycler.setHasFixedSize(true);
+                binding.reactionsRecycler.setLayoutManager(mLayoutManager);
+                binding.reactionsRecycler.setAdapter(adapter);
+                binding.reactionsRecycler.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                isDataLoadedFirstTime = false;*/
 
             requestType = GET_GROUP_CHANNEL_INFO;
             connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
+
         }
         else if (requestType == GET_GROUP_CHANNEL_INFO) {
             gson = new Gson();
@@ -2501,39 +2773,16 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
 
 
-            requestType = REQUEST_EMOJI_LIST;
-            chatViewModel.getEmojiList();
-        }
-        else if (requestType == REQUEST_PIN_MESSAGE)
-        {
-            pinMessageCount +=1;
-            binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
-            binding.pinnedMessageCount.setText(String.valueOf(pinMessageCount));
-            showBottomSheetPopUp(jsonObject.get("message").toString());
+            init();
 
-        } else if (requestType == REQUEST_EMOJI_LIST) {
+        } else if (requestType == REQUEST_UPLOAD_FILE) {
 
-            emojiListModel = new EmojiListModel();
-            Type type = new TypeToken<EmojiListModel>() {
-            }.getType();
-
-            emojiListModel = gson.fromJson(jsonObject, type);
-
-
-            requestType = PINNED_MESSAGE_COUNT;
-
-            Map<String,Object> param = new HashMap<>();
-            param.put("GroupChannelID", PreferenceConnector.readString(this,PreferenceConnector.GC_CHANNEL_ID,"0"));
-            param.put("UserID",PreferenceConnector.readInteger(this,PreferenceConnector.CONNECT_USER_ID,0));
-
-            chatViewModel.getPinnedMessages(param);
-        }
-        else if (requestType == REQUEST_UPLOAD_FILE) {
-            Log.d("UPLOAD IMAGE",jsonObject.toString());
 
             binding.pinAttachment.setVisibility(View.VISIBLE);
             binding.sendMessage.setVisibility(View.GONE);
             binding.recordButton.setVisibility(View.VISIBLE);
+
+            Log.d("UPLOAD IMAGE", jsonObject.toString());
 
             SendAttachmentResponseModel sendAttachmentResponseModel = new SendAttachmentResponseModel();
 
@@ -2544,88 +2793,168 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             sendAttachmentResponseModel = gson.fromJson(jsonObject, type);
 
             mediaIDs = "";
-            for (int i=0;i< sendAttachmentResponseModel.getData().size();i++) {
-                if (i == sendAttachmentResponseModel.getData().size()-1)
-                {
+            for (int i = 0; i < sendAttachmentResponseModel.getData().size(); i++) {
+                if (i == sendAttachmentResponseModel.getData().size() - 1) {
                     mediaIDs += sendAttachmentResponseModel.getData().get(i).getGroupChatMediaID().toString();
-                    Log.d("Media IDs","Single loop -----"+mediaIDs);
-                }
-                else {
+                    Log.d("Media IDs", "Single loop -----" + mediaIDs);
+                } else {
                     mediaIDs += sendAttachmentResponseModel.getData().get(i).getGroupChatMediaID().toString() + ",";
-                    Log.d("Media IDs","Double loop -----"+mediaIDs);
+                    Log.d("Media IDs", "Double loop -----" + mediaIDs);
                 }
             }
 
-            Log.d("Media IDs",mediaIDs);
+            Log.d("Media IDs", mediaIDs);
 
             binding.imagePreviewLayout.setVisibility(View.GONE);
             binding.attachmentContainer.setVisibility(View.GONE);
             isAnyFileAttached = false;
             isAttachmentSend = true;
-            validateSendMessage("Audio Test",binding.type);
+
+
+            if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                validateSendMessage(messageText, binding.type);
+                messageText = null;
+            } else {
+                messageText = "";
+                validateSendMessage(messageText, binding.type);
+                messageText = null;
+            }
+
+
         }
-        else if(requestType == PINNED_MESSAGE_COUNT)
-        {
-            PinnedMessagesModel pinnedMessagesModel = new PinnedMessagesModel();
+        else if (requestType == PINNED_MESSAGE_COUNT) {
             Type type = new TypeToken<PinnedMessagesModel>() {
             }.getType();
 
-            pinnedMessagesModel = gson.fromJson(jsonObject, type);
-            if(pinnedMessagesModel.getData()!=null && !pinnedMessagesModel.getData().getAllPinData().isEmpty())
-            {
+            PinnedMessagesModel pinnedMessagesModel = gson.fromJson(jsonObject, type);
+
+            if (pinnedMessagesModel!= null && pinnedMessagesModel.getData() != null && pinnedMessagesModel.getData().getAllPinData() != null && !pinnedMessagesModel.getData().getAllPinData().isEmpty()) {
+
+                binding.pinMessageContainer.setVisibility(View.VISIBLE);
+                binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
+
                 pinMessageCount = pinnedMessagesModel.getData().getAllPinData().size();
                 binding.pinnedMessageCount.setText(String.valueOf(pinMessageCount));
-                binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
+
+                String username = "";
+
+                if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat() != null) {
+
+                    if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMessage() != null && !pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMessage().trim().isEmpty()) {
+
+                        binding.pinMediaContainer.setVisibility(View.GONE);
+
+                        binding.lastPinMessage.setText(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMessage());
+
+                        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser() != null) {
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname() != null) {
+                                username = pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname();
+                            }
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname() != null) {
+                                username += " " + pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname();
+                            }
+                            binding.lastPinUser.setText(username);
+                        }
+                    } else {
+
+                        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia() != null && !pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().isEmpty()){
+
+                            binding.pinMediaContainer.setVisibility(View.VISIBLE);
+
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType() != null){
+
+                                if (Utils.checkFileType(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType()).equalsIgnoreCase("image")){
+                                    if (Utils.isFileTypeGif(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType())){
+                                        binding.lastPinMessage.setText("GIF");
+                                        loadFile(pinnedMessagesModel,"gif");
+                                    }
+                                    else{
+                                        binding.lastPinMessage.setText("IMAGE");
+                                        loadFile(pinnedMessagesModel,"image");
+                                    }
+                                }
+                                else if (Utils.checkFileType(pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getMimeType()).equalsIgnoreCase("video")){
+                                    binding.lastPinMessage.setText("VIDEO");
+                                    loadFile(pinnedMessagesModel,"video");
+                                }
+                                else{
+                                    binding.lastPinMessage.setText("DOCUMENT");
+                                    loadFile(pinnedMessagesModel,"document");
+                                }
+                            }
+
+                            int mediaCount = pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().size();
+
+                            if (mediaCount > 1){
+                                binding.pinMediaCount.setVisibility(View.VISIBLE);
+                                binding.pinMediaCount.setText("+ "+mediaCount);
+
+                            }
+                            else{
+                                binding.pinMediaCount.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser() != null) {
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname() != null) {
+                                username = pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getFirstname();
+                            }
+                            if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname() != null) {
+                                username += " " + pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getUser().getLastname();
+                            }
+                            binding.lastPinUser.setText(username);
+                        }
+                    }
+                }
+
+                Log.d("pin_message","messageCount = "+pinMessageCount);
             }
             else {
-                binding.pinnedMessageCountContainer.setVisibility(View.GONE);
+                Log.d("pin_message","messageCount = "+pinMessageCount);
+                binding.pinMessageContainer.setVisibility(View.GONE);
                 pinMessageCount = 0;
             }
+        } else if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE) {
+            Toast.makeText(this, jsonObject.get("message").toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
 
 
 
-    private void setDummyUserData(){
+    private void loadFile(PinnedMessagesModel pinnedMessagesModel,String fileType){
+        if (pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getStoragePath() != null &&
+                pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getFileName() != null) {
 
-        String userInitials = "";
-        boolean checkFlag = false;
+            String imageUrl = postBaseUrl + pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getStoragePath() +
+                    pinnedMessagesModel.getData().getAllPinData().get(0).getChat().getMedia().get(0).getFileName();
 
-        if (getDummyUserModel != null &&
-                getDummyUserModel.getData() != null &&
-                getDummyUserModel.getData().getList()!= null &&
-                !getDummyUserModel.getData().getList().isEmpty()){
-
-
-            for (int i=0;i<getDummyUserModel.getData().getList().size();i++){
-                if (getDummyUserModel.getData().getList().get(i).getIsAdmin() == 1){
-                    userInitials = Utils.getUserInitials(getDummyUserModel.getData().getList().get(i).getFirstname(),getDummyUserModel.getData().getList().get(i).getLastname());
-                    checkFlag = true;
-                    break;
-                }
+            Log.d("image_path_url",imageUrl);
+            if (fileType.equalsIgnoreCase("image") || fileType.equalsIgnoreCase("gif")) {
+                GlideUtils.loadImage(this, binding.pinMediaPreview, imageUrl);
             }
-
-            if(!checkFlag)
-            {
-                userInitials = Utils.getUserInitials(getDummyUserModel.getData().getList().get(0).getFirstname(),getDummyUserModel.getData().getList().get(0).getLastname());
+            else if (fileType.equalsIgnoreCase("video")) {
+                // Todo : Add condition in case of Video
             }
-
-            binding.dummyUserInitials.setText(userInitials);
-            binding.dummyUserContainer.setVisibility(View.VISIBLE);
+            else{
+                // Todo : Add condition in case of Document
+            }
         }
     }
 
 
 
-    private void destroyListeners()
-    {
+
+    private void destroyListeners() {
         // Todo : Remove all ON listeners of socket
 
         socketInstance.off("userTyping");
         socketInstance.off("messageReceived");
         socketInstance.off("likeUpdate");
         socketInstance.off("postDeleteData");
+
+
 
     }
 
@@ -2636,10 +2965,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     protected void onResume() {
         super.onResume();
         Log.d("Lifecycle Check ", "In the onResume() event");
-
-
-        currentPage = 1;
-        loadLocalData();
     }
 
     @Override
@@ -2692,9 +3017,61 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 if (result.getResultCode() == Constants.SHARE_GIF) {
 
-                    // Todo : Share gif from here
-                } else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
+                    attachment_request_code = Constants.SHARE_GIF;
+
+                    if ((File)result.getData().getExtras().get("gif") != null) {
+                        File pictureFile = (File) result.getData().getExtras().get("gif");
+
+                        attachmentFileList = new ArrayList<>();
+                        attachmentFileList.add(pictureFile);
+
+                        isAnyFileAttached = true;
+
+                        Log.d("GIF","gif found");
+                        callAttachmentApi();
+                    }
+                    else{
+                        Log.d("GIF","No gif found");
+                    }
+
+
+                }
+                else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
                     Utils.showSnackMessage(this,binding.getRoot(),"GIF not available");
+                }
+                else if (result.getResultCode() == Constants.SELECT_VIDEO_REQUEST_CODE) {
+
+                    if ((File)result.getData().getExtras().get("video") != null) {
+                        File videoFile = (File) result.getData().getExtras().get("video");
+
+                        attachment_request_code = Constants.SELECT_VIDEO_REQUEST_CODE;
+
+                        attachmentFileList = new ArrayList<>();
+                        attachmentFileList.add(videoFile);
+
+                        isAnyFileAttached = true;
+
+                        Log.d("Video","video found");
+                        callAttachmentApi();
+                    }
+                    else{
+                        Log.d("Video","No Video found");
+                    }
+
+                }
+                else if (result.getResultCode() == Constants.NO_VIDEO_FOUND) {
+                    Utils.showSnackMessage(this,binding.getRoot(),"Video not available");
+                }
+                else if (result.getResultCode() == Constants.SEARCH_PINNED_MESSAGE) {
+
+                    String groupChatId = result.getData().getStringExtra("groupChatId");
+                    searchedTillPosition = 0;
+                    isMessageNotFound = true;
+                    loadSearchData = false;
+                    isDataAvailable = true;
+
+                    //rest.ShowDialogue();
+                    searchMessageInList(groupChatId, false, false, false);
                 }
             });
 }

@@ -36,67 +36,11 @@
         android:layout_height="1dp"
         android:alpha=".2"/>
 
-    <RadioGroup
+
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_160sdp">
-
-        <RadioButton
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:text="Spam"
-            android:textColor="@color/tab_grey"
-            android:fontFamily="@font/open_sans"
-            android:textFontWeight="400"
-            android:paddingStart="@dimen/_12sdp"
-            android:textSize="@dimen/_10ssp"
-            />
-
-
-
-        <RadioButton
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:text="Helplines in India for sexual abuse."
-            android:textColor="@color/tab_grey"
-            android:fontFamily="@font/open_sans"
-            android:textFontWeight="400"
-            android:paddingStart="@dimen/_12sdp"
-            android:textSize="@dimen/_10ssp"
-            />
-
-
-        <RadioButton
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:text="Hate Speech"
-            android:textColor="@color/tab_grey"
-            android:fontFamily="@font/open_sans"
-            android:textFontWeight="400"
-            android:paddingStart="@dimen/_12sdp"
-            android:textSize="@dimen/_10ssp"
-            />
-
-
-        <RadioButton
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:text="Not Useful"
-            android:textColor="@color/tab_grey"
-            android:fontFamily="@font/open_sans"
-            android:textFontWeight="400"
-            android:paddingStart="@dimen/_12sdp"
-            android:textSize="@dimen/_10ssp"
-            />
-
-    </RadioGroup>
+        android:layout_height="wrap_content"
+        android:id="@+id/reason_list_recycler"/>
 
 
     <com.google.android.material.card.MaterialCardView

@@ -58,6 +58,7 @@ public class GlideUtils {
                     @Override
                     public void onLoadFailed(@Nullable Drawable errorDrawable) {
                         super.onLoadFailed(errorDrawable);
+                        imageContainer.setImageResource(R.drawable.no_image_background);
                     }
                 });
     }

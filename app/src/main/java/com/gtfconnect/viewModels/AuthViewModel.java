@@ -244,6 +244,42 @@ public class AuthViewModel extends AndroidViewModel {
 
 
 
+
+
+
+
+
+    public void report_user(String api_token,String device_type,String device_token,Map<String,Object> params){
+
+        disposables.add(repo.report_user(api_token,device_type,device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+
+
+    }
+
+
+
+
+
+
+
+
+
     @Override
     protected void onCleared() {
         super.onCleared();

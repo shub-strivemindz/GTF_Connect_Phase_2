@@ -34,9 +34,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
@@ -319,8 +319,6 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
         // with the returned requestCode
         startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);*/
     }
-
-
 
     private void accessCamera() {
 

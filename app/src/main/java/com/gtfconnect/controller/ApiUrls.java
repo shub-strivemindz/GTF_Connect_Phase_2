@@ -89,4 +89,12 @@ public class ApiUrls {
     public static final String URL_REJOIN_GROUP_CHANNEL = "rejoin_gc";
 
     public static final String URL_JOIN_GROUP_CHANNEL = "join_gc";
+
+    public static final String URL_GROUP_CHANNEL_BLOCKLIST = "blocked-member-list";
+
+    public static final String URL_GROUP_CHANNEL_REPORT_REASON_LIST = "report-reasons";
+
+    public static final String URL_REPORT_USER = "add-report";
+
+    public static final String URL_BLOCK_USER = "update-member-status";
 }

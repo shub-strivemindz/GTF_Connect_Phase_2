@@ -28,7 +28,7 @@ public class BlocklistScreen extends AppCompatActivity {
         binding.back.setOnClickListener(view -> finish());
 
         // load blocklist data  ------
-        BlockListAdapter blocklistViewAdapter= new BlockListAdapter(BlocklistScreen.this,2);
+        BlockListAdapter blocklistViewAdapter= new BlockListAdapter(BlocklistScreen.this,null);
         binding.blocklistRecycler.setHasFixedSize(true);
         binding.blocklistRecycler.setLayoutManager(new LinearLayoutManager(BlocklistScreen.this));
         binding.blocklistRecycler.setAdapter(blocklistViewAdapter);

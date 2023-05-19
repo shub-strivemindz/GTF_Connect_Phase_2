@@ -17,7 +17,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
@@ -25,6 +30,7 @@ import com.gtfconnect.databinding.RecyclerGroupChatBinding;
 import com.gtfconnect.interfaces.GroupChatListener;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -54,12 +60,15 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
     private int selectedPostCount;
 
+    String profileBaseUrl = "";
+
     String userName = "";
     String message = "";
     String time = "";
 
     String post_base_url= "";
 
+    private InfoDbEntity infoDbEntity;
     private String messageTime = "";
 
     private int messageUserID;
@@ -68,22 +77,25 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-    public GroupChatAdapter(Context context, ArrayList<ChannelRowListDataModel> list, String userID, String post_base_url, GroupChatListener groupChatListener) {
+    public GroupChatAdapter(Context context, ArrayList<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, GroupChatListener groupChatListener) {
         this.list = list;
         this.context = context;
         this.userID = userID;
         this.groupChatListener = groupChatListener;
         this.post_base_url = post_base_url;
+        this.profileBaseUrl = profileBaseUrl;
         ///this.commentCount = commentCount;
 
+        this.infoDbEntity = infoDbEntity;
 
         selectedPostCount = 0;
     }
 
-    public void updateList(ArrayList<ChannelRowListDataModel> list,String postBaseUrl)
+    public void updateList(ArrayList<ChannelRowListDataModel> list,String postBaseUrl,String profileBaseUrl)
     {
         this.list = list;
         this.post_base_url = postBaseUrl;
+        this.profileBaseUrl = profileBaseUrl;
         notifyDataSetChanged();
     }
 
@@ -164,6 +176,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
     private void sentMessageView(ViewHolder holder,int position){
+
+        Gson gson = new Gson();
+        String data = gson.toJson(list.get(position));
 
         holder.binding.sentMessageContainer.setVisibility(View.VISIBLE);
         holder.binding.receivedMessageContainer.setVisibility(View.GONE);
@@ -268,21 +283,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.binding.postImageContainer1.setVisibility(View.GONE);
         }
 
-       /*     // Todo : Uncomment below code once get thumbnail for the video and remove below line -----------------
-            loadPostMedia(holder, position, list.get(position).getMedia().size());
-            *//*if (Utils.checkFileType(list.get(index).getMedia().get(0).getMimeType()).equalsIgnoreCase("video")) {
-                String post_path = post_base_url + list.get(index).getMedia().get(0).getStoragePath() + list.get(index).getMedia().get(0).getFileName();
-                holder.binding.postImageContainer.setVisibility(View.GONE);
-                loadVideoFile(post_path);
-        }
-            else {
-                loadPostMedia(holder, position, list.get(position).getMedia().size());
-            }*//*
-        }
-        else{
-            holder.binding.postImageContainer.setVisibility(View.GONE);
-        }*/
-
+        holder.binding.comment1.setOnClickListener(view -> {
+            groupChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+        });
 
 
 
@@ -310,7 +313,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 list.get(position).setPostSelected(true);
 
                 selectedPostCount++;
-                groupChatListener.forwardMultiplePost(selectedPostCount,true);
+                groupChatListener.forwardMultiplePost(selectedPostCount);
             }
             else{
                 list.get(position).setPostSelected(false);
@@ -321,67 +324,15 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     holder.binding.selectPost1.setVisibility(View.GONE);
                     holder.binding.dummyUserTimeDivider.setVisibility(View.GONE);
 
-                    groupChatListener.forwardMultiplePost(-1,false);
+                    groupChatListener.forwardMultiplePost(-1);
 
                     toggleSelectionCheckbox(false);
                 }
                 else{
-                    groupChatListener.forwardMultiplePost(selectedPostCount,true);
+                    groupChatListener.forwardMultiplePost(selectedPostCount);
                 }
             }
         });
-
-
-     /*   if (list.get(position).getCommentData() == null) {
-            holder.binding.commentContainer.setVisibility(View.GONE);
-        } else if (list.get(position).getCommentData().size() == 0) {
-            holder.binding.commentContainer.setVisibility(View.GONE);
-        }
-        else {
-            holder.binding.commentContainer.setVisibility(View.VISIBLE);
-            holder.binding.commentCount.setText(String.valueOf(list.get(position).getCommentData().size()));
-        }
-
-        if (list.get(position).getCommentCount() == 0) {
-
-
-        }
-        else {
-            holder.binding.commentContainer.setVisibility(View.VISIBLE);
-            holder.binding.commentCount.setText(list.get(position).getCommentCount());
-        }
-
-
-
-            if (list.get(position).getLike() != null && list.get(position).getLike().size() != 0) {
-                if (String.valueOf(list.get(position).getLike().get(0).getUserID()).equalsIgnoreCase(userID) && list.get(position).getLike().get(0).getIsLike() == 1) {
-                    holder.binding.likeIcon.setColorFilter(context.getColor(R.color.theme_green));
-                }
-                else {
-                    holder.binding.likeIcon.setColorFilter(context.getColor(R.color.chatIconColor));
-                }
-            }*/
-
-         /*   holder.binding.message.post(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d("MAX_Text_Line",String.valueOf(holder.binding.message.getLineCount()));
-                    if (holder.binding.message.getLineCount() >= 3)
-                    {
-                        Utils.makeTextViewResizable(holder.binding.message,3,"Load More",true);
-                    }
-                }
-            });*/
-
-
-
-//            if (holder.binding.message.getLineCount() > 3)
-//            {
-//                holder.binding.expandMessage.setVisibility(View.VISIBLE);
-//            }
-//            else{
-//                holder.binding.expandMessage.setVisibility(View.GONE);
-//            }
 
         holder.binding.message1.setOnClickListener(view -> {
             if(isMessageClicked){
@@ -395,16 +346,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             }
         });
 
-      /*  holder.binding.viewComment.setOnClickListener(view -> {
-
-            Intent intent = new Intent(context, GroupCommentScreen.class);
-            intent.putExtra("userDetail", data);
-            intent.putExtra("userID", userID);
-
-            Log.d("Sending user ID ---", userID);
-            context.startActivity(intent);
-        });*/
-
 
 
         holder.binding.quoteMsgContainer1.setOnClickListener(view -> {
@@ -414,23 +355,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
 
-
-       /* // Reply into the Chat
-        holder.binding.comment.setOnClickListener(view -> {
-
-            Intent intent = new Intent(context, GroupCommentScreen.class);
-            intent.putExtra("replyOnComment", true);
-            intent.putExtra("userDetail", data);
-            intent.putExtra("userID", userID);
-            context.startActivity(intent);
-                *//*InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*//*
-        });
-        */
-
-        // Bottom-sheet for chat options --
-
-
         holder.binding.sentMessageContainer.setOnLongClickListener(view -> {
             Log.d("Not going ","why2");
             loadBottomSheet(holder,position,true);
@@ -438,14 +362,19 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             return false;
         });
 
-        // Bottom-sheet for image options --
 
-        /*holder.binding.postImageContainer.setOnLongClickListener(view -> {
-            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
-            chat_options_dialog.setContentView(R.layout.bottomsheet_post_action_options2);
-            chat_options_dialog.show();
-            return false;
-        });*/
+
+        if (list.get(position).getCommentData() == null) {
+
+            holder.binding.commentCount1.setText("Comment");
+
+        } else if (list.get(position).getCommentData().size() == 0) {
+            holder.binding.commentCount1.setText("Comment");
+        }
+        else {
+            holder.binding.commentCount1.setText(String.valueOf(list.get(position).getCommentData().size()));
+        }
+
 
 
         holder.binding.postImageContainer1.setOnClickListener(view -> {
@@ -614,6 +543,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
     private void receivedMessageView(ViewHolder holder,int position){
+
+
+        Gson gson = new Gson();
+        String data = gson.toJson(list.get(position));
+
+
         holder.binding.sentMessageContainer.setVisibility(View.GONE);
         holder.binding.receivedMessageContainer.setVisibility(View.VISIBLE);
 
@@ -632,10 +567,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         else {
             holder.binding.selectPost.setChecked(false);
         }
-
-
-        Gson gson = new Gson();
-        String data = gson.toJson(list.get(position));
 
         if (list.get(position).getUser() != null) {
             if (list.get(position).getUser().getFirstname() == null && list.get(position).getUser().getLastname() == null) {
@@ -662,7 +593,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             if (isChecked){
                 list.get(position).setPostSelected(true);
                 selectedPostCount++;
-                groupChatListener.forwardMultiplePost(selectedPostCount,true);
+                groupChatListener.forwardMultiplePost(selectedPostCount);
             }
             else{
                 list.get(position).setPostSelected(false);
@@ -672,15 +603,34 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
                     holder.binding.selectPost.setVisibility(View.GONE);
 
-                    groupChatListener.forwardMultiplePost(-1,false);
+                    groupChatListener.forwardMultiplePost(-1);
 
                     toggleSelectionCheckbox(false);
                 }
                 else{
-                    groupChatListener.forwardMultiplePost(selectedPostCount,true);
+                    groupChatListener.forwardMultiplePost(selectedPostCount);
                 }
             }
         });
+
+
+
+        if (list.get(position).getCommentData() == null) {
+
+            holder.binding.commentCount.setText("Comment");
+
+        } else if (list.get(position).getCommentData().size() == 0) {
+            holder.binding.commentCount.setText("Comment");
+        }
+        else {
+            holder.binding.commentCount.setText(String.valueOf(list.get(position).getCommentData().size()));
+        }
+
+
+        holder.binding.comment.setOnClickListener(view -> {
+            groupChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+        });
+
 
 
 
@@ -1058,13 +1008,24 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
-            groupChatListener.sendQuotedMessage(holder.binding.getRoot(), list.get(position).getGroupChatID(), list.get(position).getMessage(), name, time);
+
+            int mediaCount = 0;
+            String previewUrl = "";
+            if (list.get(position).getMedia() != null && !list.get(position).getMedia().isEmpty()){
+                mediaCount = list.get(position).getMedia().size();
+
+                if (list.get(position).getMedia().get(0).getStoragePath() != null && list.get(position).getMedia().get(0).getFileName() != null){
+                    previewUrl = post_base_url + list.get(position).getMedia().get(0).getStoragePath() + list.get(position).getMedia().get(0).getFileName();
+                }
+            }
+
+            groupChatListener.sendQuotedMessage(holder.binding.getRoot(), list.get(position).getGroupChatID(), list.get(position).getMessage(), name, time,mediaCount,previewUrl);
             chat_options_dialog.dismiss();
         });
 
 
         select.setOnClickListener(v -> {
-            groupChatListener.forwardMultiplePost(selectedPostCount,true);
+            groupChatListener.forwardMultiplePost(selectedPostCount);
 
             if (isSentMessage) {
                 holder.binding.selectPost1.setChecked(true);
@@ -1642,7 +1603,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-   /* private void loadImageFile(String imageFilePath, ImageView imageView)
+    private void loadImageFile(String imageFilePath, ImageView imageView)
     {
         //Setting up loader on post
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
@@ -1661,7 +1622,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 diskCacheStrategy(DiskCacheStrategy.ALL).
                 transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
     }
-*/
+
     private void loadVideoFile(String videoFilePath, ImageView imageView)
     {
         /*context.startActivity(new Intent(context, VideoActivity.class)
@@ -1675,6 +1636,53 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
     {
 
     }
+
+
+
+
+
+    public void downloadComplete(String groupChatID){
+        for (int i=0;i<list.size();i++)
+        {
+            if (list.get(i).getGroupChatID().equalsIgnoreCase(groupChatID)){
+                list.get(i).setAudioDownloaded(true);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+
+
+    public void setUserPermissions(){
+
+        if (infoDbEntity != null){
+            if (infoDbEntity.getGcInfo() != null){
+
+                if (infoDbEntity.getGcSetting() != null){
+
+                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
+                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
+
+                        }
+                        else{
+
+                        }
+                    }
+                }
+
+                if (infoDbEntity.getGcPermission() != null){
+                    if (infoDbEntity.getGcPermission().getPinMessage() != null && infoDbEntity.getGcPermission().getPinMessage() == 1){
+
+                    }
+                    else{
+
+                    }
+                }
+            }
+        }
+    }
+
 
 
 

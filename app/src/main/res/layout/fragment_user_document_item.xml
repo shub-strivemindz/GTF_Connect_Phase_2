@@ -5,6 +5,7 @@
     android:layout_height="@dimen/_56sdp"
     android:layout_marginHorizontal="@dimen/_2sdp"
     app:cardCornerRadius="@dimen/_8sdp"
+    app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -35,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="razer.trade.zip"
                 android:textSize="@dimen/_12ssp"
+                android:textColor="@color/groupChannelProfileHeaderTextColor"
                 android:id="@+id/document_name"
                 android:fontFamily="@font/poppins500"/>
 
@@ -45,6 +47,7 @@
                 android:paddingTop="@dimen/_3sdp"
                 android:id="@+id/document_size"
                 android:text="40 kb"
+                android:textColor="@color/groupChannelProfileTextColor"
                 android:textSize="@dimen/_10ssp"
                 android:fontFamily="@font/poppins"
                 android:gravity="center" />

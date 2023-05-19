@@ -41,12 +41,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 import com.gtfconnect.R;
+import com.gtfconnect.interfaces.ReportReasonListener;
 import com.gtfconnect.interfaces.SelectCityListener;
 import com.gtfconnect.interfaces.SelectCountryListener;
 import com.gtfconnect.interfaces.SelectEmoteReaction;
@@ -55,10 +59,12 @@ import com.gtfconnect.models.authResponseModels.CityData;
 import com.gtfconnect.models.authResponseModels.CountryData;
 import com.gtfconnect.models.authResponseModels.StateData;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MemberReportReasonResponseModel;
 import com.gtfconnect.services.InternetService;
 import com.gtfconnect.ui.adapters.EmojiReactionListAdapter;
 import com.gtfconnect.ui.adapters.authModuleAdapter.CityListAdapter;
 import com.gtfconnect.ui.adapters.authModuleAdapter.CountryListAdapter;
+import com.gtfconnect.ui.adapters.commonGroupChannelAdapters.MemberReportReasonListAdapter;
 
 
 import java.io.File;
@@ -81,6 +87,11 @@ public class Utils {
     private static boolean isSearchFocused = false;
 
     private static  BroadcastReceiver internetReceiver;
+
+
+    static int reasonID;
+    static String reasonTitle;
+    static String reasonCode;
 
 
     public static void showSnackMessage(Context context, View view, String message) {
@@ -687,6 +698,63 @@ public class Utils {
 
         }
     }
+
+
+
+
+    public static void ShowReportReasonList(final Context context, final List<MemberReportReasonResponseModel.ReasonList> arrayList, final ReportReasonListener listener) {
+        {
+            reasonID = 0;
+            reasonTitle = "";
+            reasonCode = "";
+
+
+            BottomSheetDialog report_user_bottomSheet = new BottomSheetDialog(context);
+
+            report_user_bottomSheet.setContentView(R.layout.bottomsheet_report_user_options);
+            report_user_bottomSheet.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            report_user_bottomSheet.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            MaterialCardView report_user =  report_user_bottomSheet.findViewById(R.id.report_user);
+            ImageView back = report_user_bottomSheet.findViewById(R.id.back);
+
+            back.setOnClickListener(view1 -> report_user_bottomSheet.dismiss());
+
+            RecyclerView placeRecycler = report_user_bottomSheet.findViewById(R.id.reason_list_recycler);
+
+            MemberReportReasonListAdapter memberReportReasonListAdapter= new MemberReportReasonListAdapter(context,arrayList);
+            placeRecycler.setHasFixedSize(true);
+            placeRecycler.setLayoutManager(new LinearLayoutManager(context));
+            placeRecycler.setAdapter(memberReportReasonListAdapter);
+
+
+            report_user.setOnClickListener(view1 -> {
+
+                if (memberReportReasonListAdapter.isReasonSelected()){
+                    listener.SelectReason(reasonID,reasonTitle,reasonCode);
+                    report_user_bottomSheet.dismiss();
+                }
+                else{
+                    Toast.makeText(context, "No reason selected!", Toast.LENGTH_SHORT).show();
+                }
+
+            });
+
+            memberReportReasonListAdapter.setOnRecyclerViewItemClickListener((id,reason,code) -> {
+                reasonID = id;
+                reasonTitle = reason;
+                reasonCode = code;
+            });
+
+
+            report_user_bottomSheet.show();
+
+        }
+    }
+
+
+
+
 
     public static boolean checkEmail_validation(String target) {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches();

@@ -10,6 +10,7 @@ import androidx.lifecycle.Transformations;
 
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
@@ -26,6 +27,20 @@ public class DatabaseViewModel extends AndroidViewModel {
         super(application);
         repo = new DatabaseRepo(application);
     }
+
+
+
+
+
+    public void insertUserProfileData(UserProfileDbEntity dataModel) {
+        repo.insertUserProfileData(dataModel);
+    }
+
+    public LiveData<UserProfileDbEntity> getUserProfileData() {
+        return  repo.getUserProfileData();
+    }
+
+
 
 
 

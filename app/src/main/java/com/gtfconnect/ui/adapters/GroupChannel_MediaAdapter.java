@@ -18,7 +18,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.medialibrary.VideoActivity;
+import com.exa.ashutosh_video.VideoActivity;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;

@@ -7,5 +7,5 @@
         android:bottomRightRadius="@dimen/_10sdp"/>
 
     <solid
-        android:color="@color/groupChatReceivedCardColor"/>
+        android:color="@color/groupChatBoxBackgroundColor"/>
 </shape>

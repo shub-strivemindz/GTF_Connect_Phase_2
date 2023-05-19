@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentUserSettingBinding;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelBlocklistScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.BlocklistScreen;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelManagePermissionScreen;
 
 public class GroupSettingAdapter extends RecyclerView.Adapter<GroupSettingAdapter.ViewHolder> {
@@ -58,7 +58,7 @@ public class GroupSettingAdapter extends RecyclerView.Adapter<GroupSettingAdapte
         holder.binding.blocklist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(new Intent(context, ChannelBlocklistScreen.class));
+                context.startActivity(new Intent(context, BlocklistScreen.class));
             }
         });
     }

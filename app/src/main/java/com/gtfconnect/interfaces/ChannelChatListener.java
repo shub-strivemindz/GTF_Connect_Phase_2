@@ -35,6 +35,7 @@ public interface ChannelChatListener {
 
     void forwardMultiplePost(int selectedCount);
 
-
     void saveMessage(int chatID);
+
+    void initiateCommentScreen(String data,String profileBaseUrl,String postBaseUrl,String userID);
 }

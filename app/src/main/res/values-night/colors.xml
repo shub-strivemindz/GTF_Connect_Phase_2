@@ -165,6 +165,8 @@
 
     <color name="dashboardTabIconColor">#fff</color>
 
+    <color name="dashboardTabBackgroundColor">#232833</color>
+
 
     <!--======================================================================= Group | Channel UI ==========================================================================-->
 
@@ -274,5 +276,85 @@
 
     <color name="bottomSheetAttachmentTextColor">#fff</color>
 
+
+
+    <!--======================================================================= Comment Message UI ==========================================================================-->
+
+
+    <color name="commentBackgroundColor">#0E1118</color>
+
+    <color name="commentDividerColor">#252C3C</color>
+
+    <color name="commentDialogBackgroundColor">#222E3C</color>
+
+    <color name="commentHeaderTextColor">#FFF</color>
+
+    <color name="commentTextColor">#DDE1EA</color>
+
+    <color name="commentFooterTextColor">#fff</color>
+
+
+
+    <!--======================================================================= Group Chat UI ==========================================================================-->
+
+
+    <color name="groupBackgroundColor">#0E1118</color>
+
+    <color name="groupActionBarBackgroundColor">#2FB463</color>
+
+    <color name="groupChatBoxBackgroundColor">#222E3C</color>
+
+    <color name="groupChatLightTextColor">#74808E</color>
+
+    <color name="groupChatTextColor">#DDE1EA</color>
+
+    <color name="groupChatUserTextColor">#2FB463</color>
+
+    <color name="groupChatFooterContainerColor">#8497A7</color>
+
+
+
+
+
+    <!--======================================================================= Group Channel Profile UI ==========================================================================-->
+
+
+    <color name="groupChannelProfileBackgroundColor">#0E1118</color>
+
+    <color name="groupChannelProfileTabOptionsColor">#86888B</color>
+
+    <color name="groupChannelProfileActionBarBackgroundColor">#232833</color>
+
+    <color name="groupChannelProfileCardBackgroundColor">#222E3C</color>
+
+    <color name="groupChannelProfileHeaderTextColor">#9EAAD6</color>
+
+    <color name="groupChannelProfileTextColor">#A7ABB1</color>
+
+    <color name="groupChannelProfileTitleTextColor">#FFF</color>
+
+    <color name="groupChannelProfileTabBackgroundColor">#0E1118</color>
+
+    <color name="groupChannelProfileTabTextColor">#86888B</color>
+
+
+
+    <!--======================================================================= Switcher UI  ==========================================================================-->
+
+    <color name="switchStrokeOffColor">#E0E2EB</color>
+    <color name="switchStrokeOnColor">#91D5B1</color>
+
+    <color name="switchBackgroundColor">#F3F6FF</color>
+
+    <color name="switchOffButtonColor">#8D8C8F</color>
+    <color name="switchOnButtonColor">#2FB463</color>
+
+
+
+    <!--======================================================================= Blocklist UI  ==========================================================================-->
+
+    <color name="blocklistTitleColor">#FFF</color>
+
+    <color name="blocklistBackgroundColor">#0E1118</color>
 
 </resources>

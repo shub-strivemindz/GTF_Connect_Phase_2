@@ -2,7 +2,7 @@ package com.gtfconnect.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.gtfconnect.models.groupChannelModels.MediaListModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
 
 import java.util.List;
 

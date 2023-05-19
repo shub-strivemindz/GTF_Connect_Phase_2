@@ -85,19 +85,21 @@ import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
-import com.gtfconnect.models.groupChannelModels.GroupChannelInfoResponseModel;
-import com.gtfconnect.models.groupResponseModel.GroupCommentResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseModels.CommentReceiveResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
-import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
-import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatHeaderDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.VideoPreviewScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Constants;
@@ -227,8 +229,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private String profileBaseUrl = "" ;
 
-    private boolean searchPinnedMessageEnabled = false;
-
     private int pinMessageCount = 0;
 
     private ChannelCommentResponseModel commentResponseModel;
@@ -274,6 +274,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private Thread checkLocalDatabaseThread;
 
+    private String userType = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -310,8 +311,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         list = new ArrayList<>();
         receivedMessageList = new ArrayList<>();
 
-        searchPinnedMessageEnabled = getIntent().getBooleanExtra("searchPinMessage", false);
-
         //destroyListeners();
         gcMemberID = Integer.parseInt(PreferenceConnector.readString(this, PreferenceConnector.GC_MEMBER_ID, ""));
         userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
@@ -322,8 +321,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
-
-
 
         loadDataToAdapter();
 
@@ -355,6 +352,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         initiateClickListeners();
         sendMessageAndAudioRecorderEvents();
+
+        currentPage = 1;
+        loadLocalData();
 
 
         binding.chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -477,18 +477,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
 
 
-        if (searchPinnedMessageEnabled) {
-            String groupChatId = getIntent().getStringExtra("groupChatId");
-            searchedTillPosition = 0;
-            isMessageNotFound = true;
-            loadSearchData = false;
-            isDataAvailable = true;
-
-            //rest.ShowDialogue();
-            searchMessageInList(groupChatId, false, false, false);
-
-        }
-
         if (pinMessageCount == 0) {
             binding.pinnedMessageCountContainer.setVisibility(View.GONE);
         } else {
@@ -507,7 +495,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void initiateClickListeners() {
         // Navigate for Member Chat
-        binding.memberTitle.setOnClickListener(view -> startActivity(new Intent(ChannelChatsScreen.this, ChannelProfileScreen.class)));
+        binding.memberTitle.setOnClickListener(view -> {
+            Intent intent = new Intent(ChannelChatsScreen.this, ProfileScreen.class);
+            intent.putExtra("viewType",Constants.Group_Channel_TYPE_2);
+            startActivity(intent);
+        });
 
         binding.pin.setOnClickListener(view -> {
 
@@ -518,8 +510,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 Intent i = new Intent(ChannelChatsScreen.this, PinnedMessageScreen.class);
                 i.putExtra("post_base_url", postBaseUrl);
                 i.putExtra("profile_base_url",profileBaseUrl);
-                startActivity(i);
-                finish();
+                startForActivityResultLauncher.launch(i);
             }
         });
 
@@ -835,9 +826,37 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
+
+        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+            if (userProfileDbEntity != null){
+
+                if (userProfileDbEntity.getUserRoleInfo() != null && userProfileDbEntity.getUserRoleInfo().getPrimary() != null){
+                    if (userProfileDbEntity.getUserRoleInfo().getPrimary().getRole() != null && userProfileDbEntity.getUserRoleInfo().getPrimary().getRole().getSlug() != null){
+                        userType = userProfileDbEntity.getUserRoleInfo().getPrimary().getRole().getSlug();
+
+                        if (userType.equalsIgnoreCase("user")){
+
+                            // Todo ============ Uncomment Line
+                            //binding.memberTitle.setClickable(false);
+                        }
+                    }
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
         databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
             if (infoDbEntity != null) {
                 this.infoDbEntity = infoDbEntity;
+                setProfileInfo();
             }
         });
 
@@ -870,6 +889,34 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         }
         refreshChannelChatSocket();
+    }
+
+
+    private void setProfileInfo(){
+
+        if (infoDbEntity != null){
+            if (infoDbEntity.getGcInfo() != null){
+                if (infoDbEntity.getGcInfo().getProfileImage() != null){
+                    GlideUtils.loadImage(this,binding.groupChannelLogo,infoDbEntity.getGcInfo().getProfileImage());
+                }
+
+                if (infoDbEntity.getGcSetting() != null){
+
+                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
+                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
+
+                        }
+                        else{
+
+                        }
+                    }
+                }
+
+                if (infoDbEntity.getGcPermission() != null){
+
+                }
+            }
+        }
     }
 
 
@@ -915,7 +962,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
         // Load Comments List Data -----
-        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,this);
+        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(channelViewAdapter);
@@ -1267,7 +1314,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 @Override
                 public void run() {
 
-                    refreshChannelChatSocket();
+                    if (receivedMessage != null && receivedMessage.getSaveMsg() != null && receivedMessage.getSaveMsg().getGetData() != null){
+                        list.add(0,receivedMessage.getSaveMsg().getGetData());
+                        channelViewAdapter.updateChat(list);
+                    }
 
                 }
             });
@@ -1404,7 +1454,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 try {
                                     // Todo: Remove when live user ID has been used
 
-                                    GroupCommentResponseModel comment = new GroupCommentResponseModel();
+                                    CommentReceiveResponseModel comment = new CommentReceiveResponseModel();
 
 
                             /*if (detail.getGroupChatID() == )
@@ -1428,11 +1478,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
     }
-
-
-
-
-
 
 
     private void readMessages(int lastChatMessage)
@@ -1467,7 +1512,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
     }
-
 
 
 
@@ -2099,12 +2143,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         Log.v("VIDEOSIZE", "video size in KB:  " + fileSizeInKB);
                         Log.v("VIDEOSIZE", "video size in MB:  " + fileSizeInMB);
 
-                        attachmentFileList.add(video);
+                        callPreviewVideo(video);
+
+                        /*attachmentFileList.add(video);
 
                         binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.autoplay_video));
                         binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
                         binding.attachmentContainer.setVisibility(View.VISIBLE);
-
+*/
 
                         //responseType = "addVideo";
                         //campaignViewModel.AddVideo(accessToken, videoName, String.valueOf(videoSectionId), video, "1", isMobileRecorded);
@@ -2121,9 +2167,16 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         campaignViewModel.AddVideo(accessToken, videoName, String.valueOf(videoSectionId), video, "1", isMobileRecorded);
                     }*/
                 } catch (Exception e) {
-
+                    Log.d("trim_exception",e.toString());
                 }
             });
+
+
+    private void callPreviewVideo(File savedVideoFile){
+        Intent intent = new Intent(ChannelChatsScreen.this, VideoPreviewScreen.class);
+        intent.putExtra("video",savedVideoFile);
+        startForActivityResultLauncher.launch(intent);
+    }
 
 
     // ---------------------------------------------------------------Interface Listeners ----------------------------------------------------------------
@@ -2413,7 +2466,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     @Override
     public void viewMemberProfile(int userID, int gcMemberId, int groupChatId, int groupChannelId) {
 
-        Intent intent = new Intent(ChannelChatsScreen.this, ChannelMemberProfileScreen.class);
+        Intent intent = new Intent(ChannelChatsScreen.this, MemberProfileScreen.class);
         intent.putExtra("gc_member_id",String.valueOf(gcMemberId));
         startActivity(intent);
 
@@ -2439,6 +2492,18 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
         connectViewModel.save_group_channel_message(api_token,channelID,params);
+    }
+
+    @Override
+    public void initiateCommentScreen(String data, String profileBaseUrl, String postBaseUrl, String userID) {
+
+        Intent intent = new Intent(ChannelChatsScreen.this, GroupChannelCommentScreen.class);
+        //intent.putExtra("replyOnComment", false);
+        intent.putExtra("userDetail", data);
+        intent.putExtra("profileBaseUrl",profileBaseUrl);
+        intent.putExtra("postBaseUrl",postBaseUrl);
+        intent.putExtra("userID", userID);
+        startActivity(intent);
     }
 
     @Override
@@ -2480,7 +2545,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     @Override
     public void onLoading() {
-        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE){
+        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE || requestType == REQUEST_UPLOAD_FILE){
             rest.ShowDialogue();
         }
     }
@@ -2847,10 +2912,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     protected void onResume() {
         super.onResume();
         Log.d("Lifecycle Check ", "In the onResume() event");
-
-        currentPage = 1;
-        loadLocalData();
-
     }
 
     @Override
@@ -2919,8 +2980,43 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     }
 
 
-                } else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
+                }
+                else if (result.getResultCode() == Constants.NO_GIF_FOUND) {
                     Utils.showSnackMessage(this,binding.getRoot(),"GIF not available");
+                }
+                else if (result.getResultCode() == Constants.SELECT_VIDEO_REQUEST_CODE) {
+
+                    if ((File)result.getData().getExtras().get("video") != null) {
+                        File videoFile = (File) result.getData().getExtras().get("video");
+
+                        attachment_request_code = Constants.SELECT_VIDEO_REQUEST_CODE;
+
+                        attachmentFileList = new ArrayList<>();
+                        attachmentFileList.add(videoFile);
+
+                        isAnyFileAttached = true;
+
+                        Log.d("Video","video found");
+                        callAttachmentApi();
+                    }
+                    else{
+                        Log.d("Video","No Video found");
+                    }
+
+                }
+                else if (result.getResultCode() == Constants.NO_VIDEO_FOUND) {
+                    Utils.showSnackMessage(this,binding.getRoot(),"Video not available");
+                }
+                else if (result.getResultCode() == Constants.SEARCH_PINNED_MESSAGE) {
+
+                    String groupChatId = result.getData().getStringExtra("groupChatId");
+                    searchedTillPosition = 0;
+                    isMessageNotFound = true;
+                    loadSearchData = false;
+                    isDataAvailable = true;
+
+                    //rest.ShowDialogue();
+                    searchMessageInList(groupChatId, false, false, false);
                 }
             });
 }

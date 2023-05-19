@@ -32,8 +32,14 @@ public class ConnectRepo {
 
 
 
-    public Observable<JsonElement> update_group_channel_profile(int id, String api_token,String device_type, String device_token, Map<String,Object> params) {
-        return restService.update_group_channel_profile(id, api_token, device_type, device_token,params);
+    public Observable<JsonElement> update_group_channel_profile(int id, String api_token, String device_type, String device_token, Map<String,Object> params, MultipartBody.Part image) {
+
+        if (image != null){
+            return restService.update_group_channel_profile_1(id, api_token, device_type, device_token,params,image);
+        }
+        else {
+            return restService.update_group_channel_profile_2(id, api_token, device_type, device_token, params);
+        }
     }
 
 
@@ -140,4 +146,21 @@ public class ConnectRepo {
         return restService.join_group_channel(id,api_token,device_type,device_token,params);
     }
 
+
+
+
+    public Observable<JsonElement> group_channel_blocklist(int id,String api_token,String device_type, String device_token) {
+        return restService.group_channel_blocklist(id,api_token,device_type,device_token);
+    }
+
+
+    public Observable<JsonElement> group_channel_report_reason_list(String api_token,String device_type, String device_token,int page,int per_page) {
+        return restService.group_channel_report_reason_list(api_token,device_type,device_token,page,per_page);
+    }
+
+
+
+    public Observable<JsonElement> block_user(int id,String api_token,String device_type, String device_token,Map<String,Object> params) {
+        return restService.block_user(id,api_token,device_type,device_token,params);
+    }
 }

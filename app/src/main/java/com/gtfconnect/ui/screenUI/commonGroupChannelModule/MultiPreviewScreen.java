@@ -1,7 +1,6 @@
 package com.gtfconnect.ui.screenUI.commonGroupChannelModule;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,35 +18,17 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.gtfconnect.R;
 import com.gtfconnect.databinding.ActivityPreviewMediaBinding;
-import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.MultiPreviewListener;
-import com.gtfconnect.models.groupChannelModels.MediaListModel;
-import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
 import com.gtfconnect.ui.adapters.ImagePreviewAdapter;
-import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.SnapOneItemView;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class MultiPreviewScreen extends AppCompatActivity implements MultiPreviewListener {
 

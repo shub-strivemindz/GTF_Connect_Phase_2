@@ -93,6 +93,23 @@
             android:id="@+id/progress_bar"
             android:layout_gravity="center"
             android:layout_centerInParent="true"/>
+        
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            app:cardCornerRadius="@dimen/_120sdp"
+            app:cardElevation="@dimen/_20sdp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#80000000"
+            android:id="@+id/play_gif">
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="GIF"
+                android:gravity="center"
+                android:textColor="@color/white"/>
+        </com.google.android.material.card.MaterialCardView>
 
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

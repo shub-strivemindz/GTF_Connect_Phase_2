@@ -16,21 +16,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.medialibrary.VideoActivity;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.Player;
+import com.exa.ashutosh_video.VideoActivity;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;
-import com.gtfconnect.models.groupChannelModels.MediaListModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.Utils;
 
-import java.io.PushbackReader;
 import java.util.List;
 
 public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -42,7 +37,7 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
 
     RecyclerView recyclerRootView;
 
-    ExoPlayer simpleExoPlayer;
+    //ExoPlayer simpleExoPlayer;
 
     boolean isSelf ;
 
@@ -90,7 +85,7 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
         if (mediaList.size() == 1){
             GroupChannelPinnedMessageMediaAdapter.SingleMediaItemViewHolder holder1 = (SingleMediaItemViewHolder) holder;
             holder1.binding.progressBar.setVisibility(View.GONE);
-            holder1.binding.playerView.setVisibility(View.GONE);
+            //holder1.binding.playerView.setVisibility(View.GONE);
 
             holder1.binding.postMediaContainer.setOnClickListener(view -> {
 
@@ -178,7 +173,7 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
             holder1.binding.playVideo.setOnClickListener(view -> {
 
                 holder1.binding.progressBar.setVisibility(View.VISIBLE);
-                holder1.binding.playerView.setVisibility(View.VISIBLE);
+                //holder1.binding.playerView.setVisibility(View.VISIBLE);
 
 
                 holder1.binding.docContainer.setVisibility(View.GONE);
@@ -189,13 +184,13 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
                 //holder1.binding.headerContainer.setVisibility(View.GONE);
                 //holder1.binding.playerContainer.setVisibility(View.VISIBLE);
 
-                simpleExoPlayer = new ExoPlayer.Builder(context).build();
+                /*simpleExoPlayer = new ExoPlayer.Builder(context).build();
                 holder1.binding.playerView.setPlayer(simpleExoPlayer);
                 holder1.binding.playerView.setKeepScreenOn(true);
 
                 MediaItem mediaItem = MediaItem.fromUri(post_path);
                 simpleExoPlayer.addMediaItem(mediaItem);
-                simpleExoPlayer.setPlayWhenReady(true);
+                simpleExoPlayer.setPlayWhenReady(true);*/
 
                 //Log.v("playerSetup",isFirstTime+" "+watchTime);
 
@@ -204,10 +199,10 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
                 isFirstTime = false;
             }*/
 
-                simpleExoPlayer.prepare();
-                simpleExoPlayer.play();
+                //simpleExoPlayer.prepare();
+                //simpleExoPlayer.play();
 
-                simpleExoPlayer.addListener(new Player.Listener() {
+                /*simpleExoPlayer.addListener(new Player.Listener() {
 
 
                     @Override
@@ -239,7 +234,7 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
                         simpleExoPlayer.prepare();
                         simpleExoPlayer.play();
                     }
-                });
+                });*/
 
             });
         }

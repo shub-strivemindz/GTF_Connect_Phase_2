@@ -1,67 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/chat_background2"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_marginBottom="@dimen/_2sdp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-<LinearLayout
-    android:layout_marginHorizontal="@dimen/_16sdp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/avatar_container"
-        android:layout_gravity="center_vertical"
-        app:cardElevation="0dp"
-        android:layout_width="@dimen/_20sdp"
-        android:layout_height="@dimen/_20sdp"
-        app:cardCornerRadius="@dimen/_100sdp">
-
-        <ImageView
-            android:id="@+id/user_avatar"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
-            android:scaleType="fitXY"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/bot2" />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <LinearLayout
-        android:layout_marginStart="@dimen/_10sdp"
+<RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@color/commentBackgroundColor"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:gravity="top"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:id="@+id/comment_profile_container"
+            app:cardCornerRadius="@dimen/_80sdp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:id="@+id/comment_profile_pic"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_20sdp"
-            android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/userName"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Lisa Harper"
-            android:textColor="@color/comment_title"
-            android:textSize="@dimen/_10ssp"
-            android:textStyle="bold"
-            android:fontFamily="@font/open_sans"
-            android:gravity="center_vertical|bottom"
-            android:layout_gravity="center_vertical"/>
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/commentDialogBackgroundColor"
+            android:layout_marginStart="@dimen/_8sdp"
+            app:cardElevation="0dp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            app:cardCornerRadius="@dimen/_4sdp"
+            android:id="@+id/comment_container_card"
+            android:layout_toEndOf="@id/comment_profile_container">
 
             <LinearLayout
-                android:id="@+id/edit_container"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/comment_user"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Amenda Lapasis"
+                        android:textColor="@color/channelCommentUserColor"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_10ssp"/>
+
+                    <TextView
+                        android:id="@+id/comment_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="27 Feb, 2023"
+                        android:textColor="@color/channelCommentTimeStampColor"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_9ssp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:id="@+id/comment_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                    android:textColor="@color/channelCommentTextColor"
+                    android:fontFamily="@font/open_sans"
+                    android:textSize="@dimen/_10ssp"/>
+
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_below="@id/comment_container_card"
+            android:id="@+id/edit_container"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_54sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/edit"
@@ -71,22 +100,20 @@
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/open_sans"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
                 android:text="Edit"
-                android:textStyle="bold"
-                android:textColor="@color/theme_green"
+                android:textColor="@color/commentFooterTextColor"
                 android:textSize="@dimen/_9ssp"/>
 
             <TextView
                 android:gravity="center_vertical|bottom"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/open_sans"
                 android:text="|"
-                android:textStyle="bold"
-                android:textColor="@color/theme_green"
+                android:textColor="@color/commentFooterTextColor"
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:textSize="@dimen/_9ssp"/>
 
@@ -97,55 +124,21 @@
                 android:gravity="center_vertical|bottom"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/open_sans"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+
                 android:text="Delete"
-                android:textStyle="bold"
-                android:textColor="@color/theme_green"
-                android:textSize="@dimen/_9ssp"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_gravity="center_vertical"
-            android:gravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/comment"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:ellipsize="end"
-                android:text="Nice line...."
-                android:layout_marginVertical="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:maxLines="3"
-                android:textSize="@dimen/_8ssp" />
-
-            <TextView
-                android:id="@+id/comment_time"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:text="Today 10:25AM"
+                android:textColor="@color/commentFooterTextColor"
                 android:textSize="@dimen/_9ssp"/>
 
         </LinearLayout>
-    </LinearLayout>
-
-</LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:alpha=".2"
-        app:dividerColor="@color/white"
+        android:layout_below="@id/edit_container"
+        app:dividerColor="@color/commentDividerColor"
+        android:layout_marginVertical="@dimen/_8sdp"
         android:layout_height="@dimen/_2sdp"/>
 
-</LinearLayout>
+</RelativeLayout>

@@ -34,4 +34,19 @@ public class Constants {
     public static final int LEAVE_GROUP_CHANNEL = 1911;
 
     public static final int DELETE_GROUP_CHANNEL_FROM_DATABASE = 1912;
+
+    public static final int NO_VIDEO_FOUND = 1913;
+
+    public static final int SEARCH_PINNED_MESSAGE = 1914;
+
+    public static final int GET_GROUP_CHANNEL_BLOCKLIST = 1915;
+
+    public static final int PROFILE_DETAILS_UPDATED = 1916;
+
+
+
+
+    public static final String Group_Channel_TYPE_1 = "group";
+
+    public static final String Group_Channel_TYPE_2 = "channel";
 }

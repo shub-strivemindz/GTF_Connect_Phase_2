@@ -24,17 +24,14 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.example.medialibrary.VideoActivity;
+import com.exa.ashutosh_video.VideoActivity;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerMediaPreviewBinding;
-import com.gtfconnect.interfaces.ImagePreviewListener;
 import com.gtfconnect.interfaces.MultiPreviewListener;
-import com.gtfconnect.models.groupChannelModels.MediaListModel;
-import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
 import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapter.ViewHolder> {

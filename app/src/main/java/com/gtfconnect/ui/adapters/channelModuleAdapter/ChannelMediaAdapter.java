@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.medialibrary.VideoActivity;
+import com.exa.ashutosh_video.VideoActivity;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
@@ -25,8 +25,9 @@ import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;
-import com.gtfconnect.models.groupChannelModels.MediaListModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
+import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.Utils;
 
 import java.util.List;
@@ -92,28 +93,6 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             holder1.binding.postMediaContainer.setOnClickListener(view -> {
 
-                /*Dialog previewDialog = new Dialog(context);
-                previewDialog.setContentView(R.layout.dialog_media_preview);
-
-                previewDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                previewDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                ImageView preview =(ImageView) previewDialog.findViewById(R.id.preview);
-                loadImageFile(post_path,preview);
-
-
-
-                ImageView close = (ImageView) previewDialog.findViewById(R.id.close);
-                ImageView download_media = (ImageView) previewDialog.findViewById(R.id.download_media);
-
-                close.setOnClickListener(view1 -> previewDialog.dismiss());
-                download_media.setOnClickListener(view1 -> {
-
-                });
-
-                previewDialog.show();*/
-
-
                 Gson gson1  = new Gson();
                 String mediaData =  gson1.toJson(mediaList);
 
@@ -129,7 +108,7 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
 
 
-            Log.d("Entered_POst",postBaseUrl);
+            //Log.d("Entered_POst",postBaseUrl);
 
             if (fileType.equalsIgnoreCase("image"))
             {
@@ -139,12 +118,25 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.GONE);
                 holder1.binding.docContainer.setVisibility(View.GONE);
 
-                loadImageFile(post_path,holder1.binding.postImage);
+                if (Utils.isFileTypeGif((mediaList.get(position).getMimeType()))) {
+
+                    holder1.binding.playGif.setVisibility(View.VISIBLE);
+                    GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
+                    //loadImageFile(post_path,holder1.binding.postImage);
+                }
+                else{
+
+                    holder1.binding.playGif.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder1.binding.postImage);
+                }
+
+
             }
             else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
                 holder1.binding.docContainer.setVisibility(View.VISIBLE);
                 holder1.binding.playVideo.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
                 loadDocumentFile(post_path,holder1.binding.postImage);
             }
@@ -152,17 +144,33 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 holder1.binding.docContainer.setVisibility(View.GONE);
                 holder1.binding.playVideo.setVisibility(View.VISIBLE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
                 //loadVideoFile(post_path,holder.binding.postImage);
             } else if (fileType.equalsIgnoreCase("gif")) {
 
                 holder1.binding.playVideo.setVisibility(View.GONE);
                 holder1.binding.docContainer.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
                 loadImageFile(post_path,holder1.binding.postImage);
             } else{
                 Log.d("File_Type_Error",fileType);
             }
+
+
+
+
+
+
+
+            holder1.binding.playGif.setOnClickListener(view -> {
+                holder1.binding.playGif.setVisibility(View.GONE);
+                loadImageFile(post_path,holder1.binding.postImage);
+            });
+
+
+
 
 
             holder1.binding.playVideo.setOnClickListener(view -> {
@@ -206,6 +214,9 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         holder1.binding.progressBar.setVisibility(View.VISIBLE);
                     } else if (state == Player.STATE_READY) {
                         holder1.binding.progressBar.setVisibility(View.GONE);
+                    } else if (state == Player.STATE_ENDED) {
+
+                        // Todo == Show preview again
                     }
                 }
 

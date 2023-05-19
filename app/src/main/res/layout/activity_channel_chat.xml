@@ -41,13 +41,20 @@
             android:layout_height="match_parent"
             >
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:layout_marginVertical="@dimen/_5sdp"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                android:background="#fff"
-                android:src="@drawable/gtf_logo"/>
+                android:layout_marginVertical="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_120sdp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/gtf_logo"
+                    android:id="@+id/group_channel_logo"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </RelativeLayout>
 
@@ -119,7 +126,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:elevation="@dimen/_10sdp"
-            android:visibility="gone"
             android:layout_below="@id/toolbar"
             android:orientation="horizontal">
 
@@ -201,6 +207,7 @@
                 android:gravity="center"
                 android:layout_alignParentEnd="true"
                 android:layout_width="@dimen/_35sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
                 android:layout_height="match_parent">
 
                 <ImageView
@@ -271,7 +278,7 @@
         </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/pin_message_container"
         android:layout_above="@id/quote_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -319,8 +326,8 @@
     <LinearLayout
         android:elevation="@dimen/_2sdp"
         android:layout_above="@id/search_container"
-        android:id="@+id/quote_container"
         android:visibility="gone"
+        android:id="@+id/quote_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/channelQuoteDialogBackgroundColor"

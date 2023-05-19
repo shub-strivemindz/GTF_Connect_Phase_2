@@ -99,22 +99,22 @@
         <activity android:name=".ui.screenUI.userProfileModule.UpdatePasswordScreen"/>
         <activity android:name=".ui.screenUI.userProfileModule.UpdateUserInfoScreen"/>
 
-        <activity android:name=".ui.screenUI.channelModule.ChannelMemberProfileScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.MemberProfileScreen"/>
 
-        <activity android:name=".ui.screenUI.channelModule.ChannelBlocklistScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.BlocklistScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManagePermissionScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelManageReactionScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelAdminSubscribersScreen"/>
 
-
-        <activity android:name=".ui.screenUI.groupModule.GroupBlocklistScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelChatsScreen"/>
         <activity android:name=".ui.screenUI.groupModule.GroupManagePermissionScreen"/>
         <activity android:name=".ui.screenUI.commonGroupChannelModule.PinnedMessageScreen"/>
-        <activity android:name=".ui.screenUI.channelModule.ChannelProfileScreen"/>
-        <activity android:name=".ui.screenUI.groupModule.GroupEditProfileScreen"/>
-        <activity android:name=".ui.screenUI.groupModule.GroupCommentScreen"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.ProfileScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.EditProfileScreen"/>
+
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen"
+            android:windowSoftInputMode="adjustPan"/>
+
         <activity android:name=".ui.screenUI.groupModule.GroupChatScreen"/>
 
         <activity android:name=".ui.screenUI.mentorModule.MentorChatScreen"/>
@@ -124,6 +124,7 @@
         <activity android:name=".ui.screenUI.authModule.registerModule.LocationPickerScreen"/>
 
         <activity android:name=".ui.screenUI.commonGroupChannelModule.MultiPreviewScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.VideoPreviewScreen"/>
     </application>
 
 </manifest>

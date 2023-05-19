@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatBodyDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
@@ -25,6 +26,31 @@ public class DatabaseRepo {
         AppDatabase appDatabase = AppDatabase.getInstance(application);
         appDao = appDatabase.appDao();
     }
+
+
+    // ================================================================ User Profile Data =====================================================================
+
+
+    public void insertUserProfileData(UserProfileDbEntity userProfileDbEntity) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                appDao.delete_user_profile_data();
+                appDao.insertUserProfileData(userProfileDbEntity);
+
+            }
+        });
+    }
+
+    public LiveData<UserProfileDbEntity> getUserProfileData() {
+        return appDao.getUserProfileData();
+    }
+
+
+
+
+
+
 
 
 
