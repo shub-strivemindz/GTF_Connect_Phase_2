@@ -157,4 +157,8 @@ dependencies {
     // Video playback
     implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
     //implementation 'com.google.android.exoplayer:exoplayer:2.18.6'
+
+
+    // Flex Box
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }

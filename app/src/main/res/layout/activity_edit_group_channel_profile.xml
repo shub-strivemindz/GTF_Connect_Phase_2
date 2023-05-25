@@ -16,7 +16,7 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
-                android:background="@color/theme_green"
+                android:background="@color/groupChannelActionBarBackgroundColor"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_70sdp">
 
@@ -73,19 +73,22 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginHorizontal="@dimen/_30sdp"
                 app:cardCornerRadius="@dimen/_8sdp"
+                app:cardBackgroundColor="@color/authEditTextBg"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:strokeColor="@color/authCardStrokeColor">
 
                     <EditText
                         android:id="@+id/title"
                         android:textSize="@dimen/_10ssp"
                         android:hint="@string/gtf_finance"
+                        android:textColorHint="@color/authEditText"
                         android:maxLength="100"
                         android:layout_marginVertical="@dimen/_12sdp"
                         android:fontFamily="@font/poppins"
                         android:layout_marginHorizontal="@dimen/_10sdp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:textColor="@color/authEditText"
                         android:includeFontPadding="false"
                         android:background="@android:color/transparent"/>
 
@@ -99,8 +102,9 @@
                 android:id="@+id/description_container"
                 android:layout_height="@dimen/_120sdp"
                 app:cardCornerRadius="@dimen/_8sdp"
+                app:cardBackgroundColor="@color/authEditTextBg"
                 app:strokeWidth=".3dp"
-                app:strokeColor="@color/theme_green">
+                app:strokeColor="@color/authCardStrokeColor">
 
                     <EditText
                         android:layout_marginTop="@dimen/_12sdp"
@@ -112,7 +116,8 @@
                         android:gravity="start"
                         android:maxLines="8"
                         android:textSize="@dimen/_10ssp"
-                        android:textColor="@color/tab_grey"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
                         android:clickable="false"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:background="@android:color/transparent"

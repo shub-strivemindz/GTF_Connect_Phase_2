@@ -1,0 +1,41 @@
+<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:alignContent="flex_start"
+    app:alignItems="flex_start"
+    app:flexWrap="wrap"
+    app:showDivider="beginning|middle">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            app:cardCornerRadius="@dimen/_4sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:id="@+id/month_container"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/subscriptionMonthCardBackgroundColor"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginVertical="@dimen/_8sdp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_30sdp"
+            android:fontFamily="@font/roboto_regular"
+            android:id="@+id/validity"
+            android:textStyle="bold"
+            android:textColor="@color/subscriptionMonthCardTextColor"
+            android:textSize="@dimen/_10ssp"
+            android:text="1 Month" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</com.google.android.flexbox.FlexboxLayout>

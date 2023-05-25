@@ -26,6 +26,9 @@ public class MediaListModel {
     @SerializedName("StorageType")
     @Expose
     private String storageType;
+    @SerializedName("StorageService")
+    @Expose
+    private String storageService;
     @SerializedName("MediaTypeId")
     @Expose
     private String mediaTypeId;
@@ -40,7 +43,10 @@ public class MediaListModel {
     private String fileName;
     @SerializedName("UserID")
     @Expose
-    private String userID;
+    private Integer userID;
+    @SerializedName("FileSize")
+    @Expose
+    private Integer fileSize;
     @SerializedName("CreatedAt")
     @Expose
     private String createdAt;
@@ -104,6 +110,14 @@ public class MediaListModel {
         this.storageType = storageType;
     }
 
+    public String getStorageService() {
+        return storageService;
+    }
+
+    public void setStorageService(String storageService) {
+        this.storageService = storageService;
+    }
+
     public String getMediaTypeId() {
         return mediaTypeId;
     }
@@ -136,12 +150,20 @@ public class MediaListModel {
         this.fileName = fileName;
     }
 
-    public String getUserID() {
+    public Integer getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
+    public void setUserID(Integer userID) {
         this.userID = userID;
+    }
+
+    public Integer getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Integer fileSize) {
+        this.fileSize = fileSize;
     }
 
     public String getCreatedAt() {

@@ -1,24 +1,15 @@
-package com.gtfconnect.ui.adapters;
+package com.gtfconnect.ui.adapters.dashboardAdapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
 
@@ -54,29 +45,39 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
 
         final int index = position;
 
-        if (responseModel.get(index).getGroup() != null) {
-
-            holder.binding.title.setText(responseModel.get(index).getGroup().getName());
-
-           /* if (responseModel.get(index).getGroup().getMessage() != null && !responseModel.get(index).getGroup().getMessage().isEmpty()) {
-                if (responseModel.get(index).getGroup().getMessage().get(0).getMessage() != null)
-                    holder.binding.subTitle.setText(responseModel.get(index).getGroup().getMessage().get(0).getMessage());
 
 
-                holder.binding.time.setText(Utils.getChipDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
-            }*/
+        if (responseModel.get(index).getGroup() != null ) {
+
+            if (responseModel.get(index).getGroup().getName() != null) {
+                holder.binding.title.setText(responseModel.get(index).getGroup().getName());
+            }
 
 
-            if(responseModel.get(position).getGroup().getMessage() != null)
+            if(responseModel.get(position).getGroup().getMessage() != null && !responseModel.get(position).getGroup().getMessage().isEmpty())
             {
-                if (responseModel.get(position).getGroup().getMessage().get(0).getMessage() != null && !responseModel.get(position).getGroup().getMessage().get(0).getMessage().trim().isEmpty()){
-                    holder.binding.subTitle.setText(responseModel.get(position).getGroup().getMessage().get(0).getMessage());
+
+                if (responseModel.get(position).getGroup().getMessage().get(0).getChatType() != null){
+
+                    Log.d("chat_type",responseModel.get(position).getGroup().getMessage().get(0).getChatType().trim()+" = !");
+                    if (responseModel.get(position).getGroup().getMessage().get(0).getChatType().trim().equalsIgnoreCase("file")){
+                        holder.binding.subTitle.setText("Media File");
+                    }
+                    else if (responseModel.get(position).getGroup().getMessage().get(0).getMessage() != null && !responseModel.get(position).getGroup().getMessage().get(0).getMessage().trim().isEmpty()){
+                        holder.binding.subTitle.setText(responseModel.get(position).getGroup().getMessage().get(0).getMessage());
+                    }
+                }
+
+                if (responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt() != null) {
+                    holder.binding.time.setText(Utils.getChipDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
                 }
                 else{
-                    holder.binding.subTitle.setText("Media File");
+                    holder.binding.time.setText("");
                 }
-
-                holder.binding.time.setText(Utils.getChipDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
+            }
+            else{
+                holder.binding.subTitle.setText("");
+                holder.binding.time.setText("");
             }
 
 
@@ -84,14 +85,24 @@ public class ChannelViewAdapter extends RecyclerView.Adapter<ChannelViewAdapter.
                 String url = profileImageBaseUrl+responseModel.get(index).getGroup().getProfileImage();
                 GlideUtils.loadImage(context,holder.binding.groupChannelIcon,url);
             }
-
-
-            if (responseModel.get(index).getUnreadcount() != null && !responseModel.get(index).getUnreadcount().isEmpty()) {
-                holder.binding.notificationCount.setText(responseModel.get(index).getUnreadcount());
+            else{
+                holder.binding.groupChannelIcon.setImageDrawable(context.getDrawable(R.drawable.no_image_logo_background));
             }
 
 
-            //Todo : Add Glide to fetch profile image when provide base url
+            if (responseModel.get(index).getUnreadcount() != null && !responseModel.get(index).getUnreadcount().isEmpty()) {
+                if (responseModel.get(index).getUnreadcount().equalsIgnoreCase("0")){
+                    holder.binding.notification.setVisibility(View.GONE);
+                }
+                else {
+                    holder.binding.notificationCount.setText(responseModel.get(index).getUnreadcount());
+                    holder.binding.notification.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                holder.binding.notification.setVisibility(View.GONE);
+            }
+
 
             holder.binding.chatItem.setOnClickListener(new View.OnClickListener() {
                 @Override

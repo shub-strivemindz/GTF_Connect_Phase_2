@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-
+    android:background="@color/settingBackgroundColor"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
+        android:layout_height="@dimen/_55sdp"
+        android:background="@color/settingActionBarBackgroundColor"
         android:orientation="horizontal">
 
         <ImageView
@@ -18,7 +18,7 @@
             android:src="@drawable/back2"
             android:id="@+id/back"
             android:layout_marginStart="@dimen/_24sdp"
-            app:tint="@color/theme_green"/>
+            app:tint="@color/settingActionBarTextColor"/>
 
         <TextView
             android:layout_gravity="center"
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Manage Reactions"
-            android:textColor="@color/theme_green"
+            android:textColor="@color/settingActionBarTextColor"
             android:fontFamily="@font/poppins500"
             android:textSize="@dimen/_15ssp"/>
 
@@ -42,6 +42,7 @@
 <com.google.android.material.card.MaterialCardView
     android:layout_marginVertical="@dimen/_20sdp"
     android:layout_width="match_parent"
+    app:cardBackgroundColor="@color/settingCardBackgroundColor"
     app:cardElevation="0dp"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/_20sdp"
@@ -81,7 +82,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/GC_manageReactionsTextColor"
                 android:textStyle="bold"
                 android:textSize="@dimen/_10ssp"
                 android:text="Manage Reactions"/>
@@ -93,7 +94,7 @@
                 android:gravity="center_vertical"
                 android:fontFamily="@font/montserrat"
                 android:textStyle="bold"
-                android:textColor="@color/profileTextColor"
+                android:textColor="@color/GC_manageReactionsTextColor"
                 android:id="@+id/reaction_switch_text"
                 android:textSize="@dimen/_10ssp"
                 android:text="On"/>

@@ -33,7 +33,7 @@
                 android:text="Edit Profile"
                 android:gravity="center_vertical"
                 android:id="@+id/edit_profile"
-                android:textSize="@dimen/_10ssp"
+                android:textSize="@dimen/_11ssp"
                 android:fontFamily="@font/roboto_regular"
                 android:layout_alignParentEnd="true"
                 android:textColor="@color/white"
@@ -61,8 +61,9 @@
             <ImageView
                 android:id="@+id/logo"
                 android:layout_width="match_parent"
+                android:scaleType="centerCrop"
                 android:layout_height="match_parent"
-                android:src="@drawable/gtr_logo" />
+                android:src="@drawable/no_image_logo_background" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -115,7 +116,7 @@
 
         </LinearLayout>
         
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/group1"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_55sdp"
@@ -124,10 +125,11 @@
             android:layout_marginTop="@dimen/_18sdp">
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+                android:layout_width="@dimen/_85sdp"
                 android:layout_height="match_parent"
                 android:id="@+id/copy_link"
-                android:layout_weight="1"
+                app:cardElevation="0dp"
+                android:layout_toStartOf="@id/leave_channel"
                 app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
                 app:cardCornerRadius="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
@@ -159,10 +161,11 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+                android:layout_width="@dimen/_85sdp"
                 android:layout_height="match_parent"
                 android:id="@+id/leave_channel"
-                android:layout_weight="1"
+                app:cardElevation="0dp"
+                android:layout_centerHorizontal="true"
                 app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
                 app:cardCornerRadius="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
@@ -177,12 +180,14 @@
                     <ImageView
                         android:layout_width="@dimen/_14sdp"
                         android:layout_height="@dimen/_14sdp"
+                        android:id="@+id/join_rejoin_icon"
                         android:src="@drawable/leave" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/_3sdp"
+                        android:id="@+id/join_rejoin_title"
                         android:text="Leave"
                         android:fontFamily="@font/open_sans"
                         android:textSize="@dimen/_9ssp"
@@ -194,10 +199,11 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+                android:layout_width="@dimen/_85sdp"
                 android:layout_height="match_parent"
                 android:id="@+id/mute_notification"
-                android:layout_weight="1"
+                android:layout_toEndOf="@id/leave_channel"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/groupChannelProfileCardBackgroundColor"
                 app:cardCornerRadius="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
@@ -230,7 +236,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:layout_marginHorizontal="@dimen/_24sdp"

@@ -11,14 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentUserSettingBinding;
 import com.gtfconnect.interfaces.ChannelSettingListener;
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.BlocklistScreen;
 import com.gtfconnect.utilities.Constants;
@@ -38,9 +41,17 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     private ChannelSettingListener listener;
 
-    public  SettingAdapter(Context context,InfoDbEntity profileDetailModel,ChannelSettingListener listener,String viewType){
+    private boolean isAdmin;
+
+    private boolean enable_disable_discussion;
+
+    public  SettingAdapter(Context context,InfoDbEntity profileDetailModel, boolean isAdmin,boolean enable_disable_discussion,ChannelSettingListener listener,String viewType){
         this.context = context;
         this.profileDetailModel = profileDetailModel;
+
+        this.isAdmin = isAdmin;
+        this.enable_disable_discussion = enable_disable_discussion;
+
         this.listener = listener;
         this.viewType = viewType;
     }
@@ -53,6 +64,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(SettingAdapter.ViewHolder holder, int position) {
+
+
+
+        checkUserAdminPermission(holder,isAdmin);
 
 
 
@@ -261,12 +276,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
         });
 
 
-        holder.binding.manipulateViewContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (profileDetailModel.getGcSetting().getEnableManipulateViews() == 1){
-                    showManipulateViewDialog();
-                }
+        holder.binding.manipulateViewContainer.setOnClickListener(view -> {
+            if (profileDetailModel.getGcSetting().getEnableManipulateViews() == 1){
+                showManipulateViewDialog();
             }
         });
 
@@ -283,6 +295,24 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
                     listener.updateManipulateViewsStatus(0,10);
                 }
             }
+        });
+
+        holder.binding.deleteChannel.setOnClickListener(view -> {
+
+            Dialog delete_dialog = new Dialog(context);
+
+            delete_dialog.setContentView(R.layout.dialog_delete_channel);
+            delete_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            delete_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            TextView delete = (TextView) delete_dialog.findViewById(R.id.delete);
+            TextView cancel = (TextView) delete_dialog.findViewById(R.id.cancel);
+
+            delete.setOnClickListener(view1 -> delete_dialog.dismiss());
+            cancel.setOnClickListener(view1 -> delete_dialog.dismiss());
+
+            delete_dialog.show();
+
         });
 
     }
@@ -390,6 +420,69 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
         });
 
         manipulate_view_dialog.show();
+    }
+
+
+
+
+
+    // -------------------------------------------------------------- Check User & Admin Permissions -----------------------------------------------------------
+
+    private void checkUserAdminPermission(ViewHolder holder,boolean isAdmin){
+
+        if (!isAdmin) {
+
+            holder.binding.container1.setVisibility(View.GONE);
+            holder.binding.container2.setVisibility(View.GONE);
+            holder.binding.blocklist.setVisibility(View.GONE);
+            holder.binding.signMessageContainer.setVisibility(View.GONE);
+            holder.binding.container3.setVisibility(View.GONE);
+            holder.binding.viewChatHistoryContainer.setVisibility(View.GONE);
+            holder.binding.deleteChannel.setVisibility(View.GONE);
+
+            if (enable_disable_discussion){
+
+                holder.binding.container1.setVisibility(View.VISIBLE);
+                holder.binding.privateChannelContainer.setVisibility(View.GONE);
+                holder.binding.managePermission.setVisibility(View.GONE);
+
+                holder.binding.discussionContainer.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.binding.container1.setVisibility(View.GONE);
+            }
+
+        }
+        else {
+
+            holder.binding.container1.setVisibility(View.VISIBLE);
+            holder.binding.container2.setVisibility(View.VISIBLE);
+            holder.binding.blocklist.setVisibility(View.VISIBLE);
+            holder.binding.signMessageContainer.setVisibility(View.VISIBLE);
+            holder.binding.container3.setVisibility(View.VISIBLE);
+            holder.binding.viewChatHistoryContainer.setVisibility(View.VISIBLE);
+            holder.binding.deleteChannel.setVisibility(View.VISIBLE);
+
+
+            if (enable_disable_discussion){
+                holder.binding.discussionContainer.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.binding.discussionContainer.setVisibility(View.GONE);
+            }
+        }
+    }
+
+
+
+    public void updateUserType(boolean isAdmin){
+        this.isAdmin = isAdmin;
+        notifyItemChanged(0);
+    }
+
+    public void updateEnableDisableDiscussion(boolean enable_disable_discussion){
+        this.enable_disable_discussion = enable_disable_discussion;
+        notifyItemChanged(0);
     }
 }
 

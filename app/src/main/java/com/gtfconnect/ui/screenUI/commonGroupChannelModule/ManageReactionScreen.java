@@ -1,4 +1,4 @@
-package com.gtfconnect.ui.screenUI.channelModule;
+package com.gtfconnect.ui.screenUI.commonGroupChannelModule;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChannelManageReactionScreen extends AppCompatActivity implements ApiResponseListener{
+public class ManageReactionScreen extends AppCompatActivity implements ApiResponseListener{
 
     ActivityManageReactionsBinding binding;
 
@@ -133,7 +133,7 @@ public class ChannelManageReactionScreen extends AppCompatActivity implements Ap
                 connectViewModel.update_group_channel_reaction_list(channelID,api_token,params);
             }
             else{
-                Utils.showSnackMessage(ChannelManageReactionScreen.this,binding.getRoot(),"Please select at least one reaction to update!");
+                Utils.showSnackMessage(ManageReactionScreen.this,binding.getRoot(),"Please select at least one reaction to update!");
             }
         });
 

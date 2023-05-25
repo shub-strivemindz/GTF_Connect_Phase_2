@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.FragmentChannelViewBinding;
 import com.gtfconnect.interfaces.DashboardMessageCountListener;
 import com.gtfconnect.roomDB.AppDao;
@@ -28,7 +27,7 @@ import com.gtfconnect.roomDB.AppDatabase;
 import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardResponseModel;
-import com.gtfconnect.ui.adapters.ChannelViewAdapter;
+import com.gtfconnect.ui.adapters.dashboardAdapters.ChannelViewAdapter;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 
@@ -37,7 +36,6 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.socket.client.Ack;
 

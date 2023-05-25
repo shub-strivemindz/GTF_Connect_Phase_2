@@ -35,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -43,13 +44,16 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 import com.gtfconnect.R;
+import com.gtfconnect.interfaces.PaymentWebPortalListener;
 import com.gtfconnect.interfaces.ReportReasonListener;
 import com.gtfconnect.interfaces.SelectCityListener;
 import com.gtfconnect.interfaces.SelectCountryListener;
@@ -80,6 +84,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Utils {
@@ -1266,6 +1271,101 @@ public class Utils {
     }
 
 
+
+
+
+
+    public static String getValidityDuration(int duration){
+
+        String validity = "";
+
+
+        if (duration <= 3600) {
+
+            if (duration/30 > 12){
+
+                validity = ((duration/30)/12)+" Years";
+            }
+            else if (duration/30 == 12){
+                validity = "1 Year";
+            } else if (duration/30 == 9) {
+                validity = "9 Months";
+            }
+            else if (duration/30 == 6) {
+                validity = "6 Months";
+            }
+            else if (duration/30 == 3) {
+                validity = "3 Months";
+            }
+            else if (duration/30 == 1) {
+                validity = "1 Month";
+            }
+            else{
+                Log.d("term_duration_validity",duration+ " days");
+                validity = duration/30+" Months";
+            }
+        } else {
+            validity = "Unlimited";
+        }
+
+
+
+
+
+
+
+        if (duration >= 28 && duration <= 31){
+            validity = "1 Month";
+        }
+        else if (duration >= 28 && duration <= 31){
+
+        }
+        else if (duration >= 28 && duration <= 31){
+
+        }
+
+        return validity;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static void ShowDialogSuccess(final Context context, String text, final PaymentWebPortalListener listener) {
+        {
+            Dialog dialog = new Dialog(Objects.requireNonNull(context));
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.payment_success_dialog);
+            LottieAnimationView animationView =dialog.findViewById(R.id.lav_actionBar);
+            CardView ok_button =dialog.findViewById(R.id.ok_button);
+            TextView dialoge_text =dialog.findViewById(R.id.dialoge_text);
+            dialoge_text.setText(text);
+            animationView.setAnimation(R.raw.payment_success);
+            animationView.playAnimation();
+            ok_button.setOnClickListener(v -> {
+                listener.OkClick();
+                animationView.cancelAnimation();
+                dialog.dismiss();
+            });
+            Window window = dialog.getWindow();
+            WindowManager.LayoutParams layoutParams = Objects.requireNonNull(window).getAttributes();
+            layoutParams.gravity = Gravity.CENTER;
+            window.setAttributes(layoutParams);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+//dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+        }
+    }
 
 
 }

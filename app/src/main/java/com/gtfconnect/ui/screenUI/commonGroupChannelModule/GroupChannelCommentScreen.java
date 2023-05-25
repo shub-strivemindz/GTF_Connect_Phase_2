@@ -675,7 +675,7 @@ public class GroupChannelCommentScreen extends AppCompatActivity implements Grou
                 binding.audioContainer.setVisibility(View.GONE);
                 binding.mediaRecycler.setVisibility(View.VISIBLE);
 
-                ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(this, binding.mediaRecycler, detail.getMedia(), postBaseUrl, String.valueOf(userID), userName);
+                ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(this, binding.mediaRecycler, detail.getMedia(), postBaseUrl, String.valueOf(userID), userName,null);
                 binding.mediaRecycler.setHasFixedSize(true);
                 binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 binding.mediaRecycler.setAdapter(mediaAdapter);

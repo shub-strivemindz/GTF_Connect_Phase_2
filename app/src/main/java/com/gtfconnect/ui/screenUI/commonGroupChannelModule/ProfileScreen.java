@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,14 +40,15 @@ import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.ChannelSettingListener;
 import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.DocumentAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.MediaAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.SettingAdapter;
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.channelModule.ChannelAdminSubscribersScreen;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelManagePermissionScreen;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelManageReactionScreen;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
+import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
@@ -90,7 +92,9 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
     private int channelID;
     String api_token;
 
-    Map<String,Object> params;
+    Map<String, Object> params;
+
+    private UserProfileDbEntity userProfileData;
 
     private boolean isReactionsUpdated = false;
 
@@ -99,6 +103,16 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
     private boolean isUpdateNotificationSettingCalled = false;
 
     private String viewType = "";
+
+    private String userStatus = "";
+
+
+    private boolean isSettingEnabled = false;
+    private boolean isDiscussionEnabled = false;
+
+
+    private String profile_image = "";
+    private String member_count = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,22 +124,28 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
         api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
         viewType = getIntent().getStringExtra("viewType");
-        if (viewType == null){
+        if (viewType == null) {
             viewType = "";
+        } else {
+            if (viewType.equalsIgnoreCase(Constants.Group_Channel_TYPE_1)) {
+                binding.editProfile.setText("Edit Group");
+            } else {
+                binding.editProfile.setText("Edit Channel");
+            }
         }
-
 
 
         init();
 
+
         binding.editProfile.setOnClickListener(view -> {
             Intent intent = new Intent(ProfileScreen.this, EditProfileScreen.class);
-            intent.putExtra("image",profileDetailModel.getGcInfo().getProfileImage());
-            intent.putExtra("title",profileDetailModel.getGcInfo().getName());
-            intent.putExtra("description",profileDetailModel.getGcInfo().getDescription());
+            intent.putExtra("image", profileDetailModel.getGcInfo().getProfileImage());
+            intent.putExtra("title", profileDetailModel.getGcInfo().getName());
+            intent.putExtra("description", profileDetailModel.getGcInfo().getDescription());
 
-            intent.putExtra("accessType",profileDetailModel.getGcInfo().getAccessType());
-            intent.putExtra("type",profileDetailModel.getGcInfo().getType());
+            intent.putExtra("accessType", profileDetailModel.getGcInfo().getAccessType());
+            intent.putExtra("type", profileDetailModel.getGcInfo().getType());
             startForResult.launch(intent);
         });
 
@@ -150,12 +170,11 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
             if (isNotificationEnabled) {
                 params.put("IsNotification", 0);
                 isNotificationEnabled = false;
-            }
-            else{
+            } else {
                 params.put("IsNotification", 1);
                 isNotificationEnabled = true;
             }
-            connectViewModel.update_groupChannel_settings(channelID,api_token,params);
+            connectViewModel.update_groupChannel_settings(channelID, api_token, params);
         });
 
         binding.backClick.setOnClickListener(view -> finish());
@@ -163,34 +182,81 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
         // Dialog for Leave Channel  :
         binding.leaveChannel.setOnClickListener(view -> {
-            Dialog leave_channel_dialog = new Dialog(ProfileScreen.this);
 
-            leave_channel_dialog.setContentView(R.layout.dialog_leave_channel);
-            leave_channel_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            leave_channel_dialog.setCancelable(false);
-            leave_channel_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            if (userStatus.equalsIgnoreCase(Constants.USER_ACTIVE)) {
 
-            TextView group_channel_name = leave_channel_dialog.findViewById(R.id.group_channel_name);
-            TextView leave = leave_channel_dialog.findViewById(R.id.sign_out);
-            TextView cancel = leave_channel_dialog.findViewById(R.id.cancel);
+                Dialog leave_channel_dialog = new Dialog(ProfileScreen.this);
 
-            if (profileDetailModel != null && profileDetailModel.getGcInfo() != null) {
-                group_channel_name.setText(profileDetailModel.getGcInfo().getName());
+                leave_channel_dialog.setContentView(R.layout.dialog_leave_channel);
+                leave_channel_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                leave_channel_dialog.setCancelable(false);
+                leave_channel_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView group_channel_name = leave_channel_dialog.findViewById(R.id.group_channel_name);
+                TextView leave = leave_channel_dialog.findViewById(R.id.sign_out);
+                TextView cancel = leave_channel_dialog.findViewById(R.id.cancel);
+
+                if (profileDetailModel != null && profileDetailModel.getGcInfo() != null) {
+                    group_channel_name.setText(profileDetailModel.getGcInfo().getName());
+                }
+
+                leave.setOnClickListener(v -> {
+
+                    leave_channel_dialog.dismiss();
+
+                    requestType = Constants.LEAVE_GROUP_CHANNEL;
+                    connectViewModel.leave_group_channel(profileDetailModel.getGcMemberInfo().getGCMemberID(), api_token);
+
+
+                });
+
+                cancel.setOnClickListener(v -> leave_channel_dialog.dismiss());
+
+                leave_channel_dialog.show();
+            }
+            if (userStatus.equalsIgnoreCase(Constants.USER_LEFT)) {
+
+                Dialog rejoin_channel_dialog = new Dialog(ProfileScreen.this);
+
+                rejoin_channel_dialog.setContentView(R.layout.dialog_rejoin_channel);
+                rejoin_channel_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                rejoin_channel_dialog.setCancelable(false);
+                rejoin_channel_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView group_channel_name = rejoin_channel_dialog.findViewById(R.id.group_channel_name);
+                TextView leave = rejoin_channel_dialog.findViewById(R.id.sign_out);
+                TextView cancel = rejoin_channel_dialog.findViewById(R.id.cancel);
+
+                if (profileDetailModel != null && profileDetailModel.getGcInfo() != null) {
+                    group_channel_name.setText(profileDetailModel.getGcInfo().getName());
+                }
+
+                leave.setOnClickListener(v -> {
+
+                    rejoin_channel_dialog.dismiss();
+
+                    requestType = Constants.REJOIN_GROUP_CHANNEL;
+                    connectViewModel.rejoin_group_channel(profileDetailModel.getGcMemberInfo().getGCMemberID(), api_token);
+
+
+                });
+
+                cancel.setOnClickListener(v -> rejoin_channel_dialog.dismiss());
+
+                rejoin_channel_dialog.show();
+            }
+            if (userStatus.equalsIgnoreCase(Constants.USER_RENEW_PLAN)){
+                String data = new Gson().toJson(profileDetailModel.getGcSubscriptionPlan());
+
+                Intent intent = new Intent(ProfileScreen.this, ExclusiveOfferScreen.class);
+                intent.putExtra("plans",data);
+                intent.putExtra("profile_image",profile_image);
+                intent.putExtra("member_count",member_count);
+                startActivity(intent);
+                finish();
             }
 
-            leave.setOnClickListener(v -> {
 
-                leave_channel_dialog.dismiss();
-
-                requestType = Constants.LEAVE_GROUP_CHANNEL;
-                connectViewModel.leave_group_channel(profileDetailModel.getGcMemberInfo().getGCMemberID(),api_token);
-
-
-            });
-
-            cancel.setOnClickListener(v -> leave_channel_dialog.dismiss());
-
-            leave_channel_dialog.show();
         });
 
 
@@ -232,7 +298,6 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
         });
 
 
-
         // Setting default tab 0 adapter ------
         DocumentAdapter documentViewAdapter = new DocumentAdapter(4);
         binding.profileRecycler.setHasFixedSize(true);
@@ -260,7 +325,7 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
                     case 2:
                     default:
-                        settingViewAdapter = new SettingAdapter(ProfileScreen.this, profileDetailModel, ProfileScreen.this,viewType);
+                        settingViewAdapter = new SettingAdapter(ProfileScreen.this, profileDetailModel, isSettingEnabled, isDiscussionEnabled, ProfileScreen.this, viewType);
                         binding.profileRecycler.setHasFixedSize(true);
                         binding.profileRecycler.setLayoutManager(new LinearLayoutManager(ProfileScreen.this));
                         binding.profileRecycler.setAdapter(settingViewAdapter);
@@ -281,22 +346,23 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
     }
 
 
-
-    private void loadLocalData(){
+    private void loadLocalData() {
 
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
         databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
-            if(infoDbEntity != null){
+            if (infoDbEntity != null) {
                 this.profileDetailModel = infoDbEntity;
                 rest.dismissProgressdialog();
 
+                if(profileDetailModel != null) {
+                    checkGroupChannelSettings();
+                }
 
-                if (requestType == GET_UPDATED_GC_SETTING){
+                if (requestType == GET_UPDATED_GC_SETTING) {
                     updateNotificationSetting();
                     settingViewAdapter.updateData(profileDetailModel);
-                }
-                else {
+                } else {
                     updateNotificationSetting();
 
                     if (isReactionsUpdated) {
@@ -308,10 +374,19 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
             }
         });
+
+
+        databaseViewModel.getUserProfileData().observe(this, new Observer<UserProfileDbEntity>() {
+            @Override
+            public void onChanged(UserProfileDbEntity userProfileDbEntity) {
+
+                if (userProfileDbEntity != null) {
+                    userProfileData = userProfileDbEntity;
+                    checkUserAdminPermission();
+                }
+            }
+        });
     }
-
-
-
 
 
     private void init() {
@@ -320,9 +395,9 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
 
-        rest = new Rest(this,false,false);
+        rest = new Rest(this, false, false);
 
-        rest = new Rest(this,true,false);
+        rest = new Rest(this, true, false);
         listener = this;
 
         connectViewModel = new ViewModelProvider(this).get(ConnectViewModel.class);
@@ -341,32 +416,48 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
         });
 
         requestType = GET_GROUP_CHANNEL_INFO;
-        connectViewModel.get_group_channel_info(channelID,api_token);
+        connectViewModel.get_group_channel_info(channelID, api_token);
 
     }
 
 
+    private void setProfileDetails() {
 
-    private void setProfileDetails()
-    {
+        if (profileDetailModel != null) {
 
-        if (profileDetailModel!=null)
-        {
-            if(profileDetailModel.getGcInfo()!=null)
-            {
-                if (!profileDetailModel.getGcInfo().getName().isEmpty() && profileDetailModel.getGcInfo().getName()!=null)
-                {
+
+            if (profileDetailModel.getGcInfo() != null ){
+                if (profileDetailModel.getGcInfo().getProfileImage() != null) {
+                    profile_image = profileDetailModel.getGcInfo().getProfileImage();
+                }
+                else{
+                    profile_image = "";
+                }
+
+                if (profileDetailModel.getGcInfo().getMemberCount() != null){
+                    member_count = String.valueOf(profileDetailModel.getGcInfo().getMemberCount());
+                }
+                else{
+                    member_count = "";
+                }
+            }
+            else{
+                profile_image = "";
+                member_count = "";
+            }
+
+
+
+            if (profileDetailModel.getGcInfo() != null) {
+                if (!profileDetailModel.getGcInfo().getName().isEmpty() && profileDetailModel.getGcInfo().getName() != null) {
                     binding.title.setText(profileDetailModel.getGcInfo().getName());
                 }
-                if (profileDetailModel.getGcInfo().getMemberCount() != 0 && profileDetailModel.getGcInfo().getMemberCount()!=null)
-                {
+                if (profileDetailModel.getGcInfo().getMemberCount() != 0 && profileDetailModel.getGcInfo().getMemberCount() != null) {
                     binding.subscriberCount.setText(String.valueOf(profileDetailModel.getGcInfo().getMemberCount()));
-                }
-                else {
+                } else {
                     binding.title2.setVisibility(View.GONE);
                 }
-                if (!profileDetailModel.getGcInfo().getProfileImage().isEmpty() && profileDetailModel.getGcInfo().getProfileImage()!=null)
-                {
+                if (profileDetailModel.getGcInfo().getProfileImage() != null && !profileDetailModel.getGcInfo().getProfileImage().isEmpty()) {
                     //Setting up loader on post
                     CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
                     circularProgressDrawable.setStrokeWidth(5f);
@@ -375,7 +466,7 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.placeholder(circularProgressDrawable);
-                    requestOptions.error(R.drawable.image_not_found);
+                    requestOptions.error(R.drawable.no_image_logo_background);
                     requestOptions.skipMemoryCache(false);
                     requestOptions.fitCenter();
 
@@ -388,9 +479,8 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
     }
 
 
-    private void updateNotificationSetting()
-    {
-        if (profileDetailModel != null && profileDetailModel != null){
+    private void updateNotificationSetting() {
+        if (profileDetailModel != null && profileDetailModel != null) {
             if (profileDetailModel.getGcSetting() != null) {
                 if (profileDetailModel.getGcSetting().getIsNotification() != null) {
 
@@ -404,7 +494,7 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
                         binding.notificationIcon.setImageDrawable(getResources().getDrawable(R.drawable.mute));
                     }
 
-                    Log.d("Mute_status",profileDetailModel.getGcSetting().getIsNotification()+"");
+                    Log.d("Mute_status", profileDetailModel.getGcSetting().getIsNotification() + "");
                 }
             }
         }
@@ -420,27 +510,27 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
     @Override
     public void onLoading() {
-        if (requestType ==GET_GROUP_CHANNEL_INFO ) {
+        if (requestType == GET_GROUP_CHANNEL_INFO) {
             if (profileDetailModel == null) {
                 rest.ShowDialogue();
             }
         } else if (requestType == Constants.LEAVE_GROUP_CHANNEL) {
             rest.ShowDialogue();
-        } else{
+        } else {
             rest.ShowDialogue();
         }
     }
 
     @Override
     public void onDataRender(JsonObject jsonObject) {
-        Log.d("rendered","successfully!");
+        Log.d("rendered", "successfully!");
         renderResponse(jsonObject);
         //Toast.makeText(this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResponseRender(JsonObject jsonObject) {
-        Log.d("rendered","successfully!");
+        Log.d("rendered", "successfully!");
         renderResponse(jsonObject);
 
     }
@@ -473,9 +563,8 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
     }
 
 
-    private void renderResponse(JsonObject response)
-    {
-        Log.d("rendered","successfully!");
+    private void renderResponse(JsonObject response) {
+        Log.d("rendered", "successfully!");
 
         if (requestType == GET_GROUP_CHANNEL_INFO) {
             Gson gson = new Gson();
@@ -492,15 +581,13 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
                 databaseViewModel.insertGroupChannelInfo(data);
             }
-        }
-        else if (requestType == UPDATE_GC_SETTING) {
+        } else if (requestType == UPDATE_GC_SETTING) {
 
             requestType = GET_UPDATED_GC_SETTING;
-            connectViewModel.get_group_channel_info(channelID,api_token);
+            connectViewModel.get_group_channel_info(channelID, api_token);
 
 
-        }
-        else if (requestType == GET_UPDATED_GC_SETTING) {
+        } else if (requestType == GET_UPDATED_GC_SETTING) {
 
             Gson gson = new Gson();
             Type type = new TypeToken<GroupChannelInfoResponseModel>() {
@@ -520,17 +607,16 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
         } else if (requestType == UPDATE_GC_REACTION_SETTING) {
 
             requestType = UPDATED_GC_REACTION_SETTING;
-            connectViewModel.get_group_channel_info(channelID,api_token);
+            connectViewModel.get_group_channel_info(channelID, api_token);
 
         } else if (requestType == UPDATED_GC_REACTION_SETTING) {
 
-            Intent intent = new Intent(this, ChannelManageReactionScreen.class);
+            Intent intent = new Intent(this, ManageReactionScreen.class);
             Gson gson = new Gson();
             String data = gson.toJson(profileDetailModel);
-            intent.putExtra("data",data);
+            intent.putExtra("data", data);
             startForResult.launch(intent);
-        }
-        else if (requestType == Constants.LEAVE_GROUP_CHANNEL) {
+        } else if (requestType == Constants.LEAVE_GROUP_CHANNEL) {
 
             //  Dialog for Leave Channel  :
 
@@ -554,16 +640,24 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
             }).start();
 
+        } else if (requestType == Constants.REJOIN_GROUP_CHANNEL) {
+
+            Toast.makeText(this, response.get("message").toString(), Toast.LENGTH_SHORT).show();
+
+            requestType = GET_GROUP_CHANNEL_INFO;
+            connectViewModel.get_group_channel_info(channelID, PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
+
+
         }
     }
 
 
     @Override
     public void callPermissionClass() {
-        Intent intent = new Intent(this, ChannelManagePermissionScreen.class);
+        Intent intent = new Intent(this, ManagePermissionScreen.class);
         Gson gson = new Gson();
         String data = gson.toJson(profileDetailModel);
-        intent.putExtra("data",data);
+        intent.putExtra("data", data);
         startForResult.launch(intent);
     }
 
@@ -572,50 +666,49 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
 
-        params.put("Name",profileDetailModel.getGcInfo().getName());
-        params.put("Description",profileDetailModel.getGcInfo().getDescription());
-        params.put("Type",profileDetailModel.getGcInfo().getType());
+        params.put("Name", profileDetailModel.getGcInfo().getName());
+        params.put("Description", profileDetailModel.getGcInfo().getDescription());
+        params.put("Type", profileDetailModel.getGcInfo().getType());
 
-        if (status == 0){
-            params.put("AccessType","private");
+        if (status == 0) {
+            params.put("AccessType", "private");
+        } else {
+            params.put("AccessType", "public");
         }
-        else{
-            params.put("AccessType","public");
-        }
-        connectViewModel.update_groupChannel_profile(channelID,api_token,params,null);
+        connectViewModel.update_groupChannel_profile(channelID, api_token, params, null);
     }
 
     @Override
     public void updateSignMessageStatus(int status) {
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
-        params.put("SignedMsg",status);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
+        params.put("SignedMsg", status);
+        connectViewModel.update_groupChannel_settings(channelID, api_token, params);
     }
 
     @Override
     public void updateDiscussionStatus(int status) {
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
-        params.put("AllowDiscussion",status);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
+        params.put("AllowDiscussion", status);
+        connectViewModel.update_groupChannel_settings(channelID, api_token, params);
     }
 
     @Override
     public void updateViewChatHistoryStatus(int status) {
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
-        params.put("ChatHistoryIsEnable",status);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
+        params.put("ChatHistoryIsEnable", status);
+        connectViewModel.update_groupChannel_settings(channelID, api_token, params);
     }
 
     @Override
-    public void updateManipulateViewsStatus(int status,int percent) {
+    public void updateManipulateViewsStatus(int status, int percent) {
         requestType = UPDATE_GC_SETTING;
         params = new HashMap<>();
         params.put("EnableManipulateViews", status);
         params.put("ManipulateViewsPercent", percent);
-        connectViewModel.update_groupChannel_settings(channelID,api_token,params);
+        connectViewModel.update_groupChannel_settings(channelID, api_token, params);
     }
 
     @Override
@@ -625,14 +718,13 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
             requestType = UPDATE_GC_REACTION_SETTING;
             params = new HashMap<>();
             params.put("EnableReactions", status);
-            connectViewModel.update_groupChannel_settings(channelID, api_token,  params);
-        }
-        else{
+            connectViewModel.update_groupChannel_settings(channelID, api_token, params);
+        } else {
 
-            Intent intent = new Intent(this, ChannelManageReactionScreen.class);
+            Intent intent = new Intent(this, ManageReactionScreen.class);
             Gson gson = new Gson();
             String data = gson.toJson(profileDetailModel);
-            intent.putExtra("data",data);
+            intent.putExtra("data", data);
             startForResult.launch(intent);
         }
 
@@ -650,19 +742,215 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
                     binding.tabLayout.getTabAt(3).select();
 
                     requestType = GET_GROUP_CHANNEL_INFO;
-                    connectViewModel.get_group_channel_info(channelID,api_token);
-                }
-                else if (result.getResultCode() == GC_REFRESH_UPDATED_REACTION_CODE) {
+                    connectViewModel.get_group_channel_info(channelID, api_token);
+                } else if (result.getResultCode() == GC_REFRESH_UPDATED_REACTION_CODE) {
 
                     binding.tabLayout.getTabAt(3).select();
 
                     requestType = GET_GROUP_CHANNEL_INFO;
                     isReactionsUpdated = true;
-                    connectViewModel.get_group_channel_info(channelID,api_token);
+                    connectViewModel.get_group_channel_info(channelID, api_token);
                 } else if (result.getResultCode() == Constants.PROFILE_DETAILS_UPDATED) {
 
                     requestType = GET_GROUP_CHANNEL_INFO;
-                    connectViewModel.get_group_channel_info(channelID,api_token);
+                    connectViewModel.get_group_channel_info(channelID, api_token);
                 }
             });
+
+
+    // -------------------------------------------------------------- Check User & Admin Permissions -----------------------------------------------------------
+
+    private void checkUserAdminPermission() {
+
+        if (userProfileData != null && userProfileData.getUserRoleInfo() != null) {
+            if (userProfileData.getUserRoleInfo().getPrimary() != null && userProfileData.getUserRoleInfo().getPrimary().getRole() != null) {
+                if (userProfileData.getUserRoleInfo().getPrimary().getRole().getSlug() != null) {
+
+                    String userType = userProfileData.getUserRoleInfo().getPrimary().getRole().getSlug();
+
+                    // =============================================  SUPER ADMIN CHECK  ===============================================================
+
+                    if (userType.equalsIgnoreCase("user") || userType.equalsIgnoreCase("admin")) {
+                        checkAdminChecks();
+                    }
+
+                    // =============================================  SUPER ADMIN CHECK  ===============================================================
+                    else if (!userType.equalsIgnoreCase("mentor")) {
+                        binding.editProfile.setVisibility(View.VISIBLE);
+                        isSettingEnabled = true;
+                        isDiscussionEnabled = true;
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    private void checkAdminChecks() {
+
+        /**
+         * Admin Allowed Permission Check ======================
+         * 1. gc_edit_profile
+         * 2. enable_disable_discussion
+         * 3. gc_setting
+         */
+
+        if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions() != null && !userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().isEmpty()) {
+
+            for (int i = 0; i < userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().size(); i++) {
+
+                if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission() != null) {
+
+                    int permissionValue = 0;
+
+                    if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermissionValue() != null) {
+                        permissionValue = userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermissionValue();
+                    }
+
+                    if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName() != null) {
+
+
+                        if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName().equalsIgnoreCase("gc_edit_profile")) {
+                            if (permissionValue == 1) {
+                                binding.editProfile.setVisibility(View.VISIBLE);
+                            } else {
+                                binding.editProfile.setVisibility(View.GONE);
+                            }
+                        } else if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName().equalsIgnoreCase("gc_setting")) {
+                            if (permissionValue == 1) {
+                                isSettingEnabled = true;
+                            } else {
+                                isSettingEnabled = false;
+                            }
+                        } else if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName().equalsIgnoreCase("enable_disable_discussion")) {
+                            if (permissionValue == 1) {
+                                isDiscussionEnabled = true;
+                            } else {
+                                isDiscussionEnabled = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        /**
+         * Special User Case Admin Allowed Permission Check ==========
+         1. gc_edit_profile
+         * 2. enable_disable_discussion
+         * 3. gc_setting
+         */
+
+
+        if (userProfileData.getUserPermission() != null && !userProfileData.getUserPermission().isEmpty()) {
+
+            for (int i = 0; i < userProfileData.getUserPermission().size(); i++) {
+
+                if (userProfileData.getUserPermission().get(i).getPermission() != null) {
+
+                    int permissionValue = 0;
+
+                    if (userProfileData.getUserPermission().get(i).getCustomValue() != null) {
+                        permissionValue = Integer.parseInt(userProfileData.getUserPermission().get(i).getCustomValue());
+                    }
+
+                    if (userProfileData.getUserPermission().get(i).getPermission().getName() != null) {
+
+
+                        if (userProfileData.getUserPermission().get(i).getPermission().getName().equalsIgnoreCase("gc_edit_profile")) {
+                            if (permissionValue == 1) {
+                                binding.editProfile.setVisibility(View.VISIBLE);
+                            } else {
+                                binding.editProfile.setVisibility(View.GONE);
+                            }
+                        } else if (userProfileData.getUserPermission().get(i).getPermission().getName().equalsIgnoreCase("gc_setting")) {
+                            if (permissionValue == 1) {
+                                isSettingEnabled = true;
+                            } else {
+                                isSettingEnabled = false;
+                            }
+                        } else if (userProfileData.getUserPermission().get(i).getPermission().getName().equalsIgnoreCase("enable_disable_discussion")) {
+                            if (permissionValue == 1) {
+                                isDiscussionEnabled = true;
+                            } else {
+                                isDiscussionEnabled = false;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+        getGroupChannelAdminChecks();
+    }
+
+
+    private void getGroupChannelAdminChecks() {
+
+        if (profileDetailModel != null) {
+
+            if (profileDetailModel.getGcMemberInfo() != null && profileDetailModel.getGcMemberInfo().getStatus() != null) {
+
+                if (profileDetailModel.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
+
+                    binding.joinRejoinIcon.setImageDrawable(getResources().getDrawable(R.drawable.leave));
+                    binding.joinRejoinTitle.setText("Leave");
+                } else if (profileDetailModel.getGcMemberInfo().getStatus().equalsIgnoreCase("inactive")) {
+
+                    binding.joinRejoinIcon.setImageDrawable(getResources().getDrawable(R.drawable.rejoin));
+                    binding.joinRejoinTitle.setText("Rejoin");
+                } else {
+                    binding.joinRejoinIcon.setImageDrawable(getResources().getDrawable(R.drawable.leave));
+                    binding.joinRejoinTitle.setText("Leave");
+                }
+            }
+        }
+    }
+
+
+    private void checkGroupChannelSettings() {
+
+        if (profileDetailModel.getGcMemberInfo() != null) {
+            if (profileDetailModel.getGcMemberInfo().getStatus() != null) {
+                if (profileDetailModel.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
+
+
+                    binding.copyLink.setVisibility(View.VISIBLE);
+                    binding.muteNotification.setVisibility(View.VISIBLE);
+
+                    binding.joinRejoinTitle.setText("Leave");
+                    binding.joinRejoinIcon.setImageDrawable(getDrawable(R.drawable.leave));
+
+                    userStatus = Constants.USER_ACTIVE;
+                } else {
+
+                    binding.joinRejoinTitle.setText("Rejoin");
+                    binding.joinRejoinIcon.setImageDrawable(getDrawable(R.drawable.rejoin));
+
+                    binding.copyLink.setVisibility(View.GONE);
+                    binding.muteNotification.setVisibility(View.GONE);
+
+                    userStatus = Constants.USER_LEFT;
+                }
+            }
+        }
+
+
+        if (profileDetailModel.getGcMemberSubscriptionPlan() != null && profileDetailModel.getGcMemberSubscriptionPlan().getIsExpired() != null) {
+
+            if (profileDetailModel.getGcMemberSubscriptionPlan().getIsExpired() == 1) {
+
+                userStatus = Constants.USER_RENEW_PLAN;
+
+
+            }
+        }
+
+
+    }
 }

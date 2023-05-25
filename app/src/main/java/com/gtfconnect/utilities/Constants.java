@@ -43,10 +43,21 @@ public class Constants {
 
     public static final int PROFILE_DETAILS_UPDATED = 1916;
 
-
+    public static final int REJOIN_GROUP_CHANNEL = 1917;
 
 
     public static final String Group_Channel_TYPE_1 = "group";
 
     public static final String Group_Channel_TYPE_2 = "channel";
+
+
+    public static final String USER_ACTIVE = "active_user";
+
+    public static final String USER_INACTIVE = "inactive_user";
+
+    public static final String USER_BLOCKED = "blocked_user";
+
+    public static final String USER_LEFT = "left_user";
+
+    public static final String USER_RENEW_PLAN = "renew_subscription";
 }

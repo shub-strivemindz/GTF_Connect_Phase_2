@@ -3,10 +3,6 @@ package com.gtfconnect.ui.fragments;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +23,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
-import com.gtfconnect.databinding.FragmentGroupViewBinding;
 import com.gtfconnect.databinding.FragmentRecentViewBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.DashboardMessageCountListener;
@@ -35,15 +30,11 @@ import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferDataModel;
 
 import com.gtfconnect.models.exclusiveOfferResponse.ExclusiveOfferResponseModel;
 import com.gtfconnect.roomDB.AppDao;
-import com.gtfconnect.roomDB.AppDatabase;
 import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardResponseModel;
 import com.gtfconnect.ui.adapters.ExclusiveOfferAdapter;
-import com.gtfconnect.ui.adapters.GroupViewAdapter;
 import com.gtfconnect.ui.adapters.dashboardAdapters.RecentViewAdapter;
-import com.gtfconnect.ui.screenUI.HomeScreen;
-import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ConnectViewModel;
@@ -53,7 +44,6 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.socket.client.Ack;
 

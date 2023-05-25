@@ -24,7 +24,7 @@ public class UserProfileDbEntity {
     private UserRoleInfo userRoleInfo;
     @SerializedName("user_permission")
     @Expose
-    private List<Object> userPermission;
+    private List<UserPermission> userPermission;
     @SerializedName("user_setting")
     @Expose
     private List<UserSetting> userSetting;
@@ -53,11 +53,11 @@ public class UserProfileDbEntity {
         this.userRoleInfo = userRoleInfo;
     }
 
-    public List<Object> getUserPermission() {
+    public List<UserPermission> getUserPermission() {
         return userPermission;
     }
 
-    public void setUserPermission(List<Object> userPermission) {
+    public void setUserPermission(List<UserPermission> userPermission) {
         this.userPermission = userPermission;
     }
 
@@ -892,4 +892,67 @@ public class UserProfileDbEntity {
         }
 
     }
+
+    public class UserPermission {
+
+        @SerializedName("UserPermissionID")
+        @Expose
+        private Integer userPermissionID;
+        @SerializedName("UserID")
+        @Expose
+        private Integer userID;
+        @SerializedName("PermissionID")
+        @Expose
+        private Integer permissionID;
+        @SerializedName("CustomValue")
+        @Expose
+        private String customValue;
+        @SerializedName("permission")
+        @Expose
+        private Permission permission;
+
+        public Integer getUserPermissionID() {
+            return userPermissionID;
+        }
+
+        public void setUserPermissionID(Integer userPermissionID) {
+            this.userPermissionID = userPermissionID;
+        }
+
+        public Integer getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Integer userID) {
+            this.userID = userID;
+        }
+
+        public Integer getPermissionID() {
+            return permissionID;
+        }
+
+        public void setPermissionID(Integer permissionID) {
+            this.permissionID = permissionID;
+        }
+
+        public String getCustomValue() {
+            return customValue;
+        }
+
+        public void setCustomValue(String customValue) {
+            this.customValue = customValue;
+        }
+
+        public Permission getPermission() {
+            return permission;
+        }
+
+        public void setPermission(Permission permission) {
+            this.permission = permission;
+        }
+
+    }
 }
+
+
+

@@ -32,7 +32,7 @@ public class GlideUtils {
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(circularProgressDrawable);
-        requestOptions.error(R.drawable.no_image_background);
+        requestOptions.error(R.drawable.no_image_logo_background);
         requestOptions.skipMemoryCache(false);
         requestOptions.fitCenter();
 
@@ -58,7 +58,7 @@ public class GlideUtils {
                     @Override
                     public void onLoadFailed(@Nullable Drawable errorDrawable) {
                         super.onLoadFailed(errorDrawable);
-                        imageContainer.setImageResource(R.drawable.no_image_background);
+                        imageContainer.setImageResource(R.drawable.no_image_logo_background);
                     }
                 });
     }

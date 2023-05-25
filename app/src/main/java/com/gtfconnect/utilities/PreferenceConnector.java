@@ -115,7 +115,7 @@ public class PreferenceConnector {
         return getPreferences(context).edit();
     }
 
-    public static void cleanPrefrences(Context context) {
+    public static void cleanPreferences(Context context) {
         getPreferences(context).edit().clear().apply();
     }
 

@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/subscriptionBackgroundColor"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
@@ -16,7 +18,7 @@
 
 
             <RelativeLayout
-                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:background="@color/subscriptionActionBarBackgroundColor"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_45sdp">
 
@@ -24,8 +26,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Membership"
+                    android:layout_marginStart="@dimen/_16sdp"
                     android:gravity="center_vertical"
-                    android:textColor="@color/black"
+                    android:textColor="@color/subscriptionHeaderTextColor"
                     android:fontFamily="@font/roboto_regular"
                     android:textSize="@dimen/_14ssp"
                     android:textStyle="bold"/>
@@ -34,6 +37,7 @@
                     android:layout_width="@dimen/_16sdp"
                     android:layout_height="@dimen/_16sdp"
                     android:src="@drawable/close"
+                    android:layout_marginEnd="@dimen/_16sdp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
                     android:id="@+id/close"/>
@@ -43,7 +47,310 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_10sdp"
                 android:id="@+id/offer_recycler"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:background="@color/subscriptionMonthCardBackgroundColor"
+                android:layout_height="@dimen/_60sdp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/avatar_container"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    app:cardElevation="0dp"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:layout_gravity="center_vertical"
+                    app:cardCornerRadius="@dimen/_100sdp">
+
+                    <ImageView
+                        android:id="@+id/user_avatar"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentBottom="true"
+                        android:scaleType="fitXY"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bot5" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Live Market Session"
+                        android:id="@+id/plan_name"
+                        android:textSize="@dimen/_13ssp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/subscriptionHeaderTextColor"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="160,851 subscribers"
+                        android:id="@+id/subscribers"
+                        android:textSize="@dimen/_10ssp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/theme_green"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Get access to membership perks"
+                        android:textSize="@dimen/_10ssp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textColor="@color/subscriptionHeaderText2Color"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/benefits_container">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Benefits"
+                android:textColor="@color/subscriptionHeaderTextColor"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/_12ssp"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_6sdp"
+                    android:layout_height="@dimen/_6sdp"
+                    android:src="@drawable/circle_point"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/subscriptionTextColor"
+                    android:textSize="@dimen/_10ssp"
+                    android:layout_height="wrap_content"
+                    android:text="The Indian rupee is the official currency in the Republic"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_6sdp"
+                    android:layout_height="@dimen/_6sdp"
+                    android:src="@drawable/circle_point"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/_10ssp"
+                    android:textColor="@color/textDashboardMessageColor"
+                    android:layout_height="wrap_content"
+                    android:text="The Indian rupee is the official currency in the Republic"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_6sdp"
+                    android:layout_height="@dimen/_6sdp"
+                    android:src="@drawable/circle_point"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/_10ssp"
+                    android:textColor="@color/textDashboardMessageColor"
+                    android:layout_height="wrap_content"
+                    android:text="The Indian rupee is the official currency in the Republic"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_6sdp"
+                    android:layout_height="@dimen/_6sdp"
+                    android:src="@drawable/circle_point"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:textSize="@dimen/_10ssp"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/textDashboardMessageColor"
+                    android:layout_height="wrap_content"
+                    android:text="The Indian rupee is the official currency in the Republic"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_6sdp"
+                    android:layout_height="@dimen/_6sdp"
+                    android:src="@drawable/circle_point"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:layout_width="match_parent"
+                    android:textSize="@dimen/_10ssp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/textDashboardMessageColor"
+                    android:layout_height="wrap_content"
+                    android:text="The Indian rupee is the official currency in the Republic"/>
+
+            </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/plan_description_container">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plan Description"
+                android:textColor="@color/subscriptionHeaderText2Color"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/_12ssp"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_14sdp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lorem "
+                android:id="@+id/plan_description"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:textColor="@color/subscriptionTextColor"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_10ssp"
+                android:fontFamily="@font/roboto_regular"/>
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha=".5"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginVertical="@dimen/_14sdp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginHorizontal="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_18sdp"
+                app:cardBackgroundColor="@color/theme_green"
+                app:cardCornerRadius="@dimen/_6sdp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Subscribe At ₹"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/roboto_regular"
+                        android:id="@+id/subscription_amount"
+                        android:text="1299"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text=" + GST / "
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/roboto_regular"
+                        android:id="@+id/validity"
+                        android:text="Year"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

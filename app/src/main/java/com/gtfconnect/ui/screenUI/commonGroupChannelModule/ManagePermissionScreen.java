@@ -1,4 +1,4 @@
-package com.gtfconnect.ui.screenUI.channelModule;
+package com.gtfconnect.ui.screenUI.commonGroupChannelModule;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -28,7 +28,7 @@ import com.gtfconnect.viewModels.ConnectViewModel;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChannelManagePermissionScreen extends AppCompatActivity implements ApiResponseListener {
+public class ManagePermissionScreen extends AppCompatActivity implements ApiResponseListener {
 
     ActivityManagePermissionBinding binding;
 
@@ -107,8 +107,17 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
         binding.sendMessageSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b){
                 sendMessage = 1;
+
             }
             else{
+
+                sendSticker = 0;
+                binding.sendStickerGifSwitch.setChecked(false);
+
+                sendMedia = 0;
+                binding.sendMediaSwitch.setChecked(false);
+
+
                 sendMessage = 0;
             }
         });
@@ -167,20 +176,20 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
                 slowModeTime = 10;
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
 
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
 
             }
@@ -200,96 +209,96 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
     {
         switch (position){
             case 1:
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
                 slowModeTime = 10;
                 break;
             case 3:
 
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
                 slowModeTime = 30;
                 break;
             case 5:
 
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
                 slowModeTime = 1;
                 break;
             case 7:
 
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
                 slowModeTime = 5;
                 break;
             case 9:
 
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.white));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.radioButtonDefaultColor)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.settingCardBackgroundColor));
 
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
                 slowModeTime = 24;
                 break;
@@ -359,8 +368,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             if (detailModel.getGcPermission().getSlowMode() == 10){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
-                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap10.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap10.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap10.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
                 binding.gap10.setChecked(true);
                 slowModeTime = 10;
@@ -368,8 +377,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             else if (detailModel.getGcPermission().getSlowMode() == 30){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
-                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap30.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap30.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap30.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
                 binding.gap30.setChecked(true);
                 slowModeTime = 30;
@@ -377,8 +386,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             else if (detailModel.getGcPermission().getSlowMode() == 1){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
-                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap1.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap1.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap1.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
                 binding.gap1.setChecked(true);
                 slowModeTime = 1;
@@ -386,8 +395,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             else if (detailModel.getGcPermission().getSlowMode() == 5){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
-                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap5.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap5.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap5.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
                 binding.gap5.setChecked(true);
                 slowModeTime = 5;
@@ -395,8 +404,8 @@ public class ChannelManagePermissionScreen extends AppCompatActivity implements 
             else if (detailModel.getGcPermission().getSlowMode() == 24){
                 binding.slowModeOptionContainer.setVisibility(View.VISIBLE);
                 binding.slowModeSwitch.setChecked(true);
-                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ChannelManagePermissionScreen.this, R.color.theme_green)));
-                binding.gap24.setBackgroundColor(ContextCompat.getColor(ChannelManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
+                binding.gap24.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(ManagePermissionScreen.this, R.color.theme_green)));
+                binding.gap24.setBackgroundColor(ContextCompat.getColor(ManagePermissionScreen.this,R.color.radioButtonSelectedBackgroundColor));
 
                 binding.gap24.setChecked(true);
                 slowModeTime = 24;

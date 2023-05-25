@@ -329,7 +329,7 @@
 
     <color name="groupChannelProfileHeaderTextColor">#9EAAD6</color>
 
-    <color name="groupChannelProfileTextColor">#A7ABB1</color>
+    <color name="groupChannelProfileTextColor">#DDE1EA</color>
 
     <color name="groupChannelProfileTitleTextColor">#FFF</color>
 
@@ -356,5 +356,85 @@
     <color name="blocklistTitleColor">#FFF</color>
 
     <color name="blocklistBackgroundColor">#0E1118</color>
+
+
+
+    <!--======================================================================= Setting UI  ==========================================================================-->
+
+
+
+    <color name="settingBackgroundColor">#0E1118</color>
+
+    <color name="settingActionBarBackgroundColor">#232833</color>
+
+    <color name="settingCardBackgroundColor">#222E3C</color>
+
+    <color name="settingActionBarTextColor">#FFF</color>
+
+
+
+    <!--==================== Manage Permission =============================-->
+
+    <color name="GC_managePermissionsTextColor">#9EAAD6</color>
+
+    <color name="GC_managePermissionsTextBoldColor">#9EAAD6</color>
+
+
+
+
+    <!--==================== Manage Reactions =============================-->
+
+    <color name="GC_manageReactionsTextColor">#fff</color>
+
+    <color name="GC_manageReactionsSmileTextColor">#9EAAD6</color>
+
+
+
+    <!--==================== Manipulate Views =============================-->
+
+    <color name="GC_manipulateViewsHeaderColor">#9EAAD6</color>
+
+    <color name="GC_manipulateViewsTextColor">#C0C2C6</color>
+
+    <color name="GC_manipulateViewsDividerColor">#232833</color>
+
+    <color name="GC_manipulateViewsLightColor">#C9CACE</color>
+
+
+
+
+    <!--==================== Delete Channel Dialog =============================-->
+
+    <color name="deleteChannelHeaderTextColor">#D3D5D8</color>
+
+    <color name="deleteChannelTextColor">#DDE1EA</color>
+
+    <color name="deleteChannelYesTag">#EB1B15</color>
+
+    <color name="deleteChannelNoTag">#37A8DB</color>
+
+    <color name="deleteChannelBackgroundColor">#252C3C</color>
+
+
+
+
+
+
+
+    <!--======================================================================= Subscription UI  ==========================================================================-->
+
+    <color name="subscriptionBackgroundColor">#0E1118</color>
+
+    <color name="subscriptionActionBarBackgroundColor">#22252E</color>
+
+    <color name="subscriptionMonthCardBackgroundColor">#222E3C</color>
+
+    <color name="subscriptionMonthCardTextColor">#DDE1EA</color>
+
+    <color name="subscriptionHeaderTextColor">#DDE1EA</color>
+
+    <color name="subscriptionHeaderText2Color">#DDE1EA</color>
+
+    <color name="subscriptionTextColor">#8497A7</color>
 
 </resources>

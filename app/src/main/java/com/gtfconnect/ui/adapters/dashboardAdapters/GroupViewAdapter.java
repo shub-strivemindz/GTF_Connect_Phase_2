@@ -1,4 +1,4 @@
-package com.gtfconnect.ui.adapters;
+package com.gtfconnect.ui.adapters.dashboardAdapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentHomeItemsBinding;
 import com.gtfconnect.roomDB.dbEntities.dashboardDbEntities.DashboardListEntity;
 import com.gtfconnect.ui.screenUI.groupModule.GroupChatScreen;
@@ -45,25 +46,57 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
 
         if (responseModel.get(index).getGroup() != null) {
 
-            holder.binding.title.setText(responseModel.get(index).getGroup().getName());
+            if (responseModel.get(index).getGroup().getName() != null) {
+                holder.binding.title.setText(responseModel.get(index).getGroup().getName());
+            }
 
-            if (responseModel.get(index).getGroup().getMessage() != null && !responseModel.get(index).getGroup().getMessage().isEmpty()) {
-                if (responseModel.get(index).getGroup().getMessage().get(0).getMessage() != null)
-                    holder.binding.subTitle.setText(responseModel.get(index).getGroup().getMessage().get(0).getMessage());
+            if(responseModel.get(position).getGroup().getMessage() != null && !responseModel.get(position).getGroup().getMessage().isEmpty())
+            {
 
+                if (responseModel.get(position).getGroup().getMessage().get(0).getChatType() != null){
 
-                holder.binding.time.setText(Utils.getHeaderDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
+                    Log.d("chat_type",responseModel.get(position).getGroup().getMessage().get(0).getChatType().trim()+" = !");
+                    if (responseModel.get(position).getGroup().getMessage().get(0).getChatType().trim().equalsIgnoreCase("file")){
+                        holder.binding.subTitle.setText("Media File");
+                    }
+                    else if (responseModel.get(position).getGroup().getMessage().get(0).getMessage() != null && !responseModel.get(position).getGroup().getMessage().get(0).getMessage().trim().isEmpty()){
+                        holder.binding.subTitle.setText(responseModel.get(position).getGroup().getMessage().get(0).getMessage());
+                    }
+                }
+
+                if (responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt() != null) {
+                    holder.binding.time.setText(Utils.getChipDate(responseModel.get(index).getGroup().getMessage().get(0).getUpdatedAt()));
+                }
+                else{
+                    holder.binding.time.setText("");
+                }
+            }
+            else{
+                holder.binding.subTitle.setText("");
+                holder.binding.time.setText("");
             }
 
 
             if (responseModel.get(index).getUnreadcount() != null && !responseModel.get(index).getUnreadcount().isEmpty()) {
-                holder.binding.notificationCount.setText(responseModel.get(index).getUnreadcount());
+                if (responseModel.get(index).getUnreadcount().equalsIgnoreCase("0")){
+                    holder.binding.notification.setVisibility(View.GONE);
+                }
+                else {
+                    holder.binding.notificationCount.setText(responseModel.get(index).getUnreadcount());
+                    holder.binding.notification.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                holder.binding.notification.setVisibility(View.GONE);
             }
 
 
             if (responseModel.get(index).getGroup().getProfileImage() != null) {
                 String url = profileImageBaseUrl + responseModel.get(index).getGroup().getProfileImage();
                 GlideUtils.loadImage(context, holder.binding.groupChannelIcon, url);
+            }
+            else{
+                holder.binding.groupChannelIcon.setImageDrawable(context.getDrawable(R.drawable.no_image_logo_background));
             }
 
             holder.binding.chatItem.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +119,6 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.View
 
     @Override
     public int getItemCount() {
-        Log.d("LIST_SIZE",String.valueOf(responseModel.size()));
         return responseModel.size();
     }
 

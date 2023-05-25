@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_marginHorizontal="@dimen/_30sdp"
+    app:cardBackgroundColor="@color/settingCardBackgroundColor"
     android:layout_height="@dimen/_180sdp"
     app:cardCornerRadius="@dimen/_12sdp">
 
@@ -39,7 +40,7 @@
                     android:fontFamily="@font/montserrat"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/GC_manipulateViewsHeaderColor"
                     android:textStyle="bold"
                     android:textSize="@dimen/_11ssp"
                     android:text="Manipulate Views "/>
@@ -48,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/GC_manipulateViewsTextColor"
                     android:gravity="center_vertical"
                     android:id="@+id/manage_view_switch_text"
                     android:fontFamily="@font/montserrat"
@@ -77,11 +78,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/manipulate_view_percent"
-            app:np_textColor="@color/manipulateViewItemColor"
+            app:np_textColor="@color/GC_manipulateViewsLightColor"
             app:np_selectedTextColor="@color/theme_green"
             app:np_selectedTextSize="@dimen/_24ssp"
             android:theme="@style/ManipulateViewNumberPickerTheme"
-            app:np_dividerColor="@color/manipulateViewItemColor"
+            app:np_dividerColor="@color/GC_manipulateViewsDividerColor"
             app:np_dividerThickness="1dp"/>
 
 

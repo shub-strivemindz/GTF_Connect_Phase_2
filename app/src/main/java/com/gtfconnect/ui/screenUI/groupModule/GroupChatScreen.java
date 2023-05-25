@@ -92,9 +92,11 @@ import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseMod
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
+import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ProfileScreen;
@@ -284,6 +286,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private String userType = "";
 
+    private UserProfileDbEntity userProfileData;
 
 
     @Override
@@ -493,6 +496,24 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         } else {
             binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
         }
+
+
+
+
+        binding.dummyUsers.setOnClickListener(view -> {
+
+            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(GroupChatScreen.this);
+            chat_options_dialog.setContentView(R.layout.bottomsheet_dummy_user_list);
+
+            RecyclerView dummy_user_recycler = chat_options_dialog.findViewById(R.id.dummy_user_list);
+
+            DummyUserListAdapter dummyUserListAdapter= new DummyUserListAdapter(GroupChatScreen.this,getDummyUserModel,this);
+            dummy_user_recycler.setHasFixedSize(true);
+            dummy_user_recycler.setLayoutManager(new LinearLayoutManager(this));
+            dummy_user_recycler.setAdapter(dummyUserListAdapter);
+
+            chat_options_dialog.show();
+        });
 
     }
 
@@ -800,8 +821,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
-        requestType = REQUEST_EMOJI_LIST;
-        connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
+        requestType = GET_GROUP_CHANNEL_INFO;
+        connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
     }
 
 
@@ -858,6 +879,18 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         });
 
 
+
+
+        databaseViewModel.getUserProfileData().observe(this, new Observer<UserProfileDbEntity>() {
+            @Override
+            public void onChanged(UserProfileDbEntity userProfileDbEntity) {
+
+                if (userProfileDbEntity != null){
+                    userProfileData = userProfileDbEntity;
+                    checkUserAdminPermission();
+                }
+            }
+        });
 
 
 
@@ -1029,7 +1062,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             postBaseUrl = responseModel.getData().getMediaUrl();
                         }
 
-                        if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                        if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
 
                             if (currentPage == 1){
                                 String response = new Gson().toJson(responseModel);
@@ -1113,7 +1146,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                 profileBaseUrl = responseModel.getData().getBaseUrl();
                             }
 
-                            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
 
                                 if (currentPage == 1){
                                     String response = new Gson().toJson(responseModel);
@@ -2752,9 +2785,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 binding.reactionsRecycler.getLayoutManager().onRestoreInstanceState(recyclerViewState);
                 isDataLoadedFirstTime = false;*/
 
-            requestType = GET_GROUP_CHANNEL_INFO;
-            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
 
+            requestType = GET_DUMMY_USER;
+            connectViewModel.get_dummy_user_list(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_,""));
         }
         else if (requestType == GET_GROUP_CHANNEL_INFO) {
             gson = new Gson();
@@ -2773,8 +2806,25 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
 
 
-            init();
+            requestType = REQUEST_EMOJI_LIST;
+            connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
 
+        } else if (requestType == GET_DUMMY_USER) {
+
+            gson = new Gson();
+            Type type = new TypeToken<GetDummyUserModel>(){}.getType();
+
+            getDummyUserModel = gson.fromJson(jsonObject,type);
+
+            if (getDummyUserModel != null && getDummyUserModel.getData() != null && getDummyUserModel.getData().getList() != null && !getDummyUserModel.getData().getList().isEmpty()){
+
+                binding.dummyUserContainer.setVisibility(View.VISIBLE);
+            }
+            else{
+                binding.dummyUserContainer.setVisibility(View.GONE);
+            }
+
+            init();
         } else if (requestType == REQUEST_UPLOAD_FILE) {
 
 
@@ -3074,4 +3124,67 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     searchMessageInList(groupChatId, false, false, false);
                 }
             });
+
+
+    // -------------------------------------------------------------- Check User & Admin Permissions -----------------------------------------------------------
+
+    private void checkUserAdminPermission(){
+
+        if (userProfileData != null && userProfileData.getUserRoleInfo() != null){
+            if (userProfileData.getUserRoleInfo().getPrimary() != null && userProfileData.getUserRoleInfo().getPrimary().getRole() != null){
+                if (userProfileData.getUserRoleInfo().getPrimary().getRole().getSlug() != null){
+                    if (!userProfileData.getUserRoleInfo().getPrimary().getRole().getSlug().equalsIgnoreCase("user")) {
+
+                        /**
+                         * Admin Permission Check ======================= FOR DUMMY USER ==============================
+                         */
+
+                        if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions() != null && !userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().isEmpty()){
+
+                            for (int i=0; i<userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().size();i++){
+
+                                if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission() != null){
+
+                                    int permissionValue = 0;
+
+                                    if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermissionValue() != null){
+                                        permissionValue = userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermissionValue();
+                                    }
+
+                                    if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName() != null){
+
+                                        if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName().equalsIgnoreCase("dummy_message")){
+                                            if (permissionValue == 1){
+                                                //binding.editProfile.setVisibility(View.VISIBLE);
+                                            }
+                                            else{
+                                                //binding.editProfile.setVisibility(View.GONE);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                        /**
+                         *  Special User-Admin Permission Check ======================= FOR DUMMY USER ==============================
+                         */
+
+
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+
+
+    private void checkAdminChecks(){
+
+
+    }
 }

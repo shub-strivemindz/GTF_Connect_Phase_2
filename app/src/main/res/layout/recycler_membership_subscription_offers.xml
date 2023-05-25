@@ -2,13 +2,85 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/subscriptionBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:id="@+id/month_container"
+            app:cardBackgroundColor="@color/subscriptionMonthCardBackgroundColor"
+            android:layout_height="@dimen/_25sdp">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/roboto_regular"
+            android:textStyle="bold"
+            android:textColor="@color/subscriptionMonthCardTextColor"
+            android:textSize="@dimen/_10ssp"
+            android:text="1 Month"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:id="@+id/month3_container"
+            app:cardBackgroundColor="@color/subscriptionMonthCardBackgroundColor"
+            android:layout_height="@dimen/_25sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:fontFamily="@font/roboto_regular"
+                android:textStyle="bold"
+                android:textColor="@color/subscriptionMonthCardTextColor"
+                android:textSize="@dimen/_10ssp"
+                android:text="3 Months"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            app:cardBackgroundColor="@color/subscriptionMonthCardBackgroundColor"
+            android:id="@+id/month6_container"
+            android:layout_height="@dimen/_25sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:fontFamily="@font/roboto_regular"
+                android:textStyle="bold"
+                android:textColor="@color/subscriptionMonthCardTextColor"
+                android:textSize="@dimen/_10ssp"
+                android:text="6 Months"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="@color/card_light_grey"
+        android:background="@color/subscriptionMonthCardBackgroundColor"
         android:layout_height="@dimen/_60sdp"
         android:orientation="horizontal">
 
@@ -47,7 +119,7 @@
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/black"/>
+                android:textColor="@color/subscriptionHeaderTextColor"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,7 +135,7 @@
                 android:text="Get access to membership perks"
                 android:textSize="@dimen/_10ssp"
                 android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/black"/>
+                android:textColor="@color/subscriptionHeaderText2Color"/>
 
         </LinearLayout>
 
@@ -73,7 +145,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Benefits"
-        android:textColor="@color/black"
+        android:textColor="@color/subscriptionHeaderTextColor"
         android:fontFamily="@font/roboto_regular"
         android:textSize="@dimen/_12ssp"
         android:layout_marginHorizontal="@dimen/_16sdp"
@@ -98,7 +170,7 @@
             android:layout_marginEnd="@dimen/_16sdp"
             android:layout_width="match_parent"
             android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/textDashboardMessageColor"
+            android:textColor="@color/subscriptionTextColor"
             android:textSize="@dimen/_10ssp"
             android:layout_height="wrap_content"
             android:text="The Indian rupee is the official currency in the Republic"/>
@@ -209,8 +281,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="More About Channel"
-        android:textColor="@color/black"
+        android:text="Plan Description"
+        android:textColor="@color/subscriptionHeaderText2Color"
         android:fontFamily="@font/roboto_regular"
         android:textSize="@dimen/_12ssp"
         android:layout_marginHorizontal="@dimen/_16sdp"
@@ -222,7 +294,7 @@
         android:layout_height="wrap_content"
         android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem I"
         android:layout_marginHorizontal="@dimen/_16sdp"
-        android:textColor="@color/textDashboardMessageColor"
+        android:textColor="@color/subscriptionTextColor"
         android:layout_marginTop="@dimen/_8sdp"
         android:textSize="@dimen/_10ssp"
         android:fontFamily="@font/roboto_regular"/>
@@ -233,45 +305,6 @@
         android:alpha=".5"
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginVertical="@dimen/_14sdp"/>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginHorizontal="@dimen/_40sdp"
-        app:cardBackgroundColor="@color/theme_green"
-        app:cardCornerRadius="@dimen/_6sdp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:text="Subscribe At ₹599/3 Month"
-            android:fontFamily="@font/roboto_regular"
-            android:textStyle="bold"/>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginHorizontal="@dimen/_40sdp"
-        android:layout_marginTop="@dimen/_14sdp"
-        app:cardBackgroundColor="@color/theme_green"
-        app:cardCornerRadius="@dimen/_6sdp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:text="Subscribe At ₹999/6 Month
-"
-            android:fontFamily="@font/roboto_regular"
-            android:textStyle="bold"/>
-
-    </com.google.android.material.card.MaterialCardView>
-
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

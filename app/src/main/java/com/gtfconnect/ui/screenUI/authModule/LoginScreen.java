@@ -1,6 +1,7 @@
 package com.gtfconnect.ui.screenUI.authModule;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -173,6 +174,8 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
             public void run() {
                 databaseViewModel = new ViewModelProvider(LoginScreen.this).get(DatabaseViewModel.class);
                 databaseViewModel.delete_database();
+
+                PreferenceConnector.cleanPreferences(LoginScreen.this);
             }
         }).start();
     }

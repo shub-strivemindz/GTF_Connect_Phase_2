@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="@dimen/_15sdp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:textAlignment="center"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:fontFamily="@font/medium"
+        android:id="@+id/dialoge_text"
+        android:textColor="@color/subscriptionHeaderTextColor"
+        android:textSize="@dimen/_13ssp"
+        />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lav_actionBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:scaleType="centerCrop"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="false" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_55sdp"
+        app:cardCornerRadius="@dimen/_5sdp"
+        app:cardElevation="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_25sdp"
+         android:clickable="true"
+        android:id="@+id/ok_button"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        android:layout_gravity="center"
+        app:cardBackgroundColor="@color/theme_green"
+        android:elevation="@dimen/_3sdp"
+        app:cardUseCompatPadding="true"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="OK"
+            android:textSize="@dimen/_18ssp"
+
+
+            />
+    </com.google.android.material.card.MaterialCardView>
+
+
+</LinearLayout>

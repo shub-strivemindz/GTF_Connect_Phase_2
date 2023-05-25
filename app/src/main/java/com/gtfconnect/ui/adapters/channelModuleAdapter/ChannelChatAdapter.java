@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
@@ -66,6 +67,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private int selectedPostCount ;
 
+    private ViewHolder holder;
+
 
     String userName = "";
     String message = "";
@@ -79,20 +82,27 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private MediaPlayer mediaPlayer;
 
+
+
+    private int previewVideoPlayBackPosition = -1;
+    private ExoPlayer videoPlayer;
+
+
+    private RecyclerView chatAdapterRecycler;
+
     private boolean isAudioPlaying = false;
 
-    static int likeCounter;
 
 
 
 
     private boolean isReactionEnabled = false;
 
-    private boolean isPinMessage = false;
-
     private boolean isAllowDiscussion = false;
 
-    private boolean isSignedMessage = false;
+    private boolean isSharingRestricted = false;
+
+    private boolean isPinMessage = false;
 
 
 
@@ -113,7 +123,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
 
-    public ChannelChatAdapter(Activity context, List<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, ChannelChatListener channelChatListener) {
+    public ChannelChatAdapter(Activity context, List<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, ChannelChatListener channelChatListener, RecyclerView chatAdapterRecycler) {
         this.list = list;
         this.context = context;
         this.userID = userID;
@@ -124,6 +134,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         this.infoDbEntity = infoDbEntity;
         ///this.commentCount = commentCount;
 
+
+        this.chatAdapterRecycler = chatAdapterRecycler;
         selectedPostCount = 0;
     }
 
@@ -137,9 +149,20 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
+
+
+
+    public void updateLikeResponse(int position, List<ChannelRowListDataModel> list){
+        this.list = list;
+        notifyItemChanged(position);
+    }
+
+
+
     public void updateChat(List<ChannelRowListDataModel> list){
         this.list = list;
-        notifyItemInserted(0);
+        //notifyItemInserted(0);
+        notifyDataSetChanged();
     }
 
 
@@ -156,11 +179,31 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int index) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int index) {
 
         final int position = index;
 
         setUserPermissions();
+
+        if (isSharingRestricted){
+            holder.binding.forward.setVisibility(View.GONE);
+        }
+        else{
+            holder.binding.forward.setVisibility(View.VISIBLE);
+        }
+
+        if (!isAllowDiscussion){
+            holder.binding.comment.setVisibility(View.GONE);
+        }
+        else{
+            holder.binding.comment.setVisibility(View.VISIBLE);
+        }
+
+
+
+
+
+
 
         // ----------------------------------------------------------------- Getting System Current Date and time-----------------------------------------------------
 
@@ -202,6 +245,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             if (list.get(position).getUser().getProfileImage() != null){
                 String baseUrl = profileBaseUrl + list.get(position).getUser().getProfileImage();
                 GlideUtils.loadImage(context,holder.binding.userIcon,baseUrl);
+            }
+            else {
+                holder.binding.userIcon.setImageResource(R.drawable.no_image_logo_background);
             }
         }
 
@@ -309,6 +355,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
             if (list.get(position).getQuote() != null) {
                 if (list.get(position).getQuote().getMessage() != null) {
+
+                    holder.binding.oldMessage.setVisibility(View.VISIBLE);
                     if (String.valueOf(list.get(position).getUserID()).equalsIgnoreCase(userID)) {
 
                         holder.binding.quoteContainer.setCardBackgroundColor(context.getColor(R.color.theme_green));
@@ -318,7 +366,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                         holder.binding.oldMessage.setTextColor(context.getColor(R.color.white));
                         holder.binding.oldMsgUser.setTextColor(context.getColor(R.color.white));
                         holder.binding.oldMsgTime.setTextColor(context.getColor(R.color.white));
+
+
+                        holder.binding.voiceMessageQuoteContainer.setCardBackgroundColor(context.getColor(R.color.channelQuoteMediaAttachedSentBackgroundColor));
                     }
+                }
+                else{
+                    holder.binding.oldMessage.setVisibility(View.GONE);
                 }
                 holder.binding.oldMessage.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
                 holder.binding.oldMessage.setText(list.get(position).getQuote().getMessage());
@@ -327,10 +381,58 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 holder.binding.oldMsgUser.setText(username);
 
                 holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
-
-
                 holder.binding.newMessage.setText(list.get(position).getMessage());
 
+
+                if (list.get(position).getQuote().getMedia() != null && !list.get(position).getQuote().getMedia().isEmpty()){
+
+                    int mediaListSize = list.get(position).getQuote().getMedia().size();
+
+                    if (list.get(position).getQuote().getMedia().get(0).getMimeType() != null){
+
+                        String fileType = Utils.checkFileType(list.get(position).getQuote().getMedia().get(0).getMimeType());
+
+                        if (fileType.equalsIgnoreCase("audio")){
+
+                            holder.binding.voiceMessageQuoteContainer.setVisibility(View.VISIBLE);
+                            holder.binding.quoteMediaContainer.setVisibility(View.GONE);
+
+                        }
+                        else{
+
+                            holder.binding.voiceMessageQuoteContainer.setVisibility(View.GONE);
+                            holder.binding.quoteMediaContainer.setVisibility(View.VISIBLE);
+
+                            if (list.get(position).getQuote().getMedia().get(0).getStoragePath() != null && list.get(position).getQuote().getMedia().get(0).getFileName() != null){
+                                String media_path = post_base_url + list.get(position).getQuote().getMedia().get(0).getStoragePath() + list.get(position).getQuote().getMedia().get(0).getFileName();
+                                GlideUtils.loadImage(context,holder.binding.quotedMediaPreview,media_path);
+                            }
+                            else{
+                                holder.binding.quotedMediaPreview.setImageDrawable(context.getDrawable(R.drawable.no_image_logo_background));
+                            }
+
+
+                            if (mediaListSize > 1){
+
+                                holder.binding.multipleMediaCountContainer.setVisibility(View.VISIBLE);
+                                holder.binding.multipleMediaCountContainer.setText("+ "+(mediaListSize-1));
+                            }
+                            else{
+                                holder.binding.multipleMediaCountContainer.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
+                else{
+                    holder.binding.quoteMediaContainer.setVisibility(View.GONE);
+                    holder.binding.voiceMessageQuoteContainer.setVisibility(View.GONE);
+                }
+
+            }
+            else{
+                holder.binding.headerDivider.setVisibility(View.VISIBLE);
+                holder.binding.messageContainer.setVisibility(View.VISIBLE);
+                holder.binding.quoteContainer.setVisibility(View.GONE);
             }
         } else {
             holder.binding.headerDivider.setVisibility(View.VISIBLE);
@@ -398,10 +500,17 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 holder.binding.audioContainer.setVisibility(View.GONE);
                 holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
 
-                ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName);
-                holder.binding.mediaRecycler.setHasFixedSize(true);
-                holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+//                    if (!fileType.equalsIgnoreCase("video")) {
+
+                        ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName,videoPlayer);
+                        holder.binding.mediaRecycler.setHasFixedSize(true);
+                        holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                        holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+
+                        mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
+                            videoPlayer = exoPlayer;
+                        });
+             //   }
 
             }
             //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
@@ -416,7 +525,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         holder.binding.memberProfileContainer.setOnClickListener(view -> {
             channelChatListener.viewMemberProfile(Integer.parseInt(userID),list.get(position).getGCMemberID(),Integer.parseInt(list.get(position).getGroupChatID()),list.get(position).getGroupChannelID());
         });
-
 
 
 
@@ -676,7 +784,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });
 
         // Bottom-sheet for chat options --
-        holder.binding.bottomsheetChatOption.setOnClickListener(view -> loadBottomsheet(holder,position));
+        holder.binding.bottomsheetChatOption.setOnClickListener(view -> loadBottomSheet(holder,position));
 
         // Bottom-sheet for image options --
 
@@ -704,7 +812,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });*/
 
         holder.binding.like.setOnLongClickListener(view -> {
-            channelChatListener.likeAsEmote(position,holder.binding.likeIcon);
+            if (isReactionEnabled) {
+                channelChatListener.likeAsEmote(position, holder.binding.likeIcon);
+            }
             return false;
         });
 
@@ -841,7 +951,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     }
 
 
-    private void loadBottomsheet(ViewHolder holder,int position)
+    private void loadBottomSheet(ViewHolder holder,int position)
     {
         BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
         chat_options_dialog.setContentView(R.layout.bottomsheet_group_chat_actions);
@@ -854,6 +964,16 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         TextView remove = chat_options_dialog.findViewById(R.id.remove);
         TextView cancel = chat_options_dialog.findViewById(R.id.cancel);
 
+        assert pin != null;
+        if (isPinMessage){
+            pin.setVisibility(View.VISIBLE);
+        }
+        else{
+            pin.setVisibility(View.GONE);
+        }
+
+
+        assert remove != null;
         if(list.get(position).getUserID() == PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0))
         {
             remove.setVisibility(View.VISIBLE);
@@ -863,6 +983,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
          }
 
 
+        assert copy != null;
         if (list.get(position).getMessage() != null && !list.get(position).getMessage().trim().isEmpty()){
             copy.setVisibility(View.VISIBLE);
         }
@@ -880,6 +1001,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             channelChatListener.pinMessage(list.get(position).getGCMemberID(),list.get(position).getGroupChannelID(),list.get(position).getUserID(),groupChatId);
         });
 
+
+        assert quote != null;
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
 
@@ -898,7 +1021,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });
 
 
-
+        assert select != null;
         select.setOnClickListener(v -> {
             channelChatListener.forwardMultiplePost(selectedPostCount);
 
@@ -953,6 +1076,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         });
 
+
+        assert cancel != null;
         cancel.setOnClickListener(view -> chat_options_dialog.dismiss());
 
         chat_options_dialog.show();
@@ -998,24 +1123,150 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                     if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
                         if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
 
+                           isAllowDiscussion = true;
                         }
                         else{
-
+                            isAllowDiscussion = false;
                         }
                     }
+
+                    if (infoDbEntity.getGcSetting().getEnableReactions() != null){
+                        if (infoDbEntity.getGcSetting().getEnableReactions() == 1){
+
+                            isReactionEnabled = true;
+                        }
+                        else{
+                            isReactionEnabled = false;
+                        }
+                    }
+
+
+                    if (infoDbEntity.getGcSetting().getRestrictSharingContent() != null){
+                        if (infoDbEntity.getGcSetting().getRestrictSharingContent() == 1){
+
+                            isSharingRestricted = true;
+                        }
+                        else{
+                            isSharingRestricted = false;
+                        }
+                    }
+
+
                 }
 
                 if (infoDbEntity.getGcPermission() != null){
                     if (infoDbEntity.getGcPermission().getPinMessage() != null && infoDbEntity.getGcPermission().getPinMessage() == 1){
-
+                        isPinMessage = true;
                     }
                     else{
-
+                        isPinMessage = false;
                     }
                 }
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     * Overriding onViewAttach and onViewDetach
+     * for setting video play and pause after its full visibility
+     */
+
+
+
+    /*@Override
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+
+        int position = holder.getBindingAdapterPosition();
+        Log.d("layout_position",""+position);
+
+        if (list.get(position).getMedia() != null && !list.get(position).getMedia().isEmpty()) {
+
+            Log.d("chatID", "========= " + list.get(position).getGroupChatID() + " channelID =" + list.get(position).getGroupChannelID().toString());
+
+            //List<ChannelMediaResponseModel> mediaResponseModel = list.get(position).getMedia();
+
+            holder.binding.audioContainer.setVisibility(View.GONE);
+            holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
+
+
+            if (list.get(position).getMedia().size() == 1 && list.get(position).getMedia().get(0).getMimeType() != null) {
+                String fileType = Utils.checkFileType(list.get(position).getMedia().get(0).getMimeType());
+
+                if (fileType.equalsIgnoreCase("video")) {
+
+                            *//*if (videoPlayer != null) {
+                                if (videoPlayer.isPlaying()) {
+                                    videoPlayer.pause();
+                                    videoPlayer.stop();
+                                    //videoPlayer.release();
+                                }
+                            }*//*
+
+                    ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName);
+                    holder.binding.mediaRecycler.setHasFixedSize(true);
+                    holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                    holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+
+                    mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
+                        videoPlayer = exoPlayer;
+                    });
+                }
+            }
+
+            //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.audioContainer.setVisibility(View.GONE);
+            holder.binding.mediaRecycler.setVisibility(View.GONE);
+        }
+    }
+
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+    }
+
+
+
+    public void setCheckAutoPlayFunctionality(int position){
+
+        Log.d("autoplay","previous position = "+previewVideoPlayBackPosition);
+        Log.d("autoplay","new position = "+position);
+
+        if (previewVideoPlayBackPosition != position) {
+
+            previewVideoPlayBackPosition = position;
+
+            holder = (ChannelChatAdapter.ViewHolder) chatAdapterRecycler.findViewHolderForAdapterPosition(position);
+
+            if (holder != null) {
+
+
+
+            }
+        }
+    }*/
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1040,6 +1291,27 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     }
 
 
+
+
+
+    public void destroyExoPlayer(){
+
+        if (videoPlayer != null){
+            if (videoPlayer.isPlaying()) {
+                videoPlayer.stop();
+            }
+            videoPlayer.release();
+        }
+    }
+
+
+    public void pauseExoPlayer(){
+        if (videoPlayer != null){
+            if (videoPlayer.isPlaying()) {
+                videoPlayer.pause();
+            }
+        }
+    }
 
 
 }

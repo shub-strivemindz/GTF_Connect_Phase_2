@@ -249,7 +249,7 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
-    public void get_dummy_user_list(int id, String api_token, String device_type, String device_token) {
+    public void get_dummy_user_list(int id, String api_token) {
         disposables.add(repo.get_dummy_user_list(id, api_token, DEVICE_TYPE, DEVICE_TOKEN).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {

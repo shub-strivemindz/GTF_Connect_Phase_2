@@ -72,16 +72,16 @@ public class UserProfileDataConvertor {
 
 
     @TypeConverter
-    public List<Object> jsonToUserPermissionData(String json) {
+    public List<UserProfileDbEntity.UserPermission> jsonToUserPermissionData(String json) {
 
         Gson gson = new Gson();
-        Type type = new TypeToken<List<Object>>() {
+        Type type = new TypeToken<List<UserProfileDbEntity.UserPermission>>() {
         }.getType();
         return gson.fromJson(json, type);
     }
 
     @TypeConverter
-    public String UserPermissionDataToJson(List<Object> specializations) {
+    public String UserPermissionDataToJson(List<UserProfileDbEntity.UserPermission> specializations) {
         return new Gson().toJson(specializations);
     }
 

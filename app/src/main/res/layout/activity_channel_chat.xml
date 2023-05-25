@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/gtf_logo"
+                    android:src="@drawable/no_image_logo_background"
                     android:id="@+id/group_channel_logo"/>
 
             </com.google.android.material.card.MaterialCardView>
@@ -124,6 +124,7 @@
             android:background="@color/groupChannelPinMessageBackgroundColor"
             android:id="@+id/pin_message_container"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="@dimen/_45sdp"
             android:elevation="@dimen/_10sdp"
             android:layout_below="@id/toolbar"
@@ -630,6 +631,11 @@
             android:background="@color/sendMessageDialogBackgroundColor"
             android:orientation="horizontal">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_sub_container">
+
             <com.example.audiorecorder.RecordView
                 android:id="@+id/record_view"
                 android:layout_width="match_parent"
@@ -760,6 +766,22 @@
                     android:src="@drawable/attach_doc"/>
 
             </LinearLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:elevation="@dimen/_8sdp"
+                android:background="@color/sendMessageDialogBackgroundColor"
+                android:layout_alignParentBottom="true"
+                android:text="Please contact admin."
+                android:gravity="center"
+                android:textColor="@color/authEditText"
+                android:visibility="gone"
+                android:textSize="@dimen/_11ssp"
+                android:fontFamily="@font/poppins"
+                android:id="@+id/footer_status_tag"/>
 
         </RelativeLayout>
 

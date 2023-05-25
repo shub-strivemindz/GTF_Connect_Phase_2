@@ -266,6 +266,15 @@
     <color name="channelQuoteTimeStampColor">#666666</color>
 
 
+
+    <color name="channelQuoteMediaAttachedReceivedBackgroundColor">#8C8C8C</color>
+
+    <color name="channelQuoteMediaAttachedSentBackgroundColor">#1A6336</color>
+
+
+
+
+
     <!--==================== Channel Quote Dialog =============================-->
 
     <color name="channelQuoteDialogBackgroundColor">#fff</color>
@@ -426,8 +435,79 @@
     <color name="blocklistBackgroundColor">#F3F6FF</color>
 
 
+    <!--======================================================================= Setting UI  ==========================================================================-->
 
 
+    <color name="settingBackgroundColor">#F3F6FF</color>
+
+    <color name="settingActionBarBackgroundColor">#F3F6FF</color>
     
+    <color name="settingCardBackgroundColor">#FFF</color>
+
+    <color name="settingActionBarTextColor">#2FB463</color>
+    
+
+
+    <!--==================== Manage Permission =============================-->
+
+    <color name="GC_managePermissionsTextColor">#9E9E9E</color>
+
+    <color name="GC_managePermissionsTextBoldColor">#707070</color>
+
+
+
+
+    <!--==================== Manage Reactions =============================-->
+
+    <color name="GC_manageReactionsTextColor">#929292</color>
+
+    <color name="GC_manageReactionsSmileTextColor">#445767</color>
+
+
+    <!--==================== Manipulate Views =============================-->
+
+    <color name="GC_manipulateViewsHeaderColor">#929292</color>
+
+    <color name="GC_manipulateViewsTextColor">#929292</color>
+
+    <color name="GC_manipulateViewsDividerColor">#F4F4F4</color>
+
+    <color name="GC_manipulateViewsLightColor">#D9D9D9</color>
+
+
+
+
+    <!--==================== Delete Channel Dialog =============================-->
+
+    <color name="deleteChannelHeaderTextColor">#333333</color>
+
+    <color name="deleteChannelTextColor">#696969</color>
+
+    <color name="deleteChannelYesTag">#EB1B15</color>
+
+    <color name="deleteChannelNoTag">#37A8DB</color>
+
+    <color name="deleteChannelBackgroundColor">#FFF</color>
+
+
+
+
+    <!--======================================================================= Subscription UI  ==========================================================================-->
+
+    <color name="subscriptionBackgroundColor">#FFFF</color>
+
+    <color name="subscriptionActionBarBackgroundColor">#FFF</color>
+
+    <color name="subscriptionMonthCardBackgroundColor">#F4F4F4</color>
+
+    <color name="subscriptionMonthCardTextColor">#626262</color>
+
+    <color name="subscriptionHeaderTextColor">#202020</color>
+
+    <color name="subscriptionHeaderText2Color">#202020</color>
+
+    <color name="subscriptionTextColor">#8497A7</color>
+
+
 
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/settingCardBackgroundColor"
     android:layout_height="@dimen/_40sdp">
 
     <LinearLayout
@@ -30,6 +31,7 @@
             android:textFontWeight="400"
             android:textSize="@dimen/_9ssp"
             android:ellipsize="end"
+            android:textColor="@color/GC_manageReactionsSmileTextColor"
             android:id="@+id/emoji_title"
             android:text="Smile"/>
 

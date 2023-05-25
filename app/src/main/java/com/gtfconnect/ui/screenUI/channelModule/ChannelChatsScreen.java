@@ -83,6 +83,7 @@ import com.gtfconnect.models.SendAttachmentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelCommentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
+import com.gtfconnect.models.channelResponseModel.ChannelReactionReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
@@ -90,6 +91,7 @@ import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseMod
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
+import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
@@ -100,6 +102,7 @@ import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.VideoPreviewScreen;
+import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Constants;
@@ -272,9 +275,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private String api_token;
 
-    private Thread checkLocalDatabaseThread;
+    private String userStatus = "";
 
-    private String userType = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -322,6 +324,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
 
+        currentPage = 1;
+        refreshChannelChatSocket();
+
         loadDataToAdapter();
 
 
@@ -348,13 +353,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         receivedMessageList = new ArrayList<>();
 
+        currentPage = 1;
+        loadLocalData();
+
         getReactionAndInitializeViewModel();
 
         initiateClickListeners();
         sendMessageAndAudioRecorderEvents();
 
-        currentPage = 1;
-        loadLocalData();
 
 
         binding.chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -367,11 +373,14 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScrolling = true;
 
-                    binding.chipDateContainer.setVisibility(View.VISIBLE);
-
                     if (position != -1) {
-                        if (!channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
+                        binding.chipDateContainer.setVisibility(View.VISIBLE);
+
+                        if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+
+                            // ============================================= Getting AutoPlay Video PlayBack ======================================
+                            //channelViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
                         } else {
                             binding.chipDateContainer.setVisibility(View.GONE);
                         }
@@ -379,18 +388,30 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 
                     if (position != -1) {
-                        if (!channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
+
+                        binding.chipDateContainer.setVisibility(View.VISIBLE);
+
+                        if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+
+                            // ============================================= Getting AutoPlay Video PlayBack ======================================
+                            //channelViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
+                        }
+                        else {
+                            binding.chipDateContainer.setVisibility(View.GONE);
                         }
                     }
                     binding.chipDateContainer.setVisibility(View.GONE);
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
 
-                    binding.chipDateContainer.setVisibility(View.VISIBLE);
-
                     if (position != -1) {
-                        if (!channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
+                        binding.chipDateContainer.setVisibility(View.VISIBLE);
+
+                        if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+
+                            // ============================================= Getting AutoPlay Video PlayBack ======================================
+                            //channelViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
                         } else {
                             binding.chipDateContainer.setVisibility(View.GONE);
                         }
@@ -537,10 +558,35 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
             scrollToPosition(0);
-
             binding.iconContainer.setVisibility(View.GONE);
 
         });
+
+
+        binding.footerStatusTag.setOnClickListener(view -> {
+
+            if (userStatus.equalsIgnoreCase(Constants.USER_LEFT)) {
+                if (infoDbEntity.getGcMemberInfo().getGCMemberID() != null) {
+                    requestType = Constants.REJOIN_GROUP_CHANNEL;
+                    connectViewModel.rejoin_group_channel(infoDbEntity.getGcMemberInfo().getGCMemberID(), api_token);
+                }
+            }
+            else if (userStatus.equalsIgnoreCase(Constants.USER_RENEW_PLAN)) {
+
+                String data = new Gson().toJson(infoDbEntity.getGcSubscriptionPlan());
+
+                Intent intent = new Intent(ChannelChatsScreen.this, ExclusiveOfferScreen.class);
+                intent.putExtra("plans",data);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
+
+
+
 
         binding.closeQuoteEditor.setOnClickListener(view -> {
             binding.quoteContainer.setVisibility(View.GONE);
@@ -787,8 +833,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
         });
 
-        requestType = REQUEST_EMOJI_LIST;
-        connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
+
+        requestType = GET_GROUP_CHANNEL_INFO;
+        connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
     }
 
 
@@ -826,8 +873,16 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
+        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
+            if (infoDbEntity != null) {
+                this.infoDbEntity = infoDbEntity;
+                setProfileInfo();
 
-        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+                checkGroupChannelSettings();
+            }
+        });
+
+        /*databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
             if (userProfileDbEntity != null){
 
                 if (userProfileDbEntity.getUserRoleInfo() != null && userProfileDbEntity.getUserRoleInfo().getPrimary() != null){
@@ -842,23 +897,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     }
                 }
             }
-        });
-
-
-
-
-
-
-
-
-
-
-        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
-            if (infoDbEntity != null) {
-                this.infoDbEntity = infoDbEntity;
-                setProfileInfo();
-            }
-        });
+        });*/
 
         list = new ArrayList<>();
 
@@ -888,7 +927,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
 
         }
-        refreshChannelChatSocket();
     }
 
 
@@ -899,25 +937,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 if (infoDbEntity.getGcInfo().getProfileImage() != null){
                     GlideUtils.loadImage(this,binding.groupChannelLogo,infoDbEntity.getGcInfo().getProfileImage());
                 }
-
-                if (infoDbEntity.getGcSetting() != null){
-
-                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
-                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
-
-                        }
-                        else{
-
-                        }
-                    }
-                }
-
-                if (infoDbEntity.getGcPermission() != null){
-
-                }
             }
         }
     }
+
+
+
 
 
     private void scrollToPosition(int position) {
@@ -962,7 +987,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
         // Load Comments List Data -----
-        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this);
+        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,binding.chats);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(channelViewAdapter);
@@ -1004,7 +1029,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 runOnUiThread(() -> {
 
-
                     if(responseModel != null && responseModel.getData() != null) {
 
 
@@ -1016,7 +1040,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                             postBaseUrl = responseModel.getData().getMediaUrl();
                         }
 
-                        if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                        if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
 
                             if (currentPage == 1){
                                 String response = new Gson().toJson(responseModel);
@@ -1024,6 +1048,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                                 list = new ArrayList<>();
                                 list.addAll(responseModel.getData().getChatData().getRows());
+
 
                                 readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
 
@@ -1100,7 +1125,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 profileBaseUrl = responseModel.getData().getBaseUrl();
                             }
 
-                            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
+                            if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null && !responseModel.getData().getChatData().getRows().isEmpty()) {
 
                                 if (currentPage == 1){
                                     String response = new Gson().toJson(responseModel);
@@ -1306,6 +1331,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             receivedMessage = gson.fromJson(gsonObject, type);
 
+            Log.d("received_message",receivedMessage.getSaveMsg().getBaseUrl());
+
             if (!receivedMessage.getSaveMsg().getGetData().getUser().getUserID().equalsIgnoreCase(String.valueOf(PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0)))) {
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
@@ -1317,6 +1344,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     if (receivedMessage != null && receivedMessage.getSaveMsg() != null && receivedMessage.getSaveMsg().getGetData() != null){
                         list.add(0,receivedMessage.getSaveMsg().getGetData());
                         channelViewAdapter.updateChat(list);
+                    }
+                    else{
+                        Log.d("received_message","getting null or empty data in above condition");
                     }
 
                 }
@@ -1330,7 +1360,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Type type;
 
         Log.d("Like Listener :::: ", "Called");
-        type = new TypeToken<ChannelRowListDataModel>() {
+        type = new TypeToken<ChannelReactionReceivedModel>() {
         }.getType();
 
 
@@ -1344,19 +1374,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         JSONObject data = (JSONObject) args[0];
                         Log.d("Like Data :", data.toString());
 
-                        JSONObject response = new JSONObject();
-                        try {
-                            response = data.getJSONObject("data").getJSONObject("chatDetail");
-                        } catch (Exception e) {
-
-                        }
-
 
                         JsonParser jsonParser = new JsonParser();
-                        JsonObject gsonObject = (JsonObject) jsonParser.parse(response.toString());
+                        JsonObject gsonObject = (JsonObject) jsonParser.parse(data.toString());
 
-                        ChannelRowListDataModel like_response = gson.fromJson(gsonObject, type);
-                        Log.d("Like response from model", String.valueOf(like_response.getLike().get(0).getIsLike()));
+                        ChannelReactionReceivedModel like_response = gson.fromJson(gsonObject, type);
+                        //Log.d("Like response from model", String.valueOf(like_response.getData().getChatDetail().getLike().get(0).getIsLike()));
 
 
                         runOnUiThread(new Runnable() {
@@ -1372,7 +1395,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                                                     Log.d("Is liked User ---", "Not Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
 
-                                                    if (list.get(i).getLike().get(0).getIsLike() == 1) {
+                                                    list.get(i).getLike().remove(0);
+                                                    list.get(i).getLike().add(0,like_response.getData().getChatDetail().getLike().get(0));
+                                                    channelViewAdapter.updateLikeResponse(i,list);
+
+                                                    /*if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
                                                         channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
@@ -1380,12 +1407,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                                         list.get(i).getLike().get(0).setIsLike(1);
                                                         channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
-                                                    }
+                                                    }*/
                                                 } else {
-                                                    list.get(i).getLike().add(0, like_response.getLike().get(0));
+                                                    list.get(i).getLike().add(0, like_response.getData().getChatDetail().getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                                    channelViewAdapter.updateLikeResponse(i,list);
                                                     break;
                                                 }
                                             }
@@ -2545,7 +2572,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     @Override
     public void onLoading() {
-        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE || requestType == REQUEST_UPLOAD_FILE){
+        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE || requestType == REQUEST_UPLOAD_FILE || requestType == Constants.REJOIN_GROUP_CHANNEL){
             rest.ShowDialogue();
         }
     }
@@ -2699,8 +2726,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 binding.reactionsRecycler.getLayoutManager().onRestoreInstanceState(recyclerViewState);
                 isDataLoadedFirstTime = false;*/
 
-            requestType = GET_GROUP_CHANNEL_INFO;
-            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
+            init();
 
         }
         else if (requestType == GET_GROUP_CHANNEL_INFO) {
@@ -2719,8 +2745,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 databaseViewModel.insertGroupChannelInfo(data);
             }
 
+            checkGroupChannelSettings();
 
-            init();
+            requestType = REQUEST_EMOJI_LIST;
+            connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
 
         } else if (requestType == REQUEST_UPLOAD_FILE) {
 
@@ -2768,8 +2796,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
 
 
-        }
-        else if (requestType == PINNED_MESSAGE_COUNT) {
+        } else if (requestType == Constants.REJOIN_GROUP_CHANNEL) {
+
+            Toast.makeText(this, jsonObject.get("message").toString(), Toast.LENGTH_SHORT).show();
+
+            requestType = GET_GROUP_CHANNEL_INFO;
+            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
+
+
+        } else if (requestType == PINNED_MESSAGE_COUNT) {
             Type type = new TypeToken<PinnedMessagesModel>() {
             }.getType();
 
@@ -2933,6 +2968,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     public void onPause() {
         super.onPause();
+
+        // Pausing video player if any video playing
+        channelViewAdapter.pauseExoPlayer();
         Log.d("Lifecycle Check ", "In the onPause() event");
     }
 
@@ -2945,6 +2983,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     public void onDestroy() {
         super.onDestroy();
+        channelViewAdapter.destroyExoPlayer();
         Log.d("Lifecycle Check ", "In the onDestroy() event");
     }
 
@@ -3019,4 +3058,101 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     searchMessageInList(groupChatId, false, false, false);
                 }
             });
+
+
+
+    private void checkGroupChannelSettings(){
+
+        if(infoDbEntity.getGcMemberSubscriptionPlan() != null && infoDbEntity.getGcMemberSubscriptionPlan().getIsExpired() != null){
+
+            if (infoDbEntity.getGcMemberSubscriptionPlan().getIsExpired() == 1){
+
+                // Todo Redirection to Subscription Page
+
+                userStatus = Constants.USER_RENEW_PLAN;
+
+                binding.searchSubContainer.setVisibility(View.GONE);
+                binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
+                binding.footerStatusTag.setTextColor(getColor(R.color.white));
+                binding.footerStatusTag.setText("Renew Subscription Plan");
+
+            }
+            else {
+
+                if (infoDbEntity.getGcMemberInfo() != null) {
+                    if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
+
+                        Log.d("user_status",infoDbEntity.getGcMemberInfo().getStatus());
+
+                        if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
+
+                            binding.searchSubContainer.setVisibility(View.GONE);
+                            binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                            binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
+                            binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
+                            binding.footerStatusTag.setText("Please contact admin.");
+
+                            userStatus = Constants.USER_BLOCKED;
+
+                        } else if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
+
+                            binding.searchSubContainer.setVisibility(View.VISIBLE);
+                            binding.footerStatusTag.setVisibility(View.GONE);
+
+                            userStatus = Constants.USER_ACTIVE;
+
+                        } else {
+
+                            binding.searchSubContainer.setVisibility(View.GONE);
+                            binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                            binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
+                            binding.footerStatusTag.setTextColor(getColor(R.color.white));
+                            binding.footerStatusTag.setText("Rejoin Channel");
+
+                            userStatus = Constants.USER_LEFT;
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            if (infoDbEntity.getGcMemberInfo() != null) {
+                if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
+                    if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
+
+                        binding.searchSubContainer.setVisibility(View.GONE);
+                        binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                        binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
+                        binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
+                        binding.footerStatusTag.setText("Please contact admin.");
+
+
+                        userStatus = Constants.USER_BLOCKED;
+
+                    } else if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
+
+                        binding.searchSubContainer.setVisibility(View.VISIBLE);
+                        binding.footerStatusTag.setVisibility(View.GONE);
+
+                        userStatus = Constants.USER_ACTIVE;
+                    } else {
+
+                        binding.searchSubContainer.setVisibility(View.GONE);
+                        binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                        binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
+                        binding.footerStatusTag.setTextColor(getColor(R.color.white));
+                        binding.footerStatusTag.setText("Rejoin Channel");
+
+                        userStatus = Constants.USER_LEFT;
+                    }
+                }
+            }
+        }
+    }
 }

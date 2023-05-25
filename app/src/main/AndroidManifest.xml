@@ -102,8 +102,8 @@
         <activity android:name=".ui.screenUI.commonGroupChannelModule.MemberProfileScreen"/>
 
         <activity android:name=".ui.screenUI.commonGroupChannelModule.BlocklistScreen"/>
-        <activity android:name=".ui.screenUI.channelModule.ChannelManagePermissionScreen"/>
-        <activity android:name=".ui.screenUI.channelModule.ChannelManageReactionScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.ManagePermissionScreen"/>
+        <activity android:name=".ui.screenUI.commonGroupChannelModule.ManageReactionScreen"/>
         <activity android:name=".ui.screenUI.channelModule.ChannelAdminSubscribersScreen"/>
 
         <activity android:name=".ui.screenUI.channelModule.ChannelChatsScreen"/>

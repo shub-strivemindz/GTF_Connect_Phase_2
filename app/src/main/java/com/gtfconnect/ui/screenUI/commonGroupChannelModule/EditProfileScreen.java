@@ -1,18 +1,14 @@
 package com.gtfconnect.ui.screenUI.commonGroupChannelModule;
 
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,17 +28,11 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityEditGroupChannelProfileBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
-import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
-import com.gtfconnect.roomDB.DatabaseViewModel;
-import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
-import com.gtfconnect.ui.screenUI.HomeScreen;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelManageReactionScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.FetchPath;
@@ -52,7 +42,6 @@ import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

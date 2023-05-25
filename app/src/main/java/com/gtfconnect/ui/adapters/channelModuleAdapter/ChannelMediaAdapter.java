@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,11 +22,14 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;
 import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
+import com.gtfconnect.ui.adapters.authModuleAdapter.CountryListAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.Utils;
@@ -39,6 +43,8 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     String postBaseUrl;
     String userID;
 
+    private boolean isFirstLoading = false;
+
     RecyclerView recyclerRootView;
 
     ExoPlayer simpleExoPlayer;
@@ -47,13 +53,27 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private String user_name;
 
-    public  ChannelMediaAdapter(Context context,RecyclerView recyclerRootView,List<MediaListModel> mediaList,String postBaseUrl,String userID, String user_name){
+    OnMediaPlayPauseListener listener;
+
+    private ExoPlayer previousPlaybackInstance;
+
+    public  ChannelMediaAdapter(Context context,RecyclerView recyclerRootView,List<MediaListModel> mediaList,String postBaseUrl,String userID, String user_name, ExoPlayer previousPlaybackInstance){
         this.context= context;
         this.mediaList = mediaList;
         this.postBaseUrl = postBaseUrl;
         this.userID = userID;
 
         this.user_name = user_name;
+
+        this.previousPlaybackInstance = previousPlaybackInstance;
+
+            if (previousPlaybackInstance != null){
+                if (previousPlaybackInstance.isPlaying()) {
+                    previousPlaybackInstance.pause();
+                    previousPlaybackInstance.stop();
+                }
+                previousPlaybackInstance.release();
+            }
     }
 
     @NonNull
@@ -172,6 +192,31 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
 
+            // Todo ========== Add auto play video condition check
+
+            /*boolean autoPlayCheck = true;
+            if (autoPlayCheck){
+
+                holder1.binding.progressBar.setVisibility(View.VISIBLE);
+                holder1.binding.playerView.setVisibility(View.VISIBLE);
+
+
+                holder1.binding.docContainer.setVisibility(View.GONE);
+                holder1.binding.headerContainer.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
+
+                holder1.binding.playVideo.setVisibility(View.GONE);
+
+                holder1.binding.playerView.hideController();
+
+                loadAutoPlayVideoFile(post_path,holder1.binding.playerView,holder1.binding.progressBar);
+            }
+            else{
+                holder1.binding.playVideo.setVisibility(View.VISIBLE);
+            }*/
+
+
+
 
             holder1.binding.playVideo.setOnClickListener(view -> {
 
@@ -181,68 +226,13 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 holder1.binding.docContainer.setVisibility(View.GONE);
                 holder1.binding.headerContainer.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
 
-
-                //holder1.binding.headerContainer.setVisibility(View.GONE);
-                //holder1.binding.playerContainer.setVisibility(View.VISIBLE);
-
-            simpleExoPlayer = new ExoPlayer.Builder(context).build();
-            holder1.binding.playerView.setPlayer(simpleExoPlayer);
-            holder1.binding.playerView.setKeepScreenOn(true);
-
-            MediaItem mediaItem = MediaItem.fromUri(post_path);
-            simpleExoPlayer.addMediaItem(mediaItem);
-            simpleExoPlayer.setPlayWhenReady(true);
-
-            //Log.v("playerSetup",isFirstTime+" "+watchTime);
-
-          /*  if (!pageType.equalsIgnoreCase("my_web_series") && isFirstTime) {
-                simpleExoPlayer.seekTo(simpleExoPlayer.getCurrentMediaItemIndex(), watchTime * 1000L);
-                isFirstTime = false;
-            }*/
-
-            simpleExoPlayer.prepare();
-            simpleExoPlayer.play();
-
-            simpleExoPlayer.addListener(new Player.Listener() {
-
-
-                @Override
-                public void onPlaybackStateChanged(@Player.State int state) {
-                    if (state == Player.STATE_BUFFERING) {
-                        holder1.binding.progressBar.setVisibility(View.VISIBLE);
-                    } else if (state == Player.STATE_READY) {
-                        holder1.binding.progressBar.setVisibility(View.GONE);
-                    } else if (state == Player.STATE_ENDED) {
-
-                        // Todo == Show preview again
-                    }
-                }
-
-                @Override
-                public void onRepeatModeChanged(int repeatMode) {
-
-                }
-
-                @Override
-                public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-                }
-
-                @Override
-                public void onPlayerError(PlaybackException error) {
-                    Player.Listener.super.onPlayerError(error);
-                    Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
-                    MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-                    simpleExoPlayer.addMediaItem(mediaItem);
-                    simpleExoPlayer.setPlayWhenReady(true);
-                    simpleExoPlayer.prepare();
-                    simpleExoPlayer.play();
-                }
-            });
+                loadAutoPlayVideoFile(post_path,holder1.binding.playerView,holder1.binding.progressBar);
 
             });
+
         }
         else{
 
@@ -323,81 +313,6 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    /*public void setupPlayer(int position) {
-
-        simpleExoPlayer.addListener(new Player.Listener() {
-
-
-            @Override
-            public void onPlaybackStateChanged(@Player.State int state) {
-                if (state == Player.STATE_BUFFERING) {
-                    progressBar.setVisibility(View.VISIBLE);
-                } else if (state == Player.STATE_READY) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onRepeatModeChanged(int repeatMode) {
-
-            }
-
-            @Override
-            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-            }
-
-            @Override
-            public void onPlayerError(PlaybackException error) {
-                Player.Listener.super.onPlayerError(error);
-                Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
-                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-                simpleExoPlayer.addMediaItem(mediaItem);
-                simpleExoPlayer.setPlayWhenReady(true);
-                simpleExoPlayer.prepare();
-                simpleExoPlayer.play();
-            }
-        });
-
-        btFullScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (flag) {
-                    btFullScreen.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), com.exa.ashutosh_video.R.drawable.ic_fullscreen, null));
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                    flag = false;
-                    binding.toolBar.setVisibility(View.VISIBLE);
-                    binding.bottomLayout.setVisibility(View.VISIBLE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.simpleExoPlayerView.getLayoutParams();
-                    params.width = params.MATCH_PARENT;
-                    params.height = 800;
-                    binding.simpleExoPlayerView.setLayoutParams(params);
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-                } else {
-                    btFullScreen.setImageDrawable(ResourcesCompat.getDrawable(getResources(), com.exa.ashutosh_video.R.drawable.ic_fullscreen_exit, null));
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    flag = true;
-                    binding.toolBar.setVisibility(View.GONE);
-                    binding.bottomLayout.setVisibility(View.GONE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.simpleExoPlayerView.getLayoutParams();
-                    params.width = params.MATCH_PARENT;
-                    params.height = params.MATCH_PARENT;
-                    binding.simpleExoPlayerView.setLayoutParams(params);
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-                }
-            }
-        });
-    }*/
-
-
-
-
-
-
-
-
     private void loadImageFile(String imageFilePath, ImageView imageView)
     {
         //Setting up loader on post
@@ -425,6 +340,73 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 .putExtra("start_time","0")
                 .putExtra("end_time","0"));
     }
+
+
+
+
+
+
+
+
+    private void loadAutoPlayVideoFile(String videoPath, PlayerView videoPlayer, ProgressBar progressBar){
+
+
+        simpleExoPlayer = new ExoPlayer.Builder(context).build();
+        videoPlayer.setPlayer(simpleExoPlayer);
+        videoPlayer.setKeepScreenOn(true);
+
+        MediaItem mediaItem = MediaItem.fromUri(videoPath);
+        simpleExoPlayer.addMediaItem(mediaItem);
+        simpleExoPlayer.setPlayWhenReady(true);
+
+        simpleExoPlayer.prepare();
+        simpleExoPlayer.play();
+
+        listener.OnMediaPlayPause(simpleExoPlayer);
+        simpleExoPlayer.addListener(new Player.Listener() {
+
+            @Override
+            public void onPlaybackStateChanged(@Player.State int state) {
+                if (state == Player.STATE_BUFFERING) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                else if (state == Player.STATE_READY) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                else if (state == Player.STATE_ENDED) {
+
+                    // Todo
+                }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                Player.Listener.super.onPlayerError(error);
+                Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
+                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+                simpleExoPlayer.addMediaItem(mediaItem);
+                simpleExoPlayer.setPlayWhenReady(true);
+                simpleExoPlayer.prepare();
+                simpleExoPlayer.play();
+            }
+        });
+
+
+
+    }
+
+
+
 
 
     private void loadDocumentFile(String docFilePath, ImageView imageView)
@@ -466,5 +448,21 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         return mediaList.size();
     }
+
+
+
+
+
+    public void setOnMediaPlayPauseListener(OnMediaPlayPauseListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnMediaPlayPauseListener {
+        void OnMediaPlayPause(ExoPlayer exoPlayer);
+
+    }
+
+
+
 }
 

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginHorizontal="@dimen/_30sdp"
+    app:cardBackgroundColor="@color/deleteChannelBackgroundColor"
     android:layout_height="@dimen/_140sdp"
     app:cardCornerRadius="@dimen/_12sdp">
 
@@ -16,6 +17,7 @@
         android:text="@string/delete_channel"
         android:fontFamily="@font/open_sans"
         android:textStyle="bold"
+        android:textColor="@color/deleteChannelHeaderTextColor"
         android:textFontWeight="600"
         android:textSize="@dimen/_13sdp"
         android:gravity="center" />
@@ -38,6 +40,7 @@
         android:fontFamily="@font/open_sans"
         android:textStyle="bold"
         android:textSize="@dimen/_11sdp"
+        android:textColor="@color/deleteChannelTextColor"
         android:text="Are you sure you want to Delete channel"
         android:gravity="center" />
 
@@ -69,8 +72,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Delete Channel"
-                android:textColor="@color/theme_red"
+                android:textColor="@color/deleteChannelYesTag"
                 android:fontFamily="@font/open_sans"
+                android:id="@+id/delete"
                 android:textSize="@dimen/_12sdp"
                 android:gravity="center"
                 android:layout_weight="1"/>
@@ -82,10 +86,11 @@
                 android:layout_height="match_parent"/>
 
             <TextView
-                android:textColor="@color/theme_blue"
+                android:textColor="@color/deleteChannelNoTag"
                 android:fontFamily="@font/open_sans"
                 android:textSize="@dimen/_12sdp"
                 android:layout_width="match_parent"
+                android:id="@+id/cancel"
                 android:layout_height="match_parent"
                 android:text="Cancel"
                 android:gravity="center"

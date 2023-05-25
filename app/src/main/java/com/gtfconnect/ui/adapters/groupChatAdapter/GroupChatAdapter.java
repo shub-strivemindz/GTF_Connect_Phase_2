@@ -2,6 +2,8 @@ package com.gtfconnect.ui.adapters.groupChatAdapter;
 
 import android.animation.ValueAnimator;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,6 +33,7 @@ import com.gtfconnect.interfaces.GroupChatListener;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.groupResponseModel.GroupChatResponseModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
+import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -75,6 +78,15 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
     private boolean isDummyUser = true;
 
+
+
+    private boolean isReactionEnabled = false;
+
+    private boolean isAllowDiscussion = false;
+
+    private boolean isSharingRestricted = false;
+
+    private boolean isPinMessage = false;
 
 
     public GroupChatAdapter(Context context, ArrayList<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, GroupChatListener groupChatListener) {
@@ -452,7 +464,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
         holder.binding.like1.setOnLongClickListener(view -> {
-            groupChatListener.likeAsEmote(position,holder.binding.likeIcon1);
+            if (isReactionEnabled) {
+                groupChatListener.likeAsEmote(position, holder.binding.likeIcon1);
+            }
             return false;
         });
 
@@ -558,6 +572,16 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             loadBottomSheet(holder,position,false);
             return false;
         });
+
+
+
+        if (isAllowDiscussion){
+            holder.binding.greenHighlightDivider.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.binding.greenHighlightDivider.setVisibility(View.GONE);
+        }
+
 
 
 
@@ -888,7 +912,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
         holder.binding.like.setOnLongClickListener(view -> {
-            groupChatListener.likeAsEmote(position,holder.binding.likeIcon);
+            if (isReactionEnabled) {
+                groupChatListener.likeAsEmote(position, holder.binding.likeIcon);
+            }
             return false;
         });
 
@@ -976,11 +1002,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
 
-
-    private void loadBottomSheet(ViewHolder holder,int position,boolean isSentMessage)
+    private void loadBottomSheet(ViewHolder holder, int position, boolean isSentMessage)
     {
         BottomSheetDialog chat_options_dialog = new BottomSheetDialog(context);
         chat_options_dialog.setContentView(R.layout.bottomsheet_group_chat_actions);
+
+        TextView select = chat_options_dialog.findViewById(R.id.select);
 
         TextView pin = chat_options_dialog.findViewById(R.id.pin);
         TextView quote = chat_options_dialog.findViewById(R.id.quote);
@@ -988,15 +1015,34 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         TextView remove = chat_options_dialog.findViewById(R.id.remove);
         TextView cancel = chat_options_dialog.findViewById(R.id.cancel);
 
-        TextView select = chat_options_dialog.findViewById(R.id.select);
+        assert pin != null;
+        if (isPinMessage){
+            pin.setVisibility(View.VISIBLE);
+        }
+        else{
+            pin.setVisibility(View.GONE);
+        }
 
+
+        assert remove != null;
         if(list.get(position).getUserID() == PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0))
         {
             remove.setVisibility(View.VISIBLE);
         }
         else{
-        remove.setVisibility(View.GONE);
-         }
+            remove.setVisibility(View.GONE);
+        }
+
+
+        assert copy != null;
+        if (list.get(position).getMessage() != null && !list.get(position).getMessage().trim().isEmpty()){
+            copy.setVisibility(View.VISIBLE);
+        }
+        else{
+            copy.setVisibility(View.GONE);
+        }
+
+
 
         pin.setOnClickListener(view -> {
             chat_options_dialog.dismiss();
@@ -1006,6 +1052,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             groupChatListener.pinMessage(list.get(position).getGCMemberID(),list.get(position).getGroupChannelID(),list.get(position).getUserID(),groupChatId);
         });
 
+
+        assert quote != null;
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
 
@@ -1024,8 +1072,10 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
 
+        assert select != null;
         select.setOnClickListener(v -> {
             groupChatListener.forwardMultiplePost(selectedPostCount);
+
 
             if (isSentMessage) {
                 holder.binding.selectPost1.setChecked(true);
@@ -1033,6 +1083,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             else{
                 holder.binding.selectPost.setChecked(true);
             }
+
+            holder.binding.selectPost.setVisibility(View.VISIBLE);
+            holder.binding.selectPost.setChecked(true);
 
             toggleSelectionCheckbox(true);
             chat_options_dialog.dismiss();
@@ -1049,6 +1102,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             copy_dialog.setCancelable(false);
             copy_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             copy_dialog.show();
+
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+
+            ClipData clip = ClipData.newPlainText("Post Message",list.get(position).getMessage());
+            clipboard.setPrimaryClip(clip);
+
             new Handler().postDelayed(copy_dialog::dismiss,1000);
         });
 
@@ -1076,11 +1135,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         });
 
+
+        assert cancel != null;
         cancel.setOnClickListener(view -> chat_options_dialog.dismiss());
 
         chat_options_dialog.show();
     }
-
 
 
     private void loadSentPostMedia(ViewHolder holder,int index,int media_count)
@@ -1664,19 +1724,43 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
                         if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
 
+                            isAllowDiscussion = true;
                         }
                         else{
-
+                            isAllowDiscussion = false;
                         }
                     }
+
+                    if (infoDbEntity.getGcSetting().getEnableReactions() != null){
+                        if (infoDbEntity.getGcSetting().getEnableReactions() == 1){
+
+                            isReactionEnabled = true;
+                        }
+                        else{
+                            isReactionEnabled = false;
+                        }
+                    }
+
+
+                    if (infoDbEntity.getGcSetting().getRestrictSharingContent() != null){
+                        if (infoDbEntity.getGcSetting().getRestrictSharingContent() == 1){
+
+                            isSharingRestricted = true;
+                        }
+                        else{
+                            isSharingRestricted = false;
+                        }
+                    }
+
+
                 }
 
                 if (infoDbEntity.getGcPermission() != null){
                     if (infoDbEntity.getGcPermission().getPinMessage() != null && infoDbEntity.getGcPermission().getPinMessage() == 1){
-
+                        isPinMessage = true;
                     }
                     else{
-
+                        isPinMessage = false;
                     }
                 }
             }

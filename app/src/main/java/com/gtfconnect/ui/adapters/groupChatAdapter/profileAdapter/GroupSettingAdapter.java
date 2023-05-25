@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.FragmentUserSettingBinding;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.BlocklistScreen;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelManagePermissionScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ManagePermissionScreen;
 
 public class GroupSettingAdapter extends RecyclerView.Adapter<GroupSettingAdapter.ViewHolder> {
 
@@ -32,7 +32,7 @@ public class GroupSettingAdapter extends RecyclerView.Adapter<GroupSettingAdapte
         holder.binding.managePermission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(new Intent(context, ChannelManagePermissionScreen.class));
+                context.startActivity(new Intent(context, ManagePermissionScreen.class));
             }
         });
 
