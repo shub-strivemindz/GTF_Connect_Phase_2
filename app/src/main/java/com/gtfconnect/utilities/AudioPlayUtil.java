@@ -209,10 +209,11 @@ public class AudioPlayUtil {
                                 File subSubDirectory = new File(filePath + localPath);
                                 File[] subSubFiles = subSubDirectory.listFiles();
 
-                                if (subSubFiles != null){
-                                    tempFilePath = subSubFiles[0].getPath();
-                                    Log.d("FoubdedFilePath",tempFilePath);
-                                    break;
+                                if (subSubFiles != null && subSubFiles.length > 0){
+
+                                        tempFilePath = subSubFiles[0].getPath();
+                                        Log.d("FoubdedFilePath", tempFilePath);
+                                        break;
                                 }
 
                             }

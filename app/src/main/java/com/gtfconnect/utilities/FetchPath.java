@@ -57,6 +57,8 @@ public class FetchPath {
                 final String[] split = docId.split(":");
                 final String type = split[0];
 
+                Log.d("fetch_path",type);
+
                 Uri contentUri = null;
                 if ("image".equals(type)) {
                     contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -64,7 +66,8 @@ public class FetchPath {
                     contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 } else if ("audio".equals(type)) {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                } else  {
+                }
+                else  {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         contentUri = MediaStore.getDocumentUri(context, uri);
                     }

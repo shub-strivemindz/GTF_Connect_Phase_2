@@ -3,7 +3,14 @@ package com.gtfconnect.utilities;
 public class Constants {
 
 
+    public static final int REQUEST_ALL_MEDIA_PERMISSIONS = 1894;
+
+    public static final int REQUEST_AUDIO_PERMISSIONS = 1895;
+
+    public static final int REQUEST_ATTACHMENT_MEDIA_PERMISSIONS = 1896;
+
     public static final int GET_COUNTRY = 1897;
+
 
     public static final int GET_STATE = 1898;
 

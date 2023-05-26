@@ -35,7 +35,11 @@ public interface ChannelChatListener {
 
     void forwardMultiplePost(int selectedCount);
 
+    void toggleMultipleMessageSelection(boolean toggleSelection);
+
     void saveMessage(int chatID);
 
     void initiateCommentScreen(String data,String profileBaseUrl,String postBaseUrl,String userID);
+
+
 }

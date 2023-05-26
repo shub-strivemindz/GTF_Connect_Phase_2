@@ -13,10 +13,12 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -70,6 +72,10 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     private ViewHolder holder;
 
 
+    private boolean isMultipleMessageSelectionEnabled = false;
+
+
+
     String userName = "";
     String message = "";
     String time = "";
@@ -100,11 +106,11 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private boolean isAllowDiscussion = false;
 
-    private boolean isSharingRestricted = false;
+    private boolean isSharingEnabled = false;
 
     private boolean isPinMessage = false;
 
-
+    private boolean isQuoteMessage = false;
 
 
 
@@ -134,10 +140,28 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         this.infoDbEntity = infoDbEntity;
         ///this.commentCount = commentCount;
 
-
         this.chatAdapterRecycler = chatAdapterRecycler;
-        selectedPostCount = 0;
+
+
+        //this.showPostSelection = false;
+        //selectedPostCount = 0;
+
     }
+
+
+
+    public void updateMultipleMessageSelection(List<ChannelRowListDataModel> list){
+        this.list = list;
+        notifyDataSetChanged();
+        /*chatAdapterRecycler.post(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+*/
+    }
+
 
     public void updateList(List<ChannelRowListDataModel> list,String postBaseUrl,String profileBaseUrl)
     {
@@ -146,9 +170,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         this.profileBaseUrl = profileBaseUrl;
         notifyDataSetChanged();
     }
-
-
-
 
 
 
@@ -181,15 +202,17 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int index) {
 
+        //Log.d("post_container_visibility",""+showPostSelection);
+
         final int position = index;
 
         setUserPermissions();
 
-        if (isSharingRestricted){
-            holder.binding.forward.setVisibility(View.GONE);
+        if (isSharingEnabled){
+            holder.binding.forward.setVisibility(View.VISIBLE);
         }
         else{
-            holder.binding.forward.setVisibility(View.VISIBLE);
+            holder.binding.forward.setVisibility(View.GONE);
         }
 
         if (!isAllowDiscussion){
@@ -295,10 +318,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-
-
-
-
         // ---------------------------------------------------------- To Find If message date of chat. --------------------------------------------
         if (list.get(position) != null) {
             if (list.get(position).getUser() != null) {
@@ -332,17 +351,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -483,10 +491,19 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
                         String filePath = AudioPlayUtil.getSavedAudioFilePath(list.get(position).getGroupChannelID().toString(), list.get(position).getGroupChatID());
 
-                        long duration = AudioPlayUtil.getAudioDuration(filePath);
-                        String totalTime = AudioPlayUtil.getAudioDurationTime(duration);
+                        if (!filePath.trim().isEmpty()) {
+                            long duration = AudioPlayUtil.getAudioDuration(filePath);
+                            String totalTime = AudioPlayUtil.getAudioDurationTime(duration);
 
-                        holder.binding.totalAudioTime.setText("/" + totalTime);
+                            holder.binding.totalAudioTime.setText("/" + totalTime);
+
+                        }
+                        else{
+                            holder.binding.audioTimeContainer.setVisibility(View.GONE);
+
+                            holder.binding.downloadAudio.setVisibility(View.VISIBLE);
+                            holder.binding.playPauseRecordedAudio.setVisibility(View.GONE);
+                        }
                     } else {
                         holder.binding.audioTimeContainer.setVisibility(View.GONE);
 
@@ -683,13 +700,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
         }
 
-
-        if (list.get(position).isShowPostSelection()){
-            holder.binding.selectPost.setVisibility(View.VISIBLE);
-        }
-        else{
-            holder.binding.selectPost.setVisibility(View.GONE);
-        }
 
 
 
@@ -909,27 +919,63 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-        holder.binding.selectPost.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                selectedPostCount++;
-                channelChatListener.forwardMultiplePost(selectedPostCount);
-            }
-            else{
-                selectedPostCount--;
-                if (selectedPostCount <= 0){
-                    holder.binding.selectPost.setVisibility(View.GONE);
-                    channelChatListener.forwardMultiplePost(-1);
 
-                    toggleSelectionCheckbox(false);
-                }
-                else{
+
+
+
+
+        if (list.get(position).isShowPostSelection()){
+            holder.binding.selectPost.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.binding.selectPost.setVisibility(View.GONE);
+        }
+
+        if (list.get(position).isPostSelected()){
+            holder.binding.selectPost.setChecked(list.get(position).isPostSelected());
+        }
+        else {
+            holder.binding.selectPost.setChecked(list.get(position).isPostSelected());
+        }
+
+
+
+
+
+
+        holder.binding.selectPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(((CompoundButton) view).isChecked()){
+
+                    list.get(position).setPostSelected(true);
+                    notifyItemChanged(position);
+
+                    selectedPostCount++;
                     channelChatListener.forwardMultiplePost(selectedPostCount);
+
+
+                } else {
+
+                    selectedPostCount--;
+                    list.get(position).setPostSelected(false);
+                    notifyItemChanged(position);
+
+                    if (selectedPostCount <= 0){
+                        channelChatListener.forwardMultiplePost(-1);
+                        channelChatListener.toggleMultipleMessageSelection(false);
+
+                    }
+                    else{
+                        channelChatListener.forwardMultiplePost(selectedPostCount);
+
+                    }
+
                 }
             }
         });
-
-
     }
+
 
 
     public String getChipDate(int position)
@@ -964,14 +1010,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         TextView remove = chat_options_dialog.findViewById(R.id.remove);
         TextView cancel = chat_options_dialog.findViewById(R.id.cancel);
 
-        assert pin != null;
-        if (isPinMessage){
-            pin.setVisibility(View.VISIBLE);
-        }
-        else{
-            pin.setVisibility(View.GONE);
-        }
-
 
         assert remove != null;
         if(list.get(position).getUserID() == PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0))
@@ -992,7 +1030,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
 
 
-
+        assert pin != null;
+        if (isPinMessage){
+            pin.setVisibility(View.VISIBLE);
+        }
+        else{
+            pin.setVisibility(View.GONE);
+        }
         pin.setOnClickListener(view -> {
             chat_options_dialog.dismiss();
 
@@ -1003,6 +1047,12 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
         assert quote != null;
+        if (isQuoteMessage){
+            quote.setVisibility(View.VISIBLE);
+        }
+        else{
+            quote.setVisibility(View.GONE);
+        }
         quote.setOnClickListener(view -> {
             String name = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
 
@@ -1023,12 +1073,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         assert select != null;
         select.setOnClickListener(v -> {
+
+            list.get(position).setPostSelected(true);
+            channelChatListener.toggleMultipleMessageSelection(true);
+
+            selectedPostCount = 1;
             channelChatListener.forwardMultiplePost(selectedPostCount);
 
-            holder.binding.selectPost.setVisibility(View.VISIBLE);
-            holder.binding.selectPost.setChecked(true);
-
-            toggleSelectionCheckbox(true);
             chat_options_dialog.dismiss();
         });
 
@@ -1084,22 +1135,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     }
 
 
-    private void toggleSelectionCheckbox(boolean showCheckbox){
-
-        if (showCheckbox){
-            for (int i=0;i< list.size();i++){
-                list.get(i).setShowPostSelection(true);
-            }
-        }
-        else{
-            for (int i=0;i< list.size();i++){
-                list.get(i).setShowPostSelection(false);
-                list.get(i).setPostSelected(false);
-            }
-        }
-        notifyDataSetChanged();
-    }
-
     public void downloadComplete(String groupChatID){
         for (int i=0;i<list.size();i++)
         {
@@ -1144,10 +1179,10 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                     if (infoDbEntity.getGcSetting().getRestrictSharingContent() != null){
                         if (infoDbEntity.getGcSetting().getRestrictSharingContent() == 1){
 
-                            isSharingRestricted = true;
+                            isSharingEnabled = true;
                         }
                         else{
-                            isSharingRestricted = false;
+                            isSharingEnabled = false;
                         }
                     }
 
@@ -1161,114 +1196,34 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                     else{
                         isPinMessage = false;
                     }
+
+
+
+                    if (infoDbEntity.getGcPermission().getSendMessage() != null && infoDbEntity.getGcPermission().getSendMessage() == 1){
+                        isQuoteMessage = true;
+                    }
+                    else{
+                        isQuoteMessage = false;
+                    }
                 }
             }
         }
-    }
 
 
-
-
-
-
-
-
-
-
-    /**
-     *
-     * Overriding onViewAttach and onViewDetach
-     * for setting video play and pause after its full visibility
-     */
-
-
-
-    /*@Override
-    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-
-        int position = holder.getBindingAdapterPosition();
-        Log.d("layout_position",""+position);
-
-        if (list.get(position).getMedia() != null && !list.get(position).getMedia().isEmpty()) {
-
-            Log.d("chatID", "========= " + list.get(position).getGroupChatID() + " channelID =" + list.get(position).getGroupChannelID().toString());
-
-            //List<ChannelMediaResponseModel> mediaResponseModel = list.get(position).getMedia();
-
-            holder.binding.audioContainer.setVisibility(View.GONE);
-            holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
-
-
-            if (list.get(position).getMedia().size() == 1 && list.get(position).getMedia().get(0).getMimeType() != null) {
-                String fileType = Utils.checkFileType(list.get(position).getMedia().get(0).getMimeType());
-
-                if (fileType.equalsIgnoreCase("video")) {
-
-                            *//*if (videoPlayer != null) {
-                                if (videoPlayer.isPlaying()) {
-                                    videoPlayer.pause();
-                                    videoPlayer.stop();
-                                    //videoPlayer.release();
-                                }
-                            }*//*
-
-                    ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, holder.binding.mediaRecycler, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName);
-                    holder.binding.mediaRecycler.setHasFixedSize(true);
-                    holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                    holder.binding.mediaRecycler.setAdapter(mediaAdapter);
-
-                    mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
-                        videoPlayer = exoPlayer;
-                    });
-                }
-            }
-
-            //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
-        } else {
-            holder.binding.audioContainer.setVisibility(View.GONE);
-            holder.binding.mediaRecycler.setVisibility(View.GONE);
+        if (PreferenceConnector.readString(context,PreferenceConnector.USER_TYPE,"").equalsIgnoreCase("super-admin")){
+            isQuoteMessage = true;
+            isPinMessage = true;
+            isReactionEnabled = true;
+            isAllowDiscussion = true;
+            isSharingEnabled = true;
         }
     }
 
 
     @Override
-    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
-
-
-
-    public void setCheckAutoPlayFunctionality(int position){
-
-        Log.d("autoplay","previous position = "+previewVideoPlayBackPosition);
-        Log.d("autoplay","new position = "+position);
-
-        if (previewVideoPlayBackPosition != position) {
-
-            previewVideoPlayBackPosition = position;
-
-            holder = (ChannelChatAdapter.ViewHolder) chatAdapterRecycler.findViewHolderForAdapterPosition(position);
-
-            if (holder != null) {
-
-
-
-            }
-        }
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1289,8 +1244,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
         }
     }
-
-
 
 
 

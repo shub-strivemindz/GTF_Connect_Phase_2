@@ -207,24 +207,24 @@ public class EditProfileScreen extends AppCompatActivity implements ApiResponseL
             Toast.makeText(this, "Nothing to update!", Toast.LENGTH_SHORT).show();
         } else if (selectedMedia != null) {
 
-            params.put("Name",title);
-            params.put("Description",description);
+            params.put("Name",updatedTitle);
+            params.put("Description",updatedDescription);
             params.put("Type",type);
             params.put("AccessType",accessType);
-
 
             connectViewModel.update_groupChannel_profile(id,api_token,params,selectedMedia);
 
         } else{
 
-            params.put("Name",title);
-            params.put("Description",description);
+            params.put("Name",updatedTitle);
+            params.put("Description",updatedDescription);
             params.put("Type",type);
             params.put("AccessType",accessType);
 
 
             connectViewModel.update_groupChannel_profile(id,api_token,params,null);
         }
+
 
 
         title = updatedTitle;

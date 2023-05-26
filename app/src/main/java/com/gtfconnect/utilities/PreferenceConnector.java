@@ -32,6 +32,8 @@ public class PreferenceConnector {
 
     public static final String REGISTRATION_ONE_TIME_EMAIL = "registration_email";
 
+    public static final String USER_TYPE = "user_type";
+
 
 
 
@@ -58,6 +60,39 @@ public class PreferenceConnector {
 
 
     public static final String TOTAL_UNREAD_NOTIFICATION_COUNT = "total_unread_notification_count";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     * Permission Check
+     */
+
+
+
+
+
+    public static final String READ_STORAGE_PERMISSION_COUNT = "read_storage_permission_requested_count";
+
+    public static final String WRITE_STORAGE_PERMISSION_COUNT = "write_storage_permission_requested_count";
+
+    public static final String MICROPHONE_PERMISSION_COUNT = "microphone_permission_requested_count";
+
+    public static final String MANAGE_PERMISSION_COUNT = "manage_external_storage_permission_requested_count";
+
+    public static final String CAMERA_PERMISSION_COUNT = "camera_permission_requested_count";
 
 
 

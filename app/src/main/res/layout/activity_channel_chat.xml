@@ -479,8 +479,8 @@
     </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:layout_above="@id/search_container"
+            android:layout_marginBottom="@dimen/_60sdp"
+            android:layout_alignParentBottom="true"
             android:id="@+id/forward_container"
             android:visibility="gone"
             app:cardElevation="@dimen/_4sdp"
@@ -534,6 +534,8 @@
                     android:layout_width="@dimen/_80sdp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="@dimen/_4sdp"
+                    android:id="@+id/forward_message"
+                    android:clickable="true"
                     android:layout_marginEnd="@dimen/_4sdp"
                     app:cardBackgroundColor="#272727">
 
@@ -614,6 +616,7 @@
                     android:src="@drawable/close"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
+                    android:clickable="true"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_8sdp"/>
 
@@ -735,6 +738,7 @@
                                 android:layout_height="match_parent"
                                 android:src="@drawable/smile"
                                 app:tint="@color/sendMessageEmojiColor"
+                                android:visibility="gone"
                                 android:layout_marginHorizontal="@dimen/_6sdp"/>
 
                             <com.gtfconnect.utilities.CustomEditText

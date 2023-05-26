@@ -91,9 +91,9 @@ import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseMod
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
-import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
+import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
@@ -109,6 +109,7 @@ import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.CustomEditText;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.GlideUtils;
+import com.gtfconnect.utilities.PermissionCheckUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
@@ -197,6 +198,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private int subscribers = 0;
     ChannelChatAdapter channelViewAdapter;
 
+
     private boolean isListLoadedOnce = false;
 
     private String groupChatIDRef;
@@ -277,6 +279,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private String userStatus = "";
 
+    private int permission_read_request_count ;
+    private int permission_write_request_count ;
+    private int permission_audio_request_count ;
+    private int permission_camera_request_count ;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -288,26 +295,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         setContentView(binding.getRoot());
 
 
+        checkEnabledPermissions();
 
-        // Setting GIF | Image Insertion in Search EditText
-        binding.type.setKeyBoardInputCallbackListener(new CustomEditText.KeyBoardInputCallbackListener() {
-            @Override
-            public void onCommitContent(InputContentInfoCompat inputContentInfo,
-                                        int flags, Bundle opts) {
-
-                //you will get your gif/png/jpg here in inputContentInfo
-                // You can use a webView or ImageView to load the gif
-
-                Uri linkUri = inputContentInfo.getLinkUri();
-
-                Intent intent = new Intent(ChannelChatsScreen.this, GifPreviewScreen.class);
-                intent.putExtra("gif",linkUri.toString());
-                startForActivityResultLauncher.launch(intent);
-
-                //mWebView.loadUrl(linkUri != null ? linkUri.toString() : "null");
-
-            }
-        });
 
 
         list = new ArrayList<>();
@@ -587,6 +576,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
+        binding.forwardMessage.setOnClickListener(view -> forwardSaveMessage());
+
+
+
+
+
+
 
         binding.closeQuoteEditor.setOnClickListener(view -> {
             binding.quoteContainer.setVisibility(View.GONE);
@@ -760,7 +756,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private void recordAudio() {
         //check the permission for the record audio and for save audio write external storage
 
-        if (CheckPermission()) {
+        if (PermissionCheckUtils.checkChatPermissions(this,Constants.REQUEST_AUDIO_PERMISSIONS)) {
+            requestPermissions(new String[]{RECORD_AUDIO,WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_AUDIO_PERMISSIONS);
+        } else {
+
             audioFilePath = Utils.getAudioFilePath();
 
             //RecordReady
@@ -780,10 +779,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        } else {
-            //if permission is not given then request permission
-            RequestPermission();
         }
     }
 
@@ -793,22 +788,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         } catch (Exception e) {
             Log.d("Recorder_Exception", e.toString());
         }
-    }
-
-
-    public boolean CheckPermission() {
-        int first = ContextCompat.checkSelfPermission(getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int first1 = ContextCompat.checkSelfPermission(getApplicationContext(),
-                RECORD_AUDIO);
-        return first == PackageManager.PERMISSION_GRANTED && first1 == PackageManager.PERMISSION_GRANTED;
-    }
-
-
-    //give below permission for audio capture
-    private void RequestPermission() {
-        ActivityCompat.requestPermissions(this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, Constants.RECORD_AUDIO_REQUEST_CODE);
     }
 
 
@@ -987,12 +966,22 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
         // Load Comments List Data -----
+        /*channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,binding.chats);
+        binding.chats.setHasFixedSize(true);
+        binding.chats.setLayoutManager(mLayoutManager);
+        binding.chats.setAdapter(channelViewAdapter);
+
+        binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);*/
+
+
+
         channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,binding.chats);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(channelViewAdapter);
 
         binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+
 
     }
 
@@ -1812,8 +1801,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
     private void openAttachmentDialog() {
-        if (AttachmentUploadUtils.checkPermission(this)) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+
+        if (PermissionCheckUtils.checkChatPermissions(this,Constants.REQUEST_ATTACHMENT_MEDIA_PERMISSIONS)) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, Constants.REQUEST_ATTACHMENT_MEDIA_PERMISSIONS);
         } else {
             AttachmentUploadUtils.showPictureDialog(
                     this,
@@ -1920,7 +1910,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         i.addCategory(Intent.CATEGORY_OPENABLE);
 
-        startActivityForResult(i,Constants.SELECT_DOCUMENT_REQUEST_CODE);
+        resultLauncher.launch(i);
+        //startActivityForResult(i,Constants.SELECT_DOCUMENT_REQUEST_CODE);
         //resultLauncher.launch(i);
 
     }
@@ -1928,19 +1919,71 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101) {
+
+
+        Log.d("permission_log","requested");
+        if (requestCode == Constants.REQUEST_ALL_MEDIA_PERMISSIONS) {
+
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                permission_camera_request_count ++;
+                PreferenceConnector.writeInteger(ChannelChatsScreen.this,PreferenceConnector.CAMERA_PERMISSION_COUNT,permission_camera_request_count);
+            }
+            if (grantResults[1] != PackageManager.PERMISSION_GRANTED){
+                permission_write_request_count ++;
+                PreferenceConnector.writeInteger(ChannelChatsScreen.this,PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT,permission_write_request_count);
+            }
+            if (grantResults[2] != PackageManager.PERMISSION_GRANTED){
+                permission_read_request_count ++;
+                PreferenceConnector.writeInteger(ChannelChatsScreen.this,PreferenceConnector.READ_STORAGE_PERMISSION_COUNT,permission_read_request_count);
+            }
+            if (grantResults[3] != PackageManager.PERMISSION_GRANTED){
+                permission_audio_request_count ++;
+                PreferenceConnector.writeInteger(ChannelChatsScreen.this,PreferenceConnector.MICROPHONE_PERMISSION_COUNT,permission_audio_request_count);
+            }
+
+        } else if (requestCode == Constants.REQUEST_ATTACHMENT_MEDIA_PERMISSIONS) {
+
+
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                 openAttachmentDialog();
-            }
-        } else if (requestCode == Constants.RECORD_AUDIO_REQUEST_CODE) {
-            if (grantResults.length > 0) {
-                boolean permissionToRecord = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean permissionToStore = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                if (permissionToRecord && permissionToStore) {
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
+            } else {
+
+                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                        permission_camera_request_count++;
+                        PreferenceConnector.writeInteger(ChannelChatsScreen.this, PreferenceConnector.CAMERA_PERMISSION_COUNT, permission_camera_request_count);
+                    }
+                    if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                        permission_write_request_count++;
+                        PreferenceConnector.writeInteger(ChannelChatsScreen.this, PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT, permission_write_request_count);
+                    }
+                    if (grantResults[2] != PackageManager.PERMISSION_GRANTED) {
+                        permission_read_request_count++;
+                        PreferenceConnector.writeInteger(ChannelChatsScreen.this, PreferenceConnector.READ_STORAGE_PERMISSION_COUNT, permission_read_request_count);
+                    }
+                    Toast.makeText(this, "Please grant required permissions!", Toast.LENGTH_SHORT).show();
                 }
+
+        } else if (requestCode == Constants.REQUEST_AUDIO_PERMISSIONS) {
+
+            if (grantResults.length > 0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    permission_audio_request_count++;
+                    PreferenceConnector.writeInteger(ChannelChatsScreen.this, PreferenceConnector.CAMERA_PERMISSION_COUNT, permission_audio_request_count);
+                }
+                if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                    permission_write_request_count++;
+                    PreferenceConnector.writeInteger(ChannelChatsScreen.this, PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT, permission_write_request_count);
+                }
+
+
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    recordAudio();
+                } else {
+                    Toast.makeText(this, "Please grant required permissions!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else{
+                recordAudio();
             }
         }
     }
@@ -2013,7 +2056,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
             previewImage();
 
-        } else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
+        } /*else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
 
             isAnyFileAttached = true;
 
@@ -2028,7 +2071,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 callAttachmentApi();
             }
 
-        } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
+        }*/ else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
 
 
@@ -2084,18 +2127,26 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     if (data != null) {
                         Uri sUri = data.getData();
-                        attachmentFileList.add(new File(copyFileToInternalStorage(sUri, "GTF_Document")));
-                        callAttachmentApi();
+
+                        binding.attachmentContainer.setVisibility(View.VISIBLE);
+
+                        binding.sendMessage.setVisibility(View.VISIBLE);
+                        binding.recordButton.setVisibility(View.GONE);
+
+                        attachmentFileList.add(new File(copyFileToInternalStorage(sUri)));
 
                         //binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.document));
                         //binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
                         //binding.attachmentContainer.setVisibility(View.VISIBLE);
                     }
+                    else{
+                        binding.attachmentContainer.setVisibility(View.GONE);
+                    }
                 }
             });
 
 
-    private String copyFileToInternalStorage(Uri uri, String newDirName) {
+    private String copyFileToInternalStorage(Uri uri) {
         Uri returnUri = uri;
 
         Cursor returnCursor = getContentResolver().query(returnUri, new String[]{
@@ -2110,12 +2161,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         String size = (Long.toString(returnCursor.getLong(sizeIndex)));
 
         File output;
-        if (!newDirName.equals("")) {
-            File dir = new File(getFilesDir() + "/" + newDirName);
+        if (!name.equals("")) {
+            File dir = new File(getFilesDir() + "/" + name);
             if (!dir.exists()) {
                 dir.mkdir();
             }
-            output = new File(getFilesDir() + "/" + newDirName + "/" + name);
+            output = new File(getFilesDir() + "/" + name + "/" + name);
         } else {
             output = new File(getFilesDir() + "/" + name);
         }
@@ -2508,6 +2559,19 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             binding.forwardContainer.setVisibility(View.VISIBLE);
             binding.forwardCount.setText(String.valueOf(selectedCount));
         }
+    }
+
+    @Override
+    public void toggleMultipleMessageSelection(boolean toggleSelection) {
+
+        for (int i=0;i<list.size();i++){
+            list.get(i).setShowPostSelection(toggleSelection);
+
+            if (!toggleSelection){
+                list.get(i).setPostSelected(false);
+            }
+        }
+        channelViewAdapter.updateMultipleMessageSelection(list);
     }
 
     @Override
@@ -3063,6 +3127,69 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private void checkGroupChannelSettings(){
 
+
+
+        /**
+         *  User setting checks
+         */
+
+
+        if (infoDbEntity.getGcPermission() != null){
+
+            if (infoDbEntity.getGcPermission().getSendMessage() != null) {
+                if (infoDbEntity.getGcPermission().getSendMessage() != 1) {
+
+                    binding.footerStatusTag.setVisibility(View.GONE);
+                    binding.searchContainer.setVisibility(View.GONE);
+                } else {
+                    binding.searchContainer.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                binding.footerStatusTag.setVisibility(View.GONE);
+                binding.searchContainer.setVisibility(View.GONE);
+            }
+
+
+            if (infoDbEntity.getGcPermission().getSendMedia() != null){
+
+                if (infoDbEntity.getGcPermission().getSendMedia() != 1){
+                    binding.pinAttachment.setVisibility(View.GONE);
+                }
+                else{
+                    binding.pinAttachment.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                binding.pinAttachment.setVisibility(View.GONE);
+            }
+
+
+            if (infoDbEntity.getGcPermission().getSendStickerGIF() != null){
+
+                if (infoDbEntity.getGcPermission().getSendStickerGIF() != 1){
+                    toggleSendGif(false);
+                }
+                else{
+                    toggleSendGif(true);
+                }
+            }
+            else{
+                toggleSendGif(false);
+            }
+        }
+
+
+
+
+
+
+
+
+        /**
+         *  USER Status and Subscription Plan Check
+         */
+
         if(infoDbEntity.getGcMemberSubscriptionPlan() != null && infoDbEntity.getGcMemberSubscriptionPlan().getIsExpired() != null){
 
             if (infoDbEntity.getGcMemberSubscriptionPlan().getIsExpired() == 1){
@@ -3153,6 +3280,118 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     }
                 }
             }
+        }
+
+
+
+
+
+        if (PreferenceConnector.readString(this,PreferenceConnector.USER_TYPE,"").equalsIgnoreCase("super-admin")){
+
+            binding.footerStatusTag.setVisibility(View.GONE);
+
+            binding.searchContainer.setVisibility(View.VISIBLE);
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+            toggleSendGif(true);
+        }
+    }
+
+
+
+    private void toggleSendGif(boolean enableSendGif){
+        // Setting GIF | Image Insertion in Search EditText
+        binding.type.setKeyBoardInputCallbackListener(new CustomEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(InputContentInfoCompat inputContentInfo,
+                                        int flags, Bundle opts) {
+
+                if (enableSendGif) {
+                    //you will get your gif/png/jpg here in inputContentInfo
+                    // You can use a webView or ImageView to load the gif
+
+                    Uri linkUri = inputContentInfo.getLinkUri();
+
+                    Intent intent = new Intent(ChannelChatsScreen.this, GifPreviewScreen.class);
+                    intent.putExtra("gif", linkUri.toString());
+                    startForActivityResultLauncher.launch(intent);
+
+                    //mWebView.loadUrl(linkUri != null ? linkUri.toString() : "null");
+
+                }
+                else{
+                    Toast.makeText(ChannelChatsScreen.this, "Sharing Gif not supported!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+
+
+    private void forwardSaveMessage(){
+
+        /*int channelID = list.get(position).getGroupChannelID();
+        int chatID = Integer.parseInt(list.get(position).getGroupChatID());*/
+
+        int chatID = 0;
+
+        Dialog forward_dialog = new Dialog(this);
+
+        forward_dialog.setContentView(R.layout.dialog_forward_message);
+        forward_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        forward_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+        ImageView close = (ImageView) forward_dialog.findViewById(R.id.close);
+        close.setOnClickListener(view1 -> {
+
+            for (int i=0;i<list.size();i++){
+                list.get(i).setShowPostSelection(false);
+                list.get(i).setPostSelected(false);
+            }
+
+            channelViewAdapter.updateMultipleMessageSelection(list);
+            binding.forwardContainer.setVisibility(View.GONE);
+
+
+            forward_dialog.dismiss();
+        });
+
+
+        RecyclerView personList = (RecyclerView) forward_dialog.findViewById(R.id.forward_person_list_recycler);
+
+        //int channelID = list.get(position).getGroupChannelID();
+        //int chatID = Integer.parseInt(list.get(position).getGroupChatID());
+
+        ForwardPersonListAdapter forwardPersonListAdapter = new ForwardPersonListAdapter(this,channelID,chatID);
+        personList.setHasFixedSize(true);
+        personList.setLayoutManager(new LinearLayoutManager(this));
+        personList.setAdapter(forwardPersonListAdapter);
+
+        forwardPersonListAdapter.setOnSaveMessageClickListener(chatID1 -> {
+            //channelChatListener.saveMessage(chatID1);
+            forward_dialog.dismiss();
+        });
+
+        forward_dialog.show();
+    }
+
+
+
+
+    private void checkEnabledPermissions(){
+
+        permission_read_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.READ_STORAGE_PERMISSION_COUNT,0);
+        permission_write_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT,0);
+        permission_audio_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.MICROPHONE_PERMISSION_COUNT,0);
+        permission_camera_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.CAMERA_PERMISSION_COUNT,0);
+
+
+        if (PermissionCheckUtils.checkChatPermissions(this,Constants.REQUEST_ALL_MEDIA_PERMISSIONS)){
+            requestPermissions(new String[]{Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.RECORD_AUDIO}, Constants.REQUEST_ALL_MEDIA_PERMISSIONS);
         }
     }
 }

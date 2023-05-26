@@ -56,6 +56,7 @@ import com.gtfconnect.viewModels.ConnectViewModel;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ProfileScreen extends AppCompatActivity implements ApiResponseListener, ChannelSettingListener {
 
@@ -739,7 +740,7 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
 
                 if (result.getResultCode() == GC_REFRESH_UPDATED_DATA_CODE) {
 
-                    binding.tabLayout.getTabAt(3).select();
+                    Objects.requireNonNull(binding.tabLayout.getTabAt(3)).select();
 
                     requestType = GET_GROUP_CHANNEL_INFO;
                     connectViewModel.get_group_channel_info(channelID, api_token);

@@ -274,6 +274,12 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
             if (userProfileDbEntity != null){
 
+                if (userProfileDbEntity.getUserRoleInfo() != null && userProfileDbEntity.getUserRoleInfo().getPrimary() != null && userProfileDbEntity.getUserRoleInfo().getPrimary().getRole() != null && userProfileDbEntity.getUserRoleInfo().getPrimary().getRole().getSlug() != null) {
+                    PreferenceConnector.writeString(this,PreferenceConnector.USER_TYPE,userProfileDbEntity.getUserRoleInfo().getPrimary().getRole().getSlug());
+                }
+                else{
+                    PreferenceConnector.writeString(this,PreferenceConnector.USER_TYPE,"");
+                }
                 // Todo Set conditions according to settings updated in api data
             }
         });

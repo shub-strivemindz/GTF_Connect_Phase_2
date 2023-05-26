@@ -175,14 +175,15 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             }
 
 
-            if (list.get(position).isShowPostSelection()){
+            // Todo
+            /*if (list.get(position).isShowPostSelection()){
                 holder.binding.selectPost1.setVisibility(View.VISIBLE);
                 holder.binding.selectPost.setVisibility(View.VISIBLE);
             }
             else{
                 holder.binding.selectPost1.setVisibility(View.GONE);
                 holder.binding.selectPost.setVisibility(View.GONE);
-            }
+            }*/
         }
     }
 
@@ -1816,7 +1817,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
     private void toggleSelectionCheckbox(boolean showCheckbox){
 
-        if (showCheckbox){
+        // Todo
+        /*if (showCheckbox){
             for (int i=0;i< list.size();i++){
                 list.get(i).setShowPostSelection(true);
             }
@@ -1825,7 +1827,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             for (int i=0;i< list.size();i++){
                 list.get(i).setShowPostSelection(false);
             }
-        }
+        }*/
 
         groupChatListener.updateChatList(list);
         notifyDataSetChanged();
