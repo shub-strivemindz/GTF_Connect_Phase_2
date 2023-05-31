@@ -120,7 +120,6 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
         init();
 
         PreferenceConnector.writeBoolean(this,PreferenceConnector.IS_USER_LOGGED,true);
@@ -281,6 +280,9 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                     PreferenceConnector.writeString(this,PreferenceConnector.USER_TYPE,"");
                 }
                 // Todo Set conditions according to settings updated in api data
+            }
+            else{
+                binding.profileImage.setImageDrawable(getDrawable(R.drawable.no_image_logo_background));
             }
         });
 
@@ -556,6 +558,9 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                         saveAndLoadImage("Condition 2");
                     }
                 }
+                else{
+                    binding.profileImage.setImageDrawable(getDrawable(R.drawable.no_image_logo_background));
+                }
             }
 
 
@@ -609,7 +614,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(circularProgressDrawable);
-        requestOptions.error(R.drawable.image_not_found);
+        requestOptions.error(R.drawable.no_image_logo_background);
         requestOptions.skipMemoryCache(true);
         requestOptions.fitCenter();
 
@@ -617,6 +622,7 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                 listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        binding.profileImage.setImageDrawable(getDrawable(R.drawable.no_image_logo_background));
                         return false;
                     }
 
@@ -711,12 +717,11 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         }
         else{
             Log.d("notification_count",""+count);
-
+            binding.recentNotificationContainer.setVisibility(View.VISIBLE);
             if (count > 999){
                 binding.recentNotificationCount.setText(". . .");
             }
             else {
-                binding.recentNotificationContainer.setVisibility(View.VISIBLE);
                 binding.recentNotificationCount.setText(count + "");
             }
         }
@@ -733,11 +738,11 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
             Log.d("notification_count",""+count);
 
 
+            binding.channelNotificationContainer.setVisibility(View.VISIBLE);
             if (count > 999){
                 binding.channelNotificationCount.setText(". . .");
             }
             else {
-                binding.channelNotificationContainer.setVisibility(View.VISIBLE);
                 binding.channelNotificationCount.setText(count + "");
             }
         }
@@ -754,11 +759,11 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         else{
             Log.d("notification_count",""+count);
 
+            binding.groupNotificationContainer.setVisibility(View.VISIBLE);
             if (count > 999){
                 binding.groupNotificationCount.setText(". . .");
             }
             else {
-                binding.groupNotificationContainer.setVisibility(View.VISIBLE);
                 binding.groupNotificationCount.setText(String.valueOf(count));
             }
         }
@@ -774,12 +779,11 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
         else{
             Log.d("notification_count",""+count);
 
-
+            binding.mentorNotificationContainer.setVisibility(View.VISIBLE);
             if (count > 999){
                 binding.mentorNotificationCount.setText(". . .");
             }
             else {
-                binding.mentorNotificationContainer.setVisibility(View.VISIBLE);
                 binding.mentorNotificationCount.setText(count + "");
             }
         }

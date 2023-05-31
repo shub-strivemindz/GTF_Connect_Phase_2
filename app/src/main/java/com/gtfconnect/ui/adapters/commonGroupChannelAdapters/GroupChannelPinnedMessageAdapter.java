@@ -11,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.gson.Gson;
+import com.gtfconnect.R;
 import com.gtfconnect.databinding.FragmentPinnedMessageBinding;
 import com.gtfconnect.interfaces.PinnedMessageListener;
 import com.gtfconnect.models.PinnedMessagesModel;
@@ -40,6 +42,8 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
     private int messageUserID = 0;
 
     private String profileBaseUrl;
+
+    private ExoPlayer videoPlayer;
 
     private String messageTime = "";
 
@@ -84,28 +88,28 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
             if (list.get(position).getChat().getUser().getFirstname() == null && list.get(position).getChat().getUser().getLastname() == null) {
                 userName = "Bot";
                 holder.binding.userName.setText("Bot");
-                isSelfUser = false;
             } else {
 
-                //Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getChat().getUser().getUserID()));
+                //Log.d("USER_ID_MATCHING",String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.GTF_USER_ID,0))+" "+String.valueOf(list.get(position).getUser().getUserID()));
 
                 int userId= Integer.parseInt(list.get(position).getChat().getUser().getUserID());
+
                 if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
                     userName = "You";
                     holder.binding.userName.setText("You");
-                    isSelfUser = true;
                 }
                 else {
                     userName = list.get(position).getChat().getUser().getFirstname() + " " + list.get(position).getChat().getUser().getLastname();
                     holder.binding.userName.setText(userName);
-                    isSelfUser = false;
                 }
             }
 
             if (list.get(position).getChat().getUser().getProfileImage() != null){
                 String baseUrl = profileBaseUrl + list.get(position).getChat().getUser().getProfileImage();
-                Log.e("profile_base_url",baseUrl);
                 GlideUtils.loadImage(context,holder.binding.userIcon,baseUrl);
+            }
+            else {
+                holder.binding.userIcon.setImageResource(R.drawable.no_image_logo_background);
             }
         }
 
@@ -208,10 +212,14 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
                 holder.binding.audioContainer.setVisibility(View.GONE);
                 holder.binding.mediaRecycler.setVisibility(View.VISIBLE);
 
-                GroupChannelPinnedMessageMediaAdapter mediaAdapter = new GroupChannelPinnedMessageMediaAdapter(context, list.get(position).getChat().getMedia(), post_base_url, String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0)),isSelfUser);
+                GroupChannelPinnedMessageMediaAdapter mediaAdapter = new GroupChannelPinnedMessageMediaAdapter(context, list.get(position).getChat().getMedia(), post_base_url, String.valueOf(PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0)),userName,videoPlayer,isSelfUser);
                 holder.binding.mediaRecycler.setHasFixedSize(true);
                 holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                 holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+
+                mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
+                    videoPlayer = exoPlayer;
+                });
 
             }
             //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
@@ -318,7 +326,7 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
 
 
 
-        if (list.get(position).getChat().getCreatedAt() != null) {
+        if (list.get(position).getChat().getUpdatedAt() != null) {
             time = Utils.getHeaderDate(list.get(position).getChat().getUpdatedAt());
             holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getChat().getUpdatedAt()));
         } else {
@@ -364,6 +372,28 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
             super(binding.getRoot());
             this.binding = binding;
 
+        }
+    }
+
+
+
+
+    public void destroyExoPlayer(){
+
+        if (videoPlayer != null){
+            if (videoPlayer.isPlaying()) {
+                videoPlayer.stop();
+            }
+            videoPlayer.release();
+        }
+    }
+
+
+    public void pauseExoPlayer(){
+        if (videoPlayer != null){
+            if (videoPlayer.isPlaying()) {
+                videoPlayer.pause();
+            }
         }
     }
 }

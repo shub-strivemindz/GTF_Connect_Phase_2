@@ -62,6 +62,8 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
     Map<String, Object> registrationData = new HashMap<>();
 
+    private boolean isCityNotFound = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +197,7 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
     @Override
     public void onAuthFailure(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -313,7 +315,16 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
             Utils.showSnackMessage(this, binding.address, "please enter valid address!");
             binding.address.requestFocus();
-        } else if (pincode.length() != 6) {
+        }else if (countryCode == 0) {
+            Utils.showSnackMessage(this, binding.chooseCountry, "Select valid country!");
+        }
+        else if (stateCode == 0) {
+            Utils.showSnackMessage(this, binding.chooseState, "Select valid state!");
+        }
+        else if (cityCode == 0) {
+            Utils.showSnackMessage(this, binding.chooseCity, "Select valid city!");
+        }
+        else if (pincode.length() != 6) {
             Utils.showSnackMessage(this, binding.pincode, "please enter valid pincode!");
             binding.pincode.requestFocus();
         } else if (password.isEmpty() || password.length() < 6) {
@@ -355,6 +366,18 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
                     countryCode = id;
                     binding.country.setText(place);
+
+
+                    binding.state.setText("");
+                    binding.city.setText("");
+
+                    stateCode = 0;
+                    cityCode = 0;
+
+                    stateResponse = new StateResponse();
+                    cityResponse = new CityResponse();
+
+
                 } else if (result.getResultCode() == Constants.GET_STATE) {
 
                     int id = result.getData().getIntExtra("id",0);
@@ -362,6 +385,12 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
                     stateCode = id;
                     binding.state.setText(place);
+
+                    binding.city.setText("");
+
+                    cityCode = 0;
+
+                    cityResponse = new CityResponse();
                 }
                 else if (result.getResultCode() == Constants.GET_CITY) {
 

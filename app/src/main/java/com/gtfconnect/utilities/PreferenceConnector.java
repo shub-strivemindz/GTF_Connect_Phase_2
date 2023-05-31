@@ -66,6 +66,8 @@ public class PreferenceConnector {
 
 
 
+    public static final String SLOW_MODE_SAVED_TIME = "slow_mode_saved_time";
+
 
 
 

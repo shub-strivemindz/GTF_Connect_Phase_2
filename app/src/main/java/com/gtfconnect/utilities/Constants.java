@@ -2,6 +2,7 @@ package com.gtfconnect.utilities;
 
 public class Constants {
 
+    public static final int HOW_DID_YOU_FIND_US = 1893;
 
     public static final int REQUEST_ALL_MEDIA_PERMISSIONS = 1894;
 
@@ -51,6 +52,18 @@ public class Constants {
     public static final int PROFILE_DETAILS_UPDATED = 1916;
 
     public static final int REJOIN_GROUP_CHANNEL = 1917;
+
+
+
+    public static final String CMS_TYPE_TERMS = "Terms";
+
+    public static final String CMS_TYPE_REFUND = "Refund";
+
+    public static final String CMS_TYPE_POLICIES = "PrivacyPolicy";
+
+    public static final String CMS_TYPE_FAQ = "FAQ";
+
+
 
 
     public static final String Group_Channel_TYPE_1 = "group";

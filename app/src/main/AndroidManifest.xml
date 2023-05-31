@@ -80,13 +80,14 @@
         </receiver>
 
         <activity android:name=".ui.screenUI.authModule.LoginScreen"/>
+        <activity android:name=".ui.screenUI.authModule.TermsConditionsScreen"/>
 
         <activity android:name=".ui.screenUI.authModule.ForgetPasswordScreen"/>
         <activity android:name=".ui.screenUI.authModule.OtpVerificationScreen"/>
 
         <activity android:name=".ui.screenUI.authModule.registerModule.RegisterScreen1"/>
-        <!--<activity android:name=".ui.screenUI.authModule.registerModule.RegisterScreen2"/>
-        <activity android:name=".ui.screenUI.authModule.registerModule.HowDidYouFindUs"/>-->
+        <!--<activity android:name=".ui.screenUI.authModule.registerModule.RegisterScreen2"/>-->
+        <activity android:name=".ui.screenUI.authModule.registerModule.HowDidYouFindUs"/>
         <activity android:name=".ui.screenUI.authModule.registerModule.RegisterScreen3"/>
 
         <activity android:name=".ui.screenUI.HomeScreen"
@@ -126,6 +127,9 @@
 
         <activity android:name=".ui.screenUI.commonGroupChannelModule.MultiPreviewScreen"/>
         <activity android:name=".ui.screenUI.commonGroupChannelModule.VideoPreviewScreen"/>
+
+
+        <activity android:name=".ui.screenUI.paymentModule.PaymentWebPortal"/>
     </application>
 
 </manifest>

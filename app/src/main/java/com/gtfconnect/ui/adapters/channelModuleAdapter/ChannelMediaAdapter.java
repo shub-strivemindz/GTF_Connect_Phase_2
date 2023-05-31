@@ -2,6 +2,7 @@ package com.gtfconnect.ui.adapters.channelModuleAdapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,13 +58,22 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private ExoPlayer previousPlaybackInstance;
 
-    public  ChannelMediaAdapter(Context context,RecyclerView recyclerRootView,List<MediaListModel> mediaList,String postBaseUrl,String userID, String user_name, ExoPlayer previousPlaybackInstance){
+
+    private boolean isVideoAutoPlay;
+    private boolean isGifAutoPlay;
+
+
+
+    public  ChannelMediaAdapter(Context context,List<MediaListModel> mediaList,String postBaseUrl,String userID, String user_name, ExoPlayer previousPlaybackInstance,boolean isVideoAutoPlay,boolean isGifAutoPlay){
         this.context= context;
         this.mediaList = mediaList;
         this.postBaseUrl = postBaseUrl;
         this.userID = userID;
 
         this.user_name = user_name;
+
+        this.isVideoAutoPlay = isVideoAutoPlay;
+        this.isGifAutoPlay = isGifAutoPlay;
 
         this.previousPlaybackInstance = previousPlaybackInstance;
 
@@ -140,9 +150,18 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 if (Utils.isFileTypeGif((mediaList.get(position).getMimeType()))) {
 
-                    holder1.binding.playGif.setVisibility(View.VISIBLE);
-                    GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
-                    //loadImageFile(post_path,holder1.binding.postImage);
+                    if (isGifAutoPlay){
+
+                        holder1.binding.playGif.setVisibility(View.GONE);
+                        loadImageFile(post_path,holder1.binding.postImage);
+                    }
+                    else{
+                        holder1.binding.playGif.setVisibility(View.VISIBLE);
+                        GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
+                    }
+
+
+
                 }
                 else{
 
@@ -158,7 +177,10 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.GONE);
                 holder1.binding.playGif.setVisibility(View.GONE);
 
-                loadDocumentFile(post_path,holder1.binding.postImage);
+
+                if (mediaList.get(position).getFileName() != null){
+                    holder1.binding.docName.setText(mediaList.get(position).getFileName());
+                }
             }
             else if (fileType.equalsIgnoreCase("video")) {
 
@@ -166,6 +188,8 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.VISIBLE);
                 holder1.binding.playGif.setVisibility(View.GONE);
 
+                String videoThumbnail = postBaseUrl + mediaList.get(position).getStoragePath() + mediaList.get(position).getThumbnail().trim();
+                loadImageFile(videoThumbnail,((SingleMediaItemViewHolder) holder).binding.postImage);
                 //loadVideoFile(post_path,holder.binding.postImage);
             } else if (fileType.equalsIgnoreCase("gif")) {
 
@@ -178,16 +202,10 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 Log.d("File_Type_Error",fileType);
             }
 
-
-
-
-
-
-
-            holder1.binding.playGif.setOnClickListener(view -> {
+            /*holder1.binding.playGif.setOnClickListener(view -> {
                 holder1.binding.playGif.setVisibility(View.GONE);
                 loadImageFile(post_path,holder1.binding.postImage);
-            });
+            });*/
 
 
 
@@ -232,7 +250,6 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 loadAutoPlayVideoFile(post_path,holder1.binding.playerView,holder1.binding.progressBar);
 
             });
-
         }
         else{
 
@@ -279,7 +296,7 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.docContainer.setVisibility(View.VISIBLE);
                 holder1.binding.playVideo.setVisibility(View.GONE);
 
-                loadDocumentFile(post_path,holder1.binding.postImage);
+
             }
             else if (fileType.equalsIgnoreCase("video")) {
 
@@ -402,15 +419,6 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
 
-
-    }
-
-
-
-
-
-    private void loadDocumentFile(String docFilePath, ImageView imageView)
-    {
 
     }
 

@@ -3,130 +3,130 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/groupChannelBackgroundColor"
+    android:background="@color/groupBackgroundColor"
     android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/toolbar"
-        android:layout_alignParentTop="true"
-        android:background="@color/groupChannelActionBarBackgroundColor"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_55sdp"
-        android:paddingHorizontal="@dimen/_16sdp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/back_click"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="match_parent"
-            app:tint="@color/groupChannelActionBarTextColor"
-            android:src="@drawable/back2" />
-
         <RelativeLayout
-            android:id="@+id/member_title"
-            android:layout_toEndOf="@id/back_click"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        <RelativeLayout
-            android:gravity="center_vertical"
-            android:id="@+id/user_avatar"
-            android:layout_gravity="center_vertical"
-            android:layout_width="@dimen/_32sdp"
-            android:layout_height="match_parent"
-            >
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginVertical="@dimen/_5sdp"
-                app:cardCornerRadius="@dimen/_120sdp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/no_image_logo_background"
-                    android:id="@+id/group_channel_logo"/>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/title_container"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@id/user_avatar"
+            android:id="@+id/toolbar"
+            android:layout_alignParentTop="true"
+            android:background="@color/groupChannelActionBarBackgroundColor"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_55sdp"
+            android:paddingHorizontal="@dimen/_16sdp"
             android:gravity="center_vertical">
-            <TextView
-                android:layout_marginStart="@dimen/_8sdp"
-                android:id="@+id/user_name"
+
+            <ImageView
+                android:id="@+id/back_click"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="match_parent"
+                app:tint="@color/groupChannelActionBarTextColor"
+                android:src="@drawable/back2" />
+
+            <RelativeLayout
+                android:id="@+id/member_title"
+                android:layout_toEndOf="@id/back_click"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/open_sans"
-                android:textSize="@dimen/_11ssp"
-                android:textFontWeight="600"
-                android:text="Live Market Session"
-                android:textColor="@color/groupChannelActionBarTextColor"
+                android:layout_height="wrap_content">
 
-                />
+                <RelativeLayout
+                    android:gravity="center_vertical"
+                    android:id="@+id/user_avatar"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="match_parent"
+                    >
 
-            <TextView
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_below="@id/user_name"
-                android:id="@+id/user_subscribers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:textSize="@dimen/_10ssp"
-                android:textFontWeight="400"
-                android:textColor="@color/groupChannelActionBarTextColor"/>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginVertical="@dimen/_5sdp"
+                        app:cardCornerRadius="@dimen/_120sdp">
 
-            <TextView
-                android:id="@+id/subscriber_subtitle"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_below="@id/user_name"
-                android:layout_toEndOf="@id/user_subscribers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:textFontWeight="400"
-                android:textSize="@dimen/_10ssp"
-                android:text="subscribers"
-                android:textColor="@color/groupChannelActionBarTextColor"/>
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/no_image_logo_background"
+                            android:id="@+id/group_channel_logo"/>
 
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/title_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/user_avatar"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_11ssp"
+                        android:textFontWeight="600"
+                        android:text="Live Market Session"
+                        android:textColor="@color/groupChannelActionBarTextColor"
+
+                        />
+
+                    <TextView
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_below="@id/user_name"
+                        android:id="@+id/user_subscribers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="@dimen/_10ssp"
+                        android:textFontWeight="400"
+                        android:textColor="@color/groupChannelActionBarTextColor"/>
+
+                    <TextView
+                        android:id="@+id/subscriber_subtitle"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_below="@id/user_name"
+                        android:layout_toEndOf="@id/user_subscribers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:textFontWeight="400"
+                        android:textSize="@dimen/_10ssp"
+                        android:text="subscribers"
+                        android:textColor="@color/groupChannelActionBarTextColor"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+            <ImageView
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:layout_centerVertical="true"
+                app:tint="@color/groupChannelActionBarTextColor"
+                android:id="@+id/search"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/search"/>
         </RelativeLayout>
-
-        </RelativeLayout>
-
-
-
-        <ImageView
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
-            android:layout_centerVertical="true"
-            app:tint="@color/groupChannelActionBarTextColor"
-            android:id="@+id/search"
-            android:layout_marginEnd="@dimen/_6sdp"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/search"/>
-    </RelativeLayout>
 
 
         <RelativeLayout
             android:background="@color/groupChannelPinMessageBackgroundColor"
             android:id="@+id/pin_message_container"
             android:layout_width="match_parent"
-            android:visibility="gone"
             android:layout_height="@dimen/_45sdp"
             android:elevation="@dimen/_10sdp"
+            android:visibility="gone"
             android:layout_below="@id/toolbar"
             android:orientation="horizontal">
 
@@ -179,7 +179,7 @@
                 android:layout_toEndOf="@id/pin_media_container"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
-                
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -278,205 +278,205 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
-        android:layout_below="@id/pin_message_container"
-        android:layout_above="@id/quote_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    <ProgressBar
-        android:id="@+id/loader"
-        android:layout_width="match_parent"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        android:layout_height="wrap_content"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chats"
-            android:layout_height="0dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/icon_container"
-        app:cardElevation="3dp"
-        android:visibility="gone"
-        android:layout_marginEnd="@dimen/_12sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_above="@id/quote_container"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="end"
-        app:cardBackgroundColor="@color/theme_grey"
-        app:cardCornerRadius="@dimen/_100sdp">
-
-        <ImageView
-            android:id="@+id/arrow_icon"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_arrow_downward_24"
-            app:tint="@color/tab_grey" />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <LinearLayout
-        android:elevation="@dimen/_2sdp"
-        android:layout_above="@id/search_container"
-        android:visibility="gone"
-        android:id="@+id/quote_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/channelQuoteDialogBackgroundColor"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/quote_user"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_gravity="center"
-            app:tint="@color/theme_green" />
-
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginVertical="@dimen/_10sdp"
-            app:dividerColor="@color/theme_green"/>
-
         <LinearLayout
+            android:layout_below="@id/pin_message_container"
+            android:layout_above="@id/quote_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <ProgressBar
+                android:id="@+id/loader"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_20sdp">
+                android:background="@android:color/white"
+                android:visibility="gone"
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                android:layout_alignParentStart="true"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_20sdp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/theme_green"
-                android:textSize="@dimen/_10sdp"
-                android:gravity="center"
-                android:text="Quote"/>
-
-                <ImageView
-                    android:layout_width="@dimen/_14sdp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/close_quote_editor"
-                    android:src="@drawable/close"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="@dimen/_4sdp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chats"
+                android:layout_height="0dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/quote_media_container"
-                android:id="@+id/old_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_14sdp"
-                android:layout_marginVertical="@dimen/_2sdp"
-                android:fontFamily="@font/poppins"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:textSize="@dimen/_9sdp"
-                android:gravity="center_vertical"
-                android:textColor="@color/channelQuoteDialogTextColor"
-                android:text="reply testing"/>
-
-            <LinearLayout
-                android:layout_below="@id/old_message"
-                android:layout_toStartOf="@id/quote_media_container"
-                android:layout_alignParentStart="true"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_20sdp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/old_msg_user"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:textColor="@color/channelQuoteDialogUserTimeStampColor"
-                    android:textSize="@dimen/_9sdp"
-                    android:text="Lisa Harper, "/>
-
-
-                <TextView
-                    android:id="@+id/old_msg_time"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:paddingStart="@dimen/_2sdp"
-                    android:textColor="@color/channelQuoteDialogUserTimeStampColor"
-                    android:textSize="@dimen/_9sdp"
-                    android:text="Today at 10.30 am"/>
-
-
-            </LinearLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/quote_media_container"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/_1sdp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="fitXY"
-                        android:id="@+id/quote_media_preview"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/white"
-                        android:gravity="center"
-                        android:textSize="@dimen/_12ssp"
-                        android:visibility="gone"
-                        android:id="@+id/quote_media_count"
-                        android:textStyle="bold"
-                        android:background="@color/mediaPinBackgroundTransparencyColor"
-                        android:elevation="@dimen/_2sdp"/>
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </RelativeLayout>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="1dp"
-                android:alpha=".6"/>
+                android:layout_weight="1"/>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/icon_container"
+            app:cardElevation="3dp"
+            android:visibility="gone"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_60sdp"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            app:cardBackgroundColor="@color/theme_grey"
+            app:cardCornerRadius="@dimen/_100sdp">
+
+            <ImageView
+                android:id="@+id/arrow_icon"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_arrow_downward_24"
+                app:tint="@color/tab_grey" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:elevation="@dimen/_2sdp"
+            android:layout_above="@id/search_container"
+            android:visibility="gone"
+            android:id="@+id/quote_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/channelQuoteDialogBackgroundColor"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/quote_user"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_gravity="center"
+                app:tint="@color/theme_green" />
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                app:dividerColor="@color/theme_green"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_20sdp">
+
+                    <TextView
+                        android:layout_alignParentStart="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_20sdp"
+                        android:fontFamily="@font/poppins"
+                        android:textColor="@color/theme_green"
+                        android:textSize="@dimen/_10sdp"
+                        android:gravity="center"
+                        android:text="Quote"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/_14sdp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/close_quote_editor"
+                        android:src="@drawable/close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_4sdp"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/quote_media_container"
+                        android:id="@+id/old_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:layout_marginVertical="@dimen/_2sdp"
+                        android:fontFamily="@font/poppins"
+                        android:ellipsize="end"
+                        android:maxLines="3"
+                        android:textSize="@dimen/_9sdp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/channelQuoteDialogTextColor"
+                        android:text="reply testing"/>
+
+                    <LinearLayout
+                        android:layout_below="@id/old_message"
+                        android:layout_toStartOf="@id/quote_media_container"
+                        android:layout_alignParentStart="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_20sdp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/old_msg_user"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:textColor="@color/channelQuoteDialogUserTimeStampColor"
+                            android:textSize="@dimen/_9sdp"
+                            android:text="Lisa Harper, "/>
+
+
+                        <TextView
+                            android:id="@+id/old_msg_time"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:paddingStart="@dimen/_2sdp"
+                            android:textColor="@color/channelQuoteDialogUserTimeStampColor"
+                            android:textSize="@dimen/_9sdp"
+                            android:text="Today at 10.30 am"/>
+
+
+                    </LinearLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/quote_media_container"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:visibility="gone"
+                        app:cardCornerRadius="@dimen/_1sdp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:id="@+id/quote_media_preview"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/white"
+                            android:gravity="center"
+                            android:textSize="@dimen/_12ssp"
+                            android:visibility="gone"
+                            android:id="@+id/quote_media_count"
+                            android:textStyle="bold"
+                            android:background="@color/mediaPinBackgroundTransparencyColor"
+                            android:elevation="@dimen/_2sdp"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="1dp"
+                    android:alpha=".6"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_marginBottom="@dimen/_60sdp"
@@ -501,32 +501,32 @@
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:gravity="center">
-                <TextView
-                    android:id="@+id/forward_count"
-                    android:layout_gravity="center"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/montserrat"
-                    android:textSize="@dimen/_11ssp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:textStyle="bold"
-                    android:text="1"/>
+                    <TextView
+                        android:id="@+id/forward_count"
+                        android:layout_gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/montserrat"
+                        android:textSize="@dimen/_11ssp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:textStyle="bold"
+                        android:text="1"/>
 
-                <TextView
-                    android:layout_gravity="center"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_10ssp"
-                    android:text="message selected"/>
+                    <TextView
+                        android:layout_gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_10ssp"
+                        android:text="message selected"/>
 
                 </LinearLayout>
 
@@ -639,137 +639,137 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/search_sub_container">
 
-            <com.example.audiorecorder.RecordView
-                android:id="@+id/record_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
-                app:slide_to_cancel_arrow_color="#000000"
-                app:slide_to_cancel_bounds="8dp"
-                app:slide_to_cancel_margin_right="10dp"
-                app:slide_to_cancel_text="Slide To Cancel"
-                app:counter_time_color="#ff0000"
-                android:layout_toStartOf="@+id/record_button"
-                />
+                <com.example.audiorecorder.RecordView
+                    android:id="@+id/record_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+                    app:slide_to_cancel_arrow_color="#000000"
+                    app:slide_to_cancel_bounds="8dp"
+                    app:slide_to_cancel_margin_right="10dp"
+                    app:slide_to_cancel_text="Slide To Cancel"
+                    app:counter_time_color="#ff0000"
+                    android:layout_toStartOf="@+id/record_button"
+                    />
 
-            <com.example.audiorecorder.RecordButton
-                android:id="@+id/record_button"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_alignParentEnd="true"
-                android:scaleType="centerInside"
-                app:tint="@color/sendMessageIconColor"
-                app:mic_icon="@drawable/microphone" />
-
-            <ImageView
-                android:id="@+id/send_message"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/send_message"
-                android:layout_alignParentEnd="true"/>
-
-            <LinearLayout
-                android:id="@+id/footer_search_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_32sdp"
-                android:orientation="horizontal">
-
-                <RelativeLayout
+                <com.example.audiorecorder.RecordButton
+                    android:id="@+id/record_button"
                     android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:id="@+id/dummy_user_container"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_alignParentEnd="true"
+                    android:scaleType="centerInside"
+                    app:tint="@color/sendMessageIconColor"
+                    app:mic_icon="@drawable/microphone" />
+
+                <ImageView
+                    android:id="@+id/send_message"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="match_parent"
                     android:visibility="gone"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_gravity="center_vertical">
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/send_message"
+                    android:layout_alignParentEnd="true"/>
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/dummyUsers"
-                        app:cardCornerRadius="@dimen/_100sdp"
-                        app:cardBackgroundColor="@color/dummy_user_background_color">
-
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="RE"
-                            android:id="@+id/dummy_user_initials"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/poppins"
-                            android:textSize="@dimen/_8ssp"
-                            android:layout_marginTop="@dimen/_2sdp"
-                            android:gravity="center"/>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </RelativeLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    app:cardElevation="0dp"
-                    android:layout_marginVertical="@dimen/_10sdp"
-                    android:layout_marginStart="@dimen/_12sdp"
-                    android:layout_marginEnd="@dimen/_12sdp"
-                    app:cardCornerRadius="@dimen/_12sdp"
-                    app:cardBackgroundColor="@color/sendMessageEditTextBackgroundColor"
-                    android:layout_height="match_parent">
+                <LinearLayout
+                    android:id="@+id/footer_search_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_32sdp"
+                    android:orientation="horizontal">
 
                     <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:id="@+id/dummy_user_container"
+                        android:visibility="gone"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_gravity="center_vertical">
 
-                        <LinearLayout
-                            android:id="@+id/message_text_container"
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:id="@+id/dummyUsers"
+                            app:cardCornerRadius="@dimen/_100sdp"
+                            app:cardBackgroundColor="@color/dummy_user_background_color">
 
-                            <ImageView
-                                android:layout_width="@dimen/_16sdp"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/smile"
-                                app:tint="@color/sendMessageEmojiColor"
-                                android:visibility="gone"
-                                android:layout_marginHorizontal="@dimen/_6sdp"/>
 
-                            <com.gtfconnect.utilities.CustomEditText
-                                android:id="@+id/type"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
+                            <TextView
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:hint="Message"
+                                android:text="RE"
+                                android:id="@+id/dummy_user_initials"
+                                android:textColor="@color/white"
                                 android:fontFamily="@font/poppins"
-                                android:textSize="@dimen/_10ssp"
-                                android:paddingStart="@dimen/_6sdp"
-                                android:textColor="@color/sendMessageTextColor"
-                                android:textColorHint="@color/sendMessageTextColor"
-                                android:background="@color/sendMessageEditTextBackgroundColor"/>
+                                android:textSize="@dimen/_8ssp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:gravity="center"/>
 
-                        </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                     </RelativeLayout>
 
-                </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        app:cardElevation="0dp"
+                        android:layout_marginVertical="@dimen/_10sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        app:cardCornerRadius="@dimen/_12sdp"
+                        app:cardBackgroundColor="@color/sendMessageEditTextBackgroundColor"
+                        android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/pin_attachment"
-                    android:layout_marginVertical="@dimen/_17sdp"
-                    android:layout_marginHorizontal="@dimen/_4sdp"
-                    android:layout_width="@dimen/_17sdp"
-                    android:layout_height="match_parent"
-                    app:tint="@color/sendMessageIconColor"
-                    android:src="@drawable/attach_doc"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/message_text_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_16sdp"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/smile"
+                                    app:tint="@color/sendMessageEmojiColor"
+                                    android:visibility="gone"
+                                    android:layout_marginHorizontal="@dimen/_6sdp"/>
+
+                                <com.gtfconnect.utilities.CustomEditText
+                                    android:id="@+id/type"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:hint="Message"
+                                    android:fontFamily="@font/poppins"
+                                    android:textSize="@dimen/_10ssp"
+                                    android:paddingStart="@dimen/_6sdp"
+                                    android:textColor="@color/sendMessageTextColor"
+                                    android:textColorHint="@color/sendMessageTextColor"
+                                    android:background="@color/sendMessageEditTextBackgroundColor"/>
+
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <ImageView
+                        android:id="@+id/pin_attachment"
+                        android:layout_marginVertical="@dimen/_17sdp"
+                        android:layout_marginHorizontal="@dimen/_4sdp"
+                        android:layout_width="@dimen/_17sdp"
+                        android:layout_height="match_parent"
+                        app:tint="@color/sendMessageIconColor"
+                        android:src="@drawable/attach_doc"/>
+
+                </LinearLayout>
 
             </RelativeLayout>
 
@@ -848,14 +848,4 @@
         android:id="@+id/animation_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <TextView
-        android:visibility="gone"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:gravity="center"
-        android:textSize="@dimen/_16sdp"
-        android:textColor="@color/white"
-        android:layout_centerInParent="true"
-        android:id="@+id/dummy_emoji_container"/>
 </RelativeLayout>

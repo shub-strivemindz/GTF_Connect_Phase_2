@@ -98,10 +98,15 @@
 
     <color name="authTextView2">#fff</color>
 
+    <color name="how_did_you_find_us">#0E1118</color>
 
+    <color name="how_did_you_find_us_divider">#dde1ea</color>
 
+    <color name="how_did_you_find_us_divider1">#252C3C</color>
 
+    <color name="policiesActionBarBackgroundColor">#232833</color>
 
+    <color name="policiesBackgroundColor">#0E1118</color>
 
     <!--======================================================================= Usr Profile Module ==========================================================================-->
 
@@ -119,6 +124,7 @@
     <color name="savedMessageActionBarTextColor">#fff</color>
 
     <color name="contactUsCardBackgroundColor">#222E3C</color>
+
 
 
 

@@ -65,7 +65,7 @@ public class ChannelRowListDataModel {
         this.chatStatus = chatStatus;
     }
 
-    @SerializedName("CommentCount")
+    @SerializedName("commentcount")
     @Expose
     private int commentCount;
     @SerializedName("ChatStatus")

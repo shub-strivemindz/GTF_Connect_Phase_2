@@ -10,12 +10,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gtfconnect.databinding.ActivityPreviewMediaBinding;
@@ -41,6 +47,8 @@ public class MultiPreviewScreen extends AppCompatActivity implements MultiPrevie
     String title_name = "";
 
     ImagePreviewAdapter imagePreviewAdapter;
+
+    ExoPlayer simpleExoPlayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -209,100 +217,16 @@ public class MultiPreviewScreen extends AppCompatActivity implements MultiPrevie
     }
 
 
-
-    /*private void downloadAndOpenInvoice(String videoUrl) {
-        //loader_show.setVisibility(View.VISIBLE);
-        LinearLayout loader_show = null;
-
-        Observable.fromCallable(() -> {
-                    String pdfName = "video";
-                    File file = null;
-                    String pdfUrl = videoUrl;
-                    if (getIntent().getStringExtra("old") != null && !getIntent().getStringExtra("old").isEmpty()) {
-                        file = downloadFile(this, pdfUrl, pdfName, loader_show, getIntent().getStringExtra("old"));
-                    } else {
-                        file = downloadFile(this, pdfUrl, pdfName, loader_show, null);
-                    }
-
-
-                    return file;
-                }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(file -> {
-                    Toast.makeText(this, "Video downloaded successfully!", Toast.LENGTH_SHORT).show();
-                    //viewPdf(file, PdfFileShow.this, loader_show);
-                });
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        imagePreviewAdapter.pauseExoPlayer();
     }
 
 
-    public static String getAppDir(Context context, String folderName) {
-        String downloadPath = "/" + "connect_files" + "/"
-                + new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date())
-                + ".mp4";
-
-        String fileDownloadPath = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS) + downloadPath;
-
-        return fileDownloadPath;
-        //return context.getExternalFilesDir(null).getAbsolutePath() + File.separator + folderName + File.separator;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        imagePreviewAdapter.destroyExoPlayer();
     }
-
-
-    public File downloadFile(Activity mActivity, String url, String fileName, LinearLayout loader_show, String old_file) throws GeneralSecurityException, IOException {
-// write the document content
-        File pdfFile = null;
-
-
-        File fileDir = new File(getAppDir(mActivity, ".Notes")); //Invoice folder inside your app directory
-        if (!fileDir.exists()) {
-            boolean mkdirs = fileDir.mkdirs();
-        }
-        pdfFile = new File(getAppDir(mActivity, "Notes"), fileName);
-        if (old_file != null) {
-            File pdfFileold = new File(getAppDir(mActivity, "Notes"), old_file);
-            if (pdfFileold.exists())
-                pdfFileold.delete();
-        }
-
-//Invoice folder inside your app directory
-        *//*String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-        EncryptedFile encryptedFile = new EncryptedFile.Builder(
-                pdfFile,
-                this,
-                masterKeyAlias,
-                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-        ).build();*//*
-
-        if (!pdfFile.exists()) {
-           // FileOutputStream encryptedOutputStream = encryptedFile.openFileOutput();
-            URL u = new URL(url);
-            URLConnection conn = u.openConnection();
-            int contentLength = conn.getContentLength();
-
-            DataInputStream stream = new DataInputStream(u.openStream());
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(stream);
-
-
-
-// Set the content type of the response to PDF
-
-
-
-
-// Write the buffered input stream to the output stream
-            DataOutputStream fos = new DataOutputStream(new FileOutputStream(pdfFile));
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
-            }
-
-            fos.write(buffer);
-            fos.flush();
-            fos.close();
-
-        }
-        return pdfFile;
-    }*/
 }

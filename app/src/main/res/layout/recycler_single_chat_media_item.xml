@@ -40,9 +40,9 @@
                 <ImageView
                     android:layout_width="@dimen/_18sdp"
                     android:layout_height="@dimen/_18sdp"
-                    android:paddingStart="@dimen/_3sdp"
                     android:layout_centerInParent="true"
                     android:elevation="@dimen/_2sdp"
+                    android:paddingStart="@dimen/_3sdp"
                     android:src="@drawable/play" />
             </RelativeLayout>
 
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_40sdp"
                 android:background="#33000000"
-                android:text=".trsdgt.125412541.gtf.Doucment.pdf"
+                android:text="Document.pdf"
                 android:textColor="@color/white"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:gravity="center"

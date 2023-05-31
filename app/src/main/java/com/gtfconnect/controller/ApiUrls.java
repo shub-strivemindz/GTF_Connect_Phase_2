@@ -20,6 +20,10 @@ public class ApiUrls {
     public static final String GET_CONNECT_V1_BASE_URL = "http://gtfconnect-api.strivemindz.com:9002/api/v1/";
 
 
+    public static final String GET_TERMS_CONDITIONS = "get_cms_page";
+
+
+
     public static final String UPDATE_PROFILE_DATA = "updateprofile";
 
     public static final String UPDATE_PROFILE_PIC = "update_profile_pic";
@@ -97,4 +101,7 @@ public class ApiUrls {
     public static final String URL_REPORT_USER = "add-report";
 
     public static final String URL_BLOCK_USER = "update-member-status";
+
+
+    public static final String URL_PAYMENT_WEB_VIEW_PORTAL = "https://gtf-connect.strivemindz.com/app/checkout/user/";
 }

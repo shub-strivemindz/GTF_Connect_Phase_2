@@ -228,6 +228,9 @@ public class DatabaseRepo {
         appDao.delete_channel_body_data();
         appDao.delete_channel_header_data();
         appDao.delete_exclusive_offer_data();
+        appDao.delete_user_profile_data();
+        appDao.delete_group_channel_info_data();
+        appDao.delete_gallery_data();
     }
 
 

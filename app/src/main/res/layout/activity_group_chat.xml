@@ -13,9 +13,9 @@
         <RelativeLayout
             android:id="@+id/toolbar"
             android:layout_alignParentTop="true"
-            android:background="@color/theme_green"
+            android:background="@color/groupChannelActionBarBackgroundColor"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
+            android:layout_height="@dimen/_55sdp"
             android:paddingHorizontal="@dimen/_16sdp"
             android:gravity="center_vertical">
 
@@ -23,6 +23,7 @@
                 android:id="@+id/back_click"
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="match_parent"
+                app:tint="@color/groupChannelActionBarTextColor"
                 android:src="@drawable/back2" />
 
             <RelativeLayout
@@ -49,7 +50,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="centerInside"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/no_image_logo_background"
                             android:id="@+id/group_channel_logo"/>
 
@@ -73,7 +74,7 @@
                         android:textSize="@dimen/_11ssp"
                         android:textFontWeight="600"
                         android:text="Live Market Session"
-                        android:textColor="@color/white"
+                        android:textColor="@color/groupChannelActionBarTextColor"
 
                         />
 
@@ -86,8 +87,7 @@
                         android:fontFamily="@font/open_sans"
                         android:textSize="@dimen/_10ssp"
                         android:textFontWeight="400"
-                        android:text="1,402,345"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/groupChannelActionBarTextColor"/>
 
                     <TextView
                         android:id="@+id/subscriber_subtitle"
@@ -100,30 +100,33 @@
                         android:textFontWeight="400"
                         android:textSize="@dimen/_10ssp"
                         android:text="subscribers"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/groupChannelActionBarTextColor"/>
 
                 </RelativeLayout>
 
             </RelativeLayout>
 
+
+
             <ImageView
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="@dimen/_16sdp"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
                 android:layout_centerVertical="true"
-                app:tint="@color/white"
+                app:tint="@color/groupChannelActionBarTextColor"
                 android:id="@+id/search"
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/search"/>
         </RelativeLayout>
 
+
         <RelativeLayout
             android:background="@color/groupChannelPinMessageBackgroundColor"
             android:id="@+id/pin_message_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
-            android:visibility="gone"
             android:elevation="@dimen/_10sdp"
+            android:visibility="gone"
             android:layout_below="@id/toolbar"
             android:orientation="horizontal">
 
@@ -250,14 +253,15 @@
 
         </RelativeLayout>
 
+
         <com.google.android.material.card.MaterialCardView
             android:layout_below="@id/pin_message_container"
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_20sdp"
-            android:visibility="gone"
             android:id="@+id/chip_date_container"
             app:cardCornerRadius="@dimen/_16sdp"
+            android:visibility="gone"
             android:alpha=".8"
             android:layout_centerHorizontal="true"
             app:cardBackgroundColor="@color/theme_green">
@@ -292,7 +296,6 @@
                 android:id="@+id/chats"
                 android:layout_height="0dp"
                 android:layout_width="match_parent"
-                android:layout_marginBottom="@dimen/_8sdp"
                 android:layout_weight="1"/>
 
         </LinearLayout>
@@ -302,10 +305,10 @@
             app:cardElevation="3dp"
             android:visibility="gone"
             android:layout_marginEnd="@dimen/_12sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_60sdp"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
-            android:layout_above="@id/quote_container"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
             app:cardBackgroundColor="@color/theme_grey"
@@ -324,8 +327,8 @@
         <LinearLayout
             android:elevation="@dimen/_2sdp"
             android:layout_above="@id/search_container"
-            android:id="@+id/quote_container"
             android:visibility="gone"
+            android:id="@+id/quote_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/channelQuoteDialogBackgroundColor"
@@ -476,11 +479,11 @@
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:layout_above="@id/search_container"
+            android:layout_marginBottom="@dimen/_60sdp"
+            android:layout_alignParentBottom="true"
             android:id="@+id/forward_container"
-            app:cardElevation="@dimen/_4sdp"
             android:visibility="gone"
+            app:cardElevation="@dimen/_4sdp"
             app:cardBackgroundColor="#525656"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
@@ -531,6 +534,8 @@
                     android:layout_width="@dimen/_80sdp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="@dimen/_4sdp"
+                    android:id="@+id/forward_message"
+                    android:clickable="true"
                     android:layout_marginEnd="@dimen/_4sdp"
                     app:cardBackgroundColor="#272727">
 
@@ -559,6 +564,7 @@
             app:cardElevation="@dimen/_4sdp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
+            android:visibility="gone"
             android:layout_marginHorizontal="@dimen/_20sdp"
             app:cardCornerRadius="@dimen/_14sdp">
 
@@ -610,6 +616,7 @@
                     android:src="@drawable/close"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
+                    android:clickable="true"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_8sdp"/>
 
@@ -618,160 +625,169 @@
 
         </com.google.android.material.card.MaterialCardView>
 
- <!--       <com.example.audiorecorder.RecordLockView
-            android:id="@+id/record_lock"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_alignParentEnd="true"
-            android:layout_above="@id/footer_container"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_60sdp" />-->
-
-
         <RelativeLayout
             android:layout_alignParentBottom="true"
             android:id="@+id/search_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
+            android:elevation="@dimen/_8sdp"
             android:background="@color/sendMessageDialogBackgroundColor"
             android:orientation="horizontal">
 
-            <com.example.audiorecorder.RecordView
-                android:id="@+id/record_view"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
-                app:slide_to_cancel_arrow_color="#000000"
-                app:slide_to_cancel_bounds="8dp"
-                app:slide_to_cancel_margin_right="10dp"
-                app:slide_to_cancel_text="Slide To Cancel"
-                app:counter_time_color="#ff0000"
-                android:layout_toStartOf="@+id/record_button"
-                />
+                android:id="@+id/search_sub_container">
 
-            <com.example.audiorecorder.RecordButton
-                android:id="@+id/record_button"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_alignParentEnd="true"
-                android:scaleType="centerInside"
-                app:tint="@color/sendMessageIconColor"
-                app:mic_icon="@drawable/microphone" />
+                <com.example.audiorecorder.RecordView
+                    android:id="@+id/record_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+                    app:slide_to_cancel_arrow_color="#000000"
+                    app:slide_to_cancel_bounds="8dp"
+                    app:slide_to_cancel_margin_right="10dp"
+                    app:slide_to_cancel_text="Slide To Cancel"
+                    app:counter_time_color="#ff0000"
+                    android:layout_toStartOf="@+id/record_button"
+                    />
 
-            <ImageView
-                android:id="@+id/send_message"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/send_message"
-                android:layout_alignParentEnd="true"/>
-
-            <LinearLayout
-                android:id="@+id/footer_search_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_32sdp"
-                android:orientation="horizontal">
-
-                <RelativeLayout
+                <com.example.audiorecorder.RecordButton
+                    android:id="@+id/record_button"
                     android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:id="@+id/dummy_user_container"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_alignParentEnd="true"
+                    android:scaleType="centerInside"
+                    app:tint="@color/sendMessageIconColor"
+                    app:mic_icon="@drawable/microphone" />
+
+                <ImageView
+                    android:id="@+id/send_message"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="match_parent"
                     android:visibility="gone"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_gravity="center_vertical">
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/send_message"
+                    android:layout_alignParentEnd="true"/>
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/dummyUsers"
-                        app:cardCornerRadius="@dimen/_100sdp"
-                        app:cardBackgroundColor="@color/dummy_user_background_color">
-
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="RE"
-                            android:id="@+id/dummy_user_initials"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/poppins"
-                            android:textSize="@dimen/_8ssp"
-                            android:layout_marginTop="@dimen/_2sdp"
-                            android:gravity="center"/>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-
-                </RelativeLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    app:cardElevation="0dp"
-                    android:layout_marginVertical="@dimen/_10sdp"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginEnd="@dimen/_12sdp"
-                    app:cardCornerRadius="@dimen/_12sdp"
-                    app:cardBackgroundColor="@color/sendMessageEditTextBackgroundColor"
-                    android:layout_height="match_parent">
+                <LinearLayout
+                    android:id="@+id/footer_search_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_32sdp"
+                    android:orientation="horizontal">
 
                     <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:id="@+id/dummy_user_container"
+                        android:visibility="gone"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_gravity="center_vertical">
 
-                        <LinearLayout
-                            android:id="@+id/message_text_container"
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:id="@+id/dummyUsers"
+                            app:cardCornerRadius="@dimen/_100sdp"
+                            app:cardBackgroundColor="@color/dummy_user_background_color">
 
-                            <ImageView
-                                android:id="@+id/emoji"
-                                android:layout_width="@dimen/_16sdp"
-                                android:layout_height="@dimen/_16sdp"
-                                android:src="@drawable/smile"
-                                app:tint="@color/sendMessageEmojiColor"
-                                android:layout_marginHorizontal="@dimen/_8sdp"
-                                android:layout_gravity="center_vertical"/>
 
-                            <com.gtfconnect.utilities.CustomEditText
-                                android:id="@+id/type"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
+                            <TextView
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:hint="Message"
-                                android:paddingStart="@dimen/_8sdp"
-                                android:textColorHint="@color/sendMessageTextColor"
-                                android:textColor="@color/sendMessageTextColor"
+                                android:text="RE"
+                                android:id="@+id/dummy_user_initials"
+                                android:textColor="@color/white"
                                 android:fontFamily="@font/poppins"
-                                android:textSize="@dimen/_10ssp"
-                                android:background="@android:color/transparent"/>
+                                android:textSize="@dimen/_8ssp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:gravity="center"/>
 
-                        </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                     </RelativeLayout>
 
-                </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        app:cardElevation="0dp"
+                        android:layout_marginVertical="@dimen/_10sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        app:cardCornerRadius="@dimen/_12sdp"
+                        app:cardBackgroundColor="@color/sendMessageEditTextBackgroundColor"
+                        android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/pin_attachment"
-                    android:layout_marginVertical="@dimen/_17sdp"
-                    android:layout_marginHorizontal="@dimen/_4sdp"
-                    android:layout_width="@dimen/_17sdp"
-                    android:layout_height="match_parent"
-                    app:tint="@color/sendMessageIconColor"
-                    android:src="@drawable/attach_doc"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/message_text_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_16sdp"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/smile"
+                                    app:tint="@color/sendMessageEmojiColor"
+                                    android:visibility="gone"
+                                    android:layout_marginHorizontal="@dimen/_6sdp"/>
+
+                                <com.gtfconnect.utilities.CustomEditText
+                                    android:id="@+id/type"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:hint="Message"
+                                    android:fontFamily="@font/poppins"
+                                    android:textSize="@dimen/_10ssp"
+                                    android:paddingStart="@dimen/_6sdp"
+                                    android:textColor="@color/sendMessageTextColor"
+                                    android:textColorHint="@color/sendMessageTextColor"
+                                    android:background="@color/sendMessageEditTextBackgroundColor"/>
+
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <ImageView
+                        android:id="@+id/pin_attachment"
+                        android:layout_marginVertical="@dimen/_17sdp"
+                        android:layout_marginHorizontal="@dimen/_4sdp"
+                        android:layout_width="@dimen/_17sdp"
+                        android:layout_height="match_parent"
+                        app:tint="@color/sendMessageIconColor"
+                        android:src="@drawable/attach_doc"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:elevation="@dimen/_8sdp"
+                android:background="@color/sendMessageDialogBackgroundColor"
+                android:layout_alignParentBottom="true"
+                android:text="Please contact admin."
+                android:gravity="center"
+                android:textColor="@color/authEditText"
+                android:visibility="gone"
+                android:textSize="@dimen/_11ssp"
+                android:fontFamily="@font/poppins"
+                android:id="@+id/footer_status_tag"/>
 
         </RelativeLayout>
-
 
     </RelativeLayout>
 
@@ -826,4 +842,10 @@
             android:id="@+id/mini_image_preview_recycler"/>
 
     </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/animation_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

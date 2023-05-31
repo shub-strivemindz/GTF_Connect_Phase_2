@@ -29,6 +29,7 @@ import com.gtfconnect.models.authResponseModels.LoginResponseModel;
 import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.authModule.registerModule.RegisterScreen1;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.AuthViewModel;
@@ -45,6 +46,10 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
 
     private final int LOGIN_AUTH = 1;
     private final int RESEND_OTP = 2;
+
+    private final int GET_TERMS = 3;
+
+    private final int GET_PRIVACY = 4;
 
     private static boolean exitDoublePressed = false;
 
@@ -123,6 +128,21 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
                 binding.password.setTransformationMethod(PasswordTransformationMethod.getInstance());
                 isTextHidden = true;
             }
+        });
+
+
+
+
+
+        binding.terms.setOnClickListener(view -> {
+            type_fetcher = GET_TERMS;
+            authViewModel.get_cms_data(Constants.CMS_TYPE_TERMS);
+        });
+
+
+        binding.privacy.setOnClickListener(view -> {
+            type_fetcher = GET_PRIVACY;
+            authViewModel.get_cms_data(Constants.CMS_TYPE_POLICIES);
         });
     }
 
@@ -247,7 +267,8 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
 
     @Override
     public void onAuthFailure(String message) {
-
+        Utils.showSnackMessage(this,binding.getRoot(),message);
+        Log.d("auth_error :",message);
         rest.dismissProgressdialog();
     }
 
@@ -255,22 +276,28 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
     @Override
     public void onServerFailure(String message) {
         binding.errorDialog.setVisibility(View.VISIBLE);
-        Log.d("Render Error :",message);
+        binding.errorMessage.setText(message);
+        Log.d("server_error :",message);
         rest.dismissProgressdialog();
     }
 
     @Override
     public void onForbidden(String message) {
+        Utils.showSnackMessage(this,binding.getRoot(),message);
+        Log.d("forbidden_error :",message);
         rest.dismissProgressdialog();
     }
 
     @Override
     public void onLaunchFailure(JsonObject jsonObject) {
+        Utils.showSnackMessage(this,binding.getRoot(),jsonObject.get("detailMessage").toString());
         rest.dismissProgressdialog();
     }
 
     @Override
     public void onOtherFailure(String message) {
+        Log.d("other_error :",message);
+        Utils.showSnackMessage(this,binding.getRoot(),message);
         rest.dismissProgressdialog();
     }
 
@@ -315,12 +342,39 @@ public class LoginScreen extends AppCompatActivity implements ApiResponseListene
                 }
             });*/
             startActivity(new Intent(LoginScreen.this, HomeScreen.class));
+            finishAffinity();
         }
         else if (type_fetcher == 2)
         {
             startActivity(new Intent(LoginScreen.this, OtpVerificationScreen.class));
+            finishAffinity();
         }
-        finishAffinity();
+        else if (type_fetcher == GET_TERMS) {
+
+            if (data != null && data.get("data") != null) {
+                String value = data.get("data").toString();
+                if (!value.isEmpty()) {
+
+                    Intent intent = new Intent(LoginScreen.this,TermsConditionsScreen.class);
+                    intent.putExtra("key_header",Constants.CMS_TYPE_TERMS);
+                    intent.putExtra("data",value);
+                    startActivity(intent);
+                }
+            }
+        }
+        else if (type_fetcher == GET_PRIVACY) {
+
+            if (data != null && data.get("data") != null) {
+                String value = data.get("data").toString();
+                if (!value.isEmpty()) {
+
+                    Intent intent = new Intent(LoginScreen.this,TermsConditionsScreen.class);
+                    intent.putExtra("key_header",Constants.CMS_TYPE_POLICIES);
+                    intent.putExtra("data",value);
+                    startActivity(intent);
+                }
+            }
+        }
     }
 
     @Override

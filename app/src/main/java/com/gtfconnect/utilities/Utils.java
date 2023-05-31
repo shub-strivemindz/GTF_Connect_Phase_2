@@ -1336,6 +1336,90 @@ public class Utils {
 
 
 
+    public static void convertSecondsToHours(String slowModeDuration){
+
+        int hour;
+        int min;
+        int sec ;
+
+
+        long duration = Long.parseLong(slowModeDuration);
+
+        // Calculating total hours =====================
+        long hourValue = (long) duration % 3600;
+        hour = (int) duration / 3600;
+
+
+        Log.d("convertSecondsToHours","slowModeDuration = "+duration);
+        Log.d("convertSecondsToHours","hourValue = "+hourValue);
+        Log.d("convertSecondsToHours","hour = "+hour);
+
+
+
+        // Calculating total minutes =====================
+        min = (int) hourValue / 60;
+
+
+        // Calculating total minutes =====================
+        sec = (int) hourValue % 60;
+
+        Log.d("convertSecondsToHours","min = "+min);
+        Log.d("convertSecondsToHours","sec = "+sec);
+
+        slowModeDuration = "";
+
+        if (hour <= 0){
+            slowModeDuration = "00";
+        } else if (hour < 10) {
+            slowModeDuration = "0"+hour;
+        }
+        else{
+            slowModeDuration = String.valueOf(hour);
+        }
+
+        slowModeDuration += ":";
+
+
+        if (min <= 0){
+            slowModeDuration += "00";
+        } else if (min < 10) {
+            slowModeDuration += "0"+min;
+        }
+        else{
+            slowModeDuration += String.valueOf(min);
+        }
+
+
+        slowModeDuration += ":";
+
+
+        if (sec <= 0){
+            slowModeDuration += "00";
+        } else if (sec < 10) {
+            slowModeDuration += "0"+sec;
+        }
+        else{
+            slowModeDuration += String.valueOf(sec);
+        }
+
+
+        Log.d("convertSecondsToHours","time = "+slowModeDuration);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

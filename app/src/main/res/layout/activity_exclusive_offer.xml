@@ -299,6 +299,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginHorizontal="@dimen/_40sdp"
+                android:id="@+id/subscribe_plan"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_18sdp"
                 app:cardBackgroundColor="@color/theme_green"

@@ -32,6 +32,9 @@ public class MediaListModel {
     @SerializedName("MediaTypeId")
     @Expose
     private String mediaTypeId;
+    @SerializedName("Thumbnail")
+    @Expose
+    private String thumbnail;
     @SerializedName("Status")
     @Expose
     private String status;
@@ -53,6 +56,16 @@ public class MediaListModel {
     @SerializedName("UpdatedAt")
     @Expose
     private String updatedAt;
+
+
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 
     public Integer getGroupChatMediaID() {
         return groupChatMediaID;

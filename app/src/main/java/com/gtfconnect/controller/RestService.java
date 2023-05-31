@@ -404,6 +404,30 @@ public interface RestService {
 
 
 
+
+
+
+
+    @FormUrlEncoded
+    @POST(ApiUrls.GET_TERMS_CONDITIONS)
+    Observable<JsonElement> get_cms_page_data(@Header("DeviceType") String device_type,
+                                        @Header("DeviceToken") String device_token,
+                                        @Field("Type") String type);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @FormUrlEncoded
     @POST(ApiUrls.URL_GROUP_CHANNEL + "/" +"{id}"+ "/" + ApiUrls.URL_REPORT_USER)
     Observable<JsonElement> block_user(@Path("id") int channelID,

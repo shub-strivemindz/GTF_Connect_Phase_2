@@ -3,6 +3,7 @@ package com.gtfconnect.ui.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +27,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.exa.ashutosh_video.VideoActivity;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerMediaPreviewBinding;
 import com.gtfconnect.interfaces.MultiPreviewListener;
@@ -51,6 +58,10 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
     private String fileType = "";
 
     private int viewPosition ;
+
+    ExoPlayer simpleExoPlayer;
+
+    CircularProgressDrawable circularProgressDrawable;
 
     public  ImagePreviewAdapter(Context context, List<MediaListModel> mediaList,String post_base_url,MultiPreviewListener listener){
         this.mediaList = mediaList;
@@ -113,6 +124,7 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
                     }).
                     transition(DrawableTransitionOptions.withCrossFade()).into(holder.binding.mediaPreview);
 
+            holder.binding.videoPlayerContainer.setVisibility(View.GONE);
             holder.binding.playVideo.setVisibility(View.GONE);
             holder.binding.mediaPreview.setVisibility(View.VISIBLE);
             holder.binding.docViewer.setVisibility(View.GONE);
@@ -120,30 +132,36 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
         }
         else if (fileType.equalsIgnoreCase("video")) {
 
-
+            holder.binding.videoPlayerContainer.setVisibility(View.GONE);
             holder.binding.playVideo.setVisibility(View.VISIBLE);
             holder.binding.mediaPreview.setVisibility(View.GONE);
             holder.binding.docViewer.setVisibility(View.GONE);
             holder.binding.previewNotAvailableContainer.setVisibility(View.GONE);
         }
-        else {
+        else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
+            holder.binding.videoPlayerContainer.setVisibility(View.GONE);
             holder.binding.previewNotAvailableContainer.setVisibility(View.VISIBLE);
             holder.binding.playVideo.setVisibility(View.GONE);
             holder.binding.mediaPreview.setVisibility(View.GONE);
             holder.binding.docViewer.setVisibility(View.GONE);
-
-            loadDocument(holder,post_path);
         }
 
 
-        holder.binding.playVideo.setOnClickListener(view -> loadVideoFile(post_path));
+        holder.binding.playVideo.setOnClickListener(view -> {
+            //loadVideoFile(post_path);
+            holder.binding.videoPlayerContainer.setVisibility(View.VISIBLE);
+            loadAutoPlayVideoFile(post_path,holder.binding.playerView,holder.binding.progressBar);
+        });
 
         holder.binding.openDoc.setOnClickListener(view -> {
+
             holder.binding.previewNotAvailableContainer.setVisibility(View.GONE);
             holder.binding.playVideo.setVisibility(View.GONE);
             holder.binding.mediaPreview.setVisibility(View.GONE);
             holder.binding.docViewer.setVisibility(View.VISIBLE);
+
+            loadDocument(holder,post_path);
         });
 
     }
@@ -154,6 +172,7 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
         notifyDataSetChanged();
     }
 
+/*
     private void loadVideoFile(String videoFilePath)
     {
         context.startActivity(new Intent(context, VideoActivity.class)
@@ -161,9 +180,14 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
                 .putExtra("start_time","0")
                 .putExtra("end_time","0"));
     }
+*/
 
     private void loadDocument(ViewHolder holder,String docPath)
     {
+        /*Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse( "http://docs.google.com/viewer?url=" + docPath), "text/html");
+        context.startActivity(intent);*/
+
         WebSettings settings = holder.binding.docViewer.getSettings();
         holder.binding.docViewer.setWebViewClient(new AppWebViewClients());
         settings.setJavaScriptEnabled(true);
@@ -228,6 +252,79 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
 
 
 
+
+
+
+
+
+    private void loadAutoPlayVideoFile(String videoPath, PlayerView videoPlayer, ProgressBar progressBar){
+
+
+        simpleExoPlayer = new ExoPlayer.Builder(context).build();
+        videoPlayer.setPlayer(simpleExoPlayer);
+        videoPlayer.setKeepScreenOn(true);
+
+        MediaItem mediaItem = MediaItem.fromUri(videoPath);
+        simpleExoPlayer.addMediaItem(mediaItem);
+        simpleExoPlayer.setPlayWhenReady(true);
+
+        simpleExoPlayer.prepare();
+        simpleExoPlayer.play();
+
+        //listener.OnMediaPlayPause(simpleExoPlayer);
+        simpleExoPlayer.addListener(new Player.Listener() {
+
+            @Override
+            public void onPlaybackStateChanged(@Player.State int state) {
+                if (state == Player.STATE_BUFFERING) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                else if (state == Player.STATE_READY) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                else if (state == Player.STATE_ENDED) {
+
+                    // Todo
+                }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                Player.Listener.super.onPlayerError(error);
+                Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
+                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+                simpleExoPlayer.addMediaItem(mediaItem);
+                simpleExoPlayer.setPlayWhenReady(true);
+                simpleExoPlayer.prepare();
+                simpleExoPlayer.play();
+            }
+        });
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
     public int getItemCount() {
         return mediaList.size();
@@ -241,6 +338,28 @@ public class ImagePreviewAdapter extends RecyclerView.Adapter<ImagePreviewAdapte
             super(binding.getRoot());
             this.binding = binding;
 
+        }
+    }
+
+
+
+    public void destroyExoPlayer(){
+
+        if (simpleExoPlayer != null){
+            if (simpleExoPlayer.isPlaying()) {
+                simpleExoPlayer.stop();
+            }
+            simpleExoPlayer.release();
+
+        }
+    }
+
+
+    public void pauseExoPlayer(){
+        if (simpleExoPlayer != null){
+            if (simpleExoPlayer.isPlaying()) {
+                simpleExoPlayer.pause();
+            }
         }
     }
 }

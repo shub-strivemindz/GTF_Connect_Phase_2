@@ -33,6 +33,8 @@ public interface ChannelChatListener {
 
     void viewMemberProfile(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
+    void viewSelfProfile();
+
     void forwardMultiplePost(int selectedCount);
 
     void toggleMultipleMessageSelection(boolean toggleSelection);

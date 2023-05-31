@@ -136,26 +136,26 @@ public class ForgetPasswordScreen extends AppCompatActivity implements ApiRespon
 
     @Override
     public void onAuthFailure(String message) {
-
+        Utils.showSnackMessage(this,binding.getRoot(),message);
     }
 
     @Override
     public void onServerFailure(String message) {
-
+        Utils.showSnackMessage(this,binding.getRoot(),message);
     }
 
     @Override
     public void onForbidden(String message) {
-
+        Utils.showSnackMessage(this,binding.getRoot(),message);
     }
 
     @Override
     public void onLaunchFailure(JsonObject jsonObject) {
-
+        Utils.showSnackMessage(this,binding.getRoot(),jsonObject.get("message").toString());
     }
 
     @Override
     public void onOtherFailure(String message) {
-
+        Utils.showSnackMessage(this,binding.getRoot(),message);
     }
 }

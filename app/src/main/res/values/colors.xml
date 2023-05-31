@@ -161,6 +161,16 @@
 
     <color name="authTextView2">#000</color>
 
+    <color name="how_did_you_find_us">#F3F6FF</color>
+
+    <color name="how_did_you_find_us_divider">#D6D8E0</color>
+
+    <color name="how_did_you_find_us_divider1">#F1F3FC</color>
+
+    <color name="policiesActionBarBackgroundColor">#2FB463</color>
+
+    <color name="policiesBackgroundColor">#FFF</color>
+
 
 
     <!--======================================================================= User Profile Module ==========================================================================-->

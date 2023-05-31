@@ -107,7 +107,7 @@ public class RecentFragment extends Fragment implements ApiResponseListener {
 
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
         try {
             dashboardMessageCountListener = (DashboardMessageCountListener) activity;
@@ -359,7 +359,6 @@ public class RecentFragment extends Fragment implements ApiResponseListener {
     public void onResume() {
         super.onResume();
         loadLocalData();
-
     }
 
 

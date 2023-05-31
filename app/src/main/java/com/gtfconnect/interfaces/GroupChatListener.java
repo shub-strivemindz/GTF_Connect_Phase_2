@@ -35,11 +35,14 @@ public interface GroupChatListener {
 
     void viewMemberProfile(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
-    void forwardMultiplePost(int selectedPostCount);
+    void viewSelfProfile();
+
+    void forwardMultiplePost(int selectedCount);
+
+    void toggleMultipleMessageSelection(boolean toggleSelection);
 
     void saveMessage(int chatID);
 
-    void updateChatList(ArrayList<ChannelRowListDataModel> list);
     void initiateCommentScreen(String data,String profileBaseUrl,String postBaseUrl,String userID);
 
 }

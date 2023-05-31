@@ -11,7 +11,12 @@
 
     <string name="forget_password"><u>Forget Password?</u></string>
     <string name="resend_otp"><u>Resend OTP</u></string>
-    <string name="read_terms_conditions_and_privacy_policy">Read <u>terms conditions</u> and <u>privacy policy</u></string>
+
+    <string name="terms_conditions"><u>terms conditions</u></string>
+    <string name="privacy_policy"><u>privacy policy</u></string>
+
+
+
     <string name="lorem_ipsum_is_simply_dummy_text_of_the_printing_and_typesetting_industry_lorem_ipsum_has_been_the_industry_s_standard_dummy_text_ever_since_the_1500s">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s|</string>
     <string name="recent">Recent</string>
     <string name="channel">Channel</string>

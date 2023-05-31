@@ -162,7 +162,7 @@ public class ManagePermissionScreen extends AppCompatActivity implements ApiResp
             Map<String,Object> params = new HashMap<>();
             if (b){
                 params.put("RestrictSharingContent",1);
-                Toast.makeText(this, String.valueOf(channelID), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, String.valueOf(channelID), Toast.LENGTH_SHORT).show();
                 connectViewModel.update_groupChannel_settings(channelID,api_token,params);
             }
             else{

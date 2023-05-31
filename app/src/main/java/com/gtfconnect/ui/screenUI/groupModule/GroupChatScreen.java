@@ -70,6 +70,7 @@ import com.gowtham.library.utils.TrimVideo;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
+import com.gtfconnect.databinding.ActivityChannelChatBinding;
 import com.gtfconnect.databinding.ActivityGroupChatBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.AttachmentUploadListener;
@@ -84,6 +85,7 @@ import com.gtfconnect.models.SendAttachmentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelCommentResponseModel;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
+import com.gtfconnect.models.channelResponseModel.ChannelReactionReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
@@ -95,21 +97,28 @@ import com.gtfconnect.roomDB.DatabaseViewModel;
 import com.gtfconnect.roomDB.dbEntities.UserProfileDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelChatDbEntity;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
+import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
+import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
+import com.gtfconnect.ui.screenUI.groupModule.GroupChatScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.VideoPreviewScreen;
+import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
+import com.gtfconnect.ui.screenUI.userProfileModule.UserProfileScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
 import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.CustomEditText;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.GlideUtils;
+import com.gtfconnect.utilities.PermissionCheckUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
@@ -289,6 +298,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private UserProfileDbEntity userProfileData;
 
 
+    private String userStatus = "";
+
+    private int permission_read_request_count ;
+    private int permission_write_request_count ;
+    private int permission_audio_request_count ;
+    private int permission_camera_request_count ;
+
+
+
+    boolean isAutoPlayGif = false;
+    boolean isAutoPlayVideo = false;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -299,26 +321,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         setContentView(binding.getRoot());
 
 
+        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
 
-        // Setting GIF | Image Insertion in Search EditText
-        binding.type.setKeyBoardInputCallbackListener(new CustomEditText.KeyBoardInputCallbackListener() {
-            @Override
-            public void onCommitContent(InputContentInfoCompat inputContentInfo,
-                                        int flags, Bundle opts) {
+        checkEnabledPermissions();
 
-                //you will get your gif/png/jpg here in inputContentInfo
-                // You can use a webView or ImageView to load the gif
-
-                Uri linkUri = inputContentInfo.getLinkUri();
-
-                Intent intent = new Intent(GroupChatScreen.this, GifPreviewScreen.class);
-                intent.putExtra("gif",linkUri.toString());
-                startForActivityResultLauncher.launch(intent);
-
-                //mWebView.loadUrl(linkUri != null ? linkUri.toString() : "null");
-
-            }
-        });
 
 
         list = new ArrayList<>();
@@ -335,7 +341,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         String userName = PreferenceConnector.readString(this, PreferenceConnector.GC_NAME, "");
         binding.userName.setText(userName);
 
-
+        currentPage = 1;
+        refreshChannelChatSocket();
 
         loadDataToAdapter();
 
@@ -363,13 +370,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         receivedMessageList = new ArrayList<>();
 
+        currentPage = 1;
+        loadLocalData();
+
         getReactionAndInitializeViewModel();
 
         initiateClickListeners();
         sendMessageAndAudioRecorderEvents();
 
-        currentPage = 1;
-        loadLocalData();
 
 
         binding.chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -382,11 +390,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScrolling = true;
 
-                    binding.chipDateContainer.setVisibility(View.VISIBLE);
-
                     if (position != -1) {
-                        if (!groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
+                        binding.chipDateContainer.setVisibility(View.VISIBLE);
+
+                        if (!groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+
+                            // ============================================= Getting AutoPlay Video PlayBack ======================================
+                            //groupViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
                         } else {
                             binding.chipDateContainer.setVisibility(View.GONE);
                         }
@@ -394,18 +405,30 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 
                     if (position != -1) {
-                        if (!groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
+
+                        binding.chipDateContainer.setVisibility(View.VISIBLE);
+
+                        if (!groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+
+                            // ============================================= Getting AutoPlay Video PlayBack ======================================
+                            //groupViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
+                        }
+                        else {
+                            binding.chipDateContainer.setVisibility(View.GONE);
                         }
                     }
                     binding.chipDateContainer.setVisibility(View.GONE);
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
 
-                    binding.chipDateContainer.setVisibility(View.VISIBLE);
-
                     if (position != -1) {
-                        if (!groupViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
+                        binding.chipDateContainer.setVisibility(View.VISIBLE);
+
+                        if (!groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(groupViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+
+                            // ============================================= Getting AutoPlay Video PlayBack ======================================
+                            //groupViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
                         } else {
                             binding.chipDateContainer.setVisibility(View.GONE);
                         }
@@ -491,29 +514,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
         });
 
+
         if (pinMessageCount == 0) {
             binding.pinnedMessageCountContainer.setVisibility(View.GONE);
         } else {
             binding.pinnedMessageCountContainer.setVisibility(View.VISIBLE);
         }
-
-
-
-
-        binding.dummyUsers.setOnClickListener(view -> {
-
-            BottomSheetDialog chat_options_dialog = new BottomSheetDialog(GroupChatScreen.this);
-            chat_options_dialog.setContentView(R.layout.bottomsheet_dummy_user_list);
-
-            RecyclerView dummy_user_recycler = chat_options_dialog.findViewById(R.id.dummy_user_list);
-
-            DummyUserListAdapter dummyUserListAdapter= new DummyUserListAdapter(GroupChatScreen.this,getDummyUserModel,this);
-            dummy_user_recycler.setHasFixedSize(true);
-            dummy_user_recycler.setLayoutManager(new LinearLayoutManager(this));
-            dummy_user_recycler.setAdapter(dummyUserListAdapter);
-
-            chat_options_dialog.show();
-        });
 
     }
 
@@ -522,16 +528,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     /*@Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putInt("currentPage",currentPage);
-
     }*/
 
     private void initiateClickListeners() {
         // Navigate for Member Chat
         binding.memberTitle.setOnClickListener(view -> {
             Intent intent = new Intent(GroupChatScreen.this, ProfileScreen.class);
-            intent.putExtra("viewType",Constants.Group_Channel_TYPE_1);
+            intent.putExtra("viewType",Constants.Group_Channel_TYPE_2);
             startActivity(intent);
         });
 
@@ -571,10 +575,42 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
             scrollToPosition(0);
-
             binding.iconContainer.setVisibility(View.GONE);
 
         });
+
+
+        binding.footerStatusTag.setOnClickListener(view -> {
+
+            if (userStatus.equalsIgnoreCase(Constants.USER_LEFT)) {
+                if (infoDbEntity.getGcMemberInfo().getGCMemberID() != null) {
+                    requestType = Constants.REJOIN_GROUP_CHANNEL;
+                    connectViewModel.rejoin_group_channel(infoDbEntity.getGcMemberInfo().getGCMemberID(), api_token);
+                }
+            }
+            else if (userStatus.equalsIgnoreCase(Constants.USER_RENEW_PLAN)) {
+
+                String data = new Gson().toJson(infoDbEntity.getGcSubscriptionPlan());
+
+                Intent intent = new Intent(GroupChatScreen.this, ExclusiveOfferScreen.class);
+                intent.putExtra("plans",data);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
+
+
+
+        binding.forwardMessage.setOnClickListener(view -> forwardSaveMessage());
+
+
+
+
+
+
 
         binding.closeQuoteEditor.setOnClickListener(view -> {
             binding.quoteContainer.setVisibility(View.GONE);
@@ -748,7 +784,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     private void recordAudio() {
         //check the permission for the record audio and for save audio write external storage
 
-        if (CheckPermission()) {
+        if (PermissionCheckUtils.checkChatPermissions(this,Constants.REQUEST_AUDIO_PERMISSIONS)) {
+            requestPermissions(new String[]{RECORD_AUDIO,WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_AUDIO_PERMISSIONS);
+        } else {
+
             audioFilePath = Utils.getAudioFilePath();
 
             //RecordReady
@@ -768,10 +807,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        } else {
-            //if permission is not given then request permission
-            RequestPermission();
         }
     }
 
@@ -781,22 +816,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         } catch (Exception e) {
             Log.d("Recorder_Exception", e.toString());
         }
-    }
-
-
-    public boolean CheckPermission() {
-        int first = ContextCompat.checkSelfPermission(getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int first1 = ContextCompat.checkSelfPermission(getApplicationContext(),
-                RECORD_AUDIO);
-        return first == PackageManager.PERMISSION_GRANTED && first1 == PackageManager.PERMISSION_GRANTED;
-    }
-
-
-    //give below permission for audio capture
-    private void RequestPermission() {
-        ActivityCompat.requestPermissions(this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, Constants.RECORD_AUDIO_REQUEST_CODE);
     }
 
 
@@ -820,6 +839,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             }
         });
+
 
         requestType = GET_GROUP_CHANNEL_INFO;
         connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
@@ -858,10 +878,33 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private void loadLocalData() {
 
-        databaseViewModel = new ViewModelProvider(this).get(DatabaseViewModel.class);
+        Log.d("group_channel","Group ID = "+channelID);
+
+        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
+            if (infoDbEntity != null) {
+                this.infoDbEntity = infoDbEntity;
+                setProfileInfo();
+
+                checkGroupChannelSettings();
+            }
+        });
 
 
-        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+
+
+        databaseViewModel.getUserProfileData().observe(this, new Observer<UserProfileDbEntity>() {
+            @Override
+            public void onChanged(UserProfileDbEntity userProfileDbEntity) {
+
+            }
+        });
+
+
+
+
+
+
+        /*databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
             if (userProfileDbEntity != null){
 
                 if (userProfileDbEntity.getUserRoleInfo() != null && userProfileDbEntity.getUserRoleInfo().getPrimary() != null){
@@ -876,35 +919,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     }
                 }
             }
-        });
-
-
-
-
-        databaseViewModel.getUserProfileData().observe(this, new Observer<UserProfileDbEntity>() {
-            @Override
-            public void onChanged(UserProfileDbEntity userProfileDbEntity) {
-
-                if (userProfileDbEntity != null){
-                    userProfileData = userProfileDbEntity;
-                    checkUserAdminPermission();
-                }
-            }
-        });
-
-
-
-
-
-
-
-
-        databaseViewModel.getGroupChannelInfo(channelID).observe(this, infoDbEntity -> {
-            if (infoDbEntity != null) {
-                this.infoDbEntity = infoDbEntity;
-                setProfileInfo();
-            }
-        });
+        });*/
 
         list = new ArrayList<>();
 
@@ -934,7 +949,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
 
         }
-        refreshGroupChatSocket();
     }
 
 
@@ -945,25 +959,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 if (infoDbEntity.getGcInfo().getProfileImage() != null){
                     GlideUtils.loadImage(this,binding.groupChannelLogo,infoDbEntity.getGcInfo().getProfileImage());
                 }
-
-                if (infoDbEntity.getGcSetting() != null){
-
-                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
-                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
-
-                        }
-                        else{
-
-                        }
-                    }
-                }
-
-                if (infoDbEntity.getGcPermission() != null){
-
-                }
             }
         }
     }
+
+
+
 
 
     private void scrollToPosition(int position) {
@@ -1005,20 +1006,67 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private void loadDataToAdapter() {
 
+
+        /**
+         * Set user settings
+         */
+
+
+        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+
+
+            if (userProfileDbEntity != null && userProfileDbEntity.getUserSetting() != null && !userProfileDbEntity.getUserSetting().isEmpty()){
+
+                for (int i=0;i<userProfileDbEntity.getUserSetting().size();i++){
+                    if (userProfileDbEntity.getUserSetting().get(i).getName()!= null && !userProfileDbEntity.getUserSetting().get(i).getName().isEmpty()){
+                        if (userProfileDbEntity.getUserSetting().get(i).getName().equalsIgnoreCase("gif")){
+                            if (userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null && !userProfileDbEntity.getUserSetting().get(i).getSettingValue().isEmpty()){
+                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")){
+                                    isAutoPlayGif = true;
+                                }
+                            }
+                        } else if (userProfileDbEntity.getUserSetting().get(i).getName().equalsIgnoreCase("video")){
+                            if (userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null && !userProfileDbEntity.getUserSetting().get(i).getSettingValue().isEmpty()){
+                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")){
+                                    isAutoPlayVideo = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+
+
+
+
+
+
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
 
         // Load Comments List Data -----
-        groupViewAdapter = new GroupChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this);
+        /*groupViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,binding.chats);
+        binding.chats.setHasFixedSize(true);
+        binding.chats.setLayoutManager(mLayoutManager);
+        binding.chats.setAdapter(groupViewAdapter);
+
+        binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);*/
+
+
+
+        groupViewAdapter = new GroupChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,isAutoPlayVideo,isAutoPlayGif);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(groupViewAdapter);
 
         binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);
 
+
     }
 
 
-    private void refreshGroupChatSocket() {
+    private void refreshChannelChatSocket() {
         Gson gson = new Gson();
         Type type;
 
@@ -1050,7 +1098,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 runOnUiThread(() -> {
 
-
                     if(responseModel != null && responseModel.getData() != null) {
 
 
@@ -1070,6 +1117,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                                 list = new ArrayList<>();
                                 list.addAll(responseModel.getData().getChatData().getRows());
+
 
                                 readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
 
@@ -1177,6 +1225,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             Log.d("JsonException ---", e.toString());
         }
     }
+
 
 
 
@@ -1307,7 +1356,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     isAttachmentSend = false;
 
                     currentPage = 1;
-                    refreshGroupChatSocket();
+                    refreshChannelChatSocket();
                             /*if (isMsgSent) {
                                 Log.d("Msg sent ", "successfully");
                                 //scrollToFirstPosition();
@@ -1351,6 +1400,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             receivedMessage = gson.fromJson(gsonObject, type);
 
+            Log.d("received_message",receivedMessage.getSaveMsg().getBaseUrl());
+
             if (!receivedMessage.getSaveMsg().getGetData().getUser().getUserID().equalsIgnoreCase(String.valueOf(PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0)))) {
                 binding.arrowIcon.setColorFilter(getResources().getColor(R.color.theme_green));
             }
@@ -1359,7 +1410,13 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 @Override
                 public void run() {
 
-                    refreshGroupChatSocket();
+                    if (receivedMessage != null && receivedMessage.getSaveMsg() != null && receivedMessage.getSaveMsg().getGetData() != null){
+                        list.add(0,receivedMessage.getSaveMsg().getGetData());
+                        groupViewAdapter.updateChat(list);
+                    }
+                    else{
+                        Log.d("received_message","getting null or empty data in above condition");
+                    }
 
                 }
             });
@@ -1372,7 +1429,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         Type type;
 
         Log.d("Like Listener :::: ", "Called");
-        type = new TypeToken<ChannelRowListDataModel>() {
+        type = new TypeToken<ChannelReactionReceivedModel>() {
         }.getType();
 
 
@@ -1386,19 +1443,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         JSONObject data = (JSONObject) args[0];
                         Log.d("Like Data :", data.toString());
 
-                        JSONObject response = new JSONObject();
-                        try {
-                            response = data.getJSONObject("data").getJSONObject("chatDetail");
-                        } catch (Exception e) {
-
-                        }
-
 
                         JsonParser jsonParser = new JsonParser();
-                        JsonObject gsonObject = (JsonObject) jsonParser.parse(response.toString());
+                        JsonObject gsonObject = (JsonObject) jsonParser.parse(data.toString());
 
-                        ChannelRowListDataModel like_response = gson.fromJson(gsonObject, type);
-                        Log.d("Like response from model", String.valueOf(like_response.getLike().get(0).getIsLike()));
+                        ChannelReactionReceivedModel like_response = gson.fromJson(gsonObject, type);
+                        //Log.d("Like response from model", String.valueOf(like_response.getData().getChatDetail().getLike().get(0).getIsLike()));
 
 
                         runOnUiThread(new Runnable() {
@@ -1414,7 +1464,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                                                     Log.d("Is liked User ---", "Not Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
 
-                                                    if (list.get(i).getLike().get(0).getIsLike() == 1) {
+                                                    list.get(i).getLike().remove(0);
+                                                    list.get(i).getLike().add(0,like_response.getData().getChatDetail().getLike().get(0));
+                                                    groupViewAdapter.updateLikeResponse(i,list);
+
+                                                    /*if (list.get(i).getLike().get(0).getIsLike() == 1) {
                                                         list.get(i).getLike().get(0).setIsLike(0);
                                                         groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
@@ -1422,12 +1476,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                                                         list.get(i).getLike().get(0).setIsLike(1);
                                                         groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
                                                         break;
-                                                    }
+                                                    }*/
                                                 } else {
-                                                    list.get(i).getLike().add(0, like_response.getLike().get(0));
+                                                    list.get(i).getLike().add(0, like_response.getData().getChatDetail().getLike().get(0));
 
                                                     Log.d("Is liked User ---", "Null case : " + list.get(i).getLike().get(0).getIsLike().toString());
-                                                    groupViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                                    groupViewAdapter.updateLikeResponse(i,list);
                                                     break;
                                                 }
                                             }
@@ -1522,53 +1576,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
 
-
-    /*private void deleteCommentListener()
-    {
-
-        Gson gson = new Gson();
-        Type type;
-
-        type = new TypeToken<List<GroupChatResponseModel.CommentResponseModel>>() {
-        }.getType();
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                socketInstance.on("commentDeleteData", new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        JSONArray response = new JSONArray();
-                        JSONObject data = (JSONObject) args[0];
-                        Log.d("Comment Data :","after delete --"+data.toString());
-
-                        try {
-                            response = data.getJSONObject("data").getJSONArray("commentList");
-                        }
-                        catch (Exception e)
-                        {
-                            Log.d("Edit Comment Listener error :",e.toString());
-                        }
-
-                        commentDeleteResponseModel.setCommentData(gson.fromJson(response.toString(), type));
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                searchMessageInList(commentDeleteResponseModel.getGroupChatID().toString(),false,false,true);
-                            }
-                        });
-
-                    }
-                });
-            }
-        });
-    }*/
-
-
-
-
-
     private void readMessages(int lastChatMessage)
     {
 
@@ -1605,7 +1612,40 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
 
-
+    /*private void deleteCommentListener()
+    {
+        Gson gson = new Gson();
+        Type type;
+        type = new TypeToken<List<GroupChatResponseModel.CommentResponseModel>>() {
+        }.getType();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                socketInstance.on("commentDeleteData", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        JSONArray response = new JSONArray();
+                        JSONObject data = (JSONObject) args[0];
+                        Log.d("Comment Data :","after delete --"+data.toString());
+                        try {
+                            response = data.getJSONObject("data").getJSONArray("commentList");
+                        }
+                        catch (Exception e)
+                        {
+                            Log.d("Edit Comment Listener error :",e.toString());
+                        }
+                        commentDeleteResponseModel.setCommentData(gson.fromJson(response.toString(), type));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                searchMessageInList(commentDeleteResponseModel.getGroupChatID().toString(),false,false,true);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }*/
 
 
     private void searchMessageInList(String groupChatId, boolean hasPostDeleted, boolean commentSearch, boolean commentDeleteSearch) {
@@ -1841,8 +1881,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
     private void openAttachmentDialog() {
-        if (AttachmentUploadUtils.checkPermission(this)) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+
+        if (PermissionCheckUtils.checkChatPermissions(this,Constants.REQUEST_ATTACHMENT_MEDIA_PERMISSIONS)) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, Constants.REQUEST_ATTACHMENT_MEDIA_PERMISSIONS);
         } else {
             AttachmentUploadUtils.showPictureDialog(
                     this,
@@ -1949,7 +1990,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         i.addCategory(Intent.CATEGORY_OPENABLE);
 
-        startActivityForResult(i,Constants.SELECT_DOCUMENT_REQUEST_CODE);
+        resultLauncher.launch(i);
+        //startActivityForResult(i,Constants.SELECT_DOCUMENT_REQUEST_CODE);
         //resultLauncher.launch(i);
 
     }
@@ -1957,19 +1999,71 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101) {
+
+
+        Log.d("permission_log","requested");
+        if (requestCode == Constants.REQUEST_ALL_MEDIA_PERMISSIONS) {
+
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                permission_camera_request_count ++;
+                PreferenceConnector.writeInteger(GroupChatScreen.this,PreferenceConnector.CAMERA_PERMISSION_COUNT,permission_camera_request_count);
+            }
+            if (grantResults[1] != PackageManager.PERMISSION_GRANTED){
+                permission_write_request_count ++;
+                PreferenceConnector.writeInteger(GroupChatScreen.this,PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT,permission_write_request_count);
+            }
+            if (grantResults[2] != PackageManager.PERMISSION_GRANTED){
+                permission_read_request_count ++;
+                PreferenceConnector.writeInteger(GroupChatScreen.this,PreferenceConnector.READ_STORAGE_PERMISSION_COUNT,permission_read_request_count);
+            }
+            if (grantResults[3] != PackageManager.PERMISSION_GRANTED){
+                permission_audio_request_count ++;
+                PreferenceConnector.writeInteger(GroupChatScreen.this,PreferenceConnector.MICROPHONE_PERMISSION_COUNT,permission_audio_request_count);
+            }
+
+        } else if (requestCode == Constants.REQUEST_ATTACHMENT_MEDIA_PERMISSIONS) {
+
+
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                 openAttachmentDialog();
-            }
-        } else if (requestCode == Constants.RECORD_AUDIO_REQUEST_CODE) {
-            if (grantResults.length > 0) {
-                boolean permissionToRecord = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean permissionToStore = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                if (permissionToRecord && permissionToStore) {
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
+            } else {
+
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    permission_camera_request_count++;
+                    PreferenceConnector.writeInteger(GroupChatScreen.this, PreferenceConnector.CAMERA_PERMISSION_COUNT, permission_camera_request_count);
                 }
+                if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                    permission_write_request_count++;
+                    PreferenceConnector.writeInteger(GroupChatScreen.this, PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT, permission_write_request_count);
+                }
+                if (grantResults[2] != PackageManager.PERMISSION_GRANTED) {
+                    permission_read_request_count++;
+                    PreferenceConnector.writeInteger(GroupChatScreen.this, PreferenceConnector.READ_STORAGE_PERMISSION_COUNT, permission_read_request_count);
+                }
+                Toast.makeText(this, "Please grant required permissions!", Toast.LENGTH_SHORT).show();
+            }
+
+        } else if (requestCode == Constants.REQUEST_AUDIO_PERMISSIONS) {
+
+            if (grantResults.length > 0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    permission_audio_request_count++;
+                    PreferenceConnector.writeInteger(GroupChatScreen.this, PreferenceConnector.CAMERA_PERMISSION_COUNT, permission_audio_request_count);
+                }
+                if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                    permission_write_request_count++;
+                    PreferenceConnector.writeInteger(GroupChatScreen.this, PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT, permission_write_request_count);
+                }
+
+
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    recordAudio();
+                } else {
+                    Toast.makeText(this, "Please grant required permissions!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else{
+                recordAudio();
             }
         }
     }
@@ -2042,7 +2136,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             previewImage();
 
-        } else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
+        } /*else if (requestCode == Constants.SELECT_DOCUMENT_REQUEST_CODE) {
 
             isAnyFileAttached = true;
 
@@ -2057,7 +2151,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 callAttachmentApi();
             }
 
-        } else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
+        }*/ else if (requestCode == Constants.SELECT_VIDEO_REQUEST_CODE && resultCode == RESULT_OK) {
             isAnyFileAttached = true;
 
 
@@ -2113,18 +2207,26 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                     if (data != null) {
                         Uri sUri = data.getData();
-                        attachmentFileList.add(new File(copyFileToInternalStorage(sUri, "GTF_Document")));
-                        callAttachmentApi();
+
+                        binding.attachmentContainer.setVisibility(View.VISIBLE);
+
+                        binding.sendMessage.setVisibility(View.VISIBLE);
+                        binding.recordButton.setVisibility(View.GONE);
+
+                        attachmentFileList.add(new File(copyFileToInternalStorage(sUri)));
 
                         //binding.attachmentTypeImage.setBackground(getResources().getDrawable(R.drawable.document));
                         //binding.attachmentTypeTitle.setText(attachmentFileList.get(0).getName());
                         //binding.attachmentContainer.setVisibility(View.VISIBLE);
                     }
+                    else{
+                        binding.attachmentContainer.setVisibility(View.GONE);
+                    }
                 }
             });
 
 
-    private String copyFileToInternalStorage(Uri uri, String newDirName) {
+    private String copyFileToInternalStorage(Uri uri) {
         Uri returnUri = uri;
 
         Cursor returnCursor = getContentResolver().query(returnUri, new String[]{
@@ -2139,12 +2241,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         String size = (Long.toString(returnCursor.getLong(sizeIndex)));
 
         File output;
-        if (!newDirName.equals("")) {
-            File dir = new File(getFilesDir() + "/" + newDirName);
+        if (!name.equals("")) {
+            File dir = new File(getFilesDir() + "/" + name);
             if (!dir.exists()) {
                 dir.mkdir();
             }
-            output = new File(getFilesDir() + "/" + newDirName + "/" + name);
+            output = new File(getFilesDir() + "/" + name + "/" + name);
         } else {
             output = new File(getFilesDir() + "/" + name);
         }
@@ -2233,7 +2335,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         intent.putExtra("video",savedVideoFile);
         startForActivityResultLauncher.launch(intent);
     }
-
 
 
     // ---------------------------------------------------------------Interface Listeners ----------------------------------------------------------------
@@ -2530,6 +2631,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     @Override
+    public void viewSelfProfile() {
+        startActivity(new Intent(GroupChatScreen.this, UserProfileScreen.class));
+    }
+
+    @Override
     public void forwardMultiplePost(int selectedCount) {
         if (selectedCount <= 0){
             binding.forwardContainer.setVisibility(View.GONE);
@@ -2538,6 +2644,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             binding.forwardContainer.setVisibility(View.VISIBLE);
             binding.forwardCount.setText(String.valueOf(selectedCount));
         }
+    }
+
+    @Override
+    public void toggleMultipleMessageSelection(boolean toggleSelection) {
+
+        for (int i=0;i<list.size();i++){
+            list.get(i).setShowPostSelection(toggleSelection);
+
+            if (!toggleSelection){
+                list.get(i).setPostSelected(false);
+            }
+        }
+        groupViewAdapter.updateMultipleMessageSelection(list);
     }
 
     @Override
@@ -2552,12 +2671,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     @Override
-    public void updateChatList(ArrayList<ChannelRowListDataModel> list) {
-
-    }
-
-    @Override
     public void initiateCommentScreen(String data, String profileBaseUrl, String postBaseUrl, String userID) {
+
         Intent intent = new Intent(GroupChatScreen.this, GroupChannelCommentScreen.class);
         //intent.putExtra("replyOnComment", false);
         intent.putExtra("userDetail", data);
@@ -2607,31 +2722,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     @Override
     public void updateDummyUser(int dummyUserId, int isAdmin) {
 
-        Log.d("update_dummy_user","true");
-
-        // Getting API data fetch
-        rest = new Rest(this, false, true);
-        listener = this;
-
-
-        Map<String,Object> param = new HashMap<>();
-        param.put("DummyUserID", dummyUserId);
-        param.put("IsAdmin",isAdmin);
-
-        String api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
-        Log.d("api_token",api_token);
-
-        requestType = UPDATE_DUMMY_USER;
-        connectViewModel.update_dummy_user_list(channelID,api_token,param);
-
-        Log.d("request_type","2 = "+requestType);
     }
-
 
 
     @Override
     public void onLoading() {
-        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE || requestType == REQUEST_UPLOAD_FILE){
+        if (requestType == Constants.SAVE_MESSAGE_REQUEST_CODE || requestType == REQUEST_UPLOAD_FILE || requestType == Constants.REJOIN_GROUP_CHANNEL){
             rest.ShowDialogue();
         }
     }
@@ -2785,9 +2881,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 binding.reactionsRecycler.getLayoutManager().onRestoreInstanceState(recyclerViewState);
                 isDataLoadedFirstTime = false;*/
 
+            init();
 
-            requestType = GET_DUMMY_USER;
-            connectViewModel.get_dummy_user_list(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_,""));
         }
         else if (requestType == GET_GROUP_CHANNEL_INFO) {
             gson = new Gson();
@@ -2805,26 +2900,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 databaseViewModel.insertGroupChannelInfo(data);
             }
 
+            checkGroupChannelSettings();
 
             requestType = REQUEST_EMOJI_LIST;
             connectViewModel.get_group_channel_manage_reaction_list(channelID, api_token,  currentPage, 25, 1);
 
-        } else if (requestType == GET_DUMMY_USER) {
-
-            gson = new Gson();
-            Type type = new TypeToken<GetDummyUserModel>(){}.getType();
-
-            getDummyUserModel = gson.fromJson(jsonObject,type);
-
-            if (getDummyUserModel != null && getDummyUserModel.getData() != null && getDummyUserModel.getData().getList() != null && !getDummyUserModel.getData().getList().isEmpty()){
-
-                binding.dummyUserContainer.setVisibility(View.VISIBLE);
-            }
-            else{
-                binding.dummyUserContainer.setVisibility(View.GONE);
-            }
-
-            init();
         } else if (requestType == REQUEST_UPLOAD_FILE) {
 
 
@@ -2871,8 +2951,15 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
 
 
-        }
-        else if (requestType == PINNED_MESSAGE_COUNT) {
+        } else if (requestType == Constants.REJOIN_GROUP_CHANNEL) {
+
+            Toast.makeText(this, jsonObject.get("message").toString(), Toast.LENGTH_SHORT).show();
+
+            requestType = GET_GROUP_CHANNEL_INFO;
+            connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
+
+
+        } else if (requestType == PINNED_MESSAGE_COUNT) {
             Type type = new TypeToken<PinnedMessagesModel>() {
             }.getType();
 
@@ -3024,32 +3111,34 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         finish();
     }
 
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
         Log.d("Lifecycle Check ", "In the onStart() event");
     }
-    public void onRestart()
-    {
+
+    public void onRestart() {
         super.onRestart();
         Log.d("Lifecycle Check ", "In the onRestart() event");
     }
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
+
+        // Pausing video player if any video playing
+        groupViewAdapter.pauseExoPlayer();
         Log.d("Lifecycle Check ", "In the onPause() event");
     }
-    public void onStop()
-    {
+
+    public void onStop() {
         super.onStop();
         Log.d("Lifecycle Check ", "In the onStop() event");
 
         //recyclerViewState = binding.chats.getLayoutManager().onSaveInstanceState();
     }
-    public void onDestroy()
-    {
+
+    public void onDestroy() {
         super.onDestroy();
+        groupViewAdapter.destroyExoPlayer();
         Log.d("Lifecycle Check ", "In the onDestroy() event");
     }
 
@@ -3126,65 +3215,278 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             });
 
 
-    // -------------------------------------------------------------- Check User & Admin Permissions -----------------------------------------------------------
 
-    private void checkUserAdminPermission(){
+    private void checkGroupChannelSettings(){
 
-        if (userProfileData != null && userProfileData.getUserRoleInfo() != null){
-            if (userProfileData.getUserRoleInfo().getPrimary() != null && userProfileData.getUserRoleInfo().getPrimary().getRole() != null){
-                if (userProfileData.getUserRoleInfo().getPrimary().getRole().getSlug() != null){
-                    if (!userProfileData.getUserRoleInfo().getPrimary().getRole().getSlug().equalsIgnoreCase("user")) {
 
-                        /**
-                         * Admin Permission Check ======================= FOR DUMMY USER ==============================
-                         */
 
-                        if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions() != null && !userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().isEmpty()){
+        /**
+         *  User setting checks
+         */
 
-                            for (int i=0; i<userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().size();i++){
 
-                                if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission() != null){
+        if (infoDbEntity.getGcPermission() != null){
 
-                                    int permissionValue = 0;
+            if (infoDbEntity.getGcPermission().getSendMessage() != null) {
+                if (infoDbEntity.getGcPermission().getSendMessage() != 1) {
 
-                                    if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermissionValue() != null){
-                                        permissionValue = userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermissionValue();
-                                    }
+                    binding.footerStatusTag.setVisibility(View.VISIBLE);
+                    binding.searchContainer.setVisibility(View.GONE);
 
-                                    if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName() != null){
+                    binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
+                    binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
+                    binding.footerStatusTag.setText("Please contact admin.");
+                } else {
+                    binding.searchContainer.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                binding.footerStatusTag.setVisibility(View.GONE);
+                binding.searchContainer.setVisibility(View.GONE);
+            }
 
-                                        if (userProfileData.getUserRoleInfo().getPrimary().getRole().getRolePermissions().get(i).getPermission().getName().equalsIgnoreCase("dummy_message")){
-                                            if (permissionValue == 1){
-                                                //binding.editProfile.setVisibility(View.VISIBLE);
-                                            }
-                                            else{
-                                                //binding.editProfile.setVisibility(View.GONE);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+
+            if (infoDbEntity.getGcPermission().getSendMedia() != null){
+
+                if (infoDbEntity.getGcPermission().getSendMedia() != 1){
+                    binding.pinAttachment.setVisibility(View.GONE);
+                }
+                else{
+                    binding.pinAttachment.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                binding.pinAttachment.setVisibility(View.GONE);
+            }
+
+
+            if (infoDbEntity.getGcPermission().getSendStickerGIF() != null){
+
+                if (infoDbEntity.getGcPermission().getSendStickerGIF() != 1){
+                    toggleSendGif(false);
+                }
+                else{
+                    toggleSendGif(true);
+                }
+            }
+            else{
+                toggleSendGif(false);
+            }
+        }
+
+
+
+
+
+
+
+
+        /**
+         *  USER Status and Subscription Plan Check
+         */
+
+        if(infoDbEntity.getGcMemberSubscriptionPlan() != null && infoDbEntity.getGcMemberSubscriptionPlan().getIsExpired() != null){
+
+            if (infoDbEntity.getGcMemberSubscriptionPlan().getIsExpired() == 1){
+
+                // Todo Redirection to Subscription Page
+
+                userStatus = Constants.USER_RENEW_PLAN;
+
+                binding.searchSubContainer.setVisibility(View.GONE);
+                binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
+                binding.footerStatusTag.setTextColor(getColor(R.color.white));
+                binding.footerStatusTag.setText("Renew Subscription Plan");
+
+            }
+            else {
+
+                if (infoDbEntity.getGcMemberInfo() != null) {
+                    if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
+
+                        Log.d("user_status",infoDbEntity.getGcMemberInfo().getStatus());
+
+                        if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
+
+                            binding.searchSubContainer.setVisibility(View.GONE);
+                            binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                            binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
+                            binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
+                            binding.footerStatusTag.setText("Please contact admin.");
+
+                            userStatus = Constants.USER_BLOCKED;
+
+                        } else if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
+
+                            binding.searchSubContainer.setVisibility(View.VISIBLE);
+                            binding.footerStatusTag.setVisibility(View.GONE);
+
+                            userStatus = Constants.USER_ACTIVE;
+
+                        } else {
+
+                            binding.searchSubContainer.setVisibility(View.GONE);
+                            binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                            binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
+                            binding.footerStatusTag.setTextColor(getColor(R.color.white));
+                            binding.footerStatusTag.setText("Rejoin Channel");
+
+                            userStatus = Constants.USER_LEFT;
                         }
+                    }
+                }
+            }
+        }
+        else{
+            if (infoDbEntity.getGcMemberInfo() != null) {
+                if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
+                    if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
+
+                        binding.searchSubContainer.setVisibility(View.GONE);
+                        binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                        binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
+                        binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
+                        binding.footerStatusTag.setText("Please contact admin.");
 
 
-                        /**
-                         *  Special User-Admin Permission Check ======================= FOR DUMMY USER ==============================
-                         */
+                        userStatus = Constants.USER_BLOCKED;
 
+                    } else if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
 
+                        binding.searchSubContainer.setVisibility(View.VISIBLE);
+                        binding.footerStatusTag.setVisibility(View.GONE);
+
+                        userStatus = Constants.USER_ACTIVE;
+                    } else {
+
+                        binding.searchSubContainer.setVisibility(View.GONE);
+                        binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                        binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
+                        binding.footerStatusTag.setTextColor(getColor(R.color.white));
+                        binding.footerStatusTag.setText("Rejoin Channel");
+
+                        userStatus = Constants.USER_LEFT;
                     }
                 }
             }
         }
 
+
+
+
+
+        if (PreferenceConnector.readString(this,PreferenceConnector.USER_TYPE,"").equalsIgnoreCase("super-admin")){
+
+            binding.footerStatusTag.setVisibility(View.GONE);
+
+            binding.searchContainer.setVisibility(View.VISIBLE);
+            binding.pinAttachment.setVisibility(View.VISIBLE);
+            toggleSendGif(true);
+        }
+    }
+
+
+
+    private void toggleSendGif(boolean enableSendGif){
+        // Setting GIF | Image Insertion in Search EditText
+        binding.type.setKeyBoardInputCallbackListener(new CustomEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(InputContentInfoCompat inputContentInfo,
+                                        int flags, Bundle opts) {
+
+                if (enableSendGif) {
+                    //you will get your gif/png/jpg here in inputContentInfo
+                    // You can use a webView or ImageView to load the gif
+
+                    Uri linkUri = inputContentInfo.getLinkUri();
+
+                    Intent intent = new Intent(GroupChatScreen.this, GifPreviewScreen.class);
+                    intent.putExtra("gif", linkUri.toString());
+                    startForActivityResultLauncher.launch(intent);
+
+                    //mWebView.loadUrl(linkUri != null ? linkUri.toString() : "null");
+
+                }
+                else{
+                    Toast.makeText(GroupChatScreen.this, "Sharing Gif not supported!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
 
 
+    private void forwardSaveMessage(){
 
-    private void checkAdminChecks(){
+        /*int channelID = list.get(position).getGroupChannelID();
+        int chatID = Integer.parseInt(list.get(position).getGroupChatID());*/
+
+        int chatID = 0;
+
+        Dialog forward_dialog = new Dialog(this);
+
+        forward_dialog.setContentView(R.layout.dialog_forward_message);
+        forward_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        forward_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
+        ImageView close = (ImageView) forward_dialog.findViewById(R.id.close);
+        close.setOnClickListener(view1 -> {
+
+            for (int i=0;i<list.size();i++){
+                list.get(i).setShowPostSelection(false);
+                list.get(i).setPostSelected(false);
+            }
+
+            groupViewAdapter.updateMultipleMessageSelection(list);
+            binding.forwardContainer.setVisibility(View.GONE);
+
+
+            forward_dialog.dismiss();
+        });
+
+
+        RecyclerView personList = (RecyclerView) forward_dialog.findViewById(R.id.forward_person_list_recycler);
+
+        //int channelID = list.get(position).getGroupChannelID();
+        //int chatID = Integer.parseInt(list.get(position).getGroupChatID());
+
+        ForwardPersonListAdapter forwardPersonListAdapter = new ForwardPersonListAdapter(this,channelID,chatID);
+        personList.setHasFixedSize(true);
+        personList.setLayoutManager(new LinearLayoutManager(this));
+        personList.setAdapter(forwardPersonListAdapter);
+
+        forwardPersonListAdapter.setOnSaveMessageClickListener(chatID1 -> {
+            //channelChatListener.saveMessage(chatID1);
+            forward_dialog.dismiss();
+        });
+
+        forward_dialog.show();
+    }
+
+
+
+
+    private void checkEnabledPermissions(){
+
+        permission_read_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.READ_STORAGE_PERMISSION_COUNT,0);
+        permission_write_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.WRITE_STORAGE_PERMISSION_COUNT,0);
+        permission_audio_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.MICROPHONE_PERMISSION_COUNT,0);
+        permission_camera_request_count = PreferenceConnector.readInteger(this,PreferenceConnector.CAMERA_PERMISSION_COUNT,0);
+
+
+        if (PermissionCheckUtils.checkChatPermissions(this,Constants.REQUEST_ALL_MEDIA_PERMISSIONS)){
+            requestPermissions(new String[]{Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.RECORD_AUDIO}, Constants.REQUEST_ALL_MEDIA_PERMISSIONS);
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +18,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.exa.ashutosh_video.VideoActivity;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
 import com.gtfconnect.databinding.RecyclerChatMediaItemBinding;
 import com.gtfconnect.databinding.RecyclerSingleChatMediaItemBinding;
 import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
+import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelMediaAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.Utils;
@@ -37,34 +44,41 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
 
     RecyclerView recyclerRootView;
 
-    //ExoPlayer simpleExoPlayer;
-
     boolean isSelf ;
+
+
+    ExoPlayer simpleExoPlayer;
 
     ImageView btFullScreen, rewind, forward;
 
-    public  GroupChannelPinnedMessageMediaAdapter(Context context, List<MediaListModel> mediaList, String postBaseUrl, String userID, boolean isSelf){
+    private String user_name;
+
+    OnMediaPlayPauseListener listener;
+
+    private ExoPlayer previousPlaybackInstance;
+
+    public  GroupChannelPinnedMessageMediaAdapter(Context context,List<MediaListModel> mediaList,String postBaseUrl,String userID, String user_name, ExoPlayer previousPlaybackInstance, boolean isSelf){
         this.context= context;
         this.mediaList = mediaList;
         this.postBaseUrl = postBaseUrl;
         this.userID = userID;
 
         this.isSelf = isSelf;
+
+        this.previousPlaybackInstance = previousPlaybackInstance;
+
+        if (previousPlaybackInstance != null){
+            if (previousPlaybackInstance.isPlaying()) {
+                previousPlaybackInstance.pause();
+                previousPlaybackInstance.stop();
+            }
+            previousPlaybackInstance.release();
+        }
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-            /*final View view =
-                    LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.your_view, parent, false);
-
-            // recyclerView is your passed view.
-            int width = recyclerRootView.getWidth();
-            ViewGroup.LayoutParams params = view.getLayoutParams();
-            params.width = (int)(width * 0.8);
-            view.setLayoutParams(params);
-            return new YourViewHolder(view);*/
 
         if (viewType == 1){
             return new GroupChannelPinnedMessageMediaAdapter.SingleMediaItemViewHolder(RecyclerSingleChatMediaItemBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false));
@@ -89,26 +103,6 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
 
             holder1.binding.postMediaContainer.setOnClickListener(view -> {
 
-                /*Dialog previewDialog = new Dialog(context);
-                previewDialog.setContentView(R.layout.dialog_media_preview);
-
-                previewDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                previewDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                ImageView preview =(ImageView) previewDialog.findViewById(R.id.preview);
-                loadImageFile(post_path,preview);
-
-
-
-                ImageView close = (ImageView) previewDialog.findViewById(R.id.close);
-                ImageView download_media = (ImageView) previewDialog.findViewById(R.id.download_media);
-
-                close.setOnClickListener(view1 -> previewDialog.dismiss());
-                download_media.setOnClickListener(view1 -> {
-
-                });
-
-                previewDialog.show();*/
 
 
                 Gson gson1  = new Gson();
@@ -137,19 +131,25 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
                 holder1.binding.playVideo.setVisibility(View.GONE);
                 holder1.binding.docContainer.setVisibility(View.GONE);
 
-                loadImageFile(post_path,holder1.binding.postImage);
+                if (Utils.isFileTypeGif((mediaList.get(position).getMimeType()))) {
 
-                if (Utils.isFileTypeGif(mediaList.get(position).getMimeType())){
-                    loadImageFile(post_path,holder1.binding.postImage);
+                    holder1.binding.playGif.setVisibility(View.VISIBLE);
+                    GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
+                    //loadImageFile(post_path,holder1.binding.postImage);
                 }
                 else{
-                    GlideUtils.loadImage(context,holder1.binding.postImage,post_path);
+
+                    holder1.binding.playGif.setVisibility(View.GONE);
+                    loadImageFile(post_path,holder1.binding.postImage);
                 }
+
+
             }
             else if (fileType.equalsIgnoreCase("document") || fileType.equalsIgnoreCase("application")) {
 
                 holder1.binding.docContainer.setVisibility(View.VISIBLE);
                 holder1.binding.playVideo.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
                 loadDocumentFile(post_path,holder1.binding.postImage);
             }
@@ -157,17 +157,24 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
 
                 holder1.binding.docContainer.setVisibility(View.GONE);
                 holder1.binding.playVideo.setVisibility(View.VISIBLE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
                 //loadVideoFile(post_path,holder.binding.postImage);
             } else if (fileType.equalsIgnoreCase("gif")) {
 
                 holder1.binding.playVideo.setVisibility(View.GONE);
                 holder1.binding.docContainer.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
                 loadImageFile(post_path,holder1.binding.postImage);
             } else{
                 Log.d("File_Type_Error",fileType);
             }
+
+            holder1.binding.playGif.setOnClickListener(view -> {
+                holder1.binding.playGif.setVisibility(View.GONE);
+                loadImageFile(post_path,holder1.binding.postImage);
+            });
 
 
             holder1.binding.playVideo.setOnClickListener(view -> {
@@ -179,62 +186,20 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
                 holder1.binding.docContainer.setVisibility(View.GONE);
                 holder1.binding.headerContainer.setVisibility(View.GONE);
 
+            });
+
+            holder1.binding.playVideo.setOnClickListener(view -> {
+
+                holder1.binding.progressBar.setVisibility(View.VISIBLE);
+                holder1.binding.playerView.setVisibility(View.VISIBLE);
 
 
-                //holder1.binding.headerContainer.setVisibility(View.GONE);
-                //holder1.binding.playerContainer.setVisibility(View.VISIBLE);
-
-                /*simpleExoPlayer = new ExoPlayer.Builder(context).build();
-                holder1.binding.playerView.setPlayer(simpleExoPlayer);
-                holder1.binding.playerView.setKeepScreenOn(true);
-
-                MediaItem mediaItem = MediaItem.fromUri(post_path);
-                simpleExoPlayer.addMediaItem(mediaItem);
-                simpleExoPlayer.setPlayWhenReady(true);*/
-
-                //Log.v("playerSetup",isFirstTime+" "+watchTime);
-
-          /*  if (!pageType.equalsIgnoreCase("my_web_series") && isFirstTime) {
-                simpleExoPlayer.seekTo(simpleExoPlayer.getCurrentMediaItemIndex(), watchTime * 1000L);
-                isFirstTime = false;
-            }*/
-
-                //simpleExoPlayer.prepare();
-                //simpleExoPlayer.play();
-
-                /*simpleExoPlayer.addListener(new Player.Listener() {
+                holder1.binding.docContainer.setVisibility(View.GONE);
+                holder1.binding.headerContainer.setVisibility(View.GONE);
+                holder1.binding.playGif.setVisibility(View.GONE);
 
 
-                    @Override
-                    public void onPlaybackStateChanged(@Player.State int state) {
-                        if (state == Player.STATE_BUFFERING) {
-                            holder1.binding.progressBar.setVisibility(View.VISIBLE);
-                        } else if (state == Player.STATE_READY) {
-                            holder1.binding.progressBar.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onRepeatModeChanged(int repeatMode) {
-
-                    }
-
-                    @Override
-                    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-                    }
-
-                    @Override
-                    public void onPlayerError(PlaybackException error) {
-                        Player.Listener.super.onPlayerError(error);
-                        Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
-                        MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-                        simpleExoPlayer.addMediaItem(mediaItem);
-                        simpleExoPlayer.setPlayWhenReady(true);
-                        simpleExoPlayer.prepare();
-                        simpleExoPlayer.play();
-                    }
-                });*/
+                loadAutoPlayVideoFile(post_path,holder1.binding.playerView,holder1.binding.progressBar);
 
             });
         }
@@ -243,29 +208,6 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
             GroupChannelPinnedMessageMediaAdapter.MultiMediaItemViewHolder holder1 = (MultiMediaItemViewHolder) holder;
 
             holder1.binding.postMediaContainer.setOnClickListener(view -> {
-
-                /*Dialog previewDialog = new Dialog(context);
-                previewDialog.setContentView(R.layout.dialog_media_preview);
-
-                previewDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                previewDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                ImageView preview =(ImageView) previewDialog.findViewById(R.id.preview);
-                loadImageFile(post_path,preview);
-
-
-
-                ImageView close = (ImageView) previewDialog.findViewById(R.id.close);
-                ImageView download_media = (ImageView) previewDialog.findViewById(R.id.download_media);
-
-                close.setOnClickListener(view1 -> previewDialog.dismiss());
-                download_media.setOnClickListener(view1 -> {
-
-                });
-
-                previewDialog.show();*/
-
-
 
                 Gson gson1  = new Gson();
                 String mediaData =  gson1.toJson(mediaList);
@@ -337,79 +279,6 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
 
     }
 
-    /*public void setupPlayer(int position) {
-
-        simpleExoPlayer.addListener(new Player.Listener() {
-
-
-            @Override
-            public void onPlaybackStateChanged(@Player.State int state) {
-                if (state == Player.STATE_BUFFERING) {
-                    progressBar.setVisibility(View.VISIBLE);
-                } else if (state == Player.STATE_READY) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onRepeatModeChanged(int repeatMode) {
-
-            }
-
-            @Override
-            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-            }
-
-            @Override
-            public void onPlayerError(PlaybackException error) {
-                Player.Listener.super.onPlayerError(error);
-                Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
-                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-                simpleExoPlayer.addMediaItem(mediaItem);
-                simpleExoPlayer.setPlayWhenReady(true);
-                simpleExoPlayer.prepare();
-                simpleExoPlayer.play();
-            }
-        });
-
-        btFullScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (flag) {
-                    btFullScreen.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), com.exa.ashutosh_video.R.drawable.ic_fullscreen, null));
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                    flag = false;
-                    binding.toolBar.setVisibility(View.VISIBLE);
-                    binding.bottomLayout.setVisibility(View.VISIBLE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.simpleExoPlayerView.getLayoutParams();
-                    params.width = params.MATCH_PARENT;
-                    params.height = 800;
-                    binding.simpleExoPlayerView.setLayoutParams(params);
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-                } else {
-                    btFullScreen.setImageDrawable(ResourcesCompat.getDrawable(getResources(), com.exa.ashutosh_video.R.drawable.ic_fullscreen_exit, null));
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    flag = true;
-                    binding.toolBar.setVisibility(View.GONE);
-                    binding.bottomLayout.setVisibility(View.GONE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.simpleExoPlayerView.getLayoutParams();
-                    params.width = params.MATCH_PARENT;
-                    params.height = params.MATCH_PARENT;
-                    binding.simpleExoPlayerView.setLayoutParams(params);
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-                }
-            }
-        });
-    }*/
-
-
-
-
-
-
 
 
     private void loadImageFile(String imageFilePath, ImageView imageView)
@@ -450,6 +319,70 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
 
 
 
+    private void loadAutoPlayVideoFile(String videoPath, PlayerView videoPlayer, ProgressBar progressBar){
+
+
+        simpleExoPlayer = new ExoPlayer.Builder(context).build();
+        videoPlayer.setPlayer(simpleExoPlayer);
+        videoPlayer.setKeepScreenOn(true);
+
+        MediaItem mediaItem = MediaItem.fromUri(videoPath);
+        simpleExoPlayer.addMediaItem(mediaItem);
+        simpleExoPlayer.setPlayWhenReady(true);
+
+        simpleExoPlayer.prepare();
+        simpleExoPlayer.play();
+
+        listener.OnMediaPlayPause(simpleExoPlayer);
+        simpleExoPlayer.addListener(new Player.Listener() {
+
+            @Override
+            public void onPlaybackStateChanged(@Player.State int state) {
+                if (state == Player.STATE_BUFFERING) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                else if (state == Player.STATE_READY) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                else if (state == Player.STATE_ENDED) {
+
+                    // Todo
+                }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                Player.Listener.super.onPlayerError(error);
+                Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
+                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+                simpleExoPlayer.addMediaItem(mediaItem);
+                simpleExoPlayer.setPlayWhenReady(true);
+                simpleExoPlayer.prepare();
+                simpleExoPlayer.play();
+            }
+        });
+
+
+
+    }
+
+
+
+
+
+
+
+
     @Override
     public int getItemCount() {
         return mediaList.size();
@@ -479,6 +412,19 @@ public class GroupChannelPinnedMessageMediaAdapter extends RecyclerView.Adapter<
     @Override
     public int getItemViewType(int position) {
         return mediaList.size();
+    }
+
+
+
+
+
+    public void setOnMediaPlayPauseListener(OnMediaPlayPauseListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnMediaPlayPauseListener {
+        void OnMediaPlayPause(ExoPlayer exoPlayer);
+
     }
 }
 

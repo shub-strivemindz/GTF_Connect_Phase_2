@@ -78,4 +78,12 @@ public class AuthRepo {
     public Observable<JsonElement> report_user(String api_token,String device_type,String device_token,Map<String,Object> params){
         return restService.report_user(api_token,device_type,device_token,params);
     }
+
+
+
+    public Observable<JsonElement> get_cms_data(String device_type,String device_token,String type){
+        return restService.get_cms_page_data(device_type,device_token,type);
+    }
+
+
 }

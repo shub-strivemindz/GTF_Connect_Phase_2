@@ -41,7 +41,6 @@
         android:layout_marginVertical="@dimen/_4sdp"
         android:id="@+id/sent_message_container"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_marginStart="@dimen/_40sdp"
         android:layout_marginEnd="@dimen/_16sdp"
         android:background="@drawable/group_message_sent_background"
@@ -107,6 +106,7 @@ more then 1000 top most trading courses+ daily or weekly"
             <RelativeLayout
                 android:id="@+id/post_image_container1"
                 android:layout_width="match_parent"
+
                 android:layout_height="@dimen/_130sdp"
                 android:layout_marginHorizontal="@dimen/_16sdp">
 
@@ -125,7 +125,6 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:id="@+id/post_image1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/no_preview_available"
                             android:scaleType="centerCrop"
                             />
 
@@ -136,6 +135,52 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:src="@drawable/play_circle"
                             android:layout_centerInParent="true"/>
 
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            app:cardCornerRadius="@dimen/_120sdp"
+                            app:cardElevation="@dimen/_20sdp"
+                            android:layout_gravity="center"
+                            app:cardBackgroundColor="#80000000"
+                            android:layout_centerInParent="true"
+                            android:id="@+id/play_gif1">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="GIF"
+                                android:gravity="center"
+                                android:textColor="@color/white"/>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:id="@+id/doc_container1"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_alignParentBottom="true"
+                            android:gravity="center_horizontal"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="@dimen/_12sdp"
+                                android:layout_height="@dimen/_12sdp"
+                                android:src="@drawable/pdf_image"
+                                android:layout_gravity="center_vertical"/>
+
+                            <TextView
+                                android:id="@+id/doc_name1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="Document.pdf"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:gravity="center"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textSize="@dimen/_9ssp"/>
+
+                        </LinearLayout>
+
                     </RelativeLayout>
 
 
@@ -144,7 +189,6 @@ more then 1000 top most trading courses+ daily or weekly"
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/dual_post_image_container1"
                     android:layout_width="match_parent"
-                    android:visibility="gone"
                     android:layout_height="match_parent"
                     app:cardCornerRadius="@dimen/_6sdp">
 
@@ -163,7 +207,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:id="@+id/dual_post11"
-                                android:background="@drawable/no_preview_available"
                                 android:scaleType="centerCrop"
                                 />
 
@@ -173,6 +216,52 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:layout_height="@dimen/_40sdp"
                                 android:src="@drawable/play_circle"
                                 android:layout_centerInParent="true"/>
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                app:cardCornerRadius="@dimen/_120sdp"
+                                app:cardElevation="@dimen/_20sdp"
+                                android:layout_gravity="center"
+                                app:cardBackgroundColor="#80000000"
+                                android:layout_centerInParent="true"
+                                android:id="@+id/play_gif2">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="GIF"
+                                    android:gravity="center"
+                                    android:textColor="@color/white"/>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:id="@+id/doc_container2"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_alignParentBottom="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_12sdp"
+                                    android:layout_height="@dimen/_12sdp"
+                                    android:src="@drawable/pdf_image"
+                                    android:layout_gravity="center_vertical"/>
+
+                                <TextView
+                                    android:id="@+id/doc_name2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:text="Document.pdf"
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:gravity="center"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="@dimen/_9ssp"/>
+
+                            </LinearLayout>
 
                         </RelativeLayout>
 
@@ -186,7 +275,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:id="@+id/dual_post21"
-                                android:background="@drawable/no_preview_available"
                                 android:scaleType="centerCrop"
                                 />
 
@@ -197,6 +285,52 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:src="@drawable/play_circle"
                                 android:layout_centerInParent="true"/>
 
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                app:cardCornerRadius="@dimen/_120sdp"
+                                app:cardElevation="@dimen/_20sdp"
+                                android:layout_gravity="center"
+                                app:cardBackgroundColor="#80000000"
+                                android:layout_centerInParent="true"
+                                android:id="@+id/play_gif3">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="GIF"
+                                    android:gravity="center"
+                                    android:textColor="@color/white"/>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:id="@+id/doc_container3"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_alignParentBottom="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_12sdp"
+                                    android:layout_height="@dimen/_12sdp"
+                                    android:src="@drawable/pdf_image"
+                                    android:layout_gravity="center_vertical"/>
+
+                                <TextView
+                                    android:id="@+id/doc_name3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:text="Document.pdf"
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:gravity="center"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="@dimen/_9ssp"/>
+
+                            </LinearLayout>
+
                         </RelativeLayout>
 
                     </LinearLayout>
@@ -206,6 +340,7 @@ more then 1000 top most trading courses+ daily or weekly"
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/multi_post_image_container1"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="match_parent"
                     app:cardCornerRadius="@dimen/_6sdp">
 
@@ -225,7 +360,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:id="@+id/multi_post11"
-                                android:background="@drawable/no_preview_available"
                                 android:scaleType="centerCrop"
                                 />
 
@@ -233,8 +367,54 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:id="@+id/play_video31"
                                 android:layout_width="@dimen/_40sdp"
                                 android:layout_height="@dimen/_40sdp"
-                                android:src="@drawable/play_circle"
-                                android:layout_centerInParent="true"/>
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/play_circle" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                app:cardCornerRadius="@dimen/_120sdp"
+                                app:cardElevation="@dimen/_20sdp"
+                                android:layout_gravity="center"
+                                app:cardBackgroundColor="#80000000"
+                                android:layout_centerInParent="true"
+                                android:id="@+id/play_gif4">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="GIF"
+                                    android:gravity="center"
+                                    android:textColor="@color/white"/>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:id="@+id/doc_container4"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_alignParentBottom="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_12sdp"
+                                    android:layout_height="@dimen/_12sdp"
+                                    android:src="@drawable/pdf_image"
+                                    android:layout_gravity="center_vertical"/>
+
+                                <TextView
+                                    android:id="@+id/doc_name4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:text="Document.pdf"
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:gravity="center"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="@dimen/_9ssp"/>
+
+                            </LinearLayout>
 
                         </RelativeLayout>
 
@@ -254,7 +434,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_width="match_parent"
                                     android:id="@+id/multi_post21"
                                     android:layout_height="match_parent"
-                                    android:background="@drawable/no_preview_available"
                                     android:scaleType="centerCrop"
                                     />
 
@@ -262,8 +441,56 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:id="@+id/play_video41"
                                     android:layout_width="@dimen/_30sdp"
                                     android:layout_height="@dimen/_30sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
+                                    android:layout_centerInParent="true"
+                                    android:src="@drawable/play_circle" />
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="@dimen/_30sdp"
+                                    android:layout_height="@dimen/_30sdp"
+                                    app:cardCornerRadius="@dimen/_120sdp"
+                                    app:cardElevation="@dimen/_20sdp"
+                                    android:layout_gravity="center"
+                                    app:cardBackgroundColor="#80000000"
+                                    android:layout_centerInParent="true"
+                                    android:id="@+id/play_gif5">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="GIF"
+                                        android:gravity="center"
+                                        android:textColor="@color/white"/>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:id="@+id/doc_container5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_15sdp"
+                                    android:layout_alignParentBottom="true"
+                                    android:gravity="center_horizontal"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_10sdp"
+                                        android:layout_height="@dimen/_10sdp"
+                                        android:src="@drawable/pdf_image"
+                                        android:layout_gravity="center_vertical"/>
+
+                                    <TextView
+                                        android:id="@+id/doc_name5"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:text="Document.pdf"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:gravity="center"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:textSize="@dimen/_8ssp"/>
+
+                                </LinearLayout>
+
                             </RelativeLayout>
 
                             <com.google.android.material.divider.MaterialDivider
@@ -280,7 +507,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:id="@+id/multi_post31"
-                                    android:background="@drawable/no_preview_available"
                                     android:scaleType="centerCrop"
                                     />
 
@@ -288,8 +514,54 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:id="@+id/play_video51"
                                     android:layout_width="@dimen/_30sdp"
                                     android:layout_height="@dimen/_30sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
+                                    android:layout_centerInParent="true"
+                                    android:src="@drawable/play_circle" />
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="@dimen/_30sdp"
+                                    android:layout_height="@dimen/_30sdp"
+                                    app:cardCornerRadius="@dimen/_120sdp"
+                                    app:cardElevation="@dimen/_20sdp"
+                                    android:layout_gravity="center"
+                                    app:cardBackgroundColor="#80000000"
+                                    android:layout_centerInParent="true"
+                                    android:id="@+id/play_gif6">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="GIF"
+                                        android:gravity="center"
+                                        android:textColor="@color/white"/>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:id="@+id/doc_container6"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_15sdp"
+                                    android:layout_alignParentBottom="true"
+                                    android:gravity="center_horizontal"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_10sdp"
+                                        android:layout_height="@dimen/_10sdp"
+                                        android:src="@drawable/pdf_image"
+                                        android:layout_gravity="center_vertical"/>
+
+                                    <TextView
+                                        android:id="@+id/doc_name6"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:text="Document.pdf"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:gravity="center"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:textSize="@dimen/_8ssp"/>
+
+                                </LinearLayout>
 
                                 <TextView
                                     android:visibility="gone"
@@ -317,6 +589,7 @@ more then 1000 top most trading courses+ daily or weekly"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/quote_container1"
+                android:visibility="gone"
                 android:layout_marginEnd="@dimen/_16sdp">
 
                 <LinearLayout
@@ -361,41 +634,71 @@ more then 1000 top most trading courses+ daily or weekly"
 
                         </RelativeLayout>
 
-                        <RelativeLayout
-                            android:layout_width="@dimen/_90sdp"
-                            android:layout_height="@dimen/_80sdp"
-                            android:layout_marginStart="@dimen/_35sdp"
-                            android:visibility="gone"
-                            android:layout_marginTop="@dimen/_3sdp">
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_width="@dimen/_60sdp"
+                            app:cardElevation="0dp"
+                            android:id="@+id/quote_media_container1"
+                            android:layout_height="@dimen/_55sdp"
+                            app:cardCornerRadius="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_30sdp">
 
-                            <com.google.android.material.card.MaterialCardView
+                            <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                app:cardCornerRadius="@dimen/_6sdp">
-
-                                <ImageView
-                                    android:id="@+id/quote_image1"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:elevation="0dp"
-                                    android:scaleType="centerCrop"
-                                    android:src="@drawable/image_view_temp" />
-
-                            </com.google.android.material.card.MaterialCardView>
+                                android:scaleType="fitXY"
+                                android:id="@+id/quoted_media_preview1"/>
 
                             <TextView
+                                android:id="@+id/multiple_media_count_container1"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:text="+5"
                                 android:textColor="@color/white"
-                                android:gravity="center"
-                                android:elevation="@dimen/_4sdp"
+                                android:text="+1"
+                                android:textSize="@dimen/_20ssp"
                                 android:textStyle="bold"
-                                android:fontFamily="@font/roboto_regular"
-                                android:textSize="@dimen/_26sdp"
-                                android:background="#332FB463"/>
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center"
+                                android:background="@color/mediaPinBackgroundTransparencyColor"/>
 
-                        </RelativeLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="@dimen/_160sdp"
+                            android:layout_height="@dimen/_35sdp"
+                            app:cardElevation="0dp"
+                            app:cardCornerRadius="@dimen/_4sdp"
+                            android:id="@+id/voice_message_quote_container1"
+                            app:cardBackgroundColor="@color/channelQuoteMediaAttachedReceivedBackgroundColor"
+                            android:layout_marginStart="@dimen/_30sdp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:gravity="center_vertical"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_15sdp"
+                                    android:layout_height="@dimen/_15sdp"
+                                    android:src="@drawable/mic"
+                                    app:tint="@color/white"
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:layout_marginEnd="@dimen/_5sdp"
+                                    android:layout_gravity="center_vertical"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:text="Voice Message"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/_10ssp"
+                                    android:fontFamily="@font/poppins"
+                                    android:textColor="@color/white"/>
+
+                            </LinearLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -459,8 +762,99 @@ more then 1000 top most trading courses+ daily or weekly"
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/_35sdp"
                 android:alpha=".5"
+                android:visibility="gone"
                 android:id="@+id/quote_divider1"
                 app:dividerColor="@color/white" />
+
+
+            <LinearLayout
+                android:id="@+id/audio_container1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:background="@color/theme_green"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/download_file"
+                        app:tint="@color/white"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:id="@+id/download_audio1"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/_14sdp"
+                        android:layout_height="@dimen/_14sdp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/play"
+                        android:visibility="gone"
+                        app:tint="@color/white"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:id="@+id/play_pause_recorded_audio1"/>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:visibility="gone"
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/downloader_loader1"/>
+
+                </RelativeLayout>
+
+                <com.example.audiowaveform.WaveformSeekBar
+                    android:layout_width="0dp"
+                    android:layout_marginHorizontal="@dimen/_4sdp"
+                    android:layout_weight="1"
+                    app:waveProgressColor="@color/white"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/waveForm1"/>
+
+                <LinearLayout
+                    android:id="@+id/audio_time_container1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="00"
+                        android:id="@+id/start_time_counter1"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/_9ssp"
+                        android:textColor="@color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="/01:30"
+                        android:id="@+id/total_audio_time1"
+                        android:fontFamily="@font/roboto_regular"
+                        android:textSize="@dimen/_9ssp"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="@dimen/_10sdp"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/volume"
+                    app:tint="@color/white"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:id="@+id/volume_switch1"/>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:gravity="center_vertical"
@@ -554,78 +948,6 @@ more then 1000 top most trading courses+ daily or weekly"
 
             </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                app:cardElevation="0dp"
-                android:visibility="gone"
-                android:layout_marginBottom="@dimen/_8sdp"
-                app:cardBackgroundColor="@color/theme_green"
-                app:cardCornerRadius="@dimen/_4sdp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="@dimen/_10sdp"
-                        android:layout_height="@dimen/_10sdp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/play"
-                        app:tint="@color/white"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:id="@+id/play_recorded_audio1"/>
-
-                    <!--<com.example.audiowaveform.WaveformSeekBar
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:id="@+id/waveForm"/>-->
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="00"
-                            android:id="@+id/start_time_counter1"
-                            android:fontFamily="@font/roboto_regular"
-                            android:textSize="@dimen/_9ssp"
-                            android:textColor="@color/white"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="/01:30"
-                            android:id="@+id/total_time1"
-                            android:fontFamily="@font/roboto_regular"
-                            android:textSize="@dimen/_9ssp"
-                            android:textColor="@color/white"
-                            android:layout_marginEnd="@dimen/_10sdp"/>
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/volume"
-                        app:tint="@color/white"
-                        android:layout_marginEnd="@dimen/_10sdp"
-                        android:id="@+id/volume_switch1"/>
-
-
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_20sdp"
@@ -667,6 +989,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="10:20 am,"
+                    android:id="@+id/time1"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:fontFamily="@font/open_sans"
                     android:textColor="@color/white"
@@ -700,6 +1023,7 @@ more then 1000 top most trading courses+ daily or weekly"
         android:id="@+id/received_message_container"
         android:layout_width="match_parent"
         android:elevation="1dp"
+        android:visibility="gone"
         android:clickable="true"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_40sdp"
@@ -744,13 +1068,19 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:layout_alignParentStart="true"
                         android:orientation="horizontal">
 
-                        <com.google.android.material.imageview.ShapeableImageView
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="@dimen/_24sdp"
+                            android:layout_height="@dimen/_24sdp"
                             android:layout_gravity="center_vertical"
-                            android:layout_width="@dimen/_20sdp"
-                            android:layout_height="@dimen/_20sdp"
-                            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                            android:background="#fff"
-                            android:src="@drawable/bot2"/>
+                            app:cardCornerRadius="@dimen/_80sdp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:id="@+id/user_icon"/>
+
+                        </com.google.android.material.card.MaterialCardView>
 
                         <TextView
                             android:id="@+id/user_name"
@@ -851,8 +1181,8 @@ more then 1000 top most trading courses+ daily or weekly"
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/single_post_image_container"
                         android:layout_width="match_parent"
-                        android:visibility="gone"
                         android:layout_height="match_parent"
+                        android:visibility="gone"
                         app:cardCornerRadius="@dimen/_6sdp">
 
                         <RelativeLayout
@@ -863,7 +1193,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:id="@+id/post_image"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/no_preview_available"
                                 android:scaleType="centerCrop"
                                 />
 
@@ -874,6 +1203,53 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:src="@drawable/play_circle"
                                 android:layout_centerInParent="true"/>
 
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                app:cardCornerRadius="@dimen/_120sdp"
+                                app:cardElevation="@dimen/_20sdp"
+                                android:layout_gravity="center"
+                                app:cardBackgroundColor="#80000000"
+                                android:layout_centerInParent="true"
+                                android:id="@+id/play_gif01">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="GIF"
+                                    android:gravity="center"
+                                    android:textColor="@color/white"/>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:id="@+id/doc_container01"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_alignParentBottom="true"
+                                android:gravity="center_horizontal"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/_12sdp"
+                                    android:layout_height="@dimen/_12sdp"
+                                    android:src="@drawable/pdf_image"
+                                    android:layout_gravity="center_vertical"/>
+
+                                <TextView
+                                    android:id="@+id/doc_name01"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:text="Document.pdf"
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:gravity="center"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="@dimen/_9ssp"/>
+
+                            </LinearLayout>
+
                         </RelativeLayout>
 
 
@@ -882,8 +1258,8 @@ more then 1000 top most trading courses+ daily or weekly"
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/dual_post_image_container"
                         android:layout_width="match_parent"
-                        android:visibility="gone"
                         android:layout_height="match_parent"
+                        android:visibility="gone"
                         app:cardCornerRadius="@dimen/_6sdp">
 
                         <LinearLayout
@@ -901,7 +1277,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:id="@+id/dual_post1"
-                                    android:background="@drawable/no_preview_available"
                                     android:scaleType="centerCrop"
                                     />
 
@@ -909,8 +1284,55 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:id="@+id/play_video1"
                                     android:layout_width="@dimen/_40sdp"
                                     android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
+                                    android:layout_centerInParent="true"
+                                    android:src="@drawable/play_circle" />
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    app:cardCornerRadius="@dimen/_120sdp"
+                                    app:cardElevation="@dimen/_20sdp"
+                                    android:layout_gravity="center"
+                                    app:cardBackgroundColor="#80000000"
+                                    android:layout_centerInParent="true"
+                                    android:id="@+id/play_gif02">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="GIF"
+                                        android:gravity="center"
+                                        android:textColor="@color/white"/>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:id="@+id/doc_container02"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp"
+                                    android:layout_alignParentBottom="true"
+                                    android:gravity="center_horizontal"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_12sdp"
+                                        android:layout_height="@dimen/_12sdp"
+                                        android:src="@drawable/pdf_image"
+                                        android:layout_gravity="center_vertical"/>
+
+                                    <TextView
+                                        android:id="@+id/doc_name02"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:text="Document.pdf"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:gravity="center"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:textSize="@dimen/_9ssp"/>
+
+                                </LinearLayout>
+
 
                             </RelativeLayout>
 
@@ -924,7 +1346,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:id="@+id/dual_post2"
-                                    android:background="@drawable/no_preview_available"
                                     android:scaleType="centerCrop"
                                     />
 
@@ -934,6 +1355,52 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_height="@dimen/_40sdp"
                                     android:src="@drawable/play_circle"
                                     android:layout_centerInParent="true"/>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    app:cardCornerRadius="@dimen/_120sdp"
+                                    app:cardElevation="@dimen/_20sdp"
+                                    android:layout_gravity="center"
+                                    app:cardBackgroundColor="#80000000"
+                                    android:layout_centerInParent="true"
+                                    android:id="@+id/play_gif03">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="GIF"
+                                        android:gravity="center"
+                                        android:textColor="@color/white"/>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:id="@+id/doc_container03"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp"
+                                    android:layout_alignParentBottom="true"
+                                    android:gravity="center_horizontal"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_12sdp"
+                                        android:layout_height="@dimen/_12sdp"
+                                        android:src="@drawable/pdf_image"
+                                        android:layout_gravity="center_vertical"/>
+
+                                    <TextView
+                                        android:id="@+id/doc_name03"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:text="Document.pdf"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:gravity="center"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:textSize="@dimen/_9ssp"/>
+
+                                </LinearLayout>
 
                             </RelativeLayout>
 
@@ -963,7 +1430,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:id="@+id/multi_post1"
-                                    android:background="@drawable/no_preview_available"
                                     android:scaleType="centerCrop"
                                     />
 
@@ -973,6 +1439,53 @@ more then 1000 top most trading courses+ daily or weekly"
                                     android:layout_height="@dimen/_40sdp"
                                     android:src="@drawable/play_circle"
                                     android:layout_centerInParent="true"/>
+
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    app:cardCornerRadius="@dimen/_120sdp"
+                                    app:cardElevation="@dimen/_20sdp"
+                                    android:layout_gravity="center"
+                                    app:cardBackgroundColor="#80000000"
+                                    android:layout_centerInParent="true"
+                                    android:id="@+id/play_gif04">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="GIF"
+                                        android:gravity="center"
+                                        android:textColor="@color/white"/>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:id="@+id/doc_container04"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp"
+                                    android:layout_alignParentBottom="true"
+                                    android:gravity="center_horizontal"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_12sdp"
+                                        android:layout_height="@dimen/_12sdp"
+                                        android:src="@drawable/pdf_image"
+                                        android:layout_gravity="center_vertical"/>
+
+                                    <TextView
+                                        android:id="@+id/doc_name04"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:text="Document.pdf"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:gravity="center"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:textSize="@dimen/_9ssp"/>
+
+                                </LinearLayout>
 
                             </RelativeLayout>
 
@@ -992,7 +1505,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                         android:layout_width="match_parent"
                                         android:id="@+id/multi_post2"
                                         android:layout_height="match_parent"
-                                        android:background="@drawable/no_preview_available"
                                         android:scaleType="centerCrop"
                                         />
 
@@ -1002,6 +1514,54 @@ more then 1000 top most trading courses+ daily or weekly"
                                         android:layout_height="@dimen/_30sdp"
                                         android:src="@drawable/play_circle"
                                         android:layout_centerInParent="true"/>
+
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:layout_width="@dimen/_30sdp"
+                                        android:layout_height="@dimen/_30sdp"
+                                        app:cardCornerRadius="@dimen/_120sdp"
+                                        app:cardElevation="@dimen/_20sdp"
+                                        android:layout_gravity="center"
+                                        app:cardBackgroundColor="#80000000"
+                                        android:layout_centerInParent="true"
+                                        android:id="@+id/play_gif05">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:text="GIF"
+                                            android:gravity="center"
+                                            android:textColor="@color/white"/>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <LinearLayout
+                                        android:id="@+id/doc_container05"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_15sdp"
+                                        android:layout_alignParentBottom="true"
+                                        android:gravity="center_horizontal"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:layout_width="@dimen/_10sdp"
+                                            android:layout_height="@dimen/_10sdp"
+                                            android:src="@drawable/pdf_image"
+                                            android:layout_gravity="center_vertical"/>
+
+                                        <TextView
+                                            android:id="@+id/doc_name05"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:maxLines="1"
+                                            android:ellipsize="end"
+                                            android:text="Document.pdf"
+                                            android:layout_marginStart="@dimen/_10sdp"
+                                            android:gravity="center"
+                                            android:fontFamily="@font/roboto_regular"
+                                            android:textSize="@dimen/_8ssp"/>
+
+                                    </LinearLayout>
+
                                 </RelativeLayout>
 
                                 <com.google.android.material.divider.MaterialDivider
@@ -1018,7 +1578,6 @@ more then 1000 top most trading courses+ daily or weekly"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:id="@+id/multi_post3"
-                                        android:background="@drawable/no_preview_available"
                                         android:scaleType="centerCrop"
                                         />
 
@@ -1028,6 +1587,52 @@ more then 1000 top most trading courses+ daily or weekly"
                                         android:layout_height="@dimen/_30sdp"
                                         android:src="@drawable/play_circle"
                                         android:layout_centerInParent="true"/>
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:layout_width="@dimen/_30sdp"
+                                        android:layout_height="@dimen/_30sdp"
+                                        app:cardCornerRadius="@dimen/_120sdp"
+                                        app:cardElevation="@dimen/_20sdp"
+                                        android:layout_gravity="center"
+                                        app:cardBackgroundColor="#80000000"
+                                        android:layout_centerInParent="true"
+                                        android:id="@+id/play_gif06">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:text="GIF"
+                                            android:gravity="center"
+                                            android:textColor="@color/white"/>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <LinearLayout
+                                        android:id="@+id/doc_container06"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_15sdp"
+                                        android:layout_alignParentBottom="true"
+                                        android:gravity="center_horizontal"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:layout_width="@dimen/_10sdp"
+                                            android:layout_height="@dimen/_10sdp"
+                                            android:src="@drawable/pdf_image"
+                                            android:layout_gravity="center_vertical"/>
+
+                                        <TextView
+                                            android:id="@+id/doc_name06"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:maxLines="1"
+                                            android:ellipsize="end"
+                                            android:text="Document.pdf"
+                                            android:layout_marginStart="@dimen/_10sdp"
+                                            android:gravity="center"
+                                            android:fontFamily="@font/roboto_regular"
+                                            android:textSize="@dimen/_8ssp"/>
+
+                                    </LinearLayout>
 
                                     <TextView
                                         android:visibility="gone"
@@ -1055,6 +1660,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/quote_container"
+                    android:visibility="gone"
                     android:layout_marginEnd="@dimen/_16sdp">
 
                     <LinearLayout
@@ -1098,41 +1704,71 @@ more then 1000 top most trading courses+ daily or weekly"
 
                             </RelativeLayout>
 
-                            <RelativeLayout
-                                android:layout_width="@dimen/_90sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_marginStart="@dimen/_35sdp"
-                                android:visibility="gone"
-                                android:layout_marginTop="@dimen/_3sdp">
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_width="@dimen/_60sdp"
+                                app:cardElevation="0dp"
+                                android:id="@+id/quote_media_container"
+                                android:layout_height="@dimen/_55sdp"
+                                app:cardCornerRadius="@dimen/_4sdp"
+                                android:layout_marginStart="@dimen/_30sdp">
 
-                                <com.google.android.material.card.MaterialCardView
+                                <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    app:cardCornerRadius="@dimen/_6sdp">
-
-                                    <ImageView
-                                        android:id="@+id/quote_image"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:elevation="0dp"
-                                        android:scaleType="centerCrop"
-                                        android:src="@drawable/image_view_temp" />
-
-                                </com.google.android.material.card.MaterialCardView>
+                                    android:scaleType="fitXY"
+                                    android:id="@+id/quoted_media_preview"/>
 
                                 <TextView
+                                    android:id="@+id/multiple_media_count_container"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:text="+5"
                                     android:textColor="@color/white"
-                                    android:gravity="center"
-                                    android:elevation="@dimen/_4sdp"
+                                    android:text="+1"
+                                    android:textSize="@dimen/_20ssp"
                                     android:textStyle="bold"
-                                    android:fontFamily="@font/roboto_regular"
-                                    android:textSize="@dimen/_26sdp"
-                                    android:background="#332FB463"/>
+                                    android:fontFamily="@font/open_sans"
+                                    android:gravity="center"
+                                    android:background="@color/mediaPinBackgroundTransparencyColor"/>
 
-                            </RelativeLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="@dimen/_160sdp"
+                                android:layout_height="@dimen/_35sdp"
+                                app:cardElevation="0dp"
+                                app:cardCornerRadius="@dimen/_4sdp"
+                                android:id="@+id/voice_message_quote_container"
+                                app:cardBackgroundColor="@color/channelQuoteMediaAttachedReceivedBackgroundColor"
+                                android:layout_marginStart="@dimen/_30sdp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:gravity="center_vertical"
+                                    android:layout_height="match_parent"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_15sdp"
+                                        android:layout_height="@dimen/_15sdp"
+                                        android:src="@drawable/mic"
+                                        app:tint="@color/white"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layout_marginEnd="@dimen/_5sdp"
+                                        android:layout_gravity="center_vertical"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:text="Voice Message"
+                                        android:gravity="center"
+                                        android:textSize="@dimen/_10ssp"
+                                        android:fontFamily="@font/poppins"
+                                        android:textColor="@color/white"/>
+
+                                </LinearLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -1199,6 +1835,96 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:id="@+id/quote_divider"
                     app:dividerColor="@color/white" />
 
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/audio_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:background="@color/groupChatBoxBackgroundColor"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+
+
+                            <ImageView
+                                android:layout_width="@dimen/_16sdp"
+                                android:layout_height="match_parent"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/download_file"
+                                app:tint="@color/audioPlayTint"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:id="@+id/download_audio"/>
+
+                            <ImageView
+                                android:layout_width="@dimen/_14sdp"
+                                android:layout_height="@dimen/_14sdp"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/play"
+                                android:visibility="gone"
+                                app:tint="@color/audioPlayTint"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:id="@+id/play_pause_recorded_audio"/>
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:visibility="gone"
+                                android:layout_width="@dimen/_16sdp"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_centerVertical="true"
+                                android:id="@+id/downloader_loader"/>
+
+                        </RelativeLayout>
+
+                        <com.example.audiowaveform.WaveformSeekBar
+                            android:layout_width="0dp"
+                            android:layout_marginHorizontal="@dimen/_4sdp"
+                            android:layout_weight="1"
+                            app:waveProgressColor="@color/theme_green"
+                            android:layout_marginVertical="@dimen/_8sdp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/waveForm"/>
+
+                        <LinearLayout
+                            android:id="@+id/audio_time_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="00"
+                                android:id="@+id/start_time_counter"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textSize="@dimen/_9ssp"
+                                android:textColor="@color/black"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="/01:30"
+                                android:id="@+id/total_audio_time"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textSize="@dimen/_9ssp"
+                                android:textColor="@color/black"
+                                android:layout_marginEnd="@dimen/_10sdp"/>
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/volume"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:id="@+id/volume_switch"/>
+
+
+
+                    </LinearLayout>
 
                 <LinearLayout
                     android:gravity="center_vertical"
@@ -1292,77 +2018,6 @@ more then 1000 top most trading courses+ daily or weekly"
                     </LinearLayout>
 
                 </LinearLayout>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_40sdp"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    android:visibility="gone"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    app:cardBackgroundColor="@color/card_light_grey"
-                    app:cardCornerRadius="@dimen/_4sdp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="@dimen/_10sdp"
-                            android:layout_height="@dimen/_10sdp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/play"
-                            app:tint="@color/audioPlayTint"
-                            android:layout_marginStart="@dimen/_10sdp"
-                            android:id="@+id/play_recorded_audio"/>
-
-                        <!--<com.example.audiowaveform.WaveformSeekBar
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="match_parent"
-                            android:id="@+id/waveForm"/>-->
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="00"
-                                android:id="@+id/start_time_counter"
-                                android:fontFamily="@font/roboto_regular"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/black"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="/01:30"
-                                android:id="@+id/total_time"
-                                android:fontFamily="@font/roboto_regular"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/black"
-                                android:layout_marginEnd="@dimen/_10sdp"/>
-
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="@dimen/_20sdp"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/volume"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:id="@+id/volume_switch"/>
-
-
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 

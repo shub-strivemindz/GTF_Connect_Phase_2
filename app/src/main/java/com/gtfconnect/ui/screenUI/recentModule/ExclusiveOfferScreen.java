@@ -1,5 +1,6 @@
 package com.gtfconnect.ui.screenUI.recentModule;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -14,6 +15,7 @@ import com.gtfconnect.databinding.ActivityExclusiveOfferBinding;
 import com.gtfconnect.interfaces.MembershipSubscriptionPlanListener;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.recentModuleAdapter.MembershipSubscriptionAdapter;
+import com.gtfconnect.ui.screenUI.paymentModule.PaymentWebPortal;
 import com.gtfconnect.utilities.Utils;
 
 import java.lang.reflect.Type;
@@ -24,6 +26,9 @@ public class ExclusiveOfferScreen extends AppCompatActivity implements Membershi
     ActivityExclusiveOfferBinding binding;
 
     List<InfoDbEntity.GcSubscriptionPlan> subscriptionPlans;
+
+
+    int selectedPlanPosition = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class ExclusiveOfferScreen extends AppCompatActivity implements Membershi
 
         if (subscriptionPlans != null && !subscriptionPlans.isEmpty()) {
 
+            selectedPlanPosition = 0;
             updatePlanDetails(0);
 
             MembershipSubscriptionAdapter groupViewAdapter = new MembershipSubscriptionAdapter(this,subscriptionPlans,this);
@@ -52,11 +58,26 @@ public class ExclusiveOfferScreen extends AppCompatActivity implements Membershi
             binding.offerRecycler.setAdapter(groupViewAdapter);
 
         }
+
+
+
+        binding.subscribePlan.setOnClickListener(view -> {
+
+            if(subscriptionPlans != null && !subscriptionPlans.isEmpty() && subscriptionPlans.get(selectedPlanPosition).getGroupChannelID() != null){
+
+                int channelID = subscriptionPlans.get(selectedPlanPosition).getGroupChannelID();
+
+                Intent intent = new Intent(ExclusiveOfferScreen.this, PaymentWebPortal.class);
+                intent.putExtra("channelID",channelID);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     public void selectPlan(int position) {
 
+        selectedPlanPosition = position;
         updatePlanDetails(position);
     }
 

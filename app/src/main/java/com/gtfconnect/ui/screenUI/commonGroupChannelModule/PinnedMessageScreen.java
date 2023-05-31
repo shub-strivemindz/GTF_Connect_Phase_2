@@ -280,4 +280,17 @@ public class PinnedMessageScreen extends AppCompatActivity implements ApiRespons
         super.onBackPressed();
         finish();
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        pinnedMessageViewAdapter.destroyExoPlayer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pinnedMessageViewAdapter.pauseExoPlayer();
+    }
 }

@@ -61,8 +61,16 @@ public class PaymentWebPortal extends Activity implements Callback<Object> {
 
         ImageView img_haderBack = findViewById(R.id.img_haderBack);
 
-        /*String userId = PreferenceConnector.readString(this, PreferenceConnector.KEY_USER_ID, "");
-        String url = ApiUrls.Payment_URL + userId;*/
+        int userID = PreferenceConnector.readInteger(this, PreferenceConnector.CONNECT_USER_ID, 0);
+
+        int channelID = getIntent().getIntExtra("channelID",0);
+
+        String base_path = userID+"?item_id="+channelID+"&item=gc_subscription_plan";
+        String url = ApiUrls.URL_PAYMENT_WEB_VIEW_PORTAL + base_path;
+
+
+        Log.d("payment_web_url",url);
+
 
         WebSettings settings = web_visitWeb.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -73,7 +81,7 @@ public class PaymentWebPortal extends Activity implements Callback<Object> {
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(web_visitWeb, true);
 
-        //web_visitWeb.loadUrl(url);
+        web_visitWeb.loadUrl(url);
         web_visitWeb.setWebChromeClient(new WebChromeClient());
         img_haderBack.setOnClickListener(v -> onBackPressed());
         rest.ShowDialogue();

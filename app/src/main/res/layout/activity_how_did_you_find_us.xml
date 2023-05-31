@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/background"
+    android:background="@color/how_did_you_find_us"
     android:orientation="vertical">
 
     <TextView
@@ -22,7 +22,7 @@
             android:layout_width="45dp"
             android:layout_marginStart="20dp"
             android:layout_height="1dp"
-            android:layout_marginTop="15dp"/>
+            app:dividerColor="@color/how_did_you_find_us_divider"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -33,257 +33,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/telegram"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/_20sdp">
-
-        <ImageView
-            android:id="@+id/telegram_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:src="@drawable/telegram" />
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/telegram_title"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:text="Telegram"
-            android:textSize="@dimen/_10ssp" />
+            android:layout_marginTop="@dimen/_25sdp"
+            android:id="@+id/find_us_recycler"/>
 
-    </LinearLayout>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="240dp"
-        android:layout_marginStart="20dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-    <LinearLayout
-        android:id="@+id/facebook"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/_20sdp"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/facebook_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/facebook"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/facebook_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Facebook"/>
-
-    </LinearLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="240dp"
-        android:layout_marginStart="20dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-    <LinearLayout
-        android:id="@+id/youtube"
-        android:paddingStart="@dimen/_20sdp"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/youtube_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/youtube"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/youtube_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Youtube"/>
-
-    </LinearLayout>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_marginStart="20dp"
-        android:layout_width="240dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-
-    <LinearLayout
-        android:id="@+id/instagram"
-        android:paddingStart="@dimen/_20sdp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/instagram_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/instgram"
-            app:tint="@color/theme_green"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/instagram_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Instagram"/>
-
-    </LinearLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_marginStart="20dp"
-        android:layout_width="240dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-    <LinearLayout
-        android:id="@+id/friends"
-        android:paddingStart="@dimen/_20sdp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/friends_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/friends"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/friends_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Friends"/>
-
-    </LinearLayout>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_marginStart="20dp"
-        android:layout_width="240dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-
-    <LinearLayout
-        android:id="@+id/google"
-        android:paddingStart="@dimen/_20sdp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/google_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/google"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/google_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Google Search"/>
-
-    </LinearLayout>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_marginStart="20dp"
-        android:layout_width="240dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-
-    <LinearLayout
-        android:id="@+id/quora"
-        android:paddingStart="@dimen/_20sdp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/quora_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/quora"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/quora_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Quora"/>
-
-    </LinearLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_marginStart="20dp"
-        android:layout_width="240dp"
-        android:layout_height="1dp"
-        android:alpha=".2"/>
-
-    <LinearLayout
-        android:id="@+id/others"
-        android:paddingStart="@dimen/_20sdp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/others_icon"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/others"/>
-
-        <TextView
-            android:textColor="@color/tab_grey"
-            android:id="@+id/others_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_10ssp"
-            android:text="Others"/>
-
-
-    </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -293,7 +48,8 @@
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         app:strokeWidth=".3dp"
-        app:strokeColor="@color/theme_green"
+        app:cardBackgroundColor="@color/authEditTextBg"
+        app:strokeColor="@color/authCardStrokeColor"
         app:cardCornerRadius="12dp">
 
         <TextView

@@ -247,6 +247,33 @@ public class AuthViewModel extends AndroidViewModel {
 
 
 
+    public void get_cms_data(String type){
+
+        disposables.add(repo.get_cms_data("android","test",type).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+
+
+    }
+
+
+
+
+
 
 
     public void report_user(String api_token,String device_type,String device_token,Map<String,Object> params){
