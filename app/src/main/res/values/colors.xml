@@ -519,5 +519,8 @@
     <color name="subscriptionTextColor">#8497A7</color>
 
 
+    <!-- ==================================== -->
+    
+    <color name="quotedTextSelfExpandableColor">#032D1A</color>
 
 </resources>

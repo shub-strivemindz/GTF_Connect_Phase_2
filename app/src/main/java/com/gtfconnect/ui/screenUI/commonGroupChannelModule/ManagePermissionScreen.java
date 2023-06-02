@@ -22,6 +22,7 @@ import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityManagePermissionBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
@@ -476,7 +477,7 @@ public class ManagePermissionScreen extends AppCompatActivity implements ApiResp
         if (requestType == UPDATE_DATA) {
             Toast.makeText(this, "Permissions Updated", Toast.LENGTH_SHORT).show();
 
-            setResult(GC_REFRESH_UPDATED_DATA_CODE, new Intent());
+            setResult(Constants.GC_PERMISSION_UPDATED, new Intent());
             finish();
         }
         Log.d("json response : ",jsonObject.toString());
@@ -487,7 +488,6 @@ public class ManagePermissionScreen extends AppCompatActivity implements ApiResp
     public void onAuthFailure(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         //startActivity(new Intent(this, LoginScreen.class));
-        finishAffinity();
     }
 
     @Override

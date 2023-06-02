@@ -53,6 +53,16 @@ public interface RestService {
     Observable<JsonElement> forgetPassword(@Field("Email") String email);
 
 
+    @FormUrlEncoded
+    @POST(ApiUrls.URL_RESET_PASSWORD)
+    Observable<JsonElement> updatePassword(@Header ("Authorization") String api_token,
+                                           @Header("DeviceType") String device_type,
+                                           @Header("DeviceToken") String device_token,
+                                           @FieldMap Map<String, Object> params);
+
+
+
+
     // Get Country List RestService --
     @GET(ApiUrls.URL_GET_COUNTRY)
     Observable<JsonElement> getCountryData();
@@ -303,8 +313,6 @@ public interface RestService {
     Observable<JsonElement> save_group_channel_message(@Header ("Authorization") String api_token,
                                                @Header("DeviceType") String device_type,
                                                @Header("DeviceToken") String device_token,
-                                               @Field("GroupChannelID") int groupChannelID,
-                                               @Field("Action") String action,
                                                @FieldMap Map<String,Object> params);
 
 

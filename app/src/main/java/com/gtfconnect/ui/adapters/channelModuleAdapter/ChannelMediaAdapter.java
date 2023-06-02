@@ -188,8 +188,13 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder1.binding.playVideo.setVisibility(View.VISIBLE);
                 holder1.binding.playGif.setVisibility(View.GONE);
 
-                String videoThumbnail = postBaseUrl + mediaList.get(position).getStoragePath() + mediaList.get(position).getThumbnail().trim();
-                loadImageFile(videoThumbnail,((SingleMediaItemViewHolder) holder).binding.postImage);
+                if(mediaList.get(position).getStoragePath() != null && mediaList.get(position).getThumbnail() != null) {
+                    String videoThumbnail = postBaseUrl + mediaList.get(position).getStoragePath() + mediaList.get(position).getThumbnail();
+                    loadImageFile(videoThumbnail,((SingleMediaItemViewHolder) holder).binding.postImage);
+                }
+                else{
+                    holder1.binding.postImage.setImageDrawable(context.getDrawable(R.drawable.no_image_logo_background));
+                }
                 //loadVideoFile(post_path,holder.binding.postImage);
             } else if (fileType.equalsIgnoreCase("gif")) {
 

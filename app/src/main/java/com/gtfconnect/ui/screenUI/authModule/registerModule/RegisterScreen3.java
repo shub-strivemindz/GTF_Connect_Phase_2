@@ -361,6 +361,7 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
                 if (result.getResultCode() == Constants.GET_COUNTRY) {
 
+                    assert result.getData() != null;
                     int id = result.getData().getIntExtra("id",0);
                     String place = result.getData().getStringExtra("place");
 
@@ -380,6 +381,7 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
 
                 } else if (result.getResultCode() == Constants.GET_STATE) {
 
+                    assert result.getData() != null;
                     int id = result.getData().getIntExtra("id",0);
                     String place = result.getData().getStringExtra("place");
 
@@ -394,6 +396,7 @@ public class RegisterScreen3 extends AppCompatActivity implements ApiResponseLis
                 }
                 else if (result.getResultCode() == Constants.GET_CITY) {
 
+                    assert result.getData() != null;
                     int id = result.getData().getIntExtra("id",0);
                     String place = result.getData().getStringExtra("place");
 

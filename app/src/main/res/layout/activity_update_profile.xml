@@ -238,6 +238,7 @@
         android:layout_marginEnd="40dp"
         app:cardCornerRadius="8dp"
         app:strokeWidth=".3dp"
+        android:id="@+id/choose_dob"
         app:cardBackgroundColor="@color/authEditTextBg"
         app:strokeColor="@color/authCardStrokeColor">
 
@@ -273,7 +274,6 @@
             <ImageView
                 android:layout_width="@dimen/_13sdp"
                 android:layout_height="match_parent"
-                android:id="@+id/open_date_picker"
                 android:src="@drawable/forward"/>
 
         </LinearLayout>
@@ -319,7 +319,7 @@
                         android:id="@+id/number"
                         android:layout_gravity="center_vertical"
                         android:ems="1"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_10ssp"
                         android:hint="*********"
                         android:inputType="number"
                         android:fontFamily="@font/poppins"
@@ -363,7 +363,7 @@
 
                     <EditText
                         android:textSize="@dimen/_10ssp"
-                        android:hint="GST Number"
+                        android:hint="GST Number (Optional)"
                         android:id="@+id/gst_no"
                         android:textColor="@color/authEditText"
                         android:textColorHint="@color/authEditText"
@@ -405,7 +405,7 @@
 
                     <EditText
                         android:textSize="@dimen/_10ssp"
-                        android:hint="Billing Name"
+                        android:hint="Billing Name (Optional)"
                         android:id="@+id/company_name"
                         android:inputType="textEmailAddress"
                         android:fontFamily="@font/poppins"
@@ -447,7 +447,7 @@
 
                     <EditText
                         android:textSize="@dimen/_10ssp"
-                        android:hint="Additional Info"
+                        android:hint="Additional Info (Optional)"
                         android:id="@+id/additional_info"
                         android:inputType="textEmailAddress"
                         android:fontFamily="@font/poppins"
@@ -471,6 +471,50 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginEnd="40dp"
                 app:cardCornerRadius="8dp"
+                android:id="@+id/how_find_us"
+                app:strokeWidth=".3dp"
+                app:cardBackgroundColor="@color/authEditTextBg"
+                app:strokeColor="@color/authCardStrokeColor">
+
+                <LinearLayout
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/_13sdp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/message"/>
+
+                    <TextView
+                        android:textSize="@dimen/_10ssp"
+                        android:hint="How Did You Find Us"
+                        android:id="@+id/how_find_us_text"
+                        android:fontFamily="@font/poppins"
+                        android:layout_marginStart="15dp"
+                        android:textColor="@color/authEditText"
+                        android:textColorHint="@color/authEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:includeFontPadding="false"
+                        android:background="@android:color/transparent"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:padding="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                app:cardCornerRadius="8dp"
+                android:visibility="gone"
+                android:id="@+id/how_find_us_other"
                 app:strokeWidth=".3dp"
                 app:cardBackgroundColor="@color/authEditTextBg"
                 app:strokeColor="@color/authCardStrokeColor">
@@ -490,7 +534,7 @@
                     <EditText
                         android:textSize="@dimen/_10ssp"
                         android:hint="How Did You Find Us"
-                        android:id="@+id/how_find_us"
+                        android:id="@+id/how_find_us_other_text"
                         android:inputType="textEmailAddress"
                         android:fontFamily="@font/poppins"
                         android:layout_marginStart="15dp"
@@ -581,7 +625,7 @@
                                 android:layout_height="match_parent"
                                 android:src="@drawable/location_info"/>
 
-                            <EditText
+                            <TextView
                                 android:textSize="@dimen/_10ssp"
                                 android:hint="Country*"
                                 android:fontFamily="@font/poppins"
@@ -622,7 +666,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/map_loc"/>
 
-                            <EditText
+                            <TextView
                                 android:textSize="@dimen/_10ssp"
                                 android:hint="State*"
                                 android:id="@+id/state"
@@ -680,7 +724,7 @@
                                 android:layout_height="match_parent"
                                 android:src="@drawable/city" />
 
-                            <EditText
+                            <TextView
                                 android:id="@+id/city"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

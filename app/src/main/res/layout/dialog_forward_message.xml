@@ -71,11 +71,69 @@
         </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:id="@+id/save_message"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="@dimen/_34sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_height="@dimen/_34sdp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/_2sdp"
+                            android:id="@+id/save_image"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="@color/groupBackgroundColor"
+                            app:cardCornerRadius="@dimen/_360sdp">
+
+                            <ImageView
+                                android:layout_width="@dimen/_20sdp"
+                                android:layout_height="@dimen/_20sdp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/save_message"/>
+
+                        </com.google.android.material.card.MaterialCardView>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:id="@+id/user_name"
+                        android:layout_weight="1"
+                        android:textColor="@color/textForwardedDialogColor"
+                        android:fontFamily="@font/poppins"
+                        android:paddingStart="@dimen/_14sdp"
+                        android:textSize="@dimen/_11ssp"
+                        android:text="Save Message"/>
+
+                </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/forward_person_list_recycler"/>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

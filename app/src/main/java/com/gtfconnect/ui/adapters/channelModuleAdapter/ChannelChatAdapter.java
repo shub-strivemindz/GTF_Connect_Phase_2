@@ -9,6 +9,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,11 +40,14 @@ import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntit
 import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.utilities.AudioPlayUtil;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
+import com.gtfconnect.utilities.TextViewUtil;
 import com.gtfconnect.utilities.Utils;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.zip.CheckedInputStream;
@@ -106,9 +112,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private boolean isSharingEnabled = false;
 
-    private boolean isPinMessage = false;
+    private boolean isPinMessage = true;
 
-    private boolean isQuoteMessage = false;
+    private boolean isQuoteMessage = true;
 
 
     private boolean isVideoAutoPlay = false;
@@ -206,8 +212,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 int userId= Integer.parseInt(list.get(position).getUser().getUserID());
 
                 if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
-                    userName = "You";
-                    holder.binding.userName.setText("You");
+                    userName = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname()+" (You)";
+                    holder.binding.userName.setText(userName);
                 }
                 else {
                     userName = list.get(position).getUser().getFirstname() + " " + list.get(position).getUser().getLastname();
@@ -311,6 +317,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             holder.binding.headerDivider.setVisibility(View.GONE);
             holder.binding.messageContainer.setVisibility(View.GONE);
 
+            boolean isMessageSelfQuoted = false;
+
             if (list.get(position).getQuote() != null) {
                 if (list.get(position).getQuote().getMessage() != null) {
 
@@ -325,21 +333,25 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                         holder.binding.oldMsgUser.setTextColor(context.getColor(R.color.white));
                         holder.binding.oldMsgTime.setTextColor(context.getColor(R.color.white));
 
-
                         holder.binding.voiceMessageQuoteContainer.setCardBackgroundColor(context.getColor(R.color.channelQuoteMediaAttachedSentBackgroundColor));
+
+                        isMessageSelfQuoted = true;
                     }
                 }
                 else{
                     holder.binding.oldMessage.setVisibility(View.GONE);
+                    isMessageSelfQuoted = false;
                 }
                 holder.binding.oldMessage.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
-                holder.binding.oldMessage.setText(list.get(position).getQuote().getMessage());
+
+                TextViewUtil.channelExpandableMessage(context,holder.binding.oldMessage,list.get(position).getQuote().getMessage(), Constants.CHANNEL_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
 
                 String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                 holder.binding.oldMsgUser.setText(username);
 
                 holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
-                holder.binding.newMessage.setText(list.get(position).getMessage());
+
+                TextViewUtil.channelExpandableMessage(context,holder.binding.newMessage,list.get(position).getMessage(), Constants.CHANNEL_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
 
 
                 if (list.get(position).getQuote().getMedia() != null && !list.get(position).getQuote().getMedia().isEmpty()){
@@ -470,14 +482,20 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 //                    if (!fileType.equalsIgnoreCase("video")) {
 
-                        ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName,videoPlayer,isVideoAutoPlay,isGifAutoPlay);
-                        holder.binding.mediaRecycler.setHasFixedSize(true);
-                        holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                        holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+                if (list.get(position).getMedia().size() == 1 && fileType.equalsIgnoreCase("video")){
 
-                        mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
-                            videoPlayer = exoPlayer;
-                        });
+                }
+                else {
+
+                    ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName, videoPlayer, isVideoAutoPlay, isGifAutoPlay);
+                    holder.binding.mediaRecycler.setHasFixedSize(true);
+                    holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                    holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+
+                    mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
+                        videoPlayer = exoPlayer;
+                    });
+                }
              //   }
 
             }
@@ -517,59 +535,37 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             channelChatListener.downloadAudio(filePath,list.get(position).getGroupChannelID().toString(),list.get(position).getGroupChatID(),holder.binding.waveForm,holder.binding.downloaderLoader,holder.binding.playPauseRecordedAudio);
         });
 
-        // Todo =============
-
-        holder.binding.message.setOnClickListener(view -> {
-            if(isMessageClicked){
-                //This will shrink textview to 2 lines if it is expanded.
-                holder.binding.message.setMaxLines(3);
-                isMessageClicked = false;
-            } else {
-                //This will expand the textview if it is of 2 lines
-                holder.binding.message.setMaxLines(Integer.MAX_VALUE);
-                isMessageClicked = true;
-            }
-        });
 
         if (list.get(position).getMessage() != null && !list.get(position).getMessage().trim().isEmpty()) {
 
             holder.binding.message.setVisibility(View.VISIBLE);
             message = list.get(position).getMessage();
-            holder.binding.message.setText(list.get(position).getMessage());
+
+            TextViewUtil.channelExpandableMessage(context,holder.binding.message,list.get(position).getMessage(),Constants.CHANNEL_MESSAGE_LIMIT_COUNT,false);
 
         } else {
             holder.binding.message.setVisibility(View.GONE);
         }
-        holder.binding.expandMessage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                if (!isMessageClicked) {
-                    isMessageClicked = true;
-                    ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 40);
-                    animation.setDuration(100).start();
 
-                    holder.binding.expandMessage.setText("See More");
 
-                    //btnSeeMore.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_collapse));/
-                } else {
-                    isMessageClicked = false;
-                    ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 4);
-                    animation.setDuration(100).start();
 
-                    holder.binding.expandMessage.setText("See Less");
+        if (list.get(position).getReactionsCount() != null && list.get(position).getReactionsCount() > 0){
+            holder.binding.reactionCount.setText(String.valueOf(list.get(position).getReactionsCount()));
+        }
+        else{
+            holder.binding.reactionCount.setVisibility(View.GONE);
+        }
 
-                    //btnSeeMore.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_expand));
-                }
 
-            }
-        });
+
 
 
 
 
         if (list.get(position).getUpdatedAt() != null) {
             time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
-            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+            holder.binding.time.setText(Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time.setText("XX/XX/XXXX");
         }
@@ -640,13 +636,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });
 
         holder.binding.commentContainer.setOnClickListener(view -> {
-            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isAllowDiscussion);
         });
 
 
         // Reply into the Chat
         holder.binding.comment.setOnClickListener(view -> {
-            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isAllowDiscussion);
         });
 
         // Bottom-sheet for chat options --
@@ -739,7 +735,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             personList.setAdapter(forwardPersonListAdapter);
 
             forwardPersonListAdapter.setOnSaveMessageClickListener(chatID1 -> {
-                channelChatListener.saveMessage(chatID1);
+                //channelChatListener.saveMessage(chatID1);
                 forward_dialog.dismiss();
             });
 
@@ -776,7 +772,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 notifyItemChanged(position);
 
                 selectedPostCount++;
-                channelChatListener.forwardMultiplePost(selectedPostCount);
+                channelChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),true);
 
 
             } else {
@@ -786,12 +782,12 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 notifyItemChanged(position);
 
                 if (selectedPostCount <= 0){
-                    channelChatListener.forwardMultiplePost(-1);
+                    channelChatListener.forwardMultiplePost(-1,Integer.parseInt(list.get(position).getGroupChatID()),false);
                     channelChatListener.toggleMultipleMessageSelection(false);
 
                 }
                 else{
-                    channelChatListener.forwardMultiplePost(selectedPostCount);
+                    channelChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),false);
 
                 }
 
@@ -830,8 +826,33 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
+    public  void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText) {
 
+        if (tv.getTag() == null) {
+            tv.setTag(tv.getText());
+        }
+        ViewTreeObserver vto = tv.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onGlobalLayout() {
+
+                ViewTreeObserver obs = tv.getViewTreeObserver();
+                obs.removeGlobalOnLayoutListener(this);
+                if (maxLine <= 0) {
+                    int lineEndIndex = tv.getLayout().getLineEnd(0);
+                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    tv.setText(text);
+                } else if (tv.getLineCount() >= maxLine) {
+                    int lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
+                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    tv.setText(text);
+                }
+            }
+        });
+
+    }
 
 
 
@@ -936,7 +957,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             channelChatListener.toggleMultipleMessageSelection(true);
 
             selectedPostCount = 1;
-            channelChatListener.forwardMultiplePost(selectedPostCount);
+            channelChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),true);
 
             chat_options_dialog.dismiss();
         });
@@ -1092,6 +1113,14 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     }
 
 
+
+    public void updateGcPermission(InfoDbEntity infoDbEntity){
+        this.infoDbEntity = infoDbEntity;
+        setUserPermissions();
+        notifyDataSetChanged();
+    }
+
+
     public void updateLikeResponse(int position, List<ChannelRowListDataModel> list){
         this.list = list;
         notifyItemChanged(position);
@@ -1100,10 +1129,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     public void updateChat(List<ChannelRowListDataModel> list){
         this.list = list;
-        //notifyItemInserted(0);
-        notifyDataSetChanged();
+        notifyItemInserted(0);
     }
-
 
 
 

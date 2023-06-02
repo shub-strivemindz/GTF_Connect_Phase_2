@@ -18,8 +18,10 @@ import com.gtfconnect.databinding.FragmentPinnedMessageBinding;
 import com.gtfconnect.interfaces.PinnedMessageListener;
 import com.gtfconnect.models.PinnedMessagesModel;
 import com.gtfconnect.utilities.AudioPlayUtil;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
+import com.gtfconnect.utilities.TextViewUtil;
 import com.gtfconnect.utilities.Utils;
 
 import java.util.List;
@@ -95,8 +97,8 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
                 int userId= Integer.parseInt(list.get(position).getChat().getUser().getUserID());
 
                 if (PreferenceConnector.readInteger(context,PreferenceConnector.CONNECT_USER_ID,0) == userId){
-                    userName = "You";
-                    holder.binding.userName.setText("You");
+                    userName = list.get(position).getChat().getUser().getFirstname() + " " + list.get(position).getChat().getUser().getLastname()+" (You)";
+                    holder.binding.userName.setText(userName);
                 }
                 else {
                     userName = list.get(position).getChat().getUser().getFirstname() + " " + list.get(position).getChat().getUser().getLastname();
@@ -112,45 +114,6 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
                 holder.binding.userIcon.setImageResource(R.drawable.no_image_logo_background);
             }
         }
-
-
-        /*// ---------------------------------------------------------- To Find If message send by same user or not. --------------------------------------------
-        if (list.get(position).getChat() != null) {
-            if (list.get(position).getChat().getUser() != null) {
-                if (list.get(position).getChat().getUser().getUserID() != null) {
-
-                    messageUserID = Integer.parseInt(list.get(position).getChat().getUser().getUserID());
-
-
-                    if (position + 1 < list.size()) {
-                        if (list.get(position + 1) != null) {
-                            if (list.get(position + 1).getChat().getUser() != null) {
-                                if (list.get(position + 1).getChat().getUser().getUserID() != null) {
-                                    int nextUserID = Integer.parseInt(list.get(position + 1).getChat().getUser().getUserID());
-
-                                    if (messageUserID == nextUserID) {
-                                        holder.binding.memberProfileContainer.setVisibility(View.GONE);
-                                        *//*holder.binding.userIcon.setVisibility(View.GONE);
-                                        holder.binding.userName.setVisibility(View.GONE);*//*
-                                    } else {
-                                        holder.binding.memberProfileContainer.setVisibility(View.VISIBLE);
-                                        *//*holder.binding.userIcon.setVisibility(View.VISIBLE);
-                                        holder.binding.userName.setVisibility(View.VISIBLE);*//*
-                                        messageUserID = 0;
-                                    }
-                                }
-                            }
-                        }
-                    } else if (position+1 == list.size()) {
-                        holder.binding.userIcon.setVisibility(View.VISIBLE);
-                        holder.binding.userName.setVisibility(View.VISIBLE);
-                        messageUserID = 0;
-                    }
-
-                }
-            }
-        }*/
-
 
 
         if (list.get(position).getChat().getMedia() !=null && !list.get(position).getChat().getMedia().isEmpty()) {
@@ -254,75 +217,16 @@ public class GroupChannelPinnedMessageAdapter extends RecyclerView.Adapter<Group
         });
 
 
-        // Todo =============
-
-        holder.binding.message.setOnClickListener(view -> {
-            if(isMessageClicked){
-                //This will shrink textview to 2 lines if it is expanded.
-                holder.binding.message.setMaxLines(3);
-                isMessageClicked = false;
-            } else {
-                //This will expand the textview if it is of 2 lines
-                holder.binding.message.setMaxLines(Integer.MAX_VALUE);
-                isMessageClicked = true;
-            }
-        });
-
-
-
-
         if (list.get(position).getChat().getMessage() != null && !list.get(position).getChat().getMessage().trim().isEmpty()) {
 
             holder.binding.message.setVisibility(View.VISIBLE);
             message = list.get(position).getChat().getMessage();
-            holder.binding.message.setText(list.get(position).getChat().getMessage());
 
-/*
-            holder.binding.message.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
+            TextViewUtil.channelExpandableMessage(context,holder.binding.message,list.get(position).getChat().getMessage(), Constants.CHANNEL_MESSAGE_LIMIT_COUNT,false);
 
-                    if (holder.binding.message.getLineCount() > 3) {
-                        holder.binding.expandMessage.setVisibility(View.VISIBLE);
-                        ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 3);
-                        animation.setDuration(0).start();
-                    }
-
-                }
-            });*/
-
-            //Utils.makeTextViewResizable(holder.binding.message,3,"See More",true);
         } else {
             holder.binding.message.setVisibility(View.GONE);
         }
-
-
-
-
-        holder.binding.expandMessage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                if (!isMessageClicked) {
-                    isMessageClicked = true;
-                    ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 40);
-                    animation.setDuration(100).start();
-
-                    holder.binding.expandMessage.setText("See More");
-
-                    //btnSeeMore.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_collapse));/
-                } else {
-                    isMessageClicked = false;
-                    ObjectAnimator animation = ObjectAnimator.ofInt(holder.binding.message, "maxLines", 4);
-                    animation.setDuration(100).start();
-
-                    holder.binding.expandMessage.setText("See Less");
-
-                    //btnSeeMore.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_expand));
-                }
-
-            }
-        });
-
 
 
 

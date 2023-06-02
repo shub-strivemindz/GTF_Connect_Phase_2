@@ -105,60 +105,57 @@ public class RegisterScreen1 extends AppCompatActivity {
             }
         };
 
-        binding.genderSelection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BottomSheetDialog gender_selection_dialog = new BottomSheetDialog(RegisterScreen1.this);
-                gender_selection_dialog.setContentView(R.layout.bottomsheet_choose_gender);
+        binding.genderSelection.setOnClickListener(view -> {
+            BottomSheetDialog gender_selection_dialog = new BottomSheetDialog(RegisterScreen1.this);
+            gender_selection_dialog.setContentView(R.layout.bottomsheet_choose_gender);
 
-                RadioGroup genderGroup = gender_selection_dialog.findViewById(R.id.gender_radio_group);
-                RadioButton maleCheck = gender_selection_dialog.findViewById(R.id.male);
-                RadioButton femaleCheck = gender_selection_dialog.findViewById(R.id.female);
-                RadioButton otherCheck = gender_selection_dialog.findViewById(R.id.others);
+            RadioGroup genderGroup = gender_selection_dialog.findViewById(R.id.gender_radio_group);
+            RadioButton maleCheck = gender_selection_dialog.findViewById(R.id.male);
+            RadioButton femaleCheck = gender_selection_dialog.findViewById(R.id.female);
+            RadioButton otherCheck = gender_selection_dialog.findViewById(R.id.others);
 
-                if (gender != null && !gender.isEmpty()){
-                    switch (gender)
-                    {
+            if (gender != null && !gender.isEmpty()){
+                switch (gender)
+                {
+                    case "Female":
+                        femaleCheck.setChecked(true);
+                        break;
+                    case "Others":
+                        otherCheck.setChecked(true);
+                        break;
+                    default:
+                        maleCheck.setChecked(true);
+                }
+            }
+
+            gender_selection_dialog.show();
+
+            genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                    int selectedPosition = genderGroup.getCheckedRadioButtonId();
+                    RadioButton radioSexButton=(RadioButton) gender_selection_dialog.findViewById(selectedPosition);
+
+                    gender = radioSexButton.getText().toString().trim();
+
+                    binding.gender.setText(gender);
+                    switch (gender) {
+                        case "Male":
+                            binding.genderIcon.setImageResource(R.drawable.male);
+                            break;
                         case "Female":
-                            femaleCheck.setChecked(true);
+                            binding.genderIcon.setImageResource(R.drawable.female);
                             break;
                         case "Others":
-                            otherCheck.setChecked(true);
+                            binding.genderIcon.setImageResource(R.drawable.others);
                             break;
                         default:
-                            maleCheck.setChecked(true);
+                            binding.genderIcon.setImageResource(R.drawable.male);
                     }
+                    gender_selection_dialog.dismiss();
                 }
+            });
 
-                gender_selection_dialog.show();
-
-                genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                        int selectedPosition = genderGroup.getCheckedRadioButtonId();
-                        RadioButton radioSexButton=(RadioButton) gender_selection_dialog.findViewById(selectedPosition);
-
-                        gender = radioSexButton.getText().toString().trim();
-
-                        binding.gender.setText(gender);
-                        switch (gender) {
-                            case "Male":
-                                binding.genderIcon.setImageResource(R.drawable.male);
-                                break;
-                            case "Female":
-                                binding.genderIcon.setImageResource(R.drawable.female);
-                                break;
-                            case "Others":
-                                binding.genderIcon.setImageResource(R.drawable.others);
-                                break;
-                            default:
-                                binding.genderIcon.setImageResource(R.drawable.male);
-                        }
-                        gender_selection_dialog.dismiss();
-                    }
-                });
-
-            }
         });
     }
 

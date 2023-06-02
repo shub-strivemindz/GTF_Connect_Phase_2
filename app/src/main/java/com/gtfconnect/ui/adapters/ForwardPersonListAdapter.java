@@ -44,19 +44,6 @@ public class ForwardPersonListAdapter extends RecyclerView.Adapter<ForwardPerson
     @Override
     public void onBindViewHolder(ForwardPersonListAdapter.ViewHolder holder, int position) {
 
-        if (position == 0)
-        {
-            holder.binding.profileImage.setVisibility(View.GONE);
-            holder.binding.saveImage.setVisibility(View.VISIBLE);
-            holder.binding.userName.setText("Save Message");
-        }
-        else{
-            holder.binding.profileImage.setVisibility(View.VISIBLE);
-            holder.binding.saveImage.setVisibility(View.GONE);
-        }
-
-
-
         holder.binding.getRoot().setOnClickListener(v -> {
             if (position == 0){
                 listener.OnSaveMessage(chatID);

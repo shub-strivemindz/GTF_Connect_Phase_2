@@ -42,8 +42,10 @@ import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelMediaAdapter;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MultiPreviewScreen;
 import com.gtfconnect.utilities.AudioPlayUtil;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.PreferenceConnector;
+import com.gtfconnect.utilities.TextViewUtil;
 import com.gtfconnect.utilities.Utils;
 
 import org.json.JSONObject;
@@ -212,11 +214,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         if (!isAllowDiscussion){
             holder.binding.greenHighlightDivider.setVisibility(View.GONE);
-            holder.binding.comment1.setVisibility(View.GONE);
         }
         else{
             holder.binding.greenHighlightDivider.setVisibility(View.VISIBLE);
-            holder.binding.comment1.setVisibility(View.VISIBLE);
         }
 
 
@@ -246,9 +246,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.binding.messageDivider1.setVisibility(View.GONE);
             holder.binding.message1.setVisibility(View.GONE);
 
+            boolean isMessageSelfQuoted = false;
 
             if (list.get(position).getQuote() != null) {
                 if (list.get(position).getQuote().getMessage() != null) {
+
+
 
                     holder.binding.oldMessage1.setVisibility(View.VISIBLE);
                     if (String.valueOf(list.get(position).getUserID()).equalsIgnoreCase(userID)) {
@@ -263,19 +266,23 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
 
                         holder.binding.voiceMessageQuoteContainer1.setCardBackgroundColor(context.getColor(R.color.channelQuoteMediaAttachedSentBackgroundColor));
+
+                        isMessageSelfQuoted = true;
                     }
                 }
                 else{
                     holder.binding.oldMessage1.setVisibility(View.GONE);
                 }
                 holder.binding.oldMessage1.setTypeface(holder.binding.oldMessage1.getTypeface(), Typeface.ITALIC);
-                holder.binding.oldMessage1.setText(list.get(position).getQuote().getMessage());
+
+                TextViewUtil.groupExpandableMessage(context,holder.binding.oldMessage1,list.get(position).getQuote().getMessage(), Constants.GROUP_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
 
                 String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                 holder.binding.oldMsgUser1.setText(username);
 
                 holder.binding.oldMsgTime1.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
-                holder.binding.newMessage1.setText(list.get(position).getMessage());
+
+                TextViewUtil.groupExpandableMessage(context,holder.binding.newMessage1,list.get(position).getMessage(), Constants.GROUP_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
 
 
                 if (list.get(position).getQuote().getMedia() != null && !list.get(position).getQuote().getMedia().isEmpty()){
@@ -352,14 +359,21 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
         if (list.get(position).getUpdatedAt() != null) {
-            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
-            holder.binding.time1.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+            time = Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt());
+            holder.binding.time1.setText(Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time1.setText("XX/XX/XXXX");
         }
 
         if (list.get(position).getCommentData() == null || list.get(position).getCommentData().size() == 0) {
-            holder.binding.commentCount1.setText("Comment");
+
+            if (isAllowDiscussion) {
+                holder.binding.comment1.setVisibility(View.VISIBLE);
+                holder.binding.commentCount1.setText("Comment");
+            }
+            else{
+                holder.binding.comment1.setVisibility(View.GONE);
+            }
         }
         else {
             String commentCounts = String.valueOf(list.get(position).getCommentData().size());
@@ -382,7 +396,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
         holder.binding.comment1.setOnClickListener(view -> {
-            groupChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+            groupChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isAllowDiscussion);
         });
 
         holder.binding.like1.setOnLongClickListener(view -> {
@@ -496,7 +510,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 notifyItemChanged(position);
 
                 selectedPostCount++;
-                groupChatListener.forwardMultiplePost(selectedPostCount);
+                groupChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),true);
 
 
             } else {
@@ -505,12 +519,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 notifyItemChanged(position);
 
                 if (selectedPostCount <= 0){
-                    groupChatListener.forwardMultiplePost(-1);
+                    groupChatListener.forwardMultiplePost(-1,Integer.parseInt(list.get(position).getGroupChatID()),false);
                     groupChatListener.toggleMultipleMessageSelection(false);
 
                 }
                 else{
-                    groupChatListener.forwardMultiplePost(selectedPostCount);
+                    groupChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),false);
 
                 }
 
@@ -602,29 +616,19 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         if (list.get(position).getMessage() != null && !list.get(position).getMessage().trim().isEmpty()) {
             holder.binding.message1.setVisibility(View.VISIBLE);
-            holder.binding.message1.setText(list.get(position).getMessage());
+
+            TextViewUtil.groupExpandableMessage(context,holder.binding.message1,list.get(position).getMessage(),Constants.GROUP_MESSAGE_LIMIT_COUNT,true);
+
         } else {
             holder.binding.message1.setVisibility(View.GONE);
         }
 
         if (list.get(position).getUpdatedAt() != null) {
-            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
-            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+            time = Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt());
+            holder.binding.time.setText(Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time.setText("XX/XX/XXXX");
         }
-
-        holder.binding.message1.setOnClickListener(view -> {
-            if(isMessageClicked){
-                //This will shrink textview to 2 lines if it is expanded.
-                holder.binding.message1.setMaxLines(3);
-                isMessageClicked = false;
-            } else {
-                //This will expand the textview if it is of 2 lines
-                holder.binding.message1.setMaxLines(Integer.MAX_VALUE);
-                isMessageClicked = true;
-            }
-        });
 
 
         holder.binding.postImageContainer1.setOnClickListener(view -> {
@@ -643,10 +647,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
 
-
-        if (list.get(position).getMessage() != null && !list.get(position).getMessage().isEmpty()) {
-            Log.d("message", "sent = " +list.get(position).getMessage());
-        }
     }
 
 
@@ -672,11 +672,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
         if (!isAllowDiscussion){
             holder.binding.greenHighlightDivider.setVisibility(View.GONE);
-            holder.binding.comment.setVisibility(View.GONE);
         }
         else{
             holder.binding.greenHighlightDivider.setVisibility(View.VISIBLE);
-            holder.binding.comment.setVisibility(View.VISIBLE);
         }
 
 
@@ -728,6 +726,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.binding.messageContainer.setVisibility(View.GONE);
 
 
+            boolean isMessageSelfQuoted = false;
 
             if (list.get(position).getQuote() != null) {
                 if (list.get(position).getQuote().getMessage() != null) {
@@ -743,7 +742,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                         holder.binding.oldMsgUser.setTextColor(context.getColor(R.color.white));
                         holder.binding.oldMsgTime.setTextColor(context.getColor(R.color.white));
 
-
+                        isMessageSelfQuoted = true;
                         holder.binding.voiceMessageQuoteContainer.setCardBackgroundColor(context.getColor(R.color.channelQuoteMediaAttachedSentBackgroundColor));
                     }
                 }
@@ -751,14 +750,15 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                     holder.binding.oldMessage.setVisibility(View.GONE);
                 }
                 holder.binding.oldMessage.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
-                holder.binding.oldMessage.setText(list.get(position).getQuote().getMessage());
+
+                TextViewUtil.groupExpandableMessage(context,holder.binding.oldMessage,list.get(position).getQuote().getMessage(), Constants.GROUP_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
 
                 String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                 holder.binding.oldMsgUser.setText(username);
 
                 holder.binding.oldMsgTime.setText(Utils.getHeaderDate(list.get(position).getQuote().getUpdatedAt()));
-                holder.binding.newMessage.setText(list.get(position).getMessage());
 
+                TextViewUtil.groupExpandableMessage(context,holder.binding.newMessage,list.get(position).getMessage(), Constants.GROUP_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
 
                 if (list.get(position).getQuote().getMedia() != null && !list.get(position).getQuote().getMedia().isEmpty()){
 
@@ -842,14 +842,21 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
         if (list.get(position).getUpdatedAt() != null) {
-            time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
-            holder.binding.time.setText(Utils.getHeaderDate(list.get(position).getUpdatedAt()));
+            time = Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt());
+            holder.binding.time.setText(Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time.setText("XX/XX/XXXX");
         }
 
         if (list.get(position).getCommentData() == null || list.get(position).getCommentData().size() == 0) {
-            holder.binding.commentCount.setText("Comment");
+
+            if (isAllowDiscussion) {
+                holder.binding.comment.setVisibility(View.VISIBLE);
+                holder.binding.commentCount.setText("Comment");
+            }
+            else{
+                holder.binding.comment.setVisibility(View.GONE);
+            }
         }
         else {
             String commentCounts = String.valueOf(list.get(position).getCommentData().size());
@@ -872,7 +879,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         });
 
         holder.binding.comment.setOnClickListener(view -> {
-            groupChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID);
+            groupChatListener.initiateCommentScreen(data, profileBaseUrl, post_base_url, userID,isAllowDiscussion);
         });
 
         holder.binding.like.setOnLongClickListener(view -> {
@@ -986,7 +993,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 notifyItemChanged(position);
 
                 selectedPostCount++;
-                groupChatListener.forwardMultiplePost(selectedPostCount);
+                groupChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),true);
 
 
             } else {
@@ -995,12 +1002,12 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 notifyItemChanged(position);
 
                 if (selectedPostCount <= 0){
-                    groupChatListener.forwardMultiplePost(-1);
+                    groupChatListener.forwardMultiplePost(-1,Integer.parseInt(list.get(position).getGroupChatID()),false);
                     groupChatListener.toggleMultipleMessageSelection(false);
 
                 }
                 else{
-                    groupChatListener.forwardMultiplePost(selectedPostCount);
+                    groupChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),false);
 
                 }
 
@@ -1010,14 +1017,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         if (list.get(position).getMedia() !=null && !list.get(position).getMedia().isEmpty()) {
 
             String fileType = Utils.checkFileType(list.get(position).getMedia().get(0).getMimeType());
-
-
-            if (list.get(position).getMessage() == null || list.get(position).getMessage().trim().isEmpty()){
-                holder.binding.message.setVisibility(View.GONE);
-            }
-            else{
-                holder.binding.message.setVisibility(View.VISIBLE);
-            }
 
 
             if (fileType.equalsIgnoreCase("audio")){
@@ -1129,34 +1128,15 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         }
 
 
-
-
-
-
-
-
-
-
         if (list.get(position).getMessage() != null && !list.get(position).getMessage().trim().isEmpty()) {
 
             holder.binding.message.setVisibility(View.VISIBLE);
 
+            TextViewUtil.groupExpandableMessage(context,holder.binding.message,list.get(position).getMessage(),Constants.GROUP_MESSAGE_LIMIT_COUNT,false);
             holder.binding.message.setText(list.get(position).getMessage());
         } else {
             holder.binding.message.setVisibility(View.GONE);
         }
-
-        holder.binding.message.setOnClickListener(view -> {
-            if(isMessageClicked){
-                //This will shrink textview to 2 lines if it is expanded.
-                holder.binding.message.setMaxLines(3);
-                isMessageClicked = false;
-            } else {
-                //This will expand the textview if it is of 2 lines
-                holder.binding.message.setMaxLines(Integer.MAX_VALUE);
-                isMessageClicked = true;
-            }
-        });
 
 
         holder.binding.postImageContainer.setOnClickListener(view -> {
@@ -2299,7 +2279,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             groupChatListener.toggleMultipleMessageSelection(true);
 
             selectedPostCount = 1;
-            groupChatListener.forwardMultiplePost(selectedPostCount);
+            groupChatListener.forwardMultiplePost(selectedPostCount,Integer.parseInt(list.get(position).getGroupChatID()),true);
 
             chat_options_dialog.dismiss();
         });
@@ -2470,8 +2450,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
 
     public void updateChat(ArrayList<ChannelRowListDataModel> list){
         this.list = list;
-        //notifyItemInserted(0);
-        notifyDataSetChanged();
+        notifyItemInserted(0);
     }
 
 
@@ -2479,6 +2458,11 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
         this.post_base_url = post_base_url;
     }
 
+    public void updateGcPermission(InfoDbEntity infoDbEntity){
+        this.infoDbEntity = infoDbEntity;
+        setUserPermissions();
+        notifyDataSetChanged();
+    }
 
     public void destroyExoPlayer(){
 

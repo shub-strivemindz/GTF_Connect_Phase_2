@@ -297,13 +297,13 @@ public class UserProfileDbEntity {
         private String dob;
         @SerializedName("AdditionalInfo")
         @Expose
-        private Object additionalInfo;
+        private String additionalInfo;
         @SerializedName("GST")
         @Expose
-        private Object gst;
+        private String gst;
         @SerializedName("CompanyName")
         @Expose
-        private Object companyName;
+        private String companyName;
         @SerializedName("State")
         @Expose
         private String state;
@@ -336,7 +336,7 @@ public class UserProfileDbEntity {
         private String findUs;
         @SerializedName("find_us_other_text")
         @Expose
-        private Object findUsOtherText;
+        private String findUsOtherText;
         @SerializedName("IsLogging")
         @Expose
         private Integer isLogging;
@@ -439,27 +439,27 @@ public class UserProfileDbEntity {
             this.dob = dob;
         }
 
-        public Object getAdditionalInfo() {
+        public String getAdditionalInfo() {
             return additionalInfo;
         }
 
-        public void setAdditionalInfo(Object additionalInfo) {
+        public void setAdditionalInfo(String additionalInfo) {
             this.additionalInfo = additionalInfo;
         }
 
-        public Object getGst() {
+        public String getGst() {
             return gst;
         }
 
-        public void setGst(Object gst) {
+        public void setGst(String gst) {
             this.gst = gst;
         }
 
-        public Object getCompanyName() {
+        public String getCompanyName() {
             return companyName;
         }
 
-        public void setCompanyName(Object companyName) {
+        public void setCompanyName(String companyName) {
             this.companyName = companyName;
         }
 
@@ -543,11 +543,11 @@ public class UserProfileDbEntity {
             this.findUs = findUs;
         }
 
-        public Object getFindUsOtherText() {
+        public String getFindUsOtherText() {
             return findUsOtherText;
         }
 
-        public void setFindUsOtherText(Object findUsOtherText) {
+        public void setFindUsOtherText(String findUsOtherText) {
             this.findUsOtherText = findUsOtherText;
         }
 

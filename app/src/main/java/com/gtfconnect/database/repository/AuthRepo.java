@@ -44,6 +44,13 @@ public class AuthRepo {
         return restService.forgetPassword(email);
     }
 
+
+    public Observable<JsonElement> updatePassword(String api_token,String device_type,String device_token,Map<String,Object> params) {
+        return restService.updatePassword(api_token, device_type, device_token, params);
+    }
+
+
+
     public Observable<JsonElement> getCountryList() {
         return restService.getCountryData();
     }

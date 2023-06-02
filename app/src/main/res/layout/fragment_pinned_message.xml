@@ -101,9 +101,7 @@
                 android:textSize="@dimen/_10ssp"
                 android:textColor="@color/pinMessageTextColor"
                 android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-                android:maxLines="3"
-                android:ellipsize="end"/>
+more then 1000 top most trading courses+ daily or weekly"/>
 
             <TextView
                 android:layout_width="wrap_content"

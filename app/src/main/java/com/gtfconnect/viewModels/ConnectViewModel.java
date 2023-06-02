@@ -409,11 +409,11 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
-    public void save_group_channel_message(String api_token,int channelID,Map<String,Object> params) {
+    public void save_group_channel_message(String api_token,Map<String,Object> params) {
 
         final String action = "WithGcChat";
 
-        disposables.add(repo.save_group_channel_message(api_token, DEVICE_TYPE, DEVICE_TOKEN,channelID,action,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+        disposables.add(repo.save_group_channel_message(api_token, DEVICE_TYPE, DEVICE_TOKEN,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());

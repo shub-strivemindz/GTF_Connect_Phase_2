@@ -36,7 +36,7 @@ public class ChannelRowListDataModel {
     @SerializedName("DummyViews")
     @Expose
     private Integer dummyViews;
-    @SerializedName("ReactionsCount")
+    @SerializedName("reactionscount")
     @Expose
     private Integer reactionsCount;
     @SerializedName("DummyUserID")

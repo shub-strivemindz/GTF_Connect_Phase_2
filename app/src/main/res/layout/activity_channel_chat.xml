@@ -125,8 +125,8 @@
             android:id="@+id/pin_message_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
-            android:elevation="@dimen/_10sdp"
             android:visibility="gone"
+            android:elevation="@dimen/_10sdp"
             android:layout_below="@id/toolbar"
             android:orientation="horizontal">
 
@@ -161,6 +161,8 @@
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="@dimen/_12ssp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:visibility="gone"
                     android:id="@+id/pin_media_count"
                     android:textStyle="bold"
@@ -185,6 +187,8 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_10ssp"
                     android:text="Pinned Message"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:id="@+id/last_pin_user"
                     android:fontFamily="@font/montserrat"
                     android:textColor="@color/messagePinTextHeaderColor"
@@ -194,6 +198,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_9ssp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:id="@+id/last_pin_message"
                     android:text="EPFO APFC new batch,Post : Assistant Co..."
                     android:fontFamily="@font/open_sans"
@@ -325,7 +331,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
-            android:elevation="@dimen/_2sdp"
+            android:elevation="@dimen/_5sdp"
             android:layout_above="@id/search_container"
             android:visibility="gone"
             android:id="@+id/quote_container"

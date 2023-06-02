@@ -53,7 +53,12 @@ public class DummyUserListAdapter extends RecyclerView.Adapter<DummyUserListAdap
 
     @Override
     public int getItemCount() {
-        return getDummyUserModel.getData().getList().size();
+        if (getDummyUserModel != null && getDummyUserModel.getData() != null && getDummyUserModel.getData().getList() != null) {
+            return getDummyUserModel.getData().getList().size();
+        }
+        else{
+            return 0;
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,6 +70,11 @@ public class DummyUserListAdapter extends RecyclerView.Adapter<DummyUserListAdap
             this.binding = binding;
 
         }
+    }
+
+
+    public void updateList(GetDummyUserModel getDummyUserModel){
+        this.getDummyUserModel = getDummyUserModel;
     }
 }
 

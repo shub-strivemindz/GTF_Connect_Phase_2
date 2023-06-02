@@ -35,13 +35,12 @@ public interface ChannelChatListener {
 
     void viewSelfProfile();
 
-    void forwardMultiplePost(int selectedCount);
+    void forwardMultiplePost(int selectedCount,int chatID,boolean isMessageSelected);
 
     void toggleMultipleMessageSelection(boolean toggleSelection);
 
     void saveMessage(int chatID);
 
-    void initiateCommentScreen(String data,String profileBaseUrl,String postBaseUrl,String userID);
-
+    void initiateCommentScreen(String data,String profileBaseUrl,String postBaseUrl,String userID,boolean isDiscussionAllowed);
 
 }

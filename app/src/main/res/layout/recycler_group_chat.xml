@@ -74,23 +74,7 @@
                     android:textSize="@dimen/_10ssp"
                     android:textColor="@color/white"
                     android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-                    android:maxLines="3"
-                    android:ellipsize="end"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/expand_message1"
-                    android:text="See More"
-                    android:visibility="gone"
-                    android:layout_below="@id/message1"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/theme_green"
-                    android:fontFamily="@font/montserrat"
-                    android:textSize="@dimen/_8ssp"
-                    android:layout_gravity="end"
-                    />
+more then 1000 top most trading courses+ daily or weekly"/>
 
             </RelativeLayout>
 
@@ -1152,23 +1136,7 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:textSize="@dimen/_10ssp"
                         android:textColor="@color/groupChatTextColor"
                         android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-                        android:maxLines="3"
-                        android:ellipsize="end"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/expand_message"
-                        android:text="See More"
-                        android:visibility="gone"
-                        android:layout_below="@id/message"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/theme_green"
-                        android:fontFamily="@font/montserrat"
-                        android:textSize="@dimen/_8ssp"
-                        android:layout_gravity="end"
-                        />
+more then 1000 top most trading courses+ daily or weekly"/>
 
                 </RelativeLayout>
 

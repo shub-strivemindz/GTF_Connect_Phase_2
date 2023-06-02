@@ -93,6 +93,8 @@ public class GroupChannelCommentScreen extends AppCompatActivity implements Grou
 
     private int commentCount = 0;
 
+    private boolean isDiscussionAllowed;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,17 @@ public class GroupChannelCommentScreen extends AppCompatActivity implements Grou
         replyOnComment = getIntent().getBooleanExtra("replyOnComment",false);
         postBaseUrl = getIntent().getStringExtra("postBaseUrl");
         profileBaseUrl = getIntent().getStringExtra("profileBaseUrl");
+        isDiscussionAllowed = getIntent().getBooleanExtra("isDiscussionAllowed",false);
+
+
+        if (isDiscussionAllowed){
+            binding.searchSubContainer.setVisibility(View.VISIBLE);
+            binding.footerStatusTag.setVisibility(View.GONE);
+        }
+        else{
+            binding.searchSubContainer.setVisibility(View.GONE);
+            binding.footerStatusTag.setVisibility(View.VISIBLE);
+        }
 
 
         //userID = getIntent().getStringExtra("userID");

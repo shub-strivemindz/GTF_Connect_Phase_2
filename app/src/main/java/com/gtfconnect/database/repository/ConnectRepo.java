@@ -115,8 +115,8 @@ public class ConnectRepo {
 
 
 
-    public Observable<JsonElement> save_group_channel_message(String api_token,String device_type, String device_token,int channelID,String action,Map<String,Object> chatIDList) {
-        return restService.save_group_channel_message(api_token,device_type,device_token,channelID,action,chatIDList);
+    public Observable<JsonElement> save_group_channel_message(String api_token,String device_type, String device_token,Map<String,Object> chatIDList) {
+        return restService.save_group_channel_message(api_token,device_type,device_token,chatIDList);
     }
 
     public Observable<JsonElement> save_personal_message(String api_token, String device_type, String device_token, String message, String action, List<MultipartBody.Part> files) {

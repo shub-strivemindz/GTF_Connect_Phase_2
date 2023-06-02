@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
@@ -23,11 +24,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -37,6 +42,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -850,6 +858,22 @@ public class Utils {
         return chatDate;
     }
 
+    public static String getChatBoxTimeStamp(String chatDate ){
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(chatDate);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("hh:mm aa"); //this format changeable
+            dateFormatter.setTimeZone(TimeZone.getDefault());
+            chatDate = dateFormatter.format(value);
+
+        } catch (Exception e) {
+            chatDate = "00-00-0000 00:00";
+        }
+        return chatDate;
+    }
+
 
     public static String getSavedMessageChipDate(String chipDate){
         String tempChatDate = chipDate;
@@ -1450,6 +1474,9 @@ public class Utils {
             dialog.show();
         }
     }
+
+
+
 
 
 }

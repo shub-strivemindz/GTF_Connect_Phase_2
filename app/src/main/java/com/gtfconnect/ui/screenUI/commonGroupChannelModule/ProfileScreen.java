@@ -540,7 +540,6 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
     public void onAuthFailure(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         //startActivity(new Intent(this, LoginScreen.class));
-        finishAffinity();
     }
 
     @Override
@@ -632,8 +631,12 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
                 try {
                     Thread.sleep(1500);
                     leave_dialog.dismiss();
-                    startActivity(new Intent(ProfileScreen.this, HomeScreen.class));
-                    finishAffinity();
+
+                    setResult(Constants.GC_USER_ROLE_UPDATED, new Intent());
+                    finish();
+
+                    /*startActivity(new Intent(ProfileScreen.this, HomeScreen.class));
+                    finishAffinity();*/
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -738,15 +741,16 @@ public class ProfileScreen extends AppCompatActivity implements ApiResponseListe
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
 
-                if (result.getResultCode() == GC_REFRESH_UPDATED_DATA_CODE) {
+                if (result.getResultCode() == Constants.GC_PERMISSION_UPDATED) {
 
-                    Objects.requireNonNull(binding.tabLayout.getTabAt(3)).select();
+                    (binding.tabLayout.getTabAt(2)).select();
 
                     requestType = GET_GROUP_CHANNEL_INFO;
                     connectViewModel.get_group_channel_info(channelID, api_token);
+
                 } else if (result.getResultCode() == GC_REFRESH_UPDATED_REACTION_CODE) {
 
-                    binding.tabLayout.getTabAt(3).select();
+                    binding.tabLayout.getTabAt(2).select();
 
                     requestType = GET_GROUP_CHANNEL_INFO;
                     isReactionsUpdated = true;

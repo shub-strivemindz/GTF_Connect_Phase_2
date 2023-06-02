@@ -36,6 +36,9 @@ public class ApiUrls {
     public static final String URL_RESEND_OTP = "resend-email-otp";
     public static final String URL_FORGET_PASSWORD = "changepassword";
 
+    public static final String URL_RESET_PASSWORD = "resetpassword";
+
+
     public static final String URL_GET_STATE = "get_state";
     public static final String URL_GET_COUNTRY = "get_country";
     public static final String URL_GET_CITY = "get_city";

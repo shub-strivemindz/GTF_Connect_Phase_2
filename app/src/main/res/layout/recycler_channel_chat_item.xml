@@ -171,23 +171,8 @@
             android:textSize="@dimen/_10ssp"
             android:textColor="@color/channelMessageColor"
             android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-            android:maxLines="3"
-            android:ellipsize="end"/>
+more then 1000 top most trading courses+ daily or weekly"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/expand_message"
-            android:text="See More"
-            android:visibility="gone"
-            android:layout_below="@id/message"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/theme_green"
-            android:fontFamily="@font/montserrat"
-            android:textSize="@dimen/_8ssp"
-            android:layout_gravity="end"
-            />
 
     </RelativeLayout>
 
@@ -528,6 +513,7 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_height="match_parent"
                     android:text="234"
                     android:layout_marginEnd="@dimen/_12sdp"
+                    android:id="@+id/reaction_count"
                     android:fontFamily="@font/open_sans"
                     android:gravity="center"
                     android:textSize="@dimen/_8ssp"

@@ -35,9 +35,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -299,6 +301,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     boolean isAutoPlayGif = false;
     boolean isAutoPlayVideo = false;
 
+    boolean isGcProfileEnabled = true;
+
+
+    private ArrayList<Integer> selectedForwardedMessageIDs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -515,9 +521,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private void initiateClickListeners() {
         // Navigate for Member Chat
         binding.memberTitle.setOnClickListener(view -> {
-            Intent intent = new Intent(ChannelChatsScreen.this, ProfileScreen.class);
-            intent.putExtra("viewType",Constants.Group_Channel_TYPE_2);
-            startActivity(intent);
+
+            if (isGcProfileEnabled) {
+                Intent intent = new Intent(ChannelChatsScreen.this, ProfileScreen.class);
+                intent.putExtra("viewType", Constants.Group_Channel_TYPE_2);
+                startForActivityResultLauncher.launch(intent);
+            }
         });
 
         binding.pin.setOnClickListener(view -> {
@@ -550,7 +559,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             }
 
 
-            scrollToPosition(0);
+            scrollToPosition(0,false);
             binding.iconContainer.setVisibility(View.GONE);
 
         });
@@ -870,6 +879,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 this.infoDbEntity = infoDbEntity;
                 setProfileInfo();
 
+                channelViewAdapter.updateGcPermission(infoDbEntity);
                 checkGroupChannelSettings();
             }
         });
@@ -922,23 +932,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
-    private void scrollToPosition(int position) {
-        /*RecyclerView.SmoothScroller smoothScroller = new
-                LinearSmoothScroller(ChannelChatsScreen.this) {
-                    @Override
-                    protected int getVerticalSnapPreference() {
-                        return LinearSmoothScroller.SNAP_TO_START;
-                    }
-                };
-        smoothScroller.setTargetPosition(position);
-        mLayoutManager.startSmoothScroll(smoothScroller);*/
+    private void scrollToPosition(int position,boolean isMessageQuoted) {
 
-        /*binding.chats.smoothScrollBy(0,0);*/
+        binding.chats.scrollToPosition(position);
 
-
-        mLayoutManager.scrollToPosition(position);
-
-        //ObjectAnimator.ofInt(mLayoutManager, "translationY",  position).setDuration(300).start();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -946,14 +943,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 if (isMessageQuoted) {
 
                     View getRoot = mLayoutManager.findViewByPosition(position);
-//                    View getRoot = channelViewAdapter.getSelectedView(position);
+                    Animation myFadeInAnimation = AnimationUtils.loadAnimation(ChannelChatsScreen.this, R.anim.view_blink_fadder);
 
-                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                    anim.setDuration(1000); //You can manage the blinking time with this parameter
-                    anim.setStartOffset(20);
-                    //anim.setRepeatMode(Animation.REVERSE);
-                    anim.setRepeatCount(Animation.INFINITE);
-                    getRoot.startAnimation(anim);
+                    assert getRoot != null;
+                    getRoot.startAnimation(myFadeInAnimation);
+//
                 }
             }
         }, 1000);
@@ -1075,7 +1069,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                                 readMessages(Integer.parseInt(responseModel.getData().getChatData().getRows().get(0).getGroupChatID()));
 
-                                scrollToPosition(0);
+                                scrollToPosition(0,false);
                             }
                             else{
                                 list.addAll(responseModel.getData().getChatData().getRows());
@@ -1309,17 +1303,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     isMessageQuoted = false;
                     isAttachmentSend = false;
 
-                    currentPage = 1;
-                    refreshChannelChatSocket();
-                            /*if (isMsgSent) {
-                                Log.d("Msg sent ", "successfully");
-                                //scrollToFirstPosition();
-                                currentPage = 1;
-                                refreshGroupChatSocket();
-                            } else {
-                                Log.d("Msg sent ", "failed");
-                            }*/
-
                 });
             }
         });
@@ -1367,6 +1350,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     if (receivedMessage != null && receivedMessage.getSaveMsg() != null && receivedMessage.getSaveMsg().getGetData() != null){
                         list.add(0,receivedMessage.getSaveMsg().getGetData());
                         channelViewAdapter.updateChat(list);
+                        binding.chats.scrollToPosition(0);
                     }
                     else{
                         Log.d("received_message","getting null or empty data in above condition");
@@ -1705,7 +1689,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                             break;
                         }*/
                         else {
-                            scrollToPosition(i);
+                            /**
+                             * Quoted Message Found
+                             */
+
+
+
+                            scrollToPosition(i,true);
                             rest.dismissProgressdialog();
                             isMessageNotFound = false;
                             break;
@@ -2592,11 +2582,29 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
-    public void forwardMultiplePost(int selectedCount) {
+    public void forwardMultiplePost(int selectedCount,int chatID,boolean isMessageSelected) {
+
         if (selectedCount <= 0){
+            selectedForwardedMessageIDs = new ArrayList<>();
             binding.forwardContainer.setVisibility(View.GONE);
         }
         else{
+
+            if (selectedCount == 1){
+                selectedForwardedMessageIDs = new ArrayList<>();
+            }
+
+            if (isMessageSelected) {
+                if (!selectedForwardedMessageIDs.contains(chatID)) {
+                    selectedForwardedMessageIDs.add(chatID);
+                }
+            }
+            else{
+                if (selectedForwardedMessageIDs.contains(chatID)) {
+                    selectedForwardedMessageIDs.remove(chatID);
+                }
+            }
+
             binding.forwardContainer.setVisibility(View.VISIBLE);
             binding.forwardCount.setText(String.valueOf(selectedCount));
         }
@@ -2622,12 +2630,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         Map<String,Object> params = new HashMap<>();
         params.put("GroupChatID[]",chatID);
 
-        requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
-        connectViewModel.save_group_channel_message(api_token,channelID,params);
+
+        /*requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
+        connectViewModel.save_group_channel_message(api_token,channelID,params);*/
     }
 
     @Override
-    public void initiateCommentScreen(String data, String profileBaseUrl, String postBaseUrl, String userID) {
+    public void initiateCommentScreen(String data, String profileBaseUrl, String postBaseUrl, String userID,boolean isDiscussionAllowed) {
 
         Intent intent = new Intent(ChannelChatsScreen.this, GroupChannelCommentScreen.class);
         //intent.putExtra("replyOnComment", false);
@@ -2635,6 +2644,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         intent.putExtra("profileBaseUrl",profileBaseUrl);
         intent.putExtra("postBaseUrl",postBaseUrl);
         intent.putExtra("userID", userID);
+        intent.putExtra("isDiscussionAllowed",isDiscussionAllowed);
         startActivity(intent);
     }
 
@@ -3163,6 +3173,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     //rest.ShowDialogue();
                     searchMessageInList(groupChatId, false, false, false);
                 }
+                else if (result.getResultCode() == Constants.GC_USER_ROLE_UPDATED){
+
+                    Log.d("user_role","updated");
+
+                    requestType = GET_GROUP_CHANNEL_INFO;
+                    connectViewModel.get_group_channel_info(channelID,PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, ""));
+                }
             });
 
 
@@ -3238,6 +3255,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 // Todo Redirection to Subscription Page
 
+                isGcProfileEnabled = false;
+
                 userStatus = Constants.USER_RENEW_PLAN;
 
                 binding.searchSubContainer.setVisibility(View.GONE);
@@ -3257,6 +3276,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                         if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
 
+                            isGcProfileEnabled = true;
+
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
 
@@ -3268,12 +3289,16 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                         } else if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
 
+                            isGcProfileEnabled = true;
+
                             binding.searchSubContainer.setVisibility(View.VISIBLE);
                             binding.footerStatusTag.setVisibility(View.GONE);
 
                             userStatus = Constants.USER_ACTIVE;
 
                         } else {
+
+                            isGcProfileEnabled = false;
 
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3305,11 +3330,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                     } else if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("active")) {
 
+                        isGcProfileEnabled = true;
+
                         binding.searchSubContainer.setVisibility(View.VISIBLE);
                         binding.footerStatusTag.setVisibility(View.GONE);
 
                         userStatus = Constants.USER_ACTIVE;
                     } else {
+
+                        isGcProfileEnabled = false;
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3329,6 +3358,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
         if (PreferenceConnector.readString(this,PreferenceConnector.USER_TYPE,"").equalsIgnoreCase("super-admin")){
+
+            isGcProfileEnabled = true;
 
             binding.footerStatusTag.setVisibility(View.GONE);
 
@@ -3385,6 +3416,33 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
         ImageView close = (ImageView) forward_dialog.findViewById(R.id.close);
+        LinearLayout saveMessage = (LinearLayout) forward_dialog.findViewById(R.id.save_message);
+        RecyclerView personList = (RecyclerView) forward_dialog.findViewById(R.id.forward_person_list_recycler);
+
+
+
+        saveMessage.setOnClickListener(view -> {
+
+            if (selectedForwardedMessageIDs != null && !selectedForwardedMessageIDs.isEmpty()){
+
+                Map<String,Object> params = new HashMap<>();
+                params.put("GroupChannelID",channelID);
+                params.put("Action","WithGcChat");
+
+
+                for (int i=0;i<selectedForwardedMessageIDs.size();i++){
+                    params.put("GroupChatID["+i+"]",selectedForwardedMessageIDs.get(i));
+                }
+
+
+                Log.d("forwarded_message_params",params.toString());
+
+                requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
+                connectViewModel.save_group_channel_message(api_token,params);
+            }
+        });
+
+
         close.setOnClickListener(view1 -> {
 
             for (int i=0;i<list.size();i++){
@@ -3400,7 +3458,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
 
 
-        RecyclerView personList = (RecyclerView) forward_dialog.findViewById(R.id.forward_person_list_recycler);
+
 
         //int channelID = list.get(position).getGroupChannelID();
         //int chatID = Integer.parseInt(list.get(position).getGroupChatID());

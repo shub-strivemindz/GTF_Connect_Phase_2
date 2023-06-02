@@ -673,6 +673,11 @@ more then 1000 top most trading courses+ daily or weekly"
         android:background="@color/sendMessageDialogBackgroundColor"
         android:orientation="horizontal">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/search_sub_container">
+
         <ImageView
             android:id="@+id/send_message"
             android:layout_marginHorizontal="@dimen/_8sdp"
@@ -738,7 +743,24 @@ more then 1000 top most trading courses+ daily or weekly"
 
         </LinearLayout>
 
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:elevation="@dimen/_8sdp"
+            android:background="@color/sendMessageDialogBackgroundColor"
+            android:layout_alignParentBottom="true"
+            android:text="Please contact admin."
+            android:gravity="center"
+            android:textColor="@color/authEditText"
+            android:visibility="gone"
+            android:textSize="@dimen/_11ssp"
+            android:fontFamily="@font/poppins"
+            android:id="@+id/footer_status_tag"/>
+
     </RelativeLayout>
+
 
 
 </RelativeLayout>
