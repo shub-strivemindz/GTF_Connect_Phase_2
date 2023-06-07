@@ -49,6 +49,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -392,7 +393,7 @@ public class Utils {
 
 
     // ======================================================= Can be used to for slide pop up from side edges of view ============================
-    public static PopupWindow showDialog(int position, Context context, ImageView chatView, ChannelManageReactionModel emojiListModel, SelectEmoteReaction listener) { //, EditUserDialogListener editUserDialogListener
+    public static PopupWindow showDialog(int position, Context context, RelativeLayout reactionView, ChannelManageReactionModel emojiListModel, SelectEmoteReaction listener) { //, EditUserDialogListener editUserDialogListener
         try {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.popup_window, null);
@@ -402,8 +403,8 @@ public class Utils {
             popupWindow.setOutsideTouchable(true);
             popupWindow.update(0, 0, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             int[] location = new int[2];
-            chatView.getLocationOnScreen(location);
-            popupWindow.showAtLocation(chatView, Gravity.NO_GRAVITY, location[0], location[1] - 160);
+            reactionView.getLocationOnScreen(location);
+            popupWindow.showAtLocation(reactionView, Gravity.NO_GRAVITY, location[0], location[1] - 160);
 
             View container = (View) popupWindow.getContentView().getParent();
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -885,12 +886,15 @@ public class Utils {
             //formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date value = formatter.parse(chipDate);
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMM, hh:mm aa"); //this format changeable
+            /*SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMM, hh:mm aa"); //this format changeable
             //dateFormatter.setTimeZone(TimeZone.getDefault());
-            chipDate = dateFormatter.format(value);
+            chipDate = dateFormatter.format(value);*/
+
+            SimpleDateFormat format = new SimpleDateFormat("dd MMM, hh:mm aa");
+            chipDate = format.format(value);
 
 
-            //current date
+         /*   //current date
             String OurDate = chipDate;
             String[] separated = OurDate.split(",");
             serverCurrentDate = separated[0];
@@ -905,7 +909,7 @@ public class Utils {
             else{
                 SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM");
                 chipDate = format.format(value);
-            }
+            }*/
         } catch (Exception e) {
             chipDate = "00-00-0000 00:00";
         }
@@ -1214,85 +1218,6 @@ public class Utils {
 
 
 
-
-
-
-
-
-
-    public static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
-
-        if (tv.getTag() == null) {
-            tv.setTag(tv.getText());
-        }
-        ViewTreeObserver vto = tv.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onGlobalLayout() {
-
-                ViewTreeObserver obs = tv.getViewTreeObserver();
-                obs.removeGlobalOnLayoutListener(this);
-                if (maxLine == 0) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(0);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                } else {
-                    int lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, lineEndIndex, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                }
-            }
-        });
-
-    }
-
-    private static SpannableStringBuilder addClickablePartTextViewResizable(final Spanned strSpanned, final TextView tv,
-                                                                            final int maxLine, final String spanableText, final boolean viewMore) {
-        String str = strSpanned.toString();
-        SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
-
-        if (str.contains(spanableText)) {
-
-
-            ssb.setSpan(new TextViewSpannableUtil(false){
-                @Override
-                public void onClick(View widget) {
-                    if (viewMore) {
-                        tv.setLayoutParams(tv.getLayoutParams());
-                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                        tv.invalidate();
-                        makeTextViewResizable(tv, -1, "See Less", false);
-                    } else {
-                        tv.setLayoutParams(tv.getLayoutParams());
-                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                        tv.invalidate();
-                        makeTextViewResizable(tv, 3, ".. See More", true);
-                    }
-                }
-            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);
-
-        }
-        return ssb;
-
-    }
 
 
 

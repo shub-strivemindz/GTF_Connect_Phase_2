@@ -62,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/open_sans"
                 android:textStyle="bold"
+                android:id="@+id/username"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="@color/theme_green"
                 android:text="Johan Harper"

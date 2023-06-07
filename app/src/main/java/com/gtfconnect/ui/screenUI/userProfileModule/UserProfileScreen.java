@@ -49,6 +49,7 @@ import com.gtfconnect.roomDB.dbEntities.groupChannelGalleryEntity.GroupChannelGa
 import com.gtfconnect.ui.screenUI.HomeScreen;
 import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.utilities.AttachmentUploadUtils;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.FetchPath;
 import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.PreferenceConnector;
@@ -58,14 +59,12 @@ import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class UserProfileScreen extends AppCompatActivity implements ApiResponseListener{
     ActivityUserProfileBinding binding;
-
-    private final int SELECT_PICTURE_REQUEST_CODE = 1001;
-
-    private final int CAPTURE_IMAGE_REQUEST_CODE = 1002;
 
     private final int REQUEST_USER_PROFILE_DATA = 1;
 
@@ -83,7 +82,7 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
     private ApiResponseListener listener;
 
-    private String api_token;
+    private String connect_api_token,gtf_api_token;
 
     private int gtf_user_id;
 
@@ -93,6 +92,9 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
     private DatabaseViewModel databaseViewModel;
 
+    Map<String, Object> params;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,21 +103,25 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
         gtf_user_id = PreferenceConnector.readInteger(this, PreferenceConnector.GTF_USER_ID, 0);
 
-        checkTheme();
+        connect_api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
+
+        gtf_api_token = PreferenceConnector.readString(this, PreferenceConnector.API_CONNECT_TOKEN, "");
+
+        //checkTheme();
 
         init();
 
 
 
 
-        binding.uiMode.setOnCheckedChangeListener((compoundButton, b) -> {
+        /*binding.uiMode.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b){
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
             else{
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
-        });
+        });*/
 
 
         binding.updateProfilePic.setOnClickListener(v -> {
@@ -187,18 +193,113 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
             sign_out_dialog.show();
         });
+
+
+
+
+
+        // Update user settings :
+
+        binding.uiMode.setOnClickListener(view -> {
+            if(((CompoundButton) view).isChecked()){
+                params = new HashMap<>();
+                params.put("SettingID",Constants.DARK_MODE_SETTING_ID);
+                params.put("CustomValue",1);
+
+                requestType = Constants.UPDATE_USER_UI_MODE;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+            else{
+                params = new HashMap<>();
+                params.put("SettingID",Constants.DARK_MODE_SETTING_ID);
+                params.put("CustomValue",0);
+
+                requestType = Constants.UPDATE_USER_UI_MODE;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+        });
+
+
+
+
+
+
+
+        binding.toggleNotification.setOnClickListener(view -> {
+            if(((CompoundButton) view).isChecked()){
+                params = new HashMap<>();
+                params.put("SettingID",Constants.NOTIFICATIONS_SETTING_ID);
+                params.put("CustomValue",1);
+
+                requestType = Constants.UPDATE_USER_NOTIFICATION_SETTING;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+            else{
+                params = new HashMap<>();
+                params.put("SettingID",Constants.NOTIFICATIONS_SETTING_ID);
+                params.put("CustomValue",0);
+
+                requestType = Constants.UPDATE_USER_NOTIFICATION_SETTING;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+        });
+
+
+
+
+
+
+        binding.toggleAutoplayGif.setOnClickListener(view -> {
+            if(((CompoundButton) view).isChecked()){
+                params = new HashMap<>();
+                params.put("SettingID",Constants.AUTOPLAY_GIF_SETTING_ID);
+                params.put("CustomValue",1);
+
+                requestType = Constants.UPDATE_USER_AUTOPLAY_GIF;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+            else{
+                params = new HashMap<>();
+                params.put("SettingID",Constants.AUTOPLAY_GIF_SETTING_ID);
+                params.put("CustomValue",0);
+
+                requestType = Constants.UPDATE_USER_AUTOPLAY_GIF;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+        });
+
+
+
+
+
+        binding.toggleAutoplayVideo.setOnClickListener(view -> {
+            if(((CompoundButton) view).isChecked()){
+                params = new HashMap<>();
+                params.put("SettingID",Constants.AUTOPLAY_VIDEO_SETTING_ID);
+                params.put("CustomValue",1);
+
+                requestType = Constants.UPDATE_USER_AUTOPLAY_VIDEO;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+            else{
+                params = new HashMap<>();
+                params.put("SettingID",Constants.AUTOPLAY_VIDEO_SETTING_ID);
+                params.put("CustomValue",0);
+
+                requestType = Constants.UPDATE_USER_AUTOPLAY_VIDEO;
+                connectViewModel.update_user_settings(connect_api_token,params);
+            }
+        });
     }
 
 
 
 
-    private void checkTheme()
+   /* private void checkTheme()
     {
         switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
-                //process
-
-                binding.uiMode.setChecked(true);
+                              binding.uiMode.setChecked(true);
 
                 break;
             case Configuration.UI_MODE_NIGHT_NO:
@@ -208,7 +309,7 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
                 break;
         }
-    }
+    }*/
 
 
 
@@ -252,10 +353,9 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
             }
         });
 
-        api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
         requestType = REQUEST_USER_PROFILE_DATA;
-        connectViewModel.getUserProfile(api_token);
+        connectViewModel.getUserProfile(connect_api_token);
     }
 
 
@@ -266,6 +366,9 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
         String name = PreferenceConnector.readString(this,PreferenceConnector.FIRST_NAME,"")+" "+PreferenceConnector.readString(this,PreferenceConnector.LAST_NAME,"");
         binding.profileTitle.setText(name);
         binding.username.setText(PreferenceConnector.readString(this,PreferenceConnector.EMAIL_ID,""));
+
+
+
 
     }
 
@@ -285,6 +388,44 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
                 Bitmap profileImage = LocalGalleryUtil.getImageFromDB(groupChannelGalleryEntity.getImageData());
                 binding.profileImage.setImageBitmap(profileImage);
+            }
+        });
+
+
+        databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
+
+            if (userProfileDbEntity != null && userProfileDbEntity.getUserSetting() != null && !userProfileDbEntity.getUserSetting().isEmpty()){
+
+                for (int i=0;i< userProfileDbEntity.getUserSetting().size();i++){
+
+                    if (userProfileDbEntity.getUserSetting().get(i).getSettingID() != null && userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null) {
+
+                        if (userProfileDbEntity.getUserSetting().get(i).getSettingID() == Constants.AUTOPLAY_VIDEO_SETTING_ID) {
+
+                            binding.toggleAutoplayVideo.setChecked(userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1"));
+
+                        } else if (userProfileDbEntity.getUserSetting().get(i).getSettingID() == Constants.AUTOPLAY_GIF_SETTING_ID) {
+
+                            binding.toggleAutoplayGif.setChecked(userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1"));
+
+                        } else if (userProfileDbEntity.getUserSetting().get(i).getSettingID() == Constants.NOTIFICATIONS_SETTING_ID) {
+
+                            binding.toggleNotification.setChecked(userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1"));
+
+                        } else if (userProfileDbEntity.getUserSetting().get(i).getSettingID() == Constants.DARK_MODE_SETTING_ID) {
+
+                            if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")){
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                                binding.uiMode.setChecked(true);
+                            }
+                            else{
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                                binding.uiMode.setChecked(false);
+                            }
+
+                        }
+                    }
+                }
             }
         });
     }
@@ -308,7 +449,7 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
         i.setType("image/*");
         i.setAction(Intent.ACTION_PICK);
 //        i.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), Constants.SELECT_PICTURE_REQUEST_CODE);
 
 /*
         Intent i = new Intent();
@@ -331,7 +472,7 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
         Intent cameraIntent = AttachmentUploadUtils.takePhotoFromCamera(this);
         selectedMedia = new File(Objects.requireNonNull(cameraIntent.getStringExtra("image_path")));
-        startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST_CODE);
+        startActivityForResult(cameraIntent, Constants.CAPTURE_IMAGE_REQUEST_CODE);
 
     }
 
@@ -340,39 +481,37 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == Constants.CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
 
             Bitmap bitmap = Utils.decodeFile(selectedMedia);
             Uri selected_camera_uri = Utils.getImageUri(this, bitmap, 1024.0f, 10240.0f);
             selectedMedia = new File(Objects.requireNonNull(FetchPath.getPath(this, selected_camera_uri)));
 
-            api_token = PreferenceConnector.readString(this, PreferenceConnector.API_CONNECT_TOKEN, "");
-
             requestType = UPDATE_USER_PROFILE_PIC;
-            authViewModel.updateProfilePic(api_token, gtf_user_id, selectedMedia);
+            authViewModel.updateProfilePic(gtf_api_token, gtf_user_id, selectedMedia);
 
             rest.ShowDialogue();
 
-        } else if (requestCode == SELECT_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
+        } else if (requestCode == Constants.SELECT_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
 
             if (data.getData() != null) {
                 Uri imageUri = data.getData();
                 if (imageUri != null) {
                     selectedMedia = new File(Objects.requireNonNull(FetchPath.getPath(this, imageUri)));
 
-                    api_token = PreferenceConnector.readString(this, PreferenceConnector.API_CONNECT_TOKEN, "");
+
 
                     requestType = UPDATE_USER_PROFILE_PIC;
-                    authViewModel.updateProfilePic(api_token, gtf_user_id, selectedMedia);
+                    authViewModel.updateProfilePic(gtf_api_token, gtf_user_id, selectedMedia);
 
                     rest.ShowDialogue();
                 }
             }
         } else {
-            if (requestCode == SELECT_PICTURE_REQUEST_CODE) {
+            if (requestCode == Constants.SELECT_PICTURE_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't picked any image", Toast.LENGTH_LONG).show();
             }
-            if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
+            if (requestCode == Constants.CAPTURE_IMAGE_REQUEST_CODE) {
                 Toast.makeText(this, "You haven't capture any image", Toast.LENGTH_LONG).show();
             }
         }
@@ -418,7 +557,14 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
     @Override
     public void onLoading() {
-        //rest.ShowDialogue();
+
+        if (requestType == Constants.UPDATE_USER_AUTOPLAY_VIDEO ||
+                requestType == Constants.UPDATE_USER_AUTOPLAY_GIF ||
+                requestType == Constants.UPDATE_USER_NOTIFICATION_SETTING ||
+                requestType == Constants.UPDATE_USER_UI_MODE) {
+
+            rest.ShowDialogue();
+        }
     }
 
     @Override
@@ -480,6 +626,12 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
 
             profileResponseModel = gson.fromJson(jsonObject,type);
 
+
+            if (profileResponseModel != null && profileResponseModel.getData() != null){
+                databaseViewModel.insertUserProfileData(profileResponseModel.getData());
+            }
+
+
             if (galleryEntity != null && galleryEntity.getImageUrl()!=null) {
                 if (!galleryEntity.getImageUrl().equalsIgnoreCase(profileResponseModel.getData().getProfileInfo().getProfileImage())) {
                     saveAndLoadImage("Condition 1");
@@ -496,10 +648,19 @@ public class UserProfileScreen extends AppCompatActivity implements ApiResponseL
         }
         else if (requestType == UPDATE_USER_PROFILE_PIC) {
 
-            api_token = PreferenceConnector.readString(this, PreferenceConnector.API_GTF_TOKEN_, "");
 
             requestType = REQUEST_USER_PROFILE_DATA;
-            connectViewModel.getUserProfile(api_token);
+            connectViewModel.getUserProfile(connect_api_token);
+        }
+        else if (requestType == Constants.UPDATE_USER_AUTOPLAY_VIDEO ||
+                requestType == Constants.UPDATE_USER_AUTOPLAY_GIF ||
+                requestType == Constants.UPDATE_USER_NOTIFICATION_SETTING ||
+                requestType == Constants.UPDATE_USER_UI_MODE) {
+
+            Toast.makeText(this, "Permission updated!", Toast.LENGTH_SHORT).show();
+
+            requestType = REQUEST_USER_PROFILE_DATA;
+            connectViewModel.getUserProfile(connect_api_token);
         }
     }
 

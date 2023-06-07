@@ -323,16 +323,24 @@ public interface RestService {
      *  Save message personally
      */
 
-    @Multipart
+    @FormUrlEncoded
     @POST(ApiUrls.URL_SAVED_MESSAGES)
     Observable<JsonElement> save_personal_message(@Header ("Authorization") String api_token,
                                                        @Header("DeviceType") String device_type,
                                                        @Header("DeviceToken") String device_token,
-                                                       @Query("Content") String message,
-                                                       @Query("Action") String action,
-                                                       @Part List<MultipartBody.Part> files);
+                                                       @FieldMap Map<String,Object> params);
 
 
+
+
+
+    @Multipart
+    @POST(ApiUrls.URL_SAVED_MESSAGES)
+    Observable<JsonElement> save_personal_message_with_attachment(@Header ("Authorization") String api_token,
+                                                  @Header("DeviceType") String device_type,
+                                                  @Header("DeviceToken") String device_token,
+                                                  @QueryMap Map<String,Object> params,
+                                                  @Part List<MultipartBody.Part> files);
 
 
 
@@ -427,22 +435,37 @@ public interface RestService {
 
 
 
-
-
-
-
+    @GET(ApiUrls.GET_CONTACT_US)
+    Observable<JsonElement> get_contact_us();
 
 
 
 
 
     @FormUrlEncoded
-    @POST(ApiUrls.URL_GROUP_CHANNEL + "/" +"{id}"+ "/" + ApiUrls.URL_REPORT_USER)
+    @PATCH(ApiUrls.URL_GROUP_CHANNEL + "/" +"{id}"+ "/" + ApiUrls.URL_BLOCK_USER)
     Observable<JsonElement> block_user(@Path("id") int channelID,
                                         @Header ("Authorization") String api_token,
                                         @Header("DeviceType") String device_type,
                                         @Header("DeviceToken") String device_token,
                                         @FieldMap Map<String,Object> params);
+
+
+
+
+
+    @FormUrlEncoded
+    @PATCH(ApiUrls.URL_UPDATE_USER_SETTINGS)
+    Observable<JsonElement> update_user_settings(@Header ("Authorization") String api_token,
+                                                           @Header("DeviceType") String device_type,
+                                                           @Header("DeviceToken") String device_token,
+                                                           @FieldMap Map<String, Object> params);
+
+
+
+
+
+
 }
 
 

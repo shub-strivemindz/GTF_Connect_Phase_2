@@ -2,37 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/groupBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <LinearLayout
-        android:id="@+id/date_chip_container"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_30sdp"
-        android:gravity="center"
-        android:orientation="vertical">
-
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_20sdp"
-            app:cardCornerRadius="@dimen/_16sdp"
-            android:alpha=".8"
-            app:cardBackgroundColor="@color/chatHeaderDateBackgroundColor">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Feb, 24 2023"
-                android:textColor="@color/textGreyDateColor"
-                android:fontFamily="@font/roboto_regular"
-                android:textSize="@dimen/_9ssp"
-                android:gravity="center"
-                android:id="@+id/current_date"/>
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
 
     <RelativeLayout
         android:layout_below="@id/date_chip_container"
@@ -51,6 +22,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:layout_alignParentEnd="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -72,23 +44,7 @@
                         android:textSize="@dimen/_10ssp"
                         android:textColor="@color/white"
                         android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-                        android:maxLines="3"
-                        android:ellipsize="end"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/expand_message1"
-                        android:text="See More"
-                        android:visibility="gone"
-                        android:layout_below="@id/message1"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/theme_green"
-                        android:fontFamily="@font/montserrat"
-                        android:textSize="@dimen/_8ssp"
-                        android:layout_gravity="end"
-                        />
+more then 1000 top most trading courses+ daily or weekly"/>
 
                 </RelativeLayout>
 
@@ -98,289 +54,105 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:alpha=".5"
                     android:id="@+id/message_divider1"
-                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginVertical="@dimen/_5sdp"
                     app:dividerColor="@color/white" />
 
-                <RelativeLayout
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:id="@+id/post_image_container1"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/media_recycler1"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_130sdp"
-                    android:layout_marginHorizontal="@dimen/_16sdp">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/single_post_image_container1"
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="@dimen/_6sdp">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <ImageView
-                                android:id="@+id/post_image1"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/no_preview_available"
-                                android:scaleType="centerCrop"
-                                />
-
-                            <ImageView
-                                android:id="@+id/play_video01"
-                                android:layout_width="@dimen/_40sdp"
-                                android:layout_height="@dimen/_40sdp"
-                                android:src="@drawable/play_circle"
-                                android:layout_centerInParent="true"/>
-
-                        </RelativeLayout>
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_below="@id/message_container1"
+                    android:layout_height="wrap_content"/>
 
 
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/dual_post_image_container1"
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="@dimen/_6sdp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_weight="1"
-                                android:layout_marginEnd="@dimen/_5sdp"
-                                android:layout_height="match_parent">
-
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:id="@+id/dual_post11"
-                                    android:background="@drawable/no_preview_available"
-                                    android:scaleType="centerCrop"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/play_video11"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
-
-                            </RelativeLayout>
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_weight="1"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:layout_height="match_parent">
-
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:id="@+id/dual_post21"
-                                    android:background="@drawable/no_preview_available"
-                                    android:scaleType="centerCrop"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/play_video21"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
-
-                            </RelativeLayout>
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/multi_post_image_container1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:cardCornerRadius="@dimen/_6sdp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginEnd="@dimen/_5sdp"
-                                android:layout_weight="1">
-
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:id="@+id/multi_post11"
-                                    android:background="@drawable/no_preview_available"
-                                    android:scaleType="centerCrop"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/play_video31"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
-
-                            </RelativeLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:orientation="vertical">
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:id="@+id/multi_post21"
-                                        android:layout_height="match_parent"
-                                        android:background="@drawable/no_preview_available"
-                                        android:scaleType="centerCrop"
-                                        />
-
-                                    <ImageView
-                                        android:id="@+id/play_video41"
-                                        android:layout_width="@dimen/_30sdp"
-                                        android:layout_height="@dimen/_30sdp"
-                                        android:src="@drawable/play_circle"
-                                        android:layout_centerInParent="true"/>
-                                </RelativeLayout>
-
-                                <com.google.android.material.divider.MaterialDivider
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/_10sdp"
-                                    app:dividerColor="@color/white"/>
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:id="@+id/multi_post31"
-                                        android:background="@drawable/no_preview_available"
-                                        android:scaleType="centerCrop"
-                                        />
-
-                                    <ImageView
-                                        android:id="@+id/play_video51"
-                                        android:layout_width="@dimen/_30sdp"
-                                        android:layout_height="@dimen/_30sdp"
-                                        android:src="@drawable/play_circle"
-                                        android:layout_centerInParent="true"/>
-
-                                    <TextView
-                                        android:visibility="gone"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:text="+1"
-                                        android:textColor="@color/white"
-                                        android:textStyle="bold"
-                                        android:textSize="@dimen/_24ssp"
-                                        android:gravity="center"
-                                        android:id="@+id/additional_image_count1"
-                                        android:background="#4D2FB463"/>
-
-                                </RelativeLayout>
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </RelativeLayout>
-
-                <com.google.android.material.card.MaterialCardView
+                <LinearLayout
+                    android:id="@+id/audio_container1"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_40sdp"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    app:cardBackgroundColor="@color/theme_green"
-                    app:cardCornerRadius="@dimen/_4sdp">
+                    android:background="@color/theme_green"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
 
                         <ImageView
-                            android:layout_width="@dimen/_10sdp"
-                            android:layout_height="@dimen/_10sdp"
-                            android:layout_gravity="center_vertical"
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/download_file"
+                            android:visibility="gone"
+                            app:tint="@color/white"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:id="@+id/download_audio1"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/_14sdp"
+                            android:layout_height="@dimen/_14sdp"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/play"
                             app:tint="@color/white"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:id="@+id/play_recorded_audio1"/>
+                            android:id="@+id/play_pause_recorded_audio1"/>
 
-                        <!--<com.example.audiowaveform.WaveformSeekBar
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:visibility="gone"
+                            android:layout_width="@dimen/_16sdp"
                             android:layout_height="match_parent"
-                            android:id="@+id/waveForm"/>-->
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_centerVertical="true"
+                            android:id="@+id/downloader_loader1"/>
 
-                        <LinearLayout
+                    </RelativeLayout>
+
+                    <com.example.audiowaveform.WaveformSeekBar
+                        android:layout_width="0dp"
+                        android:layout_marginHorizontal="@dimen/_4sdp"
+                        android:layout_weight="1"
+                        app:waveProgressColor="@color/white"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/waveForm1"/>
+
+                    <LinearLayout
+                        android:id="@+id/audio_time_container1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="00"
-                                android:id="@+id/start_time_counter1"
-                                android:fontFamily="@font/roboto_regular"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/white"/>
+                            android:gravity="center"
+                            android:text="00"
+                            android:id="@+id/start_time_counter1"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textSize="@dimen/_9ssp"
+                            android:textColor="@color/white"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:text="/01:30"
-                                android:id="@+id/total_time1"
-                                android:fontFamily="@font/roboto_regular"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/white"
-                                android:layout_marginEnd="@dimen/_10sdp"/>
-
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="@dimen/_20sdp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/volume"
-                            app:tint="@color/white"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:id="@+id/volume_switch1"/>
-
-
+                            android:gravity="center"
+                            android:text="/01:30"
+                            android:id="@+id/total_audio_time1"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textSize="@dimen/_9ssp"
+                            android:textColor="@color/white"
+                            android:layout_marginEnd="@dimen/_10sdp"/>
 
                     </LinearLayout>
 
-                </com.google.android.material.card.MaterialCardView>
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/volume"
+                        app:tint="@color/white"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:id="@+id/volume_switch1"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -388,11 +160,23 @@ more then 1000 top most trading courses+ daily or weekly"
                     android:gravity="end"
                     android:orientation="horizontal">
 
+                    <CheckBox
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:scaleX=".8"
+                        android:id="@+id/select_post1"
+                        android:scaleY=".8"
+                        android:buttonTint="@color/white"
+                        android:visibility="gone"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:layout_gravity="center_vertical"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:text="10:20 am,"
+                        android:id="@+id/time1"
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:fontFamily="@font/open_sans"
                         android:textColor="@color/white"
@@ -401,20 +185,6 @@ more then 1000 top most trading courses+ daily or weekly"
                 </LinearLayout>
 
             </LinearLayout>
-
-            <!--<LinearLayout
-                android:background="@color/card_light_grey"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_4sdp"
-                android:id="@+id/high_white_spacer1"
-                android:orientation="horizontal"/>
-
-            <LinearLayout
-                android:background="@color/card_light_grey"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_4sdp"
-                android:id="@+id/low_white_spacer1"
-                android:orientation="horizontal"/>-->
 
         </LinearLayout>
 
@@ -425,6 +195,7 @@ more then 1000 top most trading courses+ daily or weekly"
         android:layout_marginVertical="@dimen/_4sdp"
         android:id="@+id/received_message_container"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:elevation="1dp"
         android:clickable="true"
         android:layout_marginStart="@dimen/_16sdp"
@@ -442,13 +213,6 @@ more then 1000 top most trading courses+ daily or weekly"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="@dimen/_1sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/green_highlight_divider"
-                    app:dividerColor="@color/theme_green"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -470,13 +234,19 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:layout_alignParentStart="true"
                             android:orientation="horizontal">
 
-                            <com.google.android.material.imageview.ShapeableImageView
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="@dimen/_24sdp"
+                                android:layout_height="@dimen/_24sdp"
                                 android:layout_gravity="center_vertical"
-                                android:layout_width="@dimen/_20sdp"
-                                android:layout_height="@dimen/_20sdp"
-                                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                                android:background="#fff"
-                                android:src="@drawable/bot2"/>
+                                app:cardCornerRadius="@dimen/_80sdp">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="fitXY"
+                                    android:id="@+id/user_icon"/>
+
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:id="@+id/user_name"
@@ -484,7 +254,7 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:layout_height="match_parent"
                                 android:text="Lina Harper"
                                 android:maxLines="1"
-                                android:textColor="@color/theme_green"
+                                android:textColor="@color/groupChatUserTextColor"
                                 android:layout_marginStart="@dimen/_10sdp"
                                 android:gravity="center_vertical"
                                 android:textSize="@dimen/_10ssp"
@@ -503,10 +273,22 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:text="27 Feb 2023"
                             android:gravity="center_vertical"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:textColor="@color/textGroupMessageColor"
+                            android:textColor="@color/groupChatLightTextColor"
                             android:textSize="@dimen/_8ssp"
                             android:fontFamily="@font/open_sans"/>
 
+
+                        <CheckBox
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:scaleX=".8"
+                            android:id="@+id/select_post"
+                            android:visibility="gone"
+                            android:scaleY=".8"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:buttonTint="@color/theme_green"
+                            android:layout_marginEnd="@dimen/_16sdp" />
 
                     </RelativeLayout>
 
@@ -519,10 +301,11 @@ more then 1000 top most trading courses+ daily or weekly"
                         android:layout_marginHorizontal="@dimen/_16sdp"/>
 
                     <RelativeLayout
+                        android:layout_below="@id/header_divider"
                         android:id="@+id/message_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginVertical="@dimen/_10sdp"
                         android:layout_marginHorizontal="@dimen/_10sdp">
 
                         <TextView
@@ -533,311 +316,128 @@ more then 1000 top most trading courses+ daily or weekly"
                             android:gravity="center_vertical"
                             android:fontFamily="@font/open_sans"
                             android:textSize="@dimen/_10ssp"
-                            android:textColor="@color/textGroupMessageColor"
+                            android:textColor="@color/groupChatTextColor"
                             android:text="half join and then pay full Regarding Primium Membership in Lowest price,
-more then 1000 top most trading courses+ daily or weekly"
-                            android:maxLines="3"
-                            android:ellipsize="end"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/expand_message"
-                            android:text="See More"
-                            android:visibility="gone"
-                            android:layout_below="@id/message"
-                            android:layout_alignParentEnd="true"
-                            android:textColor="@color/theme_green"
-                            android:fontFamily="@font/montserrat"
-                            android:textSize="@dimen/_8ssp"
-                            android:layout_gravity="end"
-                            />
+more then 1000 top most trading courses+ daily or weekly"/>
 
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:id="@+id/post_image_container"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/media_recycler"
                         android:layout_width="match_parent"
-                        android:layout_marginBottom="@dimen/_10sdp"
-                        android:layout_height="@dimen/_130sdp"
-                        android:layout_marginHorizontal="@dimen/_16sdp">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/single_post_image_container"
-                            android:layout_width="match_parent"
-                            android:visibility="gone"
-                            android:layout_height="match_parent"
-                            app:cardCornerRadius="@dimen/_6sdp">
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                                <ImageView
-                                    android:id="@+id/post_image"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/no_preview_available"
-                                    android:scaleType="centerCrop"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/play_video"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/play_circle"
-                                    android:layout_centerInParent="true"/>
-
-                            </RelativeLayout>
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_below="@id/message_container"
+                        android:layout_height="wrap_content"/>
 
 
-                        </com.google.android.material.card.MaterialCardView>
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/dual_post_image_container"
-                            android:layout_width="match_parent"
-                            android:visibility="gone"
-                            android:layout_height="match_parent"
-                            app:cardCornerRadius="@dimen/_6sdp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_weight="1"
-                                    android:layout_marginEnd="@dimen/_5sdp"
-                                    android:layout_height="match_parent">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:id="@+id/dual_post1"
-                                        android:background="@drawable/no_preview_available"
-                                        android:scaleType="centerCrop"
-                                        />
-
-                                    <ImageView
-                                        android:id="@+id/play_video1"
-                                        android:layout_width="@dimen/_40sdp"
-                                        android:layout_height="@dimen/_40sdp"
-                                        android:src="@drawable/play_circle"
-                                        android:layout_centerInParent="true"/>
-
-                                </RelativeLayout>
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_weight="1"
-                                    android:layout_marginStart="@dimen/_5sdp"
-                                    android:layout_height="match_parent">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:id="@+id/dual_post2"
-                                        android:background="@drawable/no_preview_available"
-                                        android:scaleType="centerCrop"
-                                        />
-
-                                    <ImageView
-                                        android:id="@+id/play_video2"
-                                        android:layout_width="@dimen/_40sdp"
-                                        android:layout_height="@dimen/_40sdp"
-                                        android:src="@drawable/play_circle"
-                                        android:layout_centerInParent="true"/>
-
-                                </RelativeLayout>
-
-                            </LinearLayout>
-
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/multi_post_image_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:cardCornerRadius="@dimen/_6sdp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginEnd="@dimen/_5sdp"
-                                    android:layout_weight="1">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_weight="1"
-                                        android:id="@+id/multi_post1"
-                                        android:background="@drawable/no_preview_available"
-                                        android:scaleType="centerCrop"
-                                        />
-
-                                    <ImageView
-                                        android:id="@+id/play_video3"
-                                        android:layout_width="@dimen/_40sdp"
-                                        android:layout_height="@dimen/_40sdp"
-                                        android:src="@drawable/play_circle"
-                                        android:layout_centerInParent="true"/>
-
-                                </RelativeLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:layout_marginStart="@dimen/_5sdp"
-                                    android:orientation="vertical">
-
-                                    <RelativeLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_weight="1">
-
-                                        <ImageView
-                                            android:layout_width="match_parent"
-                                            android:id="@+id/multi_post2"
-                                            android:layout_height="match_parent"
-                                            android:background="@drawable/no_preview_available"
-                                            android:scaleType="centerCrop"
-                                            />
-
-                                        <ImageView
-                                            android:id="@+id/play_video4"
-                                            android:layout_width="@dimen/_30sdp"
-                                            android:layout_height="@dimen/_30sdp"
-                                            android:src="@drawable/play_circle"
-                                            android:layout_centerInParent="true"/>
-                                    </RelativeLayout>
-
-                                    <com.google.android.material.divider.MaterialDivider
-                                        android:layout_width="match_parent"
-                                        android:layout_height="@dimen/_10sdp"
-                                        app:dividerColor="@color/white"/>
-
-                                    <RelativeLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_weight="1">
-
-                                        <ImageView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:id="@+id/multi_post3"
-                                            android:background="@drawable/no_preview_available"
-                                            android:scaleType="centerCrop"
-                                            />
-
-                                        <ImageView
-                                            android:id="@+id/play_video5"
-                                            android:layout_width="@dimen/_30sdp"
-                                            android:layout_height="@dimen/_30sdp"
-                                            android:src="@drawable/play_circle"
-                                            android:layout_centerInParent="true"/>
-
-                                        <TextView
-                                            android:visibility="gone"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:text="+1"
-                                            android:textColor="@color/white"
-                                            android:textStyle="bold"
-                                            android:textSize="@dimen/_24ssp"
-                                            android:gravity="center"
-                                            android:id="@+id/additional_image_count"
-                                            android:background="#4D2FB463"/>
-
-                                    </RelativeLayout>
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                        </com.google.android.material.card.MaterialCardView>
-
-                    </RelativeLayout>
-
-                    <com.google.android.material.card.MaterialCardView
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/audio_container"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_10sdp"
-                        android:visibility="gone"
-                        app:cardElevation="0dp"
-                        android:layout_marginBottom="@dimen/_8sdp"
-                        app:cardBackgroundColor="@color/card_light_grey"
-                        app:cardCornerRadius="@dimen/_4sdp">
+                        android:background="@color/groupChatBoxBackgroundColor"
+                        android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+
 
                             <ImageView
-                                android:layout_width="@dimen/_10sdp"
-                                android:layout_height="@dimen/_10sdp"
-                                android:layout_gravity="center_vertical"
-                                android:src="@drawable/play"
+                                android:layout_width="@dimen/_16sdp"
+                                android:layout_height="match_parent"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/download_file"
                                 app:tint="@color/audioPlayTint"
                                 android:layout_marginStart="@dimen/_10sdp"
-                                android:id="@+id/play_recorded_audio"/>
-
-                            <!--<com.example.audiowaveform.WaveformSeekBar
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="match_parent"
-                                android:id="@+id/waveForm"/>-->
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:text="00"
-                                    android:id="@+id/start_time_counter"
-                                    android:fontFamily="@font/roboto_regular"
-                                    android:textSize="@dimen/_9ssp"
-                                    android:textColor="@color/black"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:text="/01:30"
-                                    android:id="@+id/total_time"
-                                    android:fontFamily="@font/roboto_regular"
-                                    android:textSize="@dimen/_9ssp"
-                                    android:textColor="@color/black"
-                                    android:layout_marginEnd="@dimen/_10sdp"/>
-
-                            </LinearLayout>
+                                android:id="@+id/download_audio"/>
 
                             <ImageView
-                                android:layout_width="@dimen/_20sdp"
+                                android:layout_width="@dimen/_14sdp"
+                                android:layout_height="@dimen/_14sdp"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/play"
+                                android:visibility="gone"
+                                app:tint="@color/audioPlayTint"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:id="@+id/play_pause_recorded_audio"/>
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:visibility="gone"
+                                android:layout_width="@dimen/_16sdp"
                                 android:layout_height="match_parent"
-                                android:src="@drawable/volume"
-                                android:layout_marginEnd="@dimen/_10sdp"
-                                android:id="@+id/volume_switch"/>
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_centerVertical="true"
+                                android:id="@+id/downloader_loader"/>
+
+                        </RelativeLayout>
+
+                        <com.example.audiowaveform.WaveformSeekBar
+                            android:layout_width="0dp"
+                            android:layout_marginHorizontal="@dimen/_4sdp"
+                            android:layout_weight="1"
+                            app:waveProgressColor="@color/theme_green"
+                            android:layout_marginVertical="@dimen/_8sdp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/waveForm"/>
+
+                        <LinearLayout
+                            android:id="@+id/audio_time_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="00"
+                                android:id="@+id/start_time_counter"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textSize="@dimen/_9ssp"
+                                android:textColor="@color/black"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="/01:30"
+                                android:id="@+id/total_audio_time"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textSize="@dimen/_9ssp"
+                                android:textColor="@color/black"
+                                android:layout_marginEnd="@dimen/_10sdp"/>
 
                         </LinearLayout>
 
-                    </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/volume"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:id="@+id/volume_switch"/>
+
+
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <!--        <LinearLayout
+                        android:background="@color/card_light_grey"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_4sdp"
+                        android:id="@+id/high_white_spacer"
+                        android:orientation="horizontal"/>
+
+                    <LinearLayout
+                        android:background="@color/card_light_grey"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_4sdp"
+                        android:id="@+id/low_white_spacer"
+                        android:orientation="horizontal"/>-->
 
         </LinearLayout>
 

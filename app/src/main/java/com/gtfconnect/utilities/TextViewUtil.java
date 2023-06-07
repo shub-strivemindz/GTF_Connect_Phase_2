@@ -32,8 +32,8 @@ public class TextViewUtil {
         if (message.length() > limit_count) {
             String temp_message = message.substring(0, limit_count);
 
-            see_more = new SpannableString(Html.fromHtml(temp_message + " ...see more"));
-            see_less = new SpannableString(Html.fromHtml(message + " ...see less"));
+            see_more = new SpannableString(Html.fromHtml(temp_message + " ...read more"));
+            see_less = new SpannableString(Html.fromHtml(message + " ...read less"));
 
             ClickableSpan clickableToggleSpan1 = new ClickableSpan() {
                 @Override
@@ -113,8 +113,8 @@ public class TextViewUtil {
         if (message.length() > limit_count) {
             String temp_message = message.substring(0, limit_count);
 
-            see_more = new SpannableString(Html.fromHtml(temp_message + " ...see more"));
-            see_less = new SpannableString(Html.fromHtml(message + " ...see less"));
+            see_more = new SpannableString(Html.fromHtml(temp_message + " ...read more"));
+            see_less = new SpannableString(Html.fromHtml(message + " ...read less"));
 
             ClickableSpan clickableToggleSpan1 = new ClickableSpan() {
                 @Override

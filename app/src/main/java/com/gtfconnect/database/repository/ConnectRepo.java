@@ -119,8 +119,13 @@ public class ConnectRepo {
         return restService.save_group_channel_message(api_token,device_type,device_token,chatIDList);
     }
 
-    public Observable<JsonElement> save_personal_message(String api_token, String device_type, String device_token, String message, String action, List<MultipartBody.Part> files) {
-        return restService.save_personal_message(api_token,device_type,device_token,message,action,files);
+    public Observable<JsonElement> save_personal_message(String api_token, String device_type, String device_token, Map<String,Object> params) {
+        return restService.save_personal_message(api_token,device_type,device_token,params);
+    }
+
+
+    public Observable<JsonElement> save_personal_message_with_attachment(String api_token, String device_type, String device_token, Map<String,Object> params, List<MultipartBody.Part> files) {
+        return restService.save_personal_message_with_attachment(api_token,device_type,device_token,params,files);
     }
 
 
@@ -163,4 +168,19 @@ public class ConnectRepo {
     public Observable<JsonElement> block_user(int id,String api_token,String device_type, String device_token,Map<String,Object> params) {
         return restService.block_user(id,api_token,device_type,device_token,params);
     }
+
+
+
+    public Observable<JsonElement> report_user(String api_token,String device_type,String device_token,Map<String,Object> params){
+        return restService.report_user(api_token,device_type,device_token,params);
+    }
+
+
+
+    public Observable<JsonElement> update_user_settings(String api_token,String device_type, String device_token,Map<String,Object> params) {
+        return restService.update_user_settings(api_token,device_type,device_token,params);
+    }
+
+
+
 }

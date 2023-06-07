@@ -37,7 +37,6 @@ import com.gtfconnect.utilities.GlideUtils;
 import com.gtfconnect.utilities.GridItemDecoration;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
-import com.gtfconnect.viewModels.AuthViewModel;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
 import java.lang.reflect.Type;
@@ -62,8 +61,6 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
 
     private ConnectViewModel connectViewModel;
 
-    private AuthViewModel authViewModel;
-
     private ApiResponseListener listener;
 
 
@@ -76,6 +73,15 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
     private int channel_id;
 
     private int memberID;
+
+    private String username = "";
+
+
+    private boolean isUserBlocked =false;
+
+    private boolean isUserReported = false;
+
+
     //private boolean isDataResponseLoaded = false;
 
     @Override
@@ -98,30 +104,46 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
         binding.backClick.setOnClickListener(v -> onBackPressed());
 
         binding.blockUserContainer.setOnClickListener(view -> {
-            Dialog block_user_dialog = new Dialog(this);
-
-            block_user_dialog.setContentView(R.layout.dialog_block_user);
-            block_user_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            block_user_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            TextView block = block_user_dialog.findViewById(R.id.block);
-            TextView cancel = block_user_dialog.findViewById(R.id.cancel);
-
-            block.setOnClickListener(view1 -> {
 
 
-                Map<String,Object> params = new HashMap<>();
-                params.put("Status","Blocked");
-                params.put("GCMemberID",memberID);
+            if (!isUserBlocked) {
+                Dialog block_user_dialog = new Dialog(this);
+
+                block_user_dialog.setContentView(R.layout.dialog_block_user);
+                block_user_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                block_user_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView username = block_user_dialog.findViewById(R.id.username);
+                username.setText(this.username);
+
+
+                TextView block = block_user_dialog.findViewById(R.id.block);
+                TextView cancel = block_user_dialog.findViewById(R.id.cancel);
+
+                block.setOnClickListener(view1 -> {
+
+
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("Status", "Blocked");
+                    params.put("GCMemberID", memberID);
+
+                    requestType = BLOCK_USER;
+                    connectViewModel.block_user(channel_id, api_token, params);
+
+                    block_user_dialog.dismiss();
+                });
+                cancel.setOnClickListener(view1 -> block_user_dialog.dismiss());
+
+                block_user_dialog.show();
+            }
+            else{
+                Map<String, Object> params = new HashMap<>();
+                params.put("Status", "Active");
+                params.put("GCMemberID", memberID);
 
                 requestType = BLOCK_USER;
-                connectViewModel.block_user(channel_id,api_token,params);
-
-                block_user_dialog.dismiss();
-            });
-            cancel.setOnClickListener(view1 ->  block_user_dialog.dismiss());
-
-            block_user_dialog.show();
+                connectViewModel.block_user(channel_id, api_token, params);
+            }
         });
 
 
@@ -194,7 +216,6 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
         listener = this;
 
         initializeConnectViewModel();
-        initializeAuthViewModel();
 
 
         String gc_member_id = getIntent().getStringExtra("gc_member_id");
@@ -221,24 +242,6 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
                     listener.putResponse(apiResponse, rest);
                 }
 
-            }
-        });
-    }
-
-
-
-    private void initializeAuthViewModel(){
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-        authViewModel.getResponseLiveData().observe(this, new Observer<ApiResponse>() {
-            @Override
-            public void onChanged(ApiResponse apiResponse) {
-
-                Log.d("Profile Listener Called ---", "onChanged: " + new Gson().toJson(apiResponse));
-                if (apiResponse != null) {
-
-                    //listener.putResponse(apiResponse, auth_rest);
-                    listener.putResponse(apiResponse, rest);
-                }
             }
         });
     }
@@ -334,13 +337,28 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
                     if (groupChannelMediaResponseModel.getData().getUserInfo().getLastname() != null) {
                         username += " " + groupChannelMediaResponseModel.getData().getUserInfo().getLastname();
                     }
+                    this.username = username;
                     binding.username.setText(username);
 
                     if (groupChannelMediaResponseModel.getData().getUserInfo().getProfileImage() != null) {
                         GlideUtils.loadImage(this, binding.logo, groupChannelMediaResponseModel.getData().getUserInfo().getProfileImage());
                     }
 
+                    if (groupChannelMediaResponseModel.getData().getUserInfo().getGcMember() != null && groupChannelMediaResponseModel.getData().getUserInfo().getGcMember().getStatus() != null){
+                        if (groupChannelMediaResponseModel.getData().getUserInfo().getGcMember().getStatus().equalsIgnoreCase("Blocked")){
+                            binding.blockUserTitle.setText("User has been blocked");
+                        }
+                        else{
+                            binding.blockUserTitle.setText("Block this user");
+                        }
+                    }
+                    else{
+                        binding.blockUserTitle.setText("Block this user");
+                    }
+
                 }
+
+
             }
         } else if (requestType == GET_REPORT_REASON_LIST) {
 
@@ -364,7 +382,7 @@ public class MemberProfileScreen extends AppCompatActivity implements ApiRespons
                        Log.d("report_params",params.toString());
 
                        requestType = REPORT_USER;
-                       authViewModel.report_user(api_token,"android","test",params);
+                       connectViewModel.report_user(api_token,"android","test",params);
 
                        //Toast.makeText(MemberProfileScreen.this, "Reason selected = "+reasonText, Toast.LENGTH_SHORT).show();
                    }

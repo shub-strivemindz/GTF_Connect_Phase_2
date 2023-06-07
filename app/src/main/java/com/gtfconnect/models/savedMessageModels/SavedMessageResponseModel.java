@@ -2,6 +2,7 @@ package com.gtfconnect.models.savedMessageModels;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.gtfconnect.models.commonGroupChannelResponseModels.MediaListModel;
 
 import java.util.List;
 
@@ -160,7 +161,7 @@ public class SavedMessageResponseModel {
         private Object chatUserID;
         @SerializedName("saved_message_media")
         @Expose
-        private java.util.List<SavedMessageMedium> savedMessageMedia;
+        private List<MediaListModel> savedMessageMedia;
         @SerializedName("user")
         @Expose
         private User user;
@@ -245,11 +246,11 @@ public class SavedMessageResponseModel {
             this.chatUserID = chatUserID;
         }
 
-        public java.util.List<SavedMessageMedium> getSavedMessageMedia() {
+        public List<MediaListModel> getSavedMessageMedia() {
             return savedMessageMedia;
         }
 
-        public void setSavedMessageMedia(java.util.List<SavedMessageMedium> savedMessageMedia) {
+        public void setSavedMessageMedia(List<MediaListModel> savedMessageMedia) {
             this.savedMessageMedia = savedMessageMedia;
         }
 

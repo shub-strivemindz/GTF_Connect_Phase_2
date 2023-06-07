@@ -1,22 +1,15 @@
 package com.gtfconnect.ui.adapters.channelModuleAdapter;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +31,6 @@ import com.gtfconnect.interfaces.ChannelChatListener;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
-import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
 import com.gtfconnect.utilities.AudioPlayUtil;
 import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.GlideUtils;
@@ -47,10 +39,8 @@ import com.gtfconnect.utilities.TextViewUtil;
 import com.gtfconnect.utilities.Utils;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.List;
-import java.util.zip.CheckedInputStream;
 
 public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.ViewHolder> {
 
@@ -178,8 +168,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
 
 
-
-
+        boolean isLikeWithReaction = false;
 
 
 
@@ -617,16 +606,40 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
 
 
+        if (list.get(position).getLike() != null && !list.get(position).getLike().isEmpty()){
 
+                if (String.valueOf(list.get(position).getLike().get(0).getUserID()).equalsIgnoreCase(userID) && list.get(position).getLike().get(0).getIsLike() == 1){
 
-            if (list.get(position).getLike() != null && list.get(position).getLike().size() != 0) {
-                if (String.valueOf(list.get(position).getLike().get(0).getUserID()).equalsIgnoreCase(userID) && list.get(position).getLike().get(0).getIsLike() == 1) {
-                    holder.binding.likeIcon.setColorFilter(context.getColor(R.color.theme_green));
+                    if (list.get(position).getLike().get(0).getReaction() != null && list.get(position).getLike().get(0).getReaction().getEmojiCode() != null){
+
+                        holder.binding.likeIcon.setVisibility(View.GONE);
+                        holder.binding.reactionIcon.setVisibility(View.VISIBLE);
+
+                        holder.binding.reactionIcon.setText(list.get(position).getLike().get(0).getReaction().getEmojiCode());
+
+                        isLikeWithReaction = true;
+                    }
+                    else{
+                        holder.binding.likeIcon.setVisibility(View.VISIBLE);
+                        holder.binding.reactionIcon.setVisibility(View.GONE);
+
+                        isLikeWithReaction = false;
+
+                        holder.binding.likeIcon.setColorFilter(context.getColor(R.color.theme_green));
+                    }
                 }
                 else {
+
+                    holder.binding.likeIcon.setVisibility(View.VISIBLE);
+                    holder.binding.reactionIcon.setVisibility(View.GONE);
+
+                    isLikeWithReaction = false;
                     holder.binding.likeIcon.setColorFilter(context.getColor(R.color.chatIconColor));
+
+
                 }
-            }
+        }
+
 
 
         holder.binding.quoteMsgContainer.setOnClickListener(view -> {
@@ -650,9 +663,66 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
         holder.binding.like.setOnLongClickListener(view -> {
-            if (isReactionEnabled) {
-                channelChatListener.likeAsEmote(position, holder.binding.likeIcon);
+
+            if (list.get(position).getLike() != null)
+            {
+                if (list.get(position).getLike().size() != 0)
+                {
+                    if (list.get(position).getLike().get(0).getIsLike() == 0)
+                    {
+                        channelChatListener.likeAsEmote(Integer.parseInt(userID),
+                                list.get(position).getGroupChannelID(),
+                                list.get(position).getGCMemberID(),
+                                Integer.parseInt(list.get(position).getGroupChatID()),
+                                1,
+                                position,
+                                holder.binding.like,
+                                holder.binding.likeIcon,
+                                holder.binding.reactionIcon);
+                    }
+                    else{
+                        channelChatListener.likeAsEmote(Integer.parseInt(userID),
+                                list.get(position).getGroupChannelID(),
+                                list.get(position).getGCMemberID(),
+                                Integer.parseInt(list.get(position).getGroupChatID()),
+                                0,
+                                position,
+                                holder.binding.like,
+                                holder.binding.likeIcon,
+                                holder.binding.reactionIcon);
+                    }
+                }
+                else {
+                    channelChatListener.likeAsEmote(Integer.parseInt(userID),
+                            list.get(position).getGroupChannelID(),
+                            list.get(position).getGCMemberID(),
+                            Integer.parseInt(list.get(position).getGroupChatID()),
+                            1,
+                            position,
+                            holder.binding.like,
+                            holder.binding.likeIcon,
+                            holder.binding.reactionIcon);
+                }
             }
+            else {
+                channelChatListener.likeAsEmote(Integer.parseInt(userID),
+                        list.get(position).getGroupChannelID(),
+                        list.get(position).getGCMemberID(),
+                        Integer.parseInt(list.get(position).getGroupChatID()),
+                        1,
+                        position,
+                        holder.binding.like,
+                        holder.binding.likeIcon,
+                        holder.binding.reactionIcon);
+            }
+
+            /*if (isReactionEnabled) {
+                channelChatListener.likeAsEmote(position, holder.binding.likeIcon);
+            }*/
+
+
+
+
             return false;
         });
 

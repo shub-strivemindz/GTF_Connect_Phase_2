@@ -443,4 +443,18 @@
 
     <color name="subscriptionTextColor">#8497A7</color>
 
+
+
+
+
+    <!--======================================================================= User Member UI  ==========================================================================-->
+
+    <color name="memberBackgroundColor">#0E1118</color>
+
+    <color name="memberActionBarBackgroundColor">#232833</color>
+
+    <color name="memberActionBarTextColor">#FFFFFF</color>
+
+    <color name="memberTextColor">#DDE1EA</color>
+
 </resources>

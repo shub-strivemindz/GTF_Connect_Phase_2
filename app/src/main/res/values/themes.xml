@@ -12,6 +12,9 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:windowBackground">@color/background_app</item>
 
+        <!-- Forcefully disable dark mode UI. -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/groupChannelActionBarBackgroundColor</item>
 

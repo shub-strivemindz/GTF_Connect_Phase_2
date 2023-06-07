@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/memberBackgroundColor"
     android:orientation="vertical">
 
 
@@ -16,7 +16,7 @@
                 android:id="@+id/app_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="@color/memberBackgroundColor"
                 android:fitsSystemWindows="true"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -24,7 +24,7 @@
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:contentScrim="@color/background"
+                app:contentScrim="@color/memberBackgroundColor"
                 android:fitsSystemWindows="true"
                 app:expandedTitleMarginEnd="@dimen/_64sdp"
                 app:expandedTitleMarginStart="@dimen/_48sdp"
@@ -38,7 +38,7 @@
                 <LinearLayout
                 android:id="@+id/header_container"
                 android:layout_width="match_parent"
-                android:background="@color/theme_green"
+                android:background="@color/memberActionBarBackgroundColor"
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
 
@@ -93,7 +93,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/white"
+                            android:textColor="@color/memberActionBarTextColor"
                             android:fontFamily="@font/open_sans"
                             android:textSize="@dimen/_12ssp"
                             android:textStyle="bold"
@@ -106,7 +106,7 @@
                             android:layout_height="wrap_content"
                             android:text="Online"
                             android:visibility="gone"
-                            android:textColor="@color/white"
+                            android:textColor="@color/memberActionBarTextColor"
                             android:fontFamily="@font/open_sans"
                             android:textSize="@dimen/_9ssp"
                             android:textStyle="bold"
@@ -166,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="@color/profileTextColor"
+                    android:textColor="@color/memberTextColor"
                     android:textFontWeight="400"
                     android:textSize="@dimen/_11ssp"
                     android:text="Report this user"/>
@@ -201,8 +201,9 @@
                         android:gravity="center_vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:id="@+id/block_user_title"
                         android:fontFamily="@font/montserrat"
-                        android:textColor="@color/profileTextColor"
+                        android:textColor="@color/memberTextColor"
                         android:textFontWeight="400"
                         android:textSize="@dimen/_11ssp"
                         android:text="Block this user"/>
@@ -222,19 +223,23 @@
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-            <com.google.android.material.tabs.TabLayout
-                android:layout_marginStart="@dimen/_8sdp"
-                android:id="@+id/tab_layout"
-                android:layout_below="@id/block_user_container"
-                android:layout_width="wrap_content"
-                android:background="@color/background"
-                app:tabSelectedTextColor="@color/theme_green"
-                app:tabTextColor="@color/textSearchTextColor"
-                app:tabIndicatorColor="@color/theme_green"
-                app:tabMode="auto"
-                app:tabIndicatorFullWidth="false"
-                app:tabTextAppearance="@style/profileTabTextAppearance"
-                android:layout_height="wrap_content">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:id="@+id/tab_layout"
+                    android:layout_below="@id/block_user_container"
+                    android:layout_width="wrap_content"
+                    app:tabSelectedTextColor="@color/theme_green"
+                    app:tabTextColor="@color/groupChannelProfileTabTextColor"
+                    app:tabIndicatorColor="@color/theme_green"
+                    app:tabMode="auto"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabRippleColor="@color/groupChannelProfileTabBackgroundColor"
+                    app:tabGravity="fill"
+                    android:background="@color/groupChannelProfileTabBackgroundColor"
+                    app:tabBackground="@color/groupChannelProfileTabBackgroundColor"
+                    app:tabTextAppearance="@style/profileTabTextAppearance"
+                    android:layout_height="wrap_content">
 
                <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -288,11 +293,13 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/document_recycler"
+                android:background="@color/memberBackgroundColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/media_recycler"
+                            android:background="@color/memberBackgroundColor"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
 

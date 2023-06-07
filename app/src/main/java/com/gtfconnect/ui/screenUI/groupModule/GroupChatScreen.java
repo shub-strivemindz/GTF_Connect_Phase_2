@@ -32,7 +32,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -49,8 +48,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -72,7 +69,6 @@ import com.gowtham.library.utils.TrimVideo;
 import com.gtfconnect.R;
 import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
-import com.gtfconnect.databinding.ActivityChannelChatBinding;
 import com.gtfconnect.databinding.ActivityGroupChatBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
 import com.gtfconnect.interfaces.AttachmentUploadListener;
@@ -101,15 +97,12 @@ import com.gtfconnect.roomDB.dbEntities.groupChannelChatDbEntities.GroupChannelC
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
-import com.gtfconnect.ui.adapters.channelModuleAdapter.ChannelChatAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
-import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
-import com.gtfconnect.ui.screenUI.groupModule.GroupChatScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
-import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GroupChannelCommentScreen;
+import com.gtfconnect.ui.screenUI.commonGroupChannelModule.CommentScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.PinnedMessageScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.VideoPreviewScreen;
 import com.gtfconnect.ui.screenUI.recentModule.ExclusiveOfferScreen;
@@ -323,6 +316,11 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     Animation blinkAnimation;
 
 
+    boolean isSendMediaEnabled = false;
+
+    boolean isSendMessageEnabled = false;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -374,6 +372,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         binding.sendMessage.setVisibility(View.GONE);
         binding.recordButton.setVisibility(View.VISIBLE);
         binding.pinAttachment.setVisibility(View.VISIBLE);
+
+        binding.blurFrame.setVisibility(View.GONE);
 
 
         rest = new Rest(this, false, false);
@@ -565,7 +565,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         binding.pin.setOnClickListener(view -> {
 
-
             if (pinMessageCount == 0) {
                 Utils.showSnackMessage(GroupChatScreen.this, binding.pin, "No Pinned Message Found!");
             } else {
@@ -581,11 +580,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
         // Bottom sheet for Mute Notifications
         binding.pinAttachment.setOnClickListener(view -> {
-
-
-            // Todo..................Uncomment below condition when video can be shared
-
-            //if (!isAnyFileAttached)
             openAttachmentDialog();
         });
 
@@ -639,9 +633,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         binding.closeQuoteEditor.setOnClickListener(view -> {
             binding.quoteContainer.setVisibility(View.GONE);
 
-            binding.sendMessage.setVisibility(View.GONE);
-            binding.recordButton.setVisibility(View.VISIBLE);
-            binding.pinAttachment.setVisibility(View.VISIBLE);
+            toggleSearchContainer(1,1,2);
 
             isMessageQuoted = false;
         });
@@ -975,6 +967,52 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
 
+
+
+    private void toggleSearchContainer(int togglePinAttachment, int toggleRecordAttachment, int toggleSendMessage){
+
+        if (togglePinAttachment == 1){
+            if (isSendMediaEnabled) {
+                binding.pinAttachment.setVisibility(View.VISIBLE);
+            }
+            else{
+                binding.pinAttachment.setVisibility(View.GONE);
+            }
+        }
+        if (togglePinAttachment == 2){
+            binding.pinAttachment.setVisibility(View.GONE);
+        }
+
+        if (toggleRecordAttachment == 1){
+            if (isSendMediaEnabled) {
+                binding.recordButton.setVisibility(View.VISIBLE);
+            }
+            else{
+                binding.recordButton.setVisibility(View.GONE);
+            }
+        }
+        if (toggleRecordAttachment == 2){
+            binding.recordButton.setVisibility(View.GONE);
+        }
+
+        if (toggleSendMessage == 1){
+            if (isSendMessageEnabled) {
+                binding.sendMessage.setVisibility(View.VISIBLE);
+            }
+            else{
+                binding.sendMessage.setVisibility(View.GONE);
+            }
+        }
+        if (toggleSendMessage == 2){
+            binding.sendMessage.setVisibility(View.GONE);
+        }
+    }
+
+
+
+
+
+
     private void setProfileInfo(){
 
         if (infoDbEntity != null){
@@ -1098,9 +1136,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
             binding.dummyUserInitials.setText(userInitials);
             binding.dummyUserContainer.setVisibility(View.VISIBLE);
-
-            dummyUserListAdapter.updateList(getDummyUserModel);
-
         }
     }
 
@@ -1332,9 +1367,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     private void validateSendMessage(String message, View view) {
         binding.quoteContainer.setVisibility(View.GONE);
-        binding.sendMessage.setVisibility(View.GONE);
-        binding.recordButton.setVisibility(View.VISIBLE);
-        binding.pinAttachment.setVisibility(View.VISIBLE);
+
+        toggleSearchContainer(1,1,2);
 
         binding.type.setText("");
         Utils.softKeyboard(this, false, binding.type);
@@ -1911,6 +1945,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             files.add(attachment);
         }
 
+        Log.d("callAttachmentApi:", "file = "+files.size());
+        Log.d("callAttachmentApi:", "params = "+params);
 
         attachment_request_code = 0;
         requestType = REQUEST_UPLOAD_FILE;
@@ -2452,14 +2488,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
     @Override
     public void likeAsEmote(int position, ImageView rootView) {
-        Utils.showDialog(position, this, rootView, reactionModel, new SelectEmoteReaction() {
+        /*Utils.showDialog(position, this, rootView, reactionModel, new SelectEmoteReaction() {
             @Override
             public void selectEmoteReaction(int id, String emoji_code, String emoji_name) {
                 for (int i = 0; i < 15; i++) {
                     playAnimation(Utils.textAsBitmap(GroupChatScreen.this, emoji_code));
                 }
             }
-        });
+        });*/
     }
 
 
@@ -2680,6 +2716,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     @Override
     public void forwardMultiplePost(int selectedCount,int chatID,boolean isMessageSelected) {
 
+        Integer groupChannelChatID = chatID;
+
         if (selectedCount <= 0){
             selectedForwardedMessageIDs = new ArrayList<>();
             binding.forwardContainer.setVisibility(View.GONE);
@@ -2691,14 +2729,12 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             }
 
             if (isMessageSelected) {
-                if (!selectedForwardedMessageIDs.contains(chatID)) {
-                    selectedForwardedMessageIDs.add(chatID);
+                if (!selectedForwardedMessageIDs.contains(groupChannelChatID)) {
+                    selectedForwardedMessageIDs.add(groupChannelChatID);
                 }
             }
             else{
-                if (selectedForwardedMessageIDs.contains(chatID)) {
-                    selectedForwardedMessageIDs.remove(chatID);
-                }
+                selectedForwardedMessageIDs.remove(groupChannelChatID);
             }
 
             binding.forwardContainer.setVisibility(View.VISIBLE);
@@ -2733,7 +2769,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     @Override
     public void initiateCommentScreen(String data, String profileBaseUrl, String postBaseUrl, String userID,boolean isDiscussionAllowed) {
 
-        Intent intent = new Intent(GroupChatScreen.this, GroupChannelCommentScreen.class);
+        Intent intent = new Intent(GroupChatScreen.this, CommentScreen.class);
 
         intent.putExtra("userDetail", data);
         intent.putExtra("profileBaseUrl",profileBaseUrl);
@@ -2873,9 +2909,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 imageMiniPreviewAdapter.updateList(multipleImageUri, 0);
                 binding.imagePreviewLayout.setVisibility(View.GONE);
 
-                binding.pinAttachment.setVisibility(View.VISIBLE);
-                binding.sendMessage.setVisibility(View.GONE);
-                binding.recordButton.setVisibility(View.VISIBLE);
+                toggleSearchContainer(1,1,2);
 
                 isAnyFileAttached = false;
             } else {
@@ -2995,9 +3029,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
         else if (requestType == REQUEST_UPLOAD_FILE) {
 
 
-            binding.pinAttachment.setVisibility(View.VISIBLE);
-            binding.sendMessage.setVisibility(View.GONE);
-            binding.recordButton.setVisibility(View.VISIBLE);
+            toggleSearchContainer(1,1,2);
 
             Log.d("UPLOAD IMAGE", jsonObject.toString());
 
@@ -3322,14 +3354,25 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     binding.footerStatusTag.setVisibility(View.VISIBLE);
                     binding.searchContainer.setVisibility(View.GONE);
 
+
                     binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
                     binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
                     binding.footerStatusTag.setText("Please contact admin.");
+
+                    isSendMessageEnabled = false;
                 } else {
+
+                    isSendMessageEnabled = true;
                     binding.searchContainer.setVisibility(View.VISIBLE);
+
                 }
             }
             else{
+
+                isSendMessageEnabled = false;
+
+
+
                 binding.footerStatusTag.setVisibility(View.GONE);
                 binding.searchContainer.setVisibility(View.GONE);
             }
@@ -3338,13 +3381,19 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             if (infoDbEntity.getGcPermission().getSendMedia() != null){
 
                 if (infoDbEntity.getGcPermission().getSendMedia() != 1){
-                    binding.pinAttachment.setVisibility(View.GONE);
+
+                    isSendMediaEnabled = false;
+                    toggleSearchContainer(2,2,1);
                 }
                 else{
-                    binding.pinAttachment.setVisibility(View.VISIBLE);
+
+                    isSendMediaEnabled = true;
+                    toggleSearchContainer(1,1,2);
                 }
             }
             else{
+
+                isSendMediaEnabled = false;
                 binding.pinAttachment.setVisibility(View.GONE);
             }
 
@@ -3387,9 +3436,14 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 binding.searchSubContainer.setVisibility(View.GONE);
                 binding.footerStatusTag.setVisibility(View.VISIBLE);
 
+                binding.blurFrame.setVisibility(View.VISIBLE);
+                binding.blurFrame.setBlur(this,binding.blurFrame);
+
                 binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
                 binding.footerStatusTag.setTextColor(getColor(R.color.white));
                 binding.footerStatusTag.setText("Renew Subscription Plan");
+
+                binding.blurFrame.setVisibility(View.GONE);
 
             }
             else {
@@ -3406,6 +3460,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
 
+                            binding.blurFrame.setVisibility(View.VISIBLE);
+                            binding.blurFrame.setBlur(this,binding.blurFrame);
+
                             binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
                             binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
                             binding.footerStatusTag.setText("Please contact admin.");
@@ -3419,6 +3476,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                             binding.searchSubContainer.setVisibility(View.VISIBLE);
                             binding.footerStatusTag.setVisibility(View.GONE);
 
+                            binding.blurFrame.setVisibility(View.GONE);
+
                             userStatus = Constants.USER_ACTIVE;
 
                         } else {
@@ -3427,6 +3486,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
+                            binding.blurFrame.setVisibility(View.VISIBLE);
+                            binding.blurFrame.setBlur(this,binding.blurFrame);
 
                             binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
                             binding.footerStatusTag.setTextColor(getColor(R.color.white));
@@ -3448,6 +3509,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
 
+                        binding.blurFrame.setVisibility(View.VISIBLE);
+                        binding.blurFrame.setBlur(this,binding.blurFrame);
+
                         binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
                         binding.footerStatusTag.setTextColor(getColor(R.color.authEditText));
                         binding.footerStatusTag.setText("Please contact admin.");
@@ -3462,6 +3526,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                         binding.searchSubContainer.setVisibility(View.VISIBLE);
                         binding.footerStatusTag.setVisibility(View.GONE);
 
+                        binding.blurFrame.setVisibility(View.GONE);
+
                         userStatus = Constants.USER_ACTIVE;
                     } else {
 
@@ -3469,6 +3535,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
+
+                        binding.blurFrame.setVisibility(View.VISIBLE);
+                        binding.blurFrame.setBlur(this,binding.blurFrame);
 
                         binding.footerStatusTag.setBackgroundColor(getColor(R.color.theme_green));
                         binding.footerStatusTag.setTextColor(getColor(R.color.white));
@@ -3489,9 +3558,13 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             binding.footerStatusTag.setVisibility(View.GONE);
 
             isGcProfileEnabled = true;
+            isSendMediaEnabled = true;
+            isSendMessageEnabled = true;
 
             binding.searchContainer.setVisibility(View.VISIBLE);
-            binding.pinAttachment.setVisibility(View.VISIBLE);
+            binding.blurFrame.setVisibility(View.GONE);
+
+            toggleSearchContainer(1,0,0);
             toggleSendGif(true);
         }
     }

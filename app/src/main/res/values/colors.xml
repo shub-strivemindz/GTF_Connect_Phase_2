@@ -523,4 +523,17 @@
     
     <color name="quotedTextSelfExpandableColor">#032D1A</color>
 
+
+
+    <!--======================================================================= User Member UI  ==========================================================================-->
+
+    <color name="memberBackgroundColor">#F3F6FF</color>
+
+    <color name="memberActionBarBackgroundColor">#2FB463</color>
+
+    <color name="memberActionBarTextColor">#FFFFFF</color>
+
+    <color name="memberTextColor">#8F9092</color>
+
+
 </resources>

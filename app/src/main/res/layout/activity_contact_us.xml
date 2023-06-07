@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:text="09672915757"
+            android:id="@+id/contact_us_number"
             android:fontFamily="@font/montserrat"
             android:textSize="@dimen/_12sdp"/>
 
@@ -115,7 +115,7 @@
                 android:layout_gravity="center_horizontal"
                 android:paddingHorizontal="@dimen/_20sdp"
                 android:gravity="center_horizontal"
-                android:text="159, 3rd Floor,Rathore Nagar,Amrapali Cir,Vaishali Nagar,Jaipur, Rajasthan 302021"
+                android:id="@+id/contact_us_address"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_12sdp"/>
 
@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="www.facebook.com"
+                android:id="@+id/contact_us_facebook"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_12sdp"/>
 
@@ -175,7 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="www.instagram.com"
+                android:id="@+id/contact_us_instagram"
                 android:fontFamily="@font/montserrat"
                 android:textSize="@dimen/_12sdp"/>
 

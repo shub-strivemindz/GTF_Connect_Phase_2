@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/savedMessageBgColor"
+    android:background="@color/groupBackgroundColor"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
+        android:elevation="@dimen/_4sdp"
         android:background="@color/savedMessageActionBarBgColor"
         android:layout_height="@dimen/_45sdp"
         android:orientation="horizontal">
@@ -34,19 +35,80 @@
 
     </LinearLayout>
 
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/toolbar"
-        android:alpha=".4"/>
-
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="@dimen/_6sdp"
         android:id="@+id/saved_message_recycler"
         android:layout_width="match_parent"
         android:layout_below="@id/toolbar"
+        android:layout_above="@id/search_container"
         android:layout_height="wrap_content"/>
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_above="@id/search_container"
+        android:id="@+id/attachment_container"
+        app:cardElevation="@dimen/_4sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_45sdp"
+        android:visibility="gone"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        app:cardCornerRadius="@dimen/_14sdp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_14sdp"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:id="@+id/image_box_container"
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/card_yellow"
+                app:cardCornerRadius="@dimen/_8sdp">
+
+                <ImageView
+                    android:id="@+id/attachment_type_image"
+                    android:layout_gravity="center"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/document"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/attachment_type_title"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_toEndOf="@id/image_box_container"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/_11ssp"
+                android:layout_marginEnd="@dimen/_24sdp"
+                android:text="Manage Reactions"/>
+
+
+            <ImageView
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:id="@+id/close_attachment_container"
+                android:src="@drawable/close"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:clickable="true"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"/>
+
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <RelativeLayout
         android:layout_alignParentBottom="true"
@@ -151,13 +213,6 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="@dimen/_16sdp"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/smile"
-                            app:tint="@color/sendMessageEmojiColor"
-                            android:layout_marginHorizontal="@dimen/_6sdp"/>
-
                         <com.gtfconnect.utilities.CustomEditText
                             android:id="@+id/type"
                             android:layout_width="0dp"
@@ -166,7 +221,7 @@
                             android:hint="Message"
                             android:fontFamily="@font/poppins"
                             android:textSize="@dimen/_10ssp"
-                            android:paddingStart="@dimen/_6sdp"
+                            android:paddingStart="@dimen/_12sdp"
                             android:textColor="@color/sendMessageTextColor"
                             android:textColorHint="@color/sendMessageTextColor"
                             android:background="@color/sendMessageEditTextBackgroundColor"/>
@@ -187,6 +242,58 @@
                 android:src="@drawable/attach_doc"/>
 
         </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/image_preview_layout"
+        android:layout_width="match_parent"
+        android:background="@color/switch_grey"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:elevation="@dimen/_10sdp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:elevation="@dimen/_2sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/close"
+            android:textColor="@color/white"
+            android:text="Close"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:textSize="@dimen/_10ssp"
+            />
+
+
+        <ImageView
+            android:elevation="@dimen/_2sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_selected_image"
+            android:src="@drawable/delete_image"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_alignParentTop="true"
+            />
+
+        <ImageView
+            android:alpha=".8"
+            android:id="@+id/image_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:id="@+id/mini_image_preview_recycler"/>
 
     </RelativeLayout>
 

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -435,11 +436,11 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
-    public void save_personal_message(String api_token,  String message, List<MultipartBody.Part> files) {
+    public void save_personal_message(String api_token, Map<String,Object> params) {
 
         final String action = "Manually";
 
-        disposables.add(repo.save_personal_message(api_token, DEVICE_TYPE, DEVICE_TOKEN,message,action,files).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+        disposables.add(repo.save_personal_message(api_token, DEVICE_TYPE, DEVICE_TOKEN,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 responseLiveData.setValue(ApiResponse.loading());
@@ -460,7 +461,28 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
+    public void save_personal_message_with_attachment(String api_token, Map<String,Object> params, List<MultipartBody.Part> files) {
 
+        final String action = "Manually";
+
+        disposables.add(repo.save_personal_message_with_attachment(api_token, DEVICE_TYPE, DEVICE_TOKEN,params,files).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
 
 
 
@@ -651,7 +673,28 @@ public class ConnectViewModel extends AndroidViewModel {
 
 
 
+    public void report_user(String api_token,String device_type,String device_token,Map<String,Object> params){
 
+        disposables.add(repo.report_user(api_token,device_type,device_token,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+
+
+    }
 
 
 
@@ -677,6 +720,44 @@ public class ConnectViewModel extends AndroidViewModel {
             }
         }));
     }
+
+
+
+
+
+
+
+
+    public void update_user_settings(String api_token,Map<String,Object> params) {
+        disposables.add(repo.update_user_settings(api_token, DEVICE_TYPE, DEVICE_TOKEN,params).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                responseLiveData.setValue(ApiResponse.loading());
+            }
+        }).subscribe(new Consumer<JsonElement>() {
+            @Override
+            public void accept(JsonElement jsonElement) throws Exception {
+                responseLiveData.setValue(ApiResponse.success(jsonElement));
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                responseLiveData.setValue(ApiResponse.error(throwable));
+            }
+        }));
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

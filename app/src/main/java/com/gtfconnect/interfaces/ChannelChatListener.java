@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.audiowaveform.WaveformSeekBar;
@@ -18,7 +20,7 @@ public interface ChannelChatListener {
 
     void likePost(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like);
 
-    void likeAsEmote(int position, ImageView likeRootView);
+    void likeAsEmote(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like, int position, RelativeLayout likeRootView,ImageView likeIcon, TextView reactionIcon);
 
 
     void deletePost(int userID,int gcMemberId, int groupChatId, int groupChannelId );

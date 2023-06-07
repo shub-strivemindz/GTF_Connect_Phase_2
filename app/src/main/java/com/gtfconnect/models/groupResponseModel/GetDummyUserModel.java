@@ -41,6 +41,8 @@ public class GetDummyUserModel {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+
     public class Data {
 
         @SerializedName("list")
@@ -56,7 +58,6 @@ public class GetDummyUserModel {
         }
 
     }
-
 
     public class ListItems {
 
@@ -106,4 +107,9 @@ public class GetDummyUserModel {
         }
 
     }
+
 }
+
+
+
+

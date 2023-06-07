@@ -70,6 +70,13 @@ public class AuthRepo {
     }
 
 
+
+    public Observable<JsonElement> getContactUs() {
+        return restService.get_contact_us();
+    }
+
+
+
     public Observable<JsonElement> updateUserProfile(String api_token,String device_type,String device_token,String fromGtfConnect,Map<String,Object> params) {
         return restService.updateUserProfile(api_token,device_type,device_token,fromGtfConnect,params);
     }
@@ -80,12 +87,6 @@ public class AuthRepo {
     public Observable<JsonElement> update_profile_pic(String api_token, int userID, MultipartBody.Part image) {
         return restService.update_profile_pic(api_token,userID,image);
     }
-
-
-    public Observable<JsonElement> report_user(String api_token,String device_type,String device_token,Map<String,Object> params){
-        return restService.report_user(api_token,device_type,device_token,params);
-    }
-
 
 
     public Observable<JsonElement> get_cms_data(String device_type,String device_token,String type){

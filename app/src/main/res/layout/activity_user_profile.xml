@@ -394,6 +394,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checked="false"
+                android:id="@+id/toggle_notification"
                 android:layout_marginEnd="@dimen/_14sdp"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />
@@ -443,6 +444,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checked="false"
+                android:id="@+id/toggle_autoplay_gif"
                 android:layout_marginEnd="@dimen/_14sdp"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />
@@ -492,6 +494,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checked="false"
+                android:id="@+id/toggle_autoplay_video"
                 android:layout_marginEnd="@dimen/_14sdp"
                 app:track="@drawable/switch_track"
                 android:thumb="@drawable/switch_thumb" />

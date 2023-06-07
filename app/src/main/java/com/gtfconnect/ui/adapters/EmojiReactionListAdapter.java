@@ -39,14 +39,9 @@ public class EmojiReactionListAdapter extends RecyclerView.Adapter<EmojiReaction
     @Override
     public void onBindViewHolder(EmojiReactionListAdapter.ViewHolder holder, int position) {
 
-        if (reactionModel != null && reactionModel.getData() != null && reactionModel.getData().getList() != null && !reactionModel.getData().getList().isEmpty()){
             holder.binding.reaction.setText(reactionModel.getData().getList().get(position).getEmojiCode());
             holder.binding.reaction.setOnClickListener(view -> mListener.onItemAccept(reactionModel.getData().getList().get(position).getReactionID(),reactionModel.getData().getList().get(position).getEmojiCode(),reactionModel.getData().getList().get(position).getName()));
-        }
-        else{
-            holder.binding.reaction.setText(dummyReaction[position]);
-            holder.binding.reaction.setOnClickListener(view -> mListener.onItemAccept(position+1,dummyReaction[position],"Dummy Emoji Name"));
-        }
+
     }
 
     @Override
@@ -54,7 +49,9 @@ public class EmojiReactionListAdapter extends RecyclerView.Adapter<EmojiReaction
             if (reactionModel != null && reactionModel.getData()!= null && reactionModel.getData().getList() != null && !reactionModel.getData().getList().isEmpty()){
                 return reactionModel.getData().getList().size();
             }
-            return dummyReaction.length;
+            else {
+                return 0;
+            }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

@@ -275,7 +275,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 }
                 holder.binding.oldMessage1.setTypeface(holder.binding.oldMessage1.getTypeface(), Typeface.ITALIC);
 
-                TextViewUtil.groupExpandableMessage(context,holder.binding.oldMessage1,list.get(position).getQuote().getMessage(), Constants.GROUP_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
+                holder.binding.oldMessage1.setText(list.get(position).getQuote().getMessage());
 
                 String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                 holder.binding.oldMsgUser1.setText(username);
@@ -751,7 +751,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
                 }
                 holder.binding.oldMessage.setTypeface(holder.binding.oldMessage.getTypeface(), Typeface.ITALIC);
 
-                TextViewUtil.groupExpandableMessage(context,holder.binding.oldMessage,list.get(position).getQuote().getMessage(), Constants.GROUP_QUOTE_MESSAGE_LIMIT_COUNT,isMessageSelfQuoted);
+                holder.binding.oldMessage.setText(list.get(position).getQuote().getMessage());
 
                 String username = list.get(position).getQuote().getUser().getFirstname() + " " + list.get(position).getQuote().getUser().getLastname();
                 holder.binding.oldMsgUser.setText(username);
@@ -1133,7 +1133,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.View
             holder.binding.message.setVisibility(View.VISIBLE);
 
             TextViewUtil.groupExpandableMessage(context,holder.binding.message,list.get(position).getMessage(),Constants.GROUP_MESSAGE_LIMIT_COUNT,false);
-            holder.binding.message.setText(list.get(position).getMessage());
         } else {
             holder.binding.message.setVisibility(View.GONE);
         }

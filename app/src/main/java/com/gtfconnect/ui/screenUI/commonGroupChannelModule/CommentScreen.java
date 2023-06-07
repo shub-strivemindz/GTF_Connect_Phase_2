@@ -63,7 +63,7 @@ import java.util.Map;
 
 import io.socket.emitter.Emitter;
 
-public class GroupChannelCommentScreen extends AppCompatActivity implements GroupCommentListener {
+public class CommentScreen extends AppCompatActivity implements GroupCommentListener {
 
     ActivityCommentSectionBinding binding;
 
@@ -147,9 +147,9 @@ public class GroupChannelCommentScreen extends AppCompatActivity implements Grou
 
             detail = new ChannelRowListDataModel();
 
-            commentViewAdapter= new GroupChannelCommentAdapter(GroupChannelCommentScreen.this,detail.getCommentData(),userID, this,profileBaseUrl);
+            commentViewAdapter= new GroupChannelCommentAdapter(CommentScreen.this,detail.getCommentData(),userID, this,profileBaseUrl);
             binding.commentRecycler.setHasFixedSize(true);
-            binding.commentRecycler.setLayoutManager(new LinearLayoutManager(GroupChannelCommentScreen.this));
+            binding.commentRecycler.setLayoutManager(new LinearLayoutManager(CommentScreen.this));
             binding.commentRecycler.setAdapter(commentViewAdapter);
         }
 
@@ -704,7 +704,7 @@ public class GroupChannelCommentScreen extends AppCompatActivity implements Grou
 
         binding.memberProfileContainer.setOnClickListener(view -> {
 
-            Intent intent = new Intent(GroupChannelCommentScreen.this, MemberProfileScreen.class);
+            Intent intent = new Intent(CommentScreen.this, MemberProfileScreen.class);
             intent.putExtra("gc_member_id",String.valueOf(detail.getGCMemberID()));
             startActivity(intent);
         });

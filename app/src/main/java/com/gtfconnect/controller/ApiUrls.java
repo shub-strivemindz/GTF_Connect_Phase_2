@@ -22,7 +22,7 @@ public class ApiUrls {
 
     public static final String GET_TERMS_CONDITIONS = "get_cms_page";
 
-
+    public static final String GET_CONTACT_US = "contact_us";
 
     public static final String UPDATE_PROFILE_DATA = "updateprofile";
 
@@ -105,6 +105,8 @@ public class ApiUrls {
 
     public static final String URL_BLOCK_USER = "update-member-status";
 
+
+    public static final String URL_UPDATE_USER_SETTINGS = "user/update_user_setting";
 
     public static final String URL_PAYMENT_WEB_VIEW_PORTAL = "https://gtf-connect.strivemindz.com/app/checkout/user/";
 }

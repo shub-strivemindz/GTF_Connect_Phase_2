@@ -583,32 +583,48 @@ more then 1000 top most trading courses+ daily or weekly"/>
                     android:textSize="@dimen/_16ssp"
                     android:id="@+id/post_reaction"/>
 
-            <LinearLayout
-                android:id="@+id/like"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/like_icon"
-                android:layout_gravity="center_vertical"
-                android:layout_width="@dimen/_14sdp"
-                android:layout_height="@dimen/_14sdp"
-                app:tint="@color/channelMessage2Color"
-                android:src="@drawable/like_thumb"
-                android:layout_marginStart="@dimen/_16sdp"/>
+                <ImageView
+                    android:id="@+id/like_icon"
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_height="@dimen/_14sdp"
+                    app:tint="@color/channelMessage2Color"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:src="@drawable/like_thumb" />
+
+                <RelativeLayout
+                    android:id="@+id/like"
+                    android:layout_marginStart="@dimen/_14sdp"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="@dimen/_14sdp"
+                        android:layout_height="@dimen/_14sdp"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/white"
+                        android:id="@+id/reaction_icon"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Like"
+                    android:layout_marginStart="@dimen/_14sdp"
                     android:gravity="center_vertical"
                     android:textColor="@color/channelMessage2Color"
                     android:fontFamily="@font/open_sans"
                     android:textSize="@dimen/_10ssp"
                     android:paddingStart="@dimen/_6sdp"/>
 
-            </LinearLayout>
+                </RelativeLayout>
+
+            </RelativeLayout>
 
             </RelativeLayout>
 

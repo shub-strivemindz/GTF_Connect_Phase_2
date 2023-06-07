@@ -795,6 +795,16 @@
 
         </RelativeLayout>
 
+        <com.gtfconnect.utilities.BlurView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/blur_frame"
+            android:visibility="gone"
+            android:clickable="true"
+            android:elevation="@dimen/_20sdp"
+            android:layout_below="@id/toolbar"
+            android:layout_above="@id/search_container"/>
+
     </RelativeLayout>
 
 

@@ -2,6 +2,23 @@ package com.gtfconnect.utilities;
 
 public class Constants {
 
+
+
+    /**
+     *
+     * Default static values as per postman response
+     */
+
+    public static final int AUTOPLAY_VIDEO_SETTING_ID = 7;
+
+    public static final int AUTOPLAY_GIF_SETTING_ID = 6;
+
+    public static final int DARK_MODE_SETTING_ID = 10;
+
+    public static final int NOTIFICATIONS_SETTING_ID = 12;
+
+
+
     public static final int CHANNEL_MESSAGE_LIMIT_COUNT = 195;
     public static final int CHANNEL_QUOTE_MESSAGE_LIMIT_COUNT = 125;
     public static final int GROUP_MESSAGE_LIMIT_COUNT = 155;
@@ -64,6 +81,18 @@ public class Constants {
     public static final int GC_PERMISSION_UPDATED = 1918;
 
     public static final int GC_USER_ROLE_UPDATED = 1919;
+
+    public static final int UPDATE_USER_UI_MODE = 1920;
+
+    public static final int UPDATE_USER_AUTOPLAY_GIF = 1921;
+
+    public static final int UPDATE_USER_AUTOPLAY_VIDEO = 1922;
+
+    public static final int UPDATE_USER_NOTIFICATION_SETTING = 1923;
+
+    public static final int GET_CONTACT_US_DETAILS = 1924;
+
+    public static final int SAVE_MESSAGE_MANUALLY = 1925;
 
     public static final String CMS_TYPE_TERMS = "Terms";
 

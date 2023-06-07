@@ -71,10 +71,5 @@ public class DummyUserListAdapter extends RecyclerView.Adapter<DummyUserListAdap
 
         }
     }
-
-
-    public void updateList(GetDummyUserModel getDummyUserModel){
-        this.getDummyUserModel = getDummyUserModel;
-    }
 }
 
