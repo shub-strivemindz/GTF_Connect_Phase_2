@@ -10,12 +10,14 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.gtfconnect.R;
@@ -98,8 +101,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private boolean isReactionEnabled = false;
 
-    private boolean isAllowDiscussion = false;
-
     private boolean isSharingEnabled = false;
 
     private boolean isPinMessage = true;
@@ -111,11 +112,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private boolean isGifAutoPlay = false;
 
-
-
-
-
-
+    private boolean isEnableDisableDiscussion;
+    private boolean isDiscussionAllowed = false;
 
 
 
@@ -123,7 +121,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     // ArrayList<Boolean> isMessageLiked = new ArrayList<>();
 
-    public ChannelChatAdapter(Context context, List<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, ChannelChatListener channelChatListener,boolean isVideoAutoPlay, boolean isGifAutoPlay) {
+    public ChannelChatAdapter(Context context, List<ChannelRowListDataModel> list, String userID, String post_base_url, String profileBaseUrl, InfoDbEntity infoDbEntity, ChannelChatListener channelChatListener,boolean isVideoAutoPlay, boolean isGifAutoPlay, boolean isEnableDisableDiscussion) {
         this.list = list;
         this.context = context;
         this.userID = userID;
@@ -136,6 +134,11 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         this.isGifAutoPlay =  isGifAutoPlay;
         this.isVideoAutoPlay = isVideoAutoPlay;
 
+        this.isEnableDisableDiscussion = isEnableDisableDiscussion;
+
+
+        Log.d("autoPlayTrigger","this = "+this.isVideoAutoPlay);
+        Log.d("autoPlayTrigger","adap = "+isVideoAutoPlay);
     }
 
     @NonNull
@@ -160,15 +163,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             holder.binding.forward.setVisibility(View.GONE);
         }
 
-        if (!isAllowDiscussion){
-            holder.binding.comment.setVisibility(View.GONE);
-        }
-        else{
-            holder.binding.comment.setVisibility(View.VISIBLE);
-        }
-
 
         boolean isLikeWithReaction = false;
+
 
 
 
@@ -471,10 +468,37 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 //                    if (!fileType.equalsIgnoreCase("video")) {
 
+
                 if (list.get(position).getMedia().size() == 1 && fileType.equalsIgnoreCase("video")){
+
+                    if (isVideoAutoPlay){
+
+                        holder.binding.singleVideoPlayerContainer.setVisibility(View.VISIBLE);
+
+                        if (position == 0) {
+                            String post_path = post_base_url + list.get(position).getMedia().get(0).getStoragePath() + list.get(position).getMedia().get(0).getFileName();
+                            channelChatListener.autoPlayVideo(position,post_path, holder.binding.playerView, holder.binding.progressBar);
+                        }
+                    }
+                    else{
+
+                        holder.binding.singleVideoPlayerContainer.setVisibility(View.GONE);
+
+                        ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName, videoPlayer, isVideoAutoPlay, isGifAutoPlay);
+                        holder.binding.mediaRecycler.setHasFixedSize(true);
+                        holder.binding.mediaRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                        holder.binding.mediaRecycler.setAdapter(mediaAdapter);
+
+                        mediaAdapter.setOnMediaPlayPauseListener((exoPlayer) -> {
+                            videoPlayer = exoPlayer;
+                        });
+                    }
+
 
                 }
                 else {
+
+                    holder.binding.singleVideoPlayerContainer.setVisibility(View.GONE);
 
                     ChannelMediaAdapter mediaAdapter = new ChannelMediaAdapter(context, list.get(position).getMedia(), post_base_url, String.valueOf(userID), userName, videoPlayer, isVideoAutoPlay, isGifAutoPlay);
                     holder.binding.mediaRecycler.setHasFixedSize(true);
@@ -489,10 +513,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
             }
             //holder.binding.postImageContainer.setVisibility(View.VISIBLE);
-        }else{
+        }
+        else{
             holder.binding.audioContainer.setVisibility(View.GONE);
             holder.binding.mediaRecycler.setVisibility(View.GONE);
+            holder.binding.singleVideoPlayerContainer.setVisibility(View.GONE);
         }
+
 
 
 
@@ -550,14 +577,115 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-
-
         if (list.get(position).getUpdatedAt() != null) {
             time = Utils.getHeaderDate(list.get(position).getUpdatedAt());
             holder.binding.time.setText(Utils.getChatBoxTimeStamp(list.get(position).getUpdatedAt()));
         } else {
             holder.binding.time.setText("XX/XX/XXXX");
         }
+
+
+        /**
+         * Below code for allow discussion checks
+         */
+
+
+        if (list.get(position).getAllowDiscussion() != null && list.get(position).getAllowDiscussion() == 1){
+            isDiscussionAllowed = true;
+            holder.binding.comment.setVisibility(View.VISIBLE);
+        }
+        else{
+            isDiscussionAllowed = false;
+            holder.binding.comment.setVisibility(View.GONE);
+        }
+
+
+
+
+
+        /**
+         *  Below checks for footer reaction and comment counts
+         */
+
+
+        holder.binding.reactionCommentFooter.setVisibility(View.VISIBLE);
+        boolean isAnyFooterDataAvailable = false;
+
+
+        if(list.get(position).getLastThreeData() != null && !list.get(position).getLastThreeData().isEmpty()){
+
+            isAnyFooterDataAvailable = true;
+
+            switch (list.get(position).getLastThreeData().size()){
+                case 1:
+
+                    holder.binding.emoji1.setVisibility(View.VISIBLE);
+                    holder.binding.emoji2.setVisibility(View.GONE);
+                    holder.binding.emoji3.setVisibility(View.GONE);
+
+                    if (list.get(position).getLastThreeData().get(0).getReaction() != null && list.get(position).getLastThreeData().get(0).getReaction().getEmojiCode() != null){
+                        holder.binding.emoji1.setText(list.get(position).getLastThreeData().get(0).getReaction().getEmojiCode());
+                    }
+                    else{
+                        holder.binding.emoji1.setText("👍");
+                    }
+                    break;
+                case 2:
+
+                    holder.binding.emoji1.setVisibility(View.VISIBLE);
+                    holder.binding.emoji2.setVisibility(View.VISIBLE);
+                    holder.binding.emoji3.setVisibility(View.GONE);
+
+                    if (list.get(position).getLastThreeData().get(0).getReaction() != null && list.get(position).getLastThreeData().get(0).getReaction().getEmojiCode() != null){
+                        holder.binding.emoji1.setText(list.get(position).getLastThreeData().get(0).getReaction().getEmojiCode());
+                    }
+                    else{
+                        holder.binding.emoji1.setText("👍");
+                    }
+
+                    if (list.get(position).getLastThreeData().get(1).getReaction() != null && list.get(position).getLastThreeData().get(1).getReaction().getEmojiCode() != null){
+                        holder.binding.emoji2.setText(list.get(position).getLastThreeData().get(1).getReaction().getEmojiCode());
+                    }
+                    else{
+                        holder.binding.emoji2.setText("👍");
+                    }
+
+
+                    break;
+                case 3:
+                default:
+
+                    holder.binding.emoji1.setVisibility(View.VISIBLE);
+                    holder.binding.emoji2.setVisibility(View.VISIBLE);
+                    holder.binding.emoji3.setVisibility(View.VISIBLE);
+
+                    if (list.get(position).getLastThreeData().get(0).getReaction() != null && list.get(position).getLastThreeData().get(0).getReaction().getEmojiCode() != null){
+                        holder.binding.emoji1.setText(list.get(position).getLastThreeData().get(0).getReaction().getEmojiCode());
+                    }
+                    else{
+                        holder.binding.emoji1.setText("👍");
+                    }
+                    if (list.get(position).getLastThreeData().get(1).getReaction() != null && list.get(position).getLastThreeData().get(1).getReaction().getEmojiCode() != null){
+                        holder.binding.emoji2.setText(list.get(position).getLastThreeData().get(1).getReaction().getEmojiCode());
+                    }
+                    else{
+                        holder.binding.emoji2.setText("👍");
+                    }
+                    if (list.get(position).getLastThreeData().get(2).getReaction() != null && list.get(position).getLastThreeData().get(2).getReaction().getEmojiCode() != null){
+                        holder.binding.emoji3.setText(list.get(position).getLastThreeData().get(2).getReaction().getEmojiCode());
+                    }
+                    else{
+                        holder.binding.emoji3.setText("👍");
+                    }
+                    break;
+            }
+        }
+        else{
+            holder.binding.emoji1.setVisibility(View.GONE);
+            holder.binding.emoji2.setVisibility(View.GONE);
+            holder.binding.emoji3.setVisibility(View.GONE);
+        }
+
 
 
 
@@ -573,6 +701,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             holder.binding.singleCommentContainerDivider.setVisibility(View.GONE);
         }
         else {
+
+            isAnyFooterDataAvailable = true;
+
             holder.binding.singleCommentContainer.setVisibility(View.VISIBLE);
             holder.binding.singleCommentContainerDivider.setVisibility(View.VISIBLE);
 
@@ -604,6 +735,25 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
                 holder.binding.commentDate.setText(commentTimeStamp);
             }
         }
+
+
+
+
+
+
+
+        if (isAnyFooterDataAvailable){
+            holder.binding.reactionCommentFooter.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.binding.reactionCommentFooter.setVisibility(View.GONE);
+        }
+
+
+
+
+
+
 
 
         if (list.get(position).getLike() != null && !list.get(position).getLike().isEmpty()){
@@ -649,13 +799,13 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });
 
         holder.binding.commentContainer.setOnClickListener(view -> {
-            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isAllowDiscussion);
+            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isDiscussionAllowed);
         });
 
 
         // Reply into the Chat
         holder.binding.comment.setOnClickListener(view -> {
-            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isAllowDiscussion);
+            channelChatListener.initiateCommentScreen(data,profileBaseUrl,post_base_url,userID,isDiscussionAllowed);
         });
 
         // Bottom-sheet for chat options --
@@ -895,38 +1045,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-
-    public  void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText) {
-
-        if (tv.getTag() == null) {
-            tv.setTag(tv.getText());
-        }
-        ViewTreeObserver vto = tv.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onGlobalLayout() {
-
-                ViewTreeObserver obs = tv.getViewTreeObserver();
-                obs.removeGlobalOnLayoutListener(this);
-                if (maxLine <= 0) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(0);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
-                    tv.setText(text);
-                } else if (tv.getLineCount() >= maxLine) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
-                    tv.setText(text);
-                }
-            }
-        });
-
-    }
-
-
-
-
     public String getChipDate(int position)
     {
         String date = "";
@@ -958,6 +1076,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         TextView copy = chat_options_dialog.findViewById(R.id.copy);
         TextView remove = chat_options_dialog.findViewById(R.id.remove);
         TextView cancel = chat_options_dialog.findViewById(R.id.cancel);
+
+        TextView enable_disable_discussion = chat_options_dialog.findViewById(R.id.enable_disable_discussion);
 
 
         assert remove != null;
@@ -993,6 +1113,20 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             Integer groupChatId = Integer.parseInt(list.get(position).getGroupChatID());
             channelChatListener.pinMessage(list.get(position).getGCMemberID(),list.get(position).getGroupChannelID(),list.get(position).getUserID(),groupChatId);
         });
+
+
+
+
+
+        assert enable_disable_discussion != null;
+        if (isEnableDisableDiscussion){
+            enable_disable_discussion.setVisibility(View.VISIBLE);
+        }
+        else{
+            enable_disable_discussion.setVisibility(View.GONE);
+        }
+
+
 
 
         assert quote != null;
@@ -1103,16 +1237,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
                 if (infoDbEntity.getGcSetting() != null){
 
-                    if (infoDbEntity.getGcSetting().getAllowDiscussion() != null){
-                        if (infoDbEntity.getGcSetting().getAllowDiscussion() == 1){
-
-                            isAllowDiscussion = true;
-                        }
-                        else{
-                            isAllowDiscussion = false;
-                        }
-                    }
-
                     if (infoDbEntity.getGcSetting().getEnableReactions() != null){
                         if (infoDbEntity.getGcSetting().getEnableReactions() == 1){
 
@@ -1162,7 +1286,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             isQuoteMessage = true;
             isPinMessage = true;
             isReactionEnabled = true;
-            isAllowDiscussion = true;
+            isEnableDisableDiscussion = true;
             isSharingEnabled = true;
         }
     }
@@ -1174,13 +1298,20 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     }
 
 
-    public void updateList(List<ChannelRowListDataModel> list,String postBaseUrl,String profileBaseUrl)
+    public void updateList(List<ChannelRowListDataModel> list,String postBaseUrl,String profileBaseUrl,boolean isVideoAutoPlay,boolean isGifAutoPlay)
     {
         this.list = list;
         this.post_base_url = postBaseUrl;
         this.profileBaseUrl = profileBaseUrl;
+
+        this.isVideoAutoPlay = isVideoAutoPlay;
+        this.isGifAutoPlay = isGifAutoPlay;
+
+
         notifyDataSetChanged();
     }
+
+
 
 
 
@@ -1204,10 +1335,39 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
+    public void updateChat(int deletePostPosition,List<ChannelRowListDataModel> list){
+        this.list = list;
+        notifyItemRemoved(deletePostPosition);
+    }
+
 
     public void updatePostBaseUrl(String post_base_url){
         this.post_base_url = post_base_url;
     }
+
+
+
+
+
+    public void setMediaForPlay(int position,RecyclerView recyclerView,View view){
+
+        PlayerView playerView = view.findViewById(R.id.player_view);
+        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+
+        if (list != null && !list.isEmpty() && list.get(position).getMedia() != null && !list.get(position).getMedia().isEmpty()){
+
+            if (list.get(position).getMedia().size() == 1 && Utils.checkFileType(list.get(position).getMedia().get(0).getMimeType()).equalsIgnoreCase("video")){
+
+
+                String post_path = post_base_url + list.get(position).getMedia().get(0).getStoragePath() + list.get(position).getMedia().get(0).getFileName();
+
+                channelChatListener.autoPlayVideo(position,post_path,playerView,progressBar);
+            }
+        }
+    }
+
+
+
 
 
     public void destroyExoPlayer(){

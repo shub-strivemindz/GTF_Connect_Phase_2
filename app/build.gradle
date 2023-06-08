@@ -43,7 +43,6 @@ dependencies {
     implementation project(path: ':FlyingReactionAnim')
     implementation project(path: ':AudioRecorder')
     implementation project(path: ':Media_Player')
-    implementation project(path: ':AutoPlay_Video_Player')
 
     //implementation(path: ':StickyHeader')
 

@@ -67,7 +67,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
 
 
-        checkUserAdminPermission(holder,isAdmin);
+        //checkUserAdminPermission(holder,isAdmin);
 
 
 

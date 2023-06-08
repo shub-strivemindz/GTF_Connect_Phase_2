@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class VideoActivity extends AppCompatActivity {
     PlayerView playerView;
     ProgressBar progressBar;
-    ImageView btFullScreen, rewind, forward;
+    //ImageView btFullScreen, rewind, forward;
     ExoPlayer simpleExoPlayer;
     boolean flag = false;
     long videoWatchedTime =0;
@@ -51,9 +51,15 @@ public class VideoActivity extends AppCompatActivity {
         andExoPlayerView.setSource(videourl,extraHeaders);*/
         playerView = findViewById(R.id.player_view);
         progressBar = findViewById(R.id.progress_bar);
-        btFullScreen = findViewById(R.id.bt_fullscreen);
+
+
+        /**
+         *  Uncomment to enable below layout functionality
+         */
+
+        /*btFullScreen = findViewById(R.id.bt_fullscreen);
         rewind = findViewById(R.id.exo_rew);
-        forward = findViewById(R.id.exo_ffwd);
+        forward = findViewById(R.id.exo_ffwd);*/
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -119,9 +125,11 @@ public class VideoActivity extends AppCompatActivity {
             }
         });
 
+/**
+ *  Uncomment to enable below layout functionality
+ */
 
-
-        btFullScreen.setOnClickListener(new View.OnClickListener() {
+        /*btFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -137,7 +145,10 @@ public class VideoActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
+
+
+
         Runnable getPositionVideo = () -> {
             videoWatchedTime= simpleExoPlayer.getCurrentPosition();
             Log.v("VideoTimeView",""+videoWatchedTime);

@@ -1,4 +1,4 @@
-package com.example.autoplay_video_player;
+package com.example.autoplay_video;
 
 import android.content.Context
 import android.graphics.Point
@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerView
 
 /**
+ * @author Pankaj Sharma
  * MasterExoPlayerHelper lightweight utility for playing video using ExoPlayer inside RecyclerView,
  * With this you can set
  * @param id Id of MasterExoPlayer which is placed inside RecyclerView Item

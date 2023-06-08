@@ -94,6 +94,7 @@
             android:textColor="@color/theme_green"
             android:gravity="center"
             android:textSize="@dimen/_13sdp"
+            android:id="@+id/enable_disable_discussion"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:textFontWeight="500"

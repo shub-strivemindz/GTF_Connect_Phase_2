@@ -89,17 +89,6 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-            /*final View view =
-                    LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.your_view, parent, false);
-
-            // recyclerView is your passed view.
-            int width = recyclerRootView.getWidth();
-            ViewGroup.LayoutParams params = view.getLayoutParams();
-            params.width = (int)(width * 0.8);
-            view.setLayoutParams(params);
-            return new YourViewHolder(view);*/
-
         if (viewType == 1){
             return new ChannelMediaAdapter.SingleMediaItemViewHolder(RecyclerSingleChatMediaItemBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false));
         }
@@ -422,7 +411,6 @@ public class ChannelMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 simpleExoPlayer.play();
             }
         });
-
 
 
     }

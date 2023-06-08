@@ -865,9 +865,17 @@ public class Utils {
             formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date value = formatter.parse(chatDate);
 
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(value);
+            cal.add(Calendar.HOUR, 2);
+            Date calculatedTime = cal.getTime();
+
+
+
             SimpleDateFormat dateFormatter = new SimpleDateFormat("hh:mm aa"); //this format changeable
             dateFormatter.setTimeZone(TimeZone.getDefault());
-            chatDate = dateFormatter.format(value);
+            chatDate = dateFormatter.format(calculatedTime);
 
         } catch (Exception e) {
             chatDate = "00-00-0000 00:00";
@@ -1360,6 +1368,68 @@ public class Utils {
 
 
 
+    public static boolean getSecondsRemaining(String chatTime, String slowModeDuration){
+
+
+        long slowModeTime = Long.parseLong(slowModeDuration);
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+        Date currentTime = Calendar.getInstance().getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss");
+
+        /**
+         *  Setting the UTC time to Indian region
+         */
+
+        String actualTime = "";
+        try {
+
+            Date dateTime = sdf.parse(chatTime);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dateTime);
+            cal.add(Calendar.HOUR, 7);
+            cal.add(Calendar.MINUTE,30);
+            Date calculatedTime = cal.getTime();
+
+            actualTime = dateFormat.format(calculatedTime);
+
+        } catch (ParseException e) {
+            Log.d("exception","while converting actual time");
+        }
+
+
+
+        boolean isSlowModeTimeout = false;
+
+
+
+        try{
+            Date dateTime = dateFormat.parse(actualTime);
+
+            long diff = currentTime.getTime() - dateTime.getTime();
+            long timeInSeconds = diff / 1000;
+
+            Log.d("time_remaining","total seconds = "+ timeInSeconds);
+            Log.d("time_remaining","slow mode seconds = "+ slowModeTime);
+
+            if (slowModeTime  <= timeInSeconds){
+                isSlowModeTimeout = true;
+            }
+            else{
+                isSlowModeTimeout = false;
+            }
+
+        }
+        catch (Exception e){
+            Log.d("exception","while checking between time");
+        }
+
+        return isSlowModeTimeout;
+
+    }
 
 
 
@@ -1399,9 +1469,4 @@ public class Utils {
             dialog.show();
         }
     }
-
-
-
-
-
 }

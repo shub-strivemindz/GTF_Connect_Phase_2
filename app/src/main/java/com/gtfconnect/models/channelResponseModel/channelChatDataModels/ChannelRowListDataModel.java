@@ -80,12 +80,19 @@ public class ChannelRowListDataModel {
     @SerializedName("user")
     @Expose
     private ChannelChatResponseModel.User user;
+    @SerializedName("dummyUserData")
+    @Expose
+    private ChannelChatResponseModel.User dummyUserData;
     @SerializedName("like")
     @Expose
     private List<ChannelLikeModel> like;
     @SerializedName("commentData")
     @Expose
     private List<ChannelChatCommentModel> commentData = new ArrayList<>();
+
+    @SerializedName("lastThreeData")
+    @Expose
+    private List<ChannelLikeModel> lastThreeData;
     @SerializedName("quote")
     @Expose
     private ChannelChatResponseModel.Quote quote;
@@ -251,6 +258,22 @@ public class ChannelRowListDataModel {
 
     public void setUser(ChannelChatResponseModel.User user) {
         this.user = user;
+    }
+
+    public ChannelChatResponseModel.User getDummyUserData() {
+        return dummyUserData;
+    }
+
+    public void setDummyUserData(ChannelChatResponseModel.User dummyUserData) {
+        this.dummyUserData = dummyUserData;
+    }
+
+    public List<ChannelLikeModel> getLastThreeData() {
+        return lastThreeData;
+    }
+
+    public void setLastThreeData(List<ChannelLikeModel> lastThreeData) {
+        this.lastThreeData = lastThreeData;
     }
 
     public List<ChannelLikeModel> getLike() {

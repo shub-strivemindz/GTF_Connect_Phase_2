@@ -41,6 +41,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,11 @@ import com.example.audiorecorder.OnRecordListener;
 import com.example.audiowaveform.WaveformSeekBar;
 import com.example.flyingreactionanim.Directions;
 import com.example.flyingreactionanim.ZeroGravityAnimation;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -89,6 +95,7 @@ import com.gtfconnect.models.channelResponseModel.ChannelMessageReceivedModel;
 import com.gtfconnect.models.channelResponseModel.ChannelReactionReceivedModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelChatResponseModel;
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.GetLastMessageSentResponseModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseModels.CommentReceiveResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
@@ -289,14 +296,19 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private int permission_audio_request_count ;
     private int permission_camera_request_count ;
 
+    private ExoPlayer exoPlayer;
+
+    private boolean isMediaForPlayAvailable = false;
+
+    private int mediaAvailablePosition = -1;
 
 
-    private long slowModeSeconds = 0;
-
-    private boolean isSlowModeRunning;
+    private String slowModeSeconds = "";
 
     boolean isAutoPlayGif = false;
     boolean isAutoPlayVideo = false;
+
+    boolean isEnableDisableDiscussion = false;
 
     boolean isGcProfileEnabled = true;
 
@@ -305,6 +317,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     boolean isSendMessageEnabled = false;
 
     private ArrayList<Integer> selectedForwardedMessageIDs;
+
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -383,20 +398,24 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScrolling = true;
 
+                    autoPlayViewHolderCheck();
+
+
                     if (position != -1) {
+
                         binding.chipDateContainer.setVisibility(View.VISIBLE);
 
                         if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
 
-                            // ============================================= Getting AutoPlay Video PlayBack ======================================
-                            //channelViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
                         } else {
                             binding.chipDateContainer.setVisibility(View.GONE);
                         }
                     }
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 
+                    autoPlayViewHolderCheck();
+
                     if (position != -1) {
 
                         binding.chipDateContainer.setVisibility(View.VISIBLE);
@@ -404,8 +423,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
                             binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
 
-                            // ============================================= Getting AutoPlay Video PlayBack ======================================
-                            //channelViewAdapter.setCheckAutoPlayFunctionality(mLayoutManager.findLastVisibleItemPosition());
                         }
                         else {
                             binding.chipDateContainer.setVisibility(View.GONE);
@@ -414,7 +431,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     binding.chipDateContainer.setVisibility(View.GONE);
                 } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
 
+                    autoPlayViewHolderCheck();
+
                     if (position != -1) {
+
                         binding.chipDateContainer.setVisibility(View.VISIBLE);
 
                         if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
@@ -436,29 +456,34 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 recyclerViewState = binding.chats.getLayoutManager().onSaveInstanceState(); // save recycleView state
                 totalItem = mLayoutManager.getItemCount();
 
-                if (isScrolling && mLayoutManager.findLastCompletelyVisibleItemPosition() == totalItem - 1 && dy < 0) {
+                int position = mLayoutManager.findLastCompletelyVisibleItemPosition();
 
-                    Log.d("ChannelGroupChat", "totalItem = " + totalItem);
-                    binding.chipDateContainer.setVisibility(View.GONE);
+                if(position != -1) {
 
-                    isScrolling = false;
+                    if (isScrolling && mLayoutManager.findLastCompletelyVisibleItemPosition() == totalItem - 1 && dy < 0) {
 
-                    //currentPage = databaseEntity.getChatBodyDbEntitiesLists().get(0).getPage();
-
-                    currentPage++;
-
-                    Log.d("Page", "" + currentPage);
-
-                    //binding.loader.setVisibility(View.VISIBLE);
-
-                    updateChannelChatSocket(true);
-
-                } else {
-                    if (!channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()).isEmpty()) {
-                        //Log.d("Chip Date = ", "" + channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()));
-                        binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
-                    } else {
+                        Log.d("ChannelGroupChat", "totalItem = " + totalItem);
                         binding.chipDateContainer.setVisibility(View.GONE);
+
+                        isScrolling = false;
+
+                        //currentPage = databaseEntity.getChatBodyDbEntitiesLists().get(0).getPage();
+
+                        currentPage++;
+
+                        Log.d("Page", "" + currentPage);
+
+                        //binding.loader.setVisibility(View.VISIBLE);
+
+                        updateChannelChatSocket(true);
+
+                    } else {
+                        if (!channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()).isEmpty()) {
+                            //Log.d("Chip Date = ", "" + channelViewAdapter.getChipDate(mLayoutManager.findFirstVisibleItemPosition()));
+                            binding.chipDate.setText(channelViewAdapter.getChipDate(mLayoutManager.findLastVisibleItemPosition()));
+                        } else {
+                            binding.chipDateContainer.setVisibility(View.GONE);
+                        }
                     }
                 }
 
@@ -617,63 +642,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
         binding.sendMessage.setOnClickListener(view -> {
 
-
-            if (isUserTypingMessage) {
-
-                binding.sendMessage.setVisibility(View.VISIBLE);
-                binding.recordButton.setVisibility(View.GONE);
-
-                endTypingListener();
-                messageText = binding.type.getText().toString().trim();
-
-                Log.d("SendMessage","Button Clicked");
-                Log.d("SendMessage","isAnyFileAttached = "+isAnyFileAttached);
-
-                if (isAnyFileAttached) {
-                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                        callAttachmentApi();
-                    } else {
-                        messageText = "";
-                        callAttachmentApi();
-                    }
-                } else {
-
-                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                        validateSendMessage(messageText, binding.type);
-                        messageText = null;
-                    } else {
-                        Utils.showSnackMessage(this, binding.type, "Type Message !");
-                        binding.imagePreviewLayout.setVisibility(View.GONE);
-                        isAnyFileAttached = false;
-                        isAttachmentSend = false;
-                    }
-                }
-            } else {
-
-                messageText = binding.type.getText().toString().trim();
-
-                Log.d("SendMessage","Button Clicked");
-                Log.d("SendMessage","isAnyFileAttached = "+isAnyFileAttached);
-
-                if (isAnyFileAttached) {
-
-                    binding.sendMessage.setVisibility(View.VISIBLE);
-                    binding.recordButton.setVisibility(View.GONE);
-
-                    callAttachmentApi();
-                }
-                else{
-                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
-                        validateSendMessage(messageText, binding.type);
-                        messageText = null;
-                    } else {
-                        Utils.showSnackMessage(this, binding.type, "Type Message !");
-                        binding.imagePreviewLayout.setVisibility(View.GONE);
-                        isAnyFileAttached = false;
-                        isAttachmentSend = false;
-                    }
-                }
-            }
+            getLastMessageSent();
         });
 
 
@@ -911,7 +880,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             if (responseModel.getData().getChatData() != null && responseModel.getData().getChatData().getRows() != null) {
                 list.addAll(responseModel.getData().getChatData().getRows());
 
-                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl,isAutoPlayVideo,isAutoPlayGif);
             }
             if (responseModel.getData().getSubscriptionCount() != null) {
                 subscribers = responseModel.getData().getSubscriptionCount();
@@ -1015,46 +984,56 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         databaseViewModel.getUserProfileData().observe(this, userProfileDbEntity -> {
 
 
-            if (userProfileDbEntity != null && userProfileDbEntity.getUserSetting() != null && !userProfileDbEntity.getUserSetting().isEmpty()){
+            if (userProfileDbEntity != null){
 
-                for (int i=0;i<userProfileDbEntity.getUserSetting().size();i++){
-                    if (userProfileDbEntity.getUserSetting().get(i).getName()!= null && !userProfileDbEntity.getUserSetting().get(i).getName().isEmpty()){
-                        if (userProfileDbEntity.getUserSetting().get(i).getName().equalsIgnoreCase("gif")){
-                            if (userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null && !userProfileDbEntity.getUserSetting().get(i).getSettingValue().isEmpty()){
-                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")){
-                                    isAutoPlayGif = true;
+                if (userProfileDbEntity.getUserSetting() != null && !userProfileDbEntity.getUserSetting().isEmpty()) {
+
+                    for (int i = 0; i < userProfileDbEntity.getUserSetting().size(); i++) {
+                        if (userProfileDbEntity.getUserSetting().get(i).getName() != null && !userProfileDbEntity.getUserSetting().get(i).getName().isEmpty()) {
+                            if (userProfileDbEntity.getUserSetting().get(i).getName().equalsIgnoreCase("gif")) {
+                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null && !userProfileDbEntity.getUserSetting().get(i).getSettingValue().isEmpty()) {
+                                    if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")) {
+                                        isAutoPlayGif = true;
+                                    }
                                 }
-                            }
-                        } else if (userProfileDbEntity.getUserSetting().get(i).getName().equalsIgnoreCase("video")){
-                            if (userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null && !userProfileDbEntity.getUserSetting().get(i).getSettingValue().isEmpty()){
-                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")){
-                                    isAutoPlayVideo = true;
+                            } else if (userProfileDbEntity.getUserSetting().get(i).getName().equalsIgnoreCase("video")) {
+                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null && !userProfileDbEntity.getUserSetting().get(i).getSettingValue().isEmpty()) {
+                                    if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")) {
+                                        isAutoPlayVideo = true;
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
+                if (userProfileDbEntity.getUserPermission() != null && !userProfileDbEntity.getUserPermission().isEmpty()){
+
+                    for (int i=0;i < userProfileDbEntity.getUserPermission().size();i++){
+
+                        if (userProfileDbEntity.getUserPermission().get(i).getPermission() != null &&
+                                userProfileDbEntity.getUserPermission().get(i).getPermission().getName() != null &&
+                                userProfileDbEntity.getUserPermission().get(i).getPermission().getName().equalsIgnoreCase("enable_disable_discussion")){
+
+                            if (userProfileDbEntity.getUserPermission().get(i).getCustomValue() != null &&
+                                    userProfileDbEntity.getUserPermission().get(i).getCustomValue().equalsIgnoreCase("1")){
+
+                                isEnableDisableDiscussion = true;
+                            }
+                        }
+                    }
+                }
             }
+
+
         });
 
-
+        Log.d("autoPlayTrigger","act = "+isAutoPlayVideo);
 
 
 
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-
-        // Load Comments List Data -----
-        /*channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,binding.chats);
-        binding.chats.setHasFixedSize(true);
-        binding.chats.setLayoutManager(mLayoutManager);
-        binding.chats.setAdapter(channelViewAdapter);
-
-        binding.chats.getLayoutManager().onRestoreInstanceState(recyclerViewState);*/
-
-
-
-        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,isAutoPlayVideo,isAutoPlayGif);
+        channelViewAdapter = new ChannelChatAdapter(this, list, String.valueOf(userID), postBaseUrl, profileBaseUrl,infoDbEntity,this,isAutoPlayVideo,isAutoPlayGif,isEnableDisableDiscussion);
         binding.chats.setHasFixedSize(true);
         binding.chats.setLayoutManager(mLayoutManager);
         binding.chats.setAdapter(channelViewAdapter);
@@ -1066,6 +1045,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
     private void refreshChannelChatSocket() {
+
         Gson gson = new Gson();
         Type type;
 
@@ -1126,7 +1106,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 list.addAll(responseModel.getData().getChatData().getRows());
                             }
 
-                            channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                            channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl,isAutoPlayVideo,isAutoPlayGif);
                         }
                         if (responseModel.getData().getSubscriptionCount() != null) {
                             subscribers = responseModel.getData().getSubscriptionCount();
@@ -1208,7 +1188,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                     list.addAll(responseModel.getData().getChatData().getRows());
                                 }
 
-                                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl,isAutoPlayVideo,isAutoPlayGif);
                             }
                             if (responseModel.getData().getSubscriptionCount() != null) {
                                 subscribers = responseModel.getData().getSubscriptionCount();
@@ -1224,6 +1204,121 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             Log.d("JsonException ---", e.toString());
         }
     }
+
+
+    private void getLastMessageSent(){
+        Gson gson = new Gson();
+        Type type;
+
+        type = new TypeToken<GetLastMessageSentResponseModel>() {
+        }.getType();
+
+        try {
+            jsonRawObject = new JSONObject();
+            jsonRawObject.put("GCMemberID", gcMemberID);
+            jsonRawObject.put("GroupChannelID", channelID);
+            jsonRawObject.put("UserID", userID);
+
+            Log.d("Last Chat Data ----","entered method");
+
+            isSendMessageEnabled = false;
+
+
+            socketInstance.emit("userLastMessageTime", jsonRawObject, (Ack) args -> {
+
+                isSendMessageEnabled = true;
+
+                JSONObject responseData = (JSONObject) args[0];
+                Log.d("Last Chat Data ----", responseData.toString());
+
+                JsonParser jsonParser = new JsonParser();
+                JsonObject gsonObject = (JsonObject) jsonParser.parse(responseData.toString());
+
+
+                GetLastMessageSentResponseModel getLastMessageSentResponseModel = gson.fromJson(gsonObject, type);
+
+                runOnUiThread(() -> {
+
+                    if(getLastMessageSentResponseModel != null && getLastMessageSentResponseModel.getData() != null && getLastMessageSentResponseModel.getData().getData() != null) {
+                        if (getLastMessageSentResponseModel.getData().getData().getUserID() != null){
+                            if (Objects.equals(getLastMessageSentResponseModel.getData().getData().getUserID(), userID)){
+                                if (getLastMessageSentResponseModel.getData().getData().getUpdatedAt() != null){
+                                    String dateTime = getLastMessageSentResponseModel.getData().getData().getUpdatedAt();
+
+                                    if (Utils.getChipDate(dateTime).equalsIgnoreCase("today") || Utils.getChipDate(dateTime).equalsIgnoreCase("yesterday")) {
+                                        if (Utils.getSecondsRemaining(getLastMessageSentResponseModel.getData().getData().getUpdatedAt(),slowModeSeconds)){
+                                            if (isUserTypingMessage) {
+
+                                                binding.sendMessage.setVisibility(View.VISIBLE);
+                                                binding.recordButton.setVisibility(View.GONE);
+
+                                                endTypingListener();
+                                                messageText = binding.type.getText().toString().trim();
+
+                                                Log.d("SendMessage", "Button Clicked");
+                                                Log.d("SendMessage", "isAnyFileAttached = " + isAnyFileAttached);
+
+                                                if (isAnyFileAttached) {
+                                                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                                                        callAttachmentApi();
+                                                    } else {
+                                                        messageText = "";
+                                                        callAttachmentApi();
+                                                    }
+                                                } else {
+
+                                                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                                                        validateSendMessage(messageText, binding.type);
+                                                        messageText = null;
+                                                    } else {
+                                                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                                                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                                                        isAnyFileAttached = false;
+                                                        isAttachmentSend = false;
+                                                    }
+                                                }
+                                            }
+                                            else {
+
+                                                messageText = binding.type.getText().toString().trim();
+
+                                                Log.d("SendMessage", "Button Clicked");
+                                                Log.d("SendMessage", "isAnyFileAttached = " + isAnyFileAttached);
+
+                                                if (isAnyFileAttached) {
+
+                                                    binding.sendMessage.setVisibility(View.VISIBLE);
+                                                    binding.recordButton.setVisibility(View.GONE);
+
+                                                    callAttachmentApi();
+                                                } else {
+                                                    if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                                                        validateSendMessage(messageText, binding.type);
+                                                        messageText = null;
+                                                    } else {
+                                                        Utils.showSnackMessage(this, binding.type, "Type Message !");
+                                                        binding.imagePreviewLayout.setVisibility(View.GONE);
+                                                        isAnyFileAttached = false;
+                                                        isAttachmentSend = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            Toast.makeText(this, "Unable to send message for a time duration!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        } catch (Exception e) {
+            Log.d("JsonException ---", e.toString());
+        }
+    }
+
 
 
 
@@ -1678,7 +1773,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                             runOnUiThread(() -> {
 
                                 list.addAll(responseModel.getData().getChatData().getRows());
-                                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl,isAutoPlayVideo,isAutoPlayGif);
                                 loadSearchData = false;
                                 currentPage++;
 
@@ -1702,7 +1797,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.remove(searchedTillPosition);
-                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                    channelViewAdapter.updateChat(searchedTillPosition,list);
                                 }
                             });
                             rest.dismissProgressdialog();
@@ -1713,31 +1808,13 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 @Override
                                 public void run() {
                                     list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl);
+                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl,isAutoPlayVideo,isAutoPlayGif);
                                 }
                             });
                             rest.dismissProgressdialog();
                             isMessageNotFound = false;
                             break;
                         }
-                        /*else if (commentDeleteSearch) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (commentDeleteResponseModel.getCommentData() != null) {
-                                        list.get(searchedTillPosition).setCommentData(commentDeleteResponseModel.getCommentData());
-                                        channelViewAdapter.updateList(list);
-                                    }
-                                    else {
-                                        list.get(searchedTillPosition).setCommentCount(0);
-                                        channelViewAdapter.updateList(list);
-                                    }
-                                }
-                            });
-                            rest.dismissProgressdialog();
-                            isMessageNotFound = false;
-                            break;
-                        }*/
                         else {
                             /**
                              * Quoted Message Found
@@ -2740,6 +2817,25 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
+    public void autoPlayVideo(int position, String post_path, PlayerView videoPlayer, ProgressBar progressBar) {
+
+        isMediaForPlayAvailable = true;
+        loadAutoPlayVideoFile(post_path,videoPlayer,progressBar);
+
+        /*if (mediaAvailablePosition != position) {
+            if (this.exoPlayer != null && this.exoPlayer.isPlaying()) {
+                exoPlayer.pause();
+                exoPlayer.stop();
+            }
+
+
+        }*/
+
+        Log.d("autoPlayTrigger"," = "+isAutoPlayVideo);
+        mediaAvailablePosition = position;
+    }
+
+    @Override
     public void imagePreviewListener(int index, ArrayList<ImagePreviewModel> uriList) {
         selectedImageUriIndex = index;
         binding.imagePreview.setImageURI(uriList.get(index).getUri());
@@ -3270,6 +3366,104 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
+
+
+
+    private void autoPlayViewHolderCheck(){
+
+        int position = mLayoutManager.findLastCompletelyVisibleItemPosition();
+
+        if (isAutoPlayVideo) {
+
+            if (position != -1) {
+
+                //Todo
+                Log.d("displaying_layout_percentage", "index = " + mLayoutManager.findLastCompletelyVisibleItemPosition());
+
+                View getView = mLayoutManager.findViewByPosition(position);
+
+                if (exoPlayer != null && exoPlayer.isPlaying()) {
+                    if (mediaAvailablePosition != position) {
+
+                        exoPlayer.pause();
+                        exoPlayer.stop();
+
+                        channelViewAdapter.setMediaForPlay(position, binding.chats, getView);
+                    }
+                } else {
+                    if (mediaAvailablePosition != position) {
+                        channelViewAdapter.setMediaForPlay(position, binding.chats, getView);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+    private void loadAutoPlayVideoFile(String videoPath, PlayerView videoPlayer, ProgressBar progressBar){
+
+
+        exoPlayer = new ExoPlayer.Builder(this).build();
+        videoPlayer.setPlayer(exoPlayer);
+        videoPlayer.setKeepScreenOn(true);
+
+        MediaItem mediaItem = MediaItem.fromUri(videoPath);
+        exoPlayer.addMediaItem(mediaItem);
+        exoPlayer.setPlayWhenReady(true);
+
+        exoPlayer.prepare();
+        exoPlayer.play();
+        exoPlayer.addListener(new Player.Listener() {
+
+            @Override
+            public void onPlaybackStateChanged(@Player.State int state) {
+                if (state == Player.STATE_BUFFERING) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                else if (state == Player.STATE_READY) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                else if (state == Player.STATE_ENDED) {
+
+                    // Todo
+                }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                Player.Listener.super.onPlayerError(error);
+                Log.v("TYPE_SOURCE", "TYPE_SOURCE: " + error.getMessage());
+                MediaItem mediaItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+                exoPlayer.addMediaItem(mediaItem);
+                exoPlayer.setPlayWhenReady(true);
+                exoPlayer.prepare();
+                exoPlayer.play();
+            }
+        });
+
+    }
+
+
+
+
+
+
+
+
+
     private void checkGroupChannelSettings(){
 
 
@@ -3355,6 +3549,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 userStatus = Constants.USER_RENEW_PLAN;
 
+                binding.searchContainer.setVisibility(View.VISIBLE);
+
+                binding.blurFrame.setVisibility(View.VISIBLE);
+                binding.blurFrame.setBlur(this,binding.blurFrame);
+
                 binding.searchSubContainer.setVisibility(View.GONE);
                 binding.footerStatusTag.setVisibility(View.VISIBLE);
 
@@ -3373,6 +3572,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
 
                             isGcProfileEnabled = true;
+
+                            binding.searchContainer.setVisibility(View.VISIBLE);
 
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3401,6 +3602,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                             isGcProfileEnabled = false;
 
+                            binding.searchContainer.setVisibility(View.VISIBLE);
+
                             binding.blurFrame.setVisibility(View.VISIBLE);
                             binding.blurFrame.setBlur(this,binding.blurFrame);
 
@@ -3421,6 +3624,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             if (infoDbEntity.getGcMemberInfo() != null) {
                 if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
                     if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
+
+
+                        binding.searchContainer.setVisibility(View.VISIBLE);
+
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3447,6 +3654,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     } else {
 
                         isGcProfileEnabled = false;
+
+                        binding.searchContainer.setVisibility(View.VISIBLE);
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3484,6 +3693,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
             toggleSendGif(true);
         }
     }
+
+
+
+
+
 
 
 

@@ -3352,7 +3352,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 if (infoDbEntity.getGcPermission().getSendMessage() != 1) {
 
                     binding.footerStatusTag.setVisibility(View.VISIBLE);
-                    binding.searchContainer.setVisibility(View.GONE);
+                    binding.searchSubContainer.setVisibility(View.GONE);
 
 
                     binding.footerStatusTag.setBackgroundColor(getColor(R.color.sendMessageDialogBackgroundColor));
@@ -3363,7 +3363,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 } else {
 
                     isSendMessageEnabled = true;
-                    binding.searchContainer.setVisibility(View.VISIBLE);
+                    binding.searchSubContainer.setVisibility(View.VISIBLE);
 
                 }
             }
@@ -3374,7 +3374,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
 
                 binding.footerStatusTag.setVisibility(View.GONE);
-                binding.searchContainer.setVisibility(View.GONE);
+                binding.searchSubContainer.setVisibility(View.GONE);
             }
 
 
@@ -3568,8 +3568,6 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             toggleSendGif(true);
         }
     }
-
-
 
     private void toggleSendGif(boolean enableSendGif){
         // Setting GIF | Image Insertion in Search EditText

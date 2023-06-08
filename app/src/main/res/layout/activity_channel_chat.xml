@@ -642,7 +642,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_50sdp"
                 android:id="@+id/search_sub_container">
 
                 <com.example.audiorecorder.RecordView
@@ -799,7 +799,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/blur_frame"
-            android:visibility="gone"
             android:clickable="true"
             android:elevation="@dimen/_20sdp"
             android:layout_below="@id/toolbar"

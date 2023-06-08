@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.audiowaveform.WaveformSeekBar;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerView;
 
 public interface ChannelChatListener {
 
@@ -44,5 +46,8 @@ public interface ChannelChatListener {
     void saveMessage(int chatID);
 
     void initiateCommentScreen(String data,String profileBaseUrl,String postBaseUrl,String userID,boolean isDiscussionAllowed);
+
+
+    void autoPlayVideo(int position, String post_path, PlayerView videoPlayer, ProgressBar progressBar);
 
 }

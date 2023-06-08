@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -57,6 +58,7 @@ import com.gtfconnect.services.SocketService;
 import com.gtfconnect.ui.fragments.RecentFragment;
 import com.gtfconnect.ui.screenUI.authModule.LoginScreen;
 import com.gtfconnect.ui.screenUI.userProfileModule.UserProfileScreen;
+import com.gtfconnect.utilities.Constants;
 import com.gtfconnect.utilities.LocalGalleryUtil;
 import com.gtfconnect.utilities.PreferenceConnector;
 import com.gtfconnect.utilities.Utils;
@@ -280,6 +282,34 @@ public class HomeScreen extends AppCompatActivity implements UnreadCountHeaderLi
                     PreferenceConnector.writeString(this,PreferenceConnector.USER_TYPE,"");
                 }
                 // Todo Set conditions according to settings updated in api data
+
+
+                if (userProfileDbEntity.getUserSetting() != null && !userProfileDbEntity.getUserSetting().isEmpty()){
+
+                    for (int i=0;i< userProfileDbEntity.getUserSetting().size();i++){
+
+                        if (userProfileDbEntity.getUserSetting().get(i).getSettingID() != null && userProfileDbEntity.getUserSetting().get(i).getSettingValue() != null) {
+                            if (userProfileDbEntity.getUserSetting().get(i).getSettingID() == Constants.DARK_MODE_SETTING_ID) {
+
+                                if (userProfileDbEntity.getUserSetting().get(i).getSettingValue().equalsIgnoreCase("1")){
+                                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                                }
+                                else{
+                                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                                }
+                            }
+                            else{
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                            }
+                        }
+                        else{
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        }
+                    }
+                }
+                else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
             }
             else{
                 binding.profileImage.setImageDrawable(getDrawable(R.drawable.no_image_logo_background));

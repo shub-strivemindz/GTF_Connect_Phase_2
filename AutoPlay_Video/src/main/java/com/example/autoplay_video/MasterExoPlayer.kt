@@ -1,4 +1,4 @@
-package com.example.autoplay_video_player;
+package com.example.autoplay_video;
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,6 +8,7 @@ import android.widget.ImageView
 import com.google.android.exoplayer2.ui.PlayerView
 
 /**
+ * @author Pankaj Sharma
  * MasterExoPlayer is view used to place in recyclerview item.
  *
  */
