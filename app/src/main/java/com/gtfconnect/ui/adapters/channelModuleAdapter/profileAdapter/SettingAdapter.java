@@ -66,9 +66,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
     public void onBindViewHolder(SettingAdapter.ViewHolder holder, int position) {
 
 
-
-        //checkUserAdminPermission(holder,isAdmin);
-
+        checkUserAdminPermission(holder,isAdmin);
 
 
         if (viewType.equalsIgnoreCase(Constants.Group_Channel_TYPE_1)){
