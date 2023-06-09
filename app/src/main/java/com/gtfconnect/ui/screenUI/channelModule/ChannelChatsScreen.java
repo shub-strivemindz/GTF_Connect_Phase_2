@@ -50,6 +50,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -97,6 +98,8 @@ import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelC
 import com.gtfconnect.models.channelResponseModel.channelChatDataModels.ChannelRowListDataModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.GetLastMessageSentResponseModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.GroupChannelInfoResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseModels.CommentDeleteResponseModel;
+import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseModels.CommentEditResponseModel;
 import com.gtfconnect.models.commonGroupChannelResponseModels.commentResponseModels.CommentReceiveResponseModel;
 import com.gtfconnect.models.groupResponseModel.GroupMessageReceivedModel;
 import com.gtfconnect.models.groupResponseModel.PostDeleteModel;
@@ -126,6 +129,7 @@ import com.gtfconnect.utilities.Utils;
 import com.gtfconnect.viewModels.ChatViewModel;
 import com.gtfconnect.viewModels.ConnectViewModel;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -262,6 +266,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     private boolean isUserTypingMessage = false;
 
+    private int lastCommentID ;
+
+    private int lastCommentChatID ;
+    private boolean isCommentEditable = false;
     private int selectedImageUriIndex;
 
     private DatabaseViewModel databaseViewModel;
@@ -297,8 +305,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     private int permission_camera_request_count ;
 
     private ExoPlayer exoPlayer;
-
-    private boolean isMediaForPlayAvailable = false;
 
     private int mediaAvailablePosition = -1;
 
@@ -641,8 +647,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
 
         binding.sendMessage.setOnClickListener(view -> {
+            if (isCommentEditable){
 
-            getLastMessageSent();
+                if (!binding.type.getText().toString().trim().isEmpty()){
+                    updateEditedComment(binding.type.getText().toString().trim());
+                }
+            }
+            else {
+                getLastMessageSent();
+            }
         });
 
 
@@ -1245,7 +1258,8 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 if (getLastMessageSentResponseModel.getData().getData().getUpdatedAt() != null){
                                     String dateTime = getLastMessageSentResponseModel.getData().getData().getUpdatedAt();
 
-                                    if (Utils.getChipDate(dateTime).equalsIgnoreCase("today") || Utils.getChipDate(dateTime).equalsIgnoreCase("yesterday")) {
+                                    if ((Utils.getChipDate(dateTime).equalsIgnoreCase("today") || Utils.getChipDate(dateTime).equalsIgnoreCase("yesterday"))
+                                            && slowModeSeconds != null && !slowModeSeconds.trim().isEmpty()) {
                                         if (Utils.getSecondsRemaining(getLastMessageSentResponseModel.getData().getData().getUpdatedAt(),slowModeSeconds)){
                                             if (isUserTypingMessage) {
 
@@ -1308,6 +1322,64 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                             Toast.makeText(this, "Unable to send message for a time duration!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    else{
+                                        if (isUserTypingMessage) {
+
+                                            binding.sendMessage.setVisibility(View.VISIBLE);
+                                            binding.recordButton.setVisibility(View.GONE);
+
+                                            endTypingListener();
+                                            messageText = binding.type.getText().toString().trim();
+
+                                            Log.d("SendMessage", "Button Clicked");
+                                            Log.d("SendMessage", "isAnyFileAttached = " + isAnyFileAttached);
+
+                                            if (isAnyFileAttached) {
+                                                if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                                                    callAttachmentApi();
+                                                } else {
+                                                    messageText = "";
+                                                    callAttachmentApi();
+                                                }
+                                            } else {
+
+                                                if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                                                    validateSendMessage(messageText, binding.type);
+                                                    messageText = null;
+                                                } else {
+                                                    Utils.showSnackMessage(this, binding.type, "Type Message !");
+                                                    binding.imagePreviewLayout.setVisibility(View.GONE);
+                                                    isAnyFileAttached = false;
+                                                    isAttachmentSend = false;
+                                                }
+                                            }
+                                        }
+                                        else {
+
+                                            messageText = binding.type.getText().toString().trim();
+
+                                            Log.d("SendMessage", "Button Clicked");
+                                            Log.d("SendMessage", "isAnyFileAttached = " + isAnyFileAttached);
+
+                                            if (isAnyFileAttached) {
+
+                                                binding.sendMessage.setVisibility(View.VISIBLE);
+                                                binding.recordButton.setVisibility(View.GONE);
+
+                                                callAttachmentApi();
+                                            } else {
+                                                if (messageText != null && !messageText.equalsIgnoreCase("")) {
+                                                    validateSendMessage(messageText, binding.type);
+                                                    messageText = null;
+                                                } else {
+                                                    Utils.showSnackMessage(this, binding.type, "Type Message !");
+                                                    binding.imagePreviewLayout.setVisibility(View.GONE);
+                                                    isAnyFileAttached = false;
+                                                    isAttachmentSend = false;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1320,7 +1392,113 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
 
+    private void validateSendMessage(String message, View view) {
+        binding.quoteContainer.setVisibility(View.GONE);
 
+        toggleSearchContainer(1, 1, 2);
+
+        binding.type.setText("");
+        Utils.softKeyboard(this, false, binding.type);
+
+        binding.type.setText("");
+
+        String userID = this.userID.toString();
+
+        if (message != null) {
+
+            try {
+                jsonRawObject = new JSONObject();
+                jsonRawObject.put("GCMemberID", gcMemberID);
+                jsonRawObject.put("GroupChannelID", channelID);
+                jsonRawObject.put("UserID", userID);
+
+                if (isAttachmentSend) {
+                    jsonRawObject.put("ChatType", "file");
+                    jsonRawObject.put("MediaIds", mediaIDs);
+
+                    jsonRawObject.put("Message", message);
+                    sendMessage(jsonRawObject);
+                    Log.v("Send Message Params --", jsonRawObject.toString());
+                } else {
+                    jsonRawObject.put("ChatType", "msg");
+
+
+                    jsonRawObject.put("Message", message);
+
+                    if (isMessageQuoted) {
+                        jsonRawObject.put("GroupChatRefID", groupChatIDRef);
+                    }
+
+                    sendMessage(jsonRawObject);
+                    Log.v("Send Message Params --", jsonRawObject.toString());
+                }
+
+            } catch (Exception e) {
+                Log.d("sendMessage Exception ----", e.toString());
+            }
+        }
+        else {
+            isMessageQuoted = false;
+            isAttachmentSend = false;
+            Toast.makeText(this, "Type message!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendMessage(JSONObject jsonRawObject) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                socketInstance.emit("sendMessage", jsonRawObject, (Ack) args -> {
+                    //boolean isMsgSent = (boolean) args[0];
+
+                    Log.d("Message Send Log", args[0].toString());
+
+                    isMessageQuoted = false;
+                    isAttachmentSend = false;
+
+                });
+            }
+        });
+    }
+
+    private void updateEditedComment(String commentText){
+
+        try{
+
+            jsonRawObject = new JSONObject();
+            jsonRawObject.put("UserID", userID);
+            jsonRawObject.put("GroupChannelID", channelID);
+            jsonRawObject.put("GroupChatID", lastCommentChatID);
+            jsonRawObject.put("GCMemberID",gcMemberID);
+            jsonRawObject.put("comment", commentText);
+            jsonRawObject.put("CommentID",lastCommentID);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    socketInstance.emit("commentEdit", jsonRawObject);
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                    binding.type.clearFocus();
+                    binding.type.setText("");
+
+                    binding.sendMessage.setVisibility(View.GONE);
+                    binding.recordButton.setVisibility(View.VISIBLE);
+
+                    isCommentEditable = false;
+                }
+            });
+
+        }
+        catch (Exception e){
+            Log.d("exception","edit comment = "+e.toString());
+        }
+    }
+
+
+    // -------------------------------------------------------------- Socket Listeners -----------------------------------------------------------------------------
 
 
     private void userTypingListener() {
@@ -1381,76 +1559,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         } catch (Exception e) {
             Log.d("startTyping  Exception ----", e.toString());
         }
-    }
-
-    private void validateSendMessage(String message, View view) {
-        binding.quoteContainer.setVisibility(View.GONE);
-
-        toggleSearchContainer(1, 1, 2);
-
-        binding.type.setText("");
-        Utils.softKeyboard(this, false, binding.type);
-
-        binding.type.setText("");
-
-        String userID = this.userID.toString();
-
-        if (message != null) {
-
-                try {
-                    jsonRawObject = new JSONObject();
-                    jsonRawObject.put("GCMemberID", gcMemberID);
-                    jsonRawObject.put("GroupChannelID", channelID);
-                    jsonRawObject.put("UserID", userID);
-
-                    if (isAttachmentSend) {
-                        jsonRawObject.put("ChatType", "file");
-                        jsonRawObject.put("MediaIds", mediaIDs);
-
-                        jsonRawObject.put("Message", message);
-                        sendMessage(jsonRawObject);
-                        Log.v("Send Message Params --", jsonRawObject.toString());
-                    } else {
-                        jsonRawObject.put("ChatType", "msg");
-
-
-                        jsonRawObject.put("Message", message);
-
-                        if (isMessageQuoted) {
-                            jsonRawObject.put("GroupChatRefID", groupChatIDRef);
-                        }
-
-                        sendMessage(jsonRawObject);
-                        Log.v("Send Message Params --", jsonRawObject.toString());
-                    }
-
-                } catch (Exception e) {
-                    Log.d("sendMessage Exception ----", e.toString());
-                }
-            }
-         else {
-            isMessageQuoted = false;
-            isAttachmentSend = false;
-            Toast.makeText(this, "Type message!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private void sendMessage(JSONObject jsonRawObject) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                socketInstance.emit("sendMessage", jsonRawObject, (Ack) args -> {
-                    //boolean isMsgSent = (boolean) args[0];
-
-                    Log.d("Message Send Log", args[0].toString());
-
-                    isMessageQuoted = false;
-                    isAttachmentSend = false;
-
-                });
-            }
-        });
     }
 
     private void messageReceivedListener() {
@@ -1584,7 +1692,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
     }
 
-
     private void commentReceiver() {
         commentResponseModel = new ChannelCommentResponseModel();
 
@@ -1613,11 +1720,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 searchedTillPosition = 0;
                                 isMessageNotFound = true;
-                                loadSearchData = false;
-                                isDataAvailable = true;
-                                searchMessageInList(commentResponseModel.getGroupChatID().toString(), false, true, false);
+                                searchMessageFromLoadedChat(commentResponseModel.getGroupChatID().toString(),false,true);
                             }
                         });
 
@@ -1658,6 +1764,126 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
     }
 
+    /*private void editCommentListener()
+    {
+        Gson gson = new Gson();
+        Type type;
+
+        type = new TypeToken<CommentEditResponseModel>() {
+        }.getType();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                socketInstance.on("commentEditData", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        JSONArray response = new JSONArray();
+                        JSONObject data = (JSONObject) args[0];
+                        Log.d("Comment Data :",data.toString());
+
+
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject gsonObject = (JsonObject)jsonParser.parse(data.toString());
+
+                        CommentEditResponseModel editResponseModel = new CommentEditResponseModel();
+                        try {
+                            editResponseModel = new Gson().fromJson(gsonObject,type);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.d("Edit Comment Listener error :",e.toString());
+                        }
+
+
+                        *//*JsonParser jsonParser = new JsonParser();
+                        JsonObject gsonObject = (JsonObject)jsonParser.parse(response.toString());*/
+    /*
+
+                        //detail.getCommentData()
+
+                        Log.d("Edit Comment Response",response.toString());
+                        if (editResponseModel != null && editResponseModel.getData() != null && editResponseModel.getData().getCommentList() != null) {
+                            detail.setCommentData(editResponseModel.getData().getCommentList());
+                        }
+
+
+                        //responseModel = gson.fromJson(gsonObject, type);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //detail = responseModel.getData().getChatDetail();
+                                commentViewAdapter.updateList(detail.getCommentData());
+                            }
+                        });
+
+                    }
+                });
+            }
+        });
+    }
+    private void deleteCommentListener()
+    {
+
+        Gson gson = new Gson();
+        Type type;
+
+        type = new TypeToken<CommentDeleteResponseModel>() {
+        }.getType();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                socketInstance.on("commentDeleteData", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        JSONArray response = new JSONArray();
+                        JSONObject data = (JSONObject) args[0];
+                        Log.d("Comment Data :","after delete --"+data.toString());
+
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject gsonObject = (JsonObject)jsonParser.parse(data.toString());
+
+                        CommentDeleteResponseModel deleteResponseModel = new CommentDeleteResponseModel();
+                        try {
+                            deleteResponseModel = new Gson().fromJson(gsonObject,type);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.d("Edit Comment Listener error :",e.toString());
+                        }
+
+                        if (deleteResponseModel != null && deleteResponseModel.getData() != null && deleteResponseModel.getData().getCommentList() != null) {
+                            detail.setCommentData(deleteResponseModel.getData().getCommentList());
+                        }
+                        //detail.setCommentData(gson.fromJson(response.toString(), type));
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //detail = responseModel.getData().getChatDetail();
+
+                                commentCount--;
+
+                                if (commentCount <= 0){
+                                    binding.commentContainer.setVisibility(View.GONE);
+                                }
+                                else {
+                                    binding.commentContainer.setVisibility(View.VISIBLE);
+                                    binding.commentCount.setText(String.valueOf(commentCount));
+                                }
+
+                                commentViewAdapter.updateList(detail.getCommentData());
+                            }
+                        });
+
+                    }
+                });
+            }
+        });
+    }*/
+
+
 
     private void readMessages(int lastChatMessage)
     {
@@ -1694,44 +1920,47 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
 
+    private void searchMessageFromLoadedChat(String groupChatID,boolean isPostDeleted, boolean isCommentUpdated){
+        if (isMessageNotFound) {
+                for (int i = searchedTillPosition; i < list.size(); i++) {
+                    if (groupChatID.equalsIgnoreCase(list.get(i).getGroupChatID())) {
 
-    /*private void deleteCommentListener()
-    {
-        Gson gson = new Gson();
-        Type type;
-        type = new TypeToken<List<GroupChatResponseModel.CommentResponseModel>>() {
-        }.getType();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                socketInstance.on("commentDeleteData", new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        JSONArray response = new JSONArray();
-                        JSONObject data = (JSONObject) args[0];
-                        Log.d("Comment Data :","after delete --"+data.toString());
-                        try {
-                            response = data.getJSONObject("data").getJSONArray("commentList");
+                        int position = i;
+                        if (isPostDeleted) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    list.remove(position);
+                                    channelViewAdapter.updateChat(position,list);
+                                }
+                            });
+                            rest.dismissProgressdialog();
+                            isMessageNotFound = false;
+                            break;
                         }
-                        catch (Exception e)
-                        {
-                            Log.d("Edit Comment Listener error :",e.toString());
+                        else if (isCommentUpdated) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Log.d("post","index updated"+position);
+
+                                    list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
+                                    channelViewAdapter.updateChat(list,position);
+                                }
+                            });
+                            rest.dismissProgressdialog();
+                            isMessageNotFound = false;
+                            break;
                         }
-                        commentDeleteResponseModel.setCommentData(gson.fromJson(response.toString(), type));
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                searchMessageInList(commentDeleteResponseModel.getGroupChatID().toString(),false,false,true);
-                            }
-                        });
                     }
-                });
-            }
-        });
-    }*/
+                    searchedTillPosition = i;
+                }
+            searchMessageFromLoadedChat(groupChatID, isPostDeleted, isCommentUpdated);
+        }
+    }
 
-
-    private void searchMessageInList(String groupChatId, boolean hasPostDeleted, boolean commentSearch, boolean commentDeleteSearch) {
+    private void searchMessageInList(String groupChatId) {
 
         if (isMessageNotFound) {
             if (loadSearchData) {
@@ -1777,7 +2006,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                                 loadSearchData = false;
                                 currentPage++;
 
-                                searchMessageInList(groupChatId, hasPostDeleted, commentSearch, commentDeleteSearch);
+                                searchMessageInList(groupChatId);
                             });
 
                         }
@@ -1791,50 +2020,24 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     if (groupChatId.equalsIgnoreCase(list.get(i).getGroupChatID())) {
 
                         int position = i;
-                        if (hasPostDeleted) {
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    list.remove(searchedTillPosition);
-                                    channelViewAdapter.updateChat(searchedTillPosition,list);
-                                }
-                            });
-                            rest.dismissProgressdialog();
-                            isMessageNotFound = false;
-                            break;
-                        } else if (commentSearch) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    list.get(position).setCommentData(commentResponseModel.getData().getChatDetail().getCommentData());
-                                    channelViewAdapter.updateList(list,postBaseUrl,profileBaseUrl,isAutoPlayVideo,isAutoPlayGif);
-                                }
-                            });
-                            rest.dismissProgressdialog();
-                            isMessageNotFound = false;
-                            break;
-                        }
-                        else {
-                            /**
-                             * Quoted Message Found
-                             */
+                        /**
+                         * Quoted Message Found
+                         */
 
 
-
-                            scrollToPosition(i,true);
-                            rest.dismissProgressdialog();
-                            isMessageNotFound = false;
-                            break;
-                        }
+                        scrollToPosition(i, true);
+                        rest.dismissProgressdialog();
+                        isMessageNotFound = false;
+                        break;
                     }
                     searchedTillPosition = i;
                 }
                 loadSearchData = true;
-                searchMessageInList(groupChatId, hasPostDeleted, commentSearch, commentDeleteSearch);
+                searchMessageInList(groupChatId);
             }
         }
     }
+
 
 
     private void deletePostListener() {
@@ -1856,7 +2059,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                         JsonObject gsonObject = (JsonObject) jsonParser.parse(response.toString());
 
                         PostDeleteModel postDeleteModel = gson.fromJson(gsonObject, type);
-                        searchMessageInList(postDeleteModel.getGroupChatID().toString(), true, false, false);
+                        searchMessageFromLoadedChat(postDeleteModel.getGroupChatID().toString(),true,false);
 
                     }
                 });
@@ -2409,7 +2612,11 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
 
+
+
     // ---------------------------------------------------------------Interface Listeners ----------------------------------------------------------------
+
+
 
     @Override
     public void sendQuotedMessage(View view, String groupChatId, String oldMessage, String username, String time,int mediaCount,String previewUrl) {
@@ -2611,6 +2818,56 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
+    public void editComment(int position, String oldMessage, int commentID, int chatID) {
+
+        binding.type.setText(oldMessage);
+
+        this.lastCommentID = commentID;
+        this.lastCommentChatID = chatID;
+
+        isCommentEditable = true;
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.SHOW_IMPLICIT);
+        binding.type.requestFocus();
+
+        binding.sendMessage.setVisibility(View.VISIBLE);
+        binding.recordButton.setVisibility(View.GONE);
+
+
+        binding.type.setSelection(oldMessage.length());
+    }
+
+    @Override
+    public void deleteComment(int position, int commentID, int chatID) {
+
+        Log.d("delete_comment","entered method");
+        jsonRawObject = new JSONObject();
+
+        try {
+            jsonRawObject.put("CommentID",commentID);
+            jsonRawObject.put("UserID",PreferenceConnector.readInteger(this,PreferenceConnector.CONNECT_USER_ID,0));
+            jsonRawObject.put("GroupChatID",chatID);
+            jsonRawObject.put("GroupChannelID",channelID);
+
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Log.d("delete_comment","params = "+jsonRawObject.toString());
+
+                    socketInstance.emit("commentDelete", jsonRawObject);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Log.d("Delete Comment Exception ---",e.toString());
+        }
+    }
+
+    @Override
     public void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, LottieAnimationView progressBar, ImageView downloadPlayPic) {
 
         new Thread() {
@@ -2750,6 +3007,15 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     }
 
     @Override
+    public void forwardPost(int chatID) {
+
+        selectedForwardedMessageIDs = new ArrayList<>();
+        selectedForwardedMessageIDs.add(chatID);
+        forwardSaveMessage();
+
+    }
+
+    @Override
     public void forwardMultiplePost(int selectedCount,int chatID,boolean isMessageSelected) {
 
         if (selectedCount <= 0){
@@ -2819,19 +3085,17 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
     @Override
     public void autoPlayVideo(int position, String post_path, PlayerView videoPlayer, ProgressBar progressBar) {
 
-        isMediaForPlayAvailable = true;
-        loadAutoPlayVideoFile(post_path,videoPlayer,progressBar);
+        Log.d("autoplay_video","index = "+position);
 
-        /*if (mediaAvailablePosition != position) {
-            if (this.exoPlayer != null && this.exoPlayer.isPlaying()) {
+        if (mediaAvailablePosition != position) {
+            if (exoPlayer != null && exoPlayer.isPlaying()) {
                 exoPlayer.pause();
-                exoPlayer.stop();
+                /*exoPlayer.stop();
+                exoPlayer.release();*/
             }
+            loadAutoPlayVideoFile(post_path,videoPlayer,progressBar);
+        }
 
-
-        }*/
-
-        Log.d("autoPlayTrigger"," = "+isAutoPlayVideo);
         mediaAvailablePosition = position;
     }
 
@@ -2853,7 +3117,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
         //rest.ShowDialogue();
-        searchMessageInList(groupChatId, false, false, false);
+        searchMessageInList(groupChatId);
 
     }
 
@@ -3267,6 +3531,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         super.onPause();
 
         // Pausing video player if any video playing
+        if (exoPlayer != null) {
+            exoPlayer.pause();
+        }
         channelViewAdapter.pauseExoPlayer();
         Log.d("Lifecycle Check ", "In the onPause() event");
     }
@@ -3280,6 +3547,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
     public void onDestroy() {
         super.onDestroy();
+
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+        }
+
         channelViewAdapter.destroyExoPlayer();
         Log.d("Lifecycle Check ", "In the onDestroy() event");
     }
@@ -3353,7 +3626,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                     isDataAvailable = true;
 
                     //rest.ShowDialogue();
-                    searchMessageInList(groupChatId, false, false, false);
+                    searchMessageInList(groupChatId);
                 }
                 else if (result.getResultCode() == Constants.GC_USER_ROLE_UPDATED){
 
@@ -3382,19 +3655,26 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 View getView = mLayoutManager.findViewByPosition(position);
 
+                channelViewAdapter.checkMediaForPlay(position, binding.chats, getView);
+
+
+                /*if (mediaAvailablePosition != position){
+
+                }
+
                 if (exoPlayer != null && exoPlayer.isPlaying()) {
                     if (mediaAvailablePosition != position) {
 
                         exoPlayer.pause();
                         exoPlayer.stop();
 
-                        channelViewAdapter.setMediaForPlay(position, binding.chats, getView);
+
                     }
                 } else {
                     if (mediaAvailablePosition != position) {
-                        channelViewAdapter.setMediaForPlay(position, binding.chats, getView);
+                        channelViewAdapter.checkMediaForPlay(position, binding.chats, getView);
                     }
-                }
+                }*/
             }
         }
     }
@@ -3404,6 +3684,10 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
 
     private void loadAutoPlayVideoFile(String videoPath, PlayerView videoPlayer, ProgressBar progressBar){
+
+
+        videoPlayer.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
 
         exoPlayer = new ExoPlayer.Builder(this).build();
@@ -3455,10 +3739,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
         });
 
     }
-
-
-
-
 
 
 
@@ -3571,7 +3851,7 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                         if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
 
-                            isGcProfileEnabled = true;
+                            isGcProfileEnabled = false;
 
                             binding.searchContainer.setVisibility(View.VISIBLE);
 
@@ -3625,9 +3905,9 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
                     if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
 
+                        isGcProfileEnabled = false;
 
                         binding.searchContainer.setVisibility(View.VISIBLE);
-
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3672,8 +3952,6 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
                 }
             }
         }
-
-
 
 
 
@@ -3767,8 +4045,12 @@ public class ChannelChatsScreen extends AppCompatActivity implements ApiResponse
 
                 Log.d("forwarded_message_params",params.toString());
 
+                forward_dialog.dismiss();
+
                 requestType = Constants.SAVE_MESSAGE_REQUEST_CODE;
                 connectViewModel.save_group_channel_message(api_token,params);
+
+
             }
         });
 

@@ -884,6 +884,26 @@ public class Utils {
     }
 
 
+    public static String getCommentMessageTimeStamp(String chatDate){
+        String tempChatDate = chatDate;
+        String serverCurrentDate = "";
+        String currentDate = "";
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            //formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(chatDate);
+
+            SimpleDateFormat format = new SimpleDateFormat("dd MMM, hh:mm aa");
+            chatDate = format.format(value);
+
+
+        } catch (Exception e) {
+            chatDate = "00-00-0000 00:00";
+        }
+        return chatDate;
+    }
+
     public static String getSavedMessageChipDate(String chipDate){
         String tempChatDate = chipDate;
         String serverCurrentDate = "";
@@ -1035,7 +1055,11 @@ public class Utils {
         if (view != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
 
+            Log.d("softKeyboard","outside showSoftKeyboard condition");
+
             if (showSoftKeyboard){
+
+                Log.d("softKeyboard","inside showSoftKeyboard condition");
 
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.SHOW_IMPLICIT);
@@ -1043,10 +1067,15 @@ public class Utils {
 
             }
             else {
+
+                Log.d("softKeyboard","else showSoftKeyboard condition");
+
                 inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
             }
         }
     }
+
+
 
 
     public static void checkInternetConnection(Context context,InternetService.ReceiverListener listener) {
@@ -1369,7 +1398,6 @@ public class Utils {
 
 
     public static boolean getSecondsRemaining(String chatTime, String slowModeDuration){
-
 
         long slowModeTime = Long.parseLong(slowModeDuration);
 

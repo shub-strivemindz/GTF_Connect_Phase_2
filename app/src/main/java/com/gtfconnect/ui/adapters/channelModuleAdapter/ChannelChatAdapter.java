@@ -23,7 +23,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -85,9 +90,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
     private InfoDbEntity infoDbEntity;
 
-    private MediaPlayer mediaPlayer;
-
-
 
     private int previewVideoPlayBackPosition = -1;
     private ExoPlayer videoPlayer;
@@ -108,9 +110,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
     private boolean isQuoteMessage = true;
 
 
-    private boolean isVideoAutoPlay = false;
+    private boolean isVideoAutoPlay;
 
-    private boolean isGifAutoPlay = false;
+    private boolean isGifAutoPlay;
 
     private boolean isEnableDisableDiscussion;
     private boolean isDiscussionAllowed = false;
@@ -473,7 +475,10 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
                     if (isVideoAutoPlay){
 
+                        String video_image_thumbnail = post_base_url + list.get(position).getMedia().get(0).getStoragePath() + list.get(position).getMedia().get(0).getThumbnail();
+
                         holder.binding.singleVideoPlayerContainer.setVisibility(View.VISIBLE);
+                        loadImageFile(video_image_thumbnail,holder.binding.videoThumbnail);
 
                         if (position == 0) {
                             String post_path = post_base_url + list.get(position).getMedia().get(0).getStoragePath() + list.get(position).getMedia().get(0).getFileName();
@@ -595,8 +600,8 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             holder.binding.comment.setVisibility(View.VISIBLE);
         }
         else{
-            isDiscussionAllowed = false;
-            holder.binding.comment.setVisibility(View.GONE);
+            isDiscussionAllowed = true;
+            holder.binding.comment.setVisibility(View.VISIBLE);
         }
 
 
@@ -687,6 +692,9 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
 
 
+        /**
+         *  - Comment Section
+         */
 
 
         if (list.get(position).getCommentData() == null) {
@@ -716,10 +724,27 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
 
             if (list.get(position).getCommentData().get(0).getUser() != null) {
-                if (list.get(position).getCommentData().get(0).getUser().getFirstname() != null && list.get(position).getCommentData().get(0).getUser().getLastname() != null) {
-                    String commentUserName = list.get(position).getCommentData().get(0).getUser().getFirstname() + list.get(position).getCommentData().get(0).getUser().getLastname();
-                    holder.binding.commentUser.setText(commentUserName);
-                }
+
+                int commentUserID = list.get(position).getCommentData().get(0).getUserID();
+
+                    if (PreferenceConnector.readInteger(context, PreferenceConnector.CONNECT_USER_ID, 0) == commentUserID) {
+
+                        if (list.get(position).getCommentData().get(0).getUser().getFirstname() != null && list.get(position).getCommentData().get(0).getUser().getLastname() != null) {
+                            String commentUserName = list.get(position).getCommentData().get(0).getUser().getFirstname() + " " + list.get(position).getCommentData().get(0).getUser().getLastname() + " (You)";
+                            holder.binding.commentUser.setText(commentUserName);
+                        }
+
+                        holder.binding.editContainer.setVisibility(View.VISIBLE);
+
+                    } else {
+                        if (list.get(position).getCommentData().get(0).getUser().getFirstname() != null && list.get(position).getCommentData().get(0).getUser().getLastname() != null) {
+                            String commentUserName = list.get(position).getCommentData().get(0).getUser().getFirstname() + " " +  list.get(position).getCommentData().get(0).getUser().getLastname();
+                            holder.binding.commentUser.setText(commentUserName);
+                        }
+
+                        holder.binding.editContainer.setVisibility(View.GONE);
+                    }
+
 
                 if (list.get(position).getCommentData().get(0).getUser().getProfileImage() != null){
                     String profileImage = profileBaseUrl + list.get(position).getCommentData().get(0).getUser().getProfileImage();
@@ -731,13 +756,49 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
             }
 
             if (list.get(position).getCommentData().get(0).getUpdatedAt() != null){
-                String commentTimeStamp = Utils.getChipDate(list.get(position).getCommentData().get(0).getUpdatedAt());
+                String commentTimeStamp = Utils.getCommentMessageTimeStamp(list.get(position).getCommentData().get(0).getUpdatedAt());
                 holder.binding.commentDate.setText(commentTimeStamp);
             }
         }
 
 
+        /**
+         * Edit / Delete Comment
+         */
 
+
+        holder.binding.edit.setOnClickListener(view -> {
+            if (list.get(position).getCommentData().get(0).getComment() != null && list.get(position).getCommentData().get(0).getCommentID() != null) {
+                channelChatListener.editComment(position, list.get(position).getCommentData().get(0).getComment(),list.get(position).getCommentData().get(0).getCommentID(),Integer.parseInt(list.get(position).getGroupChatID()));
+            }
+        });
+
+        holder.binding.delete.setOnClickListener(view -> {
+            if (list.get(position).getCommentData().get(0).getCommentID() != null) {
+
+
+                Dialog delete_comment_dialog = new Dialog(context);
+
+                delete_comment_dialog.setContentView(R.layout.dialog_delete_comment);
+                delete_comment_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                delete_comment_dialog.setCancelable(false);
+                delete_comment_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView delete = (TextView) delete_comment_dialog.findViewById(R.id.delete);
+                TextView cancel = (TextView) delete_comment_dialog.findViewById(R.id.cancel);
+
+                delete.setOnClickListener(view1 -> {
+                    channelChatListener.deleteComment(position,list.get(position).getCommentData().get(0).getCommentID(),Integer.parseInt(list.get(position).getGroupChatID()));
+                    delete_comment_dialog.dismiss();
+                });
+
+                cancel.setOnClickListener(view1 -> {
+                    delete_comment_dialog.dismiss();
+                });
+
+                delete_comment_dialog.show();
+            }
+        });
 
 
 
@@ -748,9 +809,6 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         else {
             holder.binding.reactionCommentFooter.setVisibility(View.GONE);
         }
-
-
-
 
 
 
@@ -930,36 +988,14 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         });
 
 
-        //holder.binding.playVideo.setOnClickListener(view -> playVideo);
+        /**
+         * - Forward a message
+         * - Save a message
+         */
+
 
         holder.binding.forward.setOnClickListener(view -> {
-            Dialog forward_dialog = new Dialog(context);
-
-            forward_dialog.setContentView(R.layout.dialog_forward_message);
-            forward_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            forward_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
-            ImageView close = (ImageView) forward_dialog.findViewById(R.id.close);
-            close.setOnClickListener(view1 -> forward_dialog.dismiss());
-
-
-            RecyclerView personList = (RecyclerView) forward_dialog.findViewById(R.id.forward_person_list_recycler);
-
-            int channelID = list.get(position).getGroupChannelID();
-            int chatID = Integer.parseInt(list.get(position).getGroupChatID());
-
-            ForwardPersonListAdapter forwardPersonListAdapter = new ForwardPersonListAdapter(context,channelID,chatID);
-            personList.setHasFixedSize(true);
-            personList.setLayoutManager(new LinearLayoutManager(context));
-            personList.setAdapter(forwardPersonListAdapter);
-
-            forwardPersonListAdapter.setOnSaveMessageClickListener(chatID1 -> {
-                //channelChatListener.saveMessage(chatID1);
-                forward_dialog.dismiss();
-            });
-
-            forward_dialog.show();
+            channelChatListener.forwardPost(Integer.parseInt(list.get(position).getGroupChatID()));
         });
 
 
@@ -1041,6 +1077,28 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         }
     }
 
+
+
+
+    private void loadImageFile(String imageFilePath, ImageView imageView)
+    {
+        //Setting up loader on post
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(circularProgressDrawable);
+        requestOptions.error(R.drawable.no_image_logo_background);
+        requestOptions.skipMemoryCache(true);
+        requestOptions.fitCenter();
+
+        Glide.with(context).load(imageFilePath).
+                fitCenter().apply(requestOptions).
+                diskCacheStrategy(DiskCacheStrategy.ALL).
+                transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+    }
 
 
 
@@ -1333,11 +1391,14 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
         notifyItemInserted(0);
     }
 
-
-
     public void updateChat(int deletePostPosition,List<ChannelRowListDataModel> list){
         this.list = list;
         notifyItemRemoved(deletePostPosition);
+    }
+
+    public void updateChat(List<ChannelRowListDataModel> list, int positionUpdated){
+        this.list = list;
+        notifyItemChanged(positionUpdated);
     }
 
 
@@ -1349,7 +1410,7 @@ public class ChannelChatAdapter extends RecyclerView.Adapter<ChannelChatAdapter.
 
 
 
-    public void setMediaForPlay(int position,RecyclerView recyclerView,View view){
+    public void checkMediaForPlay(int position,RecyclerView recyclerView,View view){
 
         PlayerView playerView = view.findViewById(R.id.player_view);
         ProgressBar progressBar = view.findViewById(R.id.progress_bar);

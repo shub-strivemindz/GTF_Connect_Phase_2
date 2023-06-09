@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gtfconnect.databinding.RecyclerManageReactionsListItemBinding;
+import com.gtfconnect.interfaces.ManageReactionsListener;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 
 import java.util.ArrayList;
@@ -22,9 +23,13 @@ public class ManageReactionsListAdapter extends RecyclerView.Adapter<ManageReact
 
     ArrayList<Integer> selectedEmojiID;
 
-    public  ManageReactionsListAdapter(Context context,ChannelManageReactionModel reactionModel){
+    ManageReactionsListener listener;
+
+    public  ManageReactionsListAdapter(Context context, ChannelManageReactionModel reactionModel, ManageReactionsListener listener){
         this.context = context;
         this.reactionModel = reactionModel;
+
+        this.listener = listener;
 
         selectedEmojiID = new ArrayList<>();
     }
@@ -45,7 +50,6 @@ public class ManageReactionsListAdapter extends RecyclerView.Adapter<ManageReact
 
             if (reactionModel.getData().getList().get(position).getGcReactionStatus().equalsIgnoreCase("Active")) {
                 holder.binding.emojiCheckbox.setVisibility(View.VISIBLE);
-                reactionModel.getData().getList().get(position).setChecked(true);
                 selectedEmojiID.add(reactionModel.getData().getList().get(position).getReactionID());
             }
             else {
@@ -54,21 +58,23 @@ public class ManageReactionsListAdapter extends RecyclerView.Adapter<ManageReact
         }
 
 
-
         holder.binding.smileSelection.setOnClickListener(view -> {
-            if (reactionModel.getData().getList().get(position).isChecked()){
+
+            if (reactionModel.getData().getList().get(position).getGcReactionStatus().equalsIgnoreCase("Active")) {
                 for (int i =0;i<selectedEmojiID.size();i++)
                 {
                     if (selectedEmojiID.get(i) == reactionModel.getData().getList().get(position).getReactionID()){
                         selectedEmojiID.remove(i);
                         holder.binding.emojiCheckbox.setVisibility(View.GONE);
-                        reactionModel.getData().getList().get(position).setChecked(false);
+                        reactionModel.getData().getList().get(position).setGcReactionStatus("Inactive");
+                        listener.updateReactions(reactionModel);
                         break;
                     }
                 }
             }
             else{
-                reactionModel.getData().getList().get(position).setChecked(true);
+                reactionModel.getData().getList().get(position).setGcReactionStatus("Active");
+                listener.updateReactions(reactionModel);
                 holder.binding.emojiCheckbox.setVisibility(View.VISIBLE);
                 selectedEmojiID.add(reactionModel.getData().getList().get(position).getReactionID());
             }

@@ -5,6 +5,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.gtfconnect.services.SocketService.socketInstance;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -38,6 +39,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +101,7 @@ import com.gtfconnect.ui.adapters.ForwardPersonListAdapter;
 import com.gtfconnect.ui.adapters.ImageMiniPreviewAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.DummyUserListAdapter;
 import com.gtfconnect.ui.adapters.groupChatAdapter.GroupChatAdapter;
+import com.gtfconnect.ui.screenUI.channelModule.ChannelChatsScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.MemberProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.ProfileScreen;
 import com.gtfconnect.ui.screenUI.commonGroupChannelModule.GifPreviewScreen;
@@ -2487,15 +2490,57 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
     }
 
     @Override
-    public void likeAsEmote(int position, ImageView rootView) {
-        /*Utils.showDialog(position, this, rootView, reactionModel, new SelectEmoteReaction() {
+    public void likeAsEmote(int userID, int groupChannelId, int gcMemberID, int groupChatId, int like, int position, RelativeLayout likeRootView, ImageView likeIcon, TextView reactionIcon) {
+
+
+        Utils.showDialog(position, this, likeRootView, reactionModel, new SelectEmoteReaction() {
             @Override
             public void selectEmoteReaction(int id, String emoji_code, String emoji_name) {
+
+
+                jsonRawObject = new JSONObject();
+                likeGroupChatID = groupChatId;
+
+                try {
+                    jsonRawObject.put("UserID", userID);
+                    jsonRawObject.put("GroupChannelID", groupChannelId);
+                    jsonRawObject.put("GCMemberID", gcMemberID);
+                    jsonRawObject.put("GroupChatID", groupChatId);
+
+                    jsonRawObject.put("ReactionID", id);
+                    jsonRawObject.put("isLike", like);
+
+
+                    Log.v("Like Message Params --", jsonRawObject.toString());
+                    Log.v("Like Message Params --", jsonRawObject.toString());
+
+                    socketInstance.emit("like", jsonRawObject);
+                } catch (Exception e) {
+                    Log.d("Like Exception ------", e.toString());
+                }
+
+                likeIcon.setVisibility(View.GONE);
+                reactionIcon.setVisibility(View.VISIBLE);
+
+
+                final ValueAnimator anim = ValueAnimator.ofFloat(1f, 1.5f);
+                anim.setDuration(1000);
+                anim.addUpdateListener(animation -> {
+                    reactionIcon.setScaleX((Float) animation.getAnimatedValue());
+                    reactionIcon.setScaleY((Float) animation.getAnimatedValue());
+                });
+                anim.setRepeatCount(1);
+                anim.setRepeatMode(ValueAnimator.REVERSE);
+                anim.start();
+
+
+
+
                 for (int i = 0; i < 15; i++) {
                     playAnimation(Utils.textAsBitmap(GroupChatScreen.this, emoji_code));
                 }
             }
-        });*/
+        });
     }
 
 
@@ -3433,6 +3478,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                 isGcProfileEnabled = false;
 
+                binding.searchContainer.setVisibility(View.VISIBLE);
+
                 binding.searchSubContainer.setVisibility(View.GONE);
                 binding.footerStatusTag.setVisibility(View.VISIBLE);
 
@@ -3455,7 +3502,9 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                         if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
 
-                            isGcProfileEnabled = true;
+                            isGcProfileEnabled = false;
+
+                            binding.searchContainer.setVisibility(View.VISIBLE);
 
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3484,6 +3533,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
 
                             isGcProfileEnabled = false;
 
+                            binding.searchContainer.setVisibility(View.VISIBLE);
+
                             binding.searchSubContainer.setVisibility(View.GONE);
                             binding.footerStatusTag.setVisibility(View.VISIBLE);
                             binding.blurFrame.setVisibility(View.VISIBLE);
@@ -3504,7 +3555,10 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                 if (infoDbEntity.getGcMemberInfo().getStatus() != null) {
                     if (infoDbEntity.getGcMemberInfo().getStatus().equalsIgnoreCase("blocked")) {
 
-                        isGcProfileEnabled = true;
+
+                        isGcProfileEnabled = false;
+
+                        binding.searchContainer.setVisibility(View.VISIBLE);
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3532,6 +3586,8 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
                     } else {
 
                         isGcProfileEnabled = false;
+
+                        binding.searchContainer.setVisibility(View.VISIBLE);
 
                         binding.searchSubContainer.setVisibility(View.GONE);
                         binding.footerStatusTag.setVisibility(View.VISIBLE);
@@ -3561,6 +3617,7 @@ public class GroupChatScreen extends AppCompatActivity implements ApiResponseLis
             isSendMediaEnabled = true;
             isSendMessageEnabled = true;
 
+            binding.footerStatusTag.setVisibility(View.GONE);
             binding.searchContainer.setVisibility(View.VISIBLE);
             binding.blurFrame.setVisibility(View.GONE);
 

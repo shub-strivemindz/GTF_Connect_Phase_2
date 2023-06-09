@@ -40,6 +40,7 @@
         android:elevation="1dp"
         android:layout_marginVertical="@dimen/_4sdp"
         android:id="@+id/sent_message_container"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_marginStart="@dimen/_40sdp"
         android:layout_marginEnd="@dimen/_16sdp"
@@ -849,32 +850,51 @@ more then 1000 top most trading courses+ daily or weekly"/>
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@android:color/transparent">
 
-                <LinearLayout
-                    android:id="@+id/like1"
+
+                <RelativeLayout
+                    android:id="@+id/like_container1"
+                    android:layout_alignParentStart="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_height="match_parent">
 
                     <ImageView
                         android:id="@+id/like_icon1"
-                        android:layout_gravity="center_vertical"
                         android:layout_width="@dimen/_14sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_centerVertical="true"
                         android:layout_height="@dimen/_14sdp"
                         app:tint="@color/white"
-                        android:src="@drawable/like_thumb"/>
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:src="@drawable/like_thumb" />
 
-                    <TextView
+                    <RelativeLayout
+                        android:id="@+id/like1"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:clickable="true"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="Like"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/open_sans"
-                        android:textSize="@dimen/_10ssp"
-                        android:paddingStart="@dimen/_6sdp"/>
+                        android:layout_height="match_parent">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="@dimen/_14sdp"
+                            android:layout_height="@dimen/_14sdp"
+                            android:layout_centerVertical="true"
+                            android:textColor="@color/white"
+                            android:id="@+id/reaction_icon1"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Like"
+                            android:id="@+id/like_count1"
+                            android:layout_marginStart="@dimen/_11sdp"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/open_sans"
+                            android:textSize="@dimen/_10ssp"
+                            android:paddingStart="@dimen/_6sdp"/>
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
 
 
                 <LinearLayout
@@ -1008,7 +1028,6 @@ more then 1000 top most trading courses+ daily or weekly"/>
         android:id="@+id/received_message_container"
         android:layout_width="match_parent"
         android:elevation="1dp"
-        android:visibility="gone"
         android:clickable="true"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_40sdp"
@@ -1906,32 +1925,50 @@ more then 1000 top most trading courses+ daily or weekly"/>
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:background="@android:color/transparent">
 
-                    <LinearLayout
-                        android:id="@+id/like"
+                    <RelativeLayout
+                        android:id="@+id/like_container"
+                        android:layout_alignParentStart="true"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent">
 
                         <ImageView
                             android:id="@+id/like_icon"
-                            android:layout_marginStart="@dimen/_10sdp"
-                            android:layout_gravity="center_vertical"
                             android:layout_width="@dimen/_14sdp"
+                            android:layout_centerVertical="true"
                             android:layout_height="@dimen/_14sdp"
                             app:tint="@color/groupChatFooterContainerColor"
-                            android:src="@drawable/like_thumb"/>
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:src="@drawable/like_thumb" />
 
-                        <TextView
+                        <RelativeLayout
+                            android:id="@+id/like"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:clickable="true"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="Like"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/groupChatFooterContainerColor"
-                            android:fontFamily="@font/open_sans"
-                            android:textSize="@dimen/_10ssp"
-                            android:paddingStart="@dimen/_6sdp"/>
+                            android:layout_height="match_parent">
 
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="@dimen/_14sdp"
+                                android:layout_height="@dimen/_14sdp"
+                                android:layout_centerVertical="true"
+                                android:textColor="@color/white"
+                                android:id="@+id/reaction_icon"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="Like"
+                                android:id="@+id/like_count"
+                                android:layout_marginStart="@dimen/_11sdp"
+                                android:gravity="center_vertical"
+                                android:textColor="@color/groupChatFooterContainerColor"
+                                android:fontFamily="@font/open_sans"
+                                android:textSize="@dimen/_10ssp"
+                                android:paddingStart="@dimen/_6sdp"/>
+
+                        </RelativeLayout>
+
+                    </RelativeLayout>
 
 
                     <LinearLayout

@@ -474,37 +474,67 @@ more then 1000 top most trading courses+ daily or weekly"
 
                             <RelativeLayout
                                 android:id="@+id/emoji_layout"
-                                android:layout_width="@dimen/_40sdp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="@dimen/_30sdp">
 
-                                <ImageView
-                                    android:id="@+id/emoji1"
-                                    android:layout_width="@dimen/_14sdp"
-                                    android:padding="@dimen/_2sdp"
-                                    android:background="@drawable/emoji_circle"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginEnd="-6dp"
-                                    android:src="@drawable/emoji"/>
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardElevation="0dp"
+                                    android:id="@+id/emoji_container_one"
+                                    android:layout_centerVertical="true"
+                                    app:cardBackgroundColor="@color/channelChatBackgroundColor"
+                                    app:cardCornerRadius="@dimen/_100sdp">
 
-                                <ImageView
-                                    android:layout_marginEnd="-6dp"
-                                    android:layout_toEndOf="@id/emoji1"
-                                    android:padding="@dimen/_2sdp"
-                                    android:id="@+id/emoji2"
-                                    android:layout_width="@dimen/_14sdp"
-                                    android:background="@drawable/emoji_circle"
-                                    android:layout_height="match_parent"
-                                    android:src="@drawable/emoji"/>
+                                    <TextView
+                                        android:id="@+id/emoji1"
+                                        android:layout_width="@dimen/_14sdp"
+                                        android:text="\ud83d\ude00"
+                                        android:gravity="center_vertical"
+                                        android:textColor="@color/white"
+                                        android:layout_height="match_parent" />
 
-                                <ImageView
-                                    android:id="@+id/emoji3"
-                                    android:layout_toEndOf="@id/emoji2"
-                                    android:padding="@dimen/_2sdp"
-                                    android:layout_width="@dimen/_14sdp"
-                                    android:background="@drawable/emoji_circle"
-                                    android:layout_height="match_parent"
-                                    android:src="@drawable/emoji"/>
+                                </com.google.android.material.card.MaterialCardView>
 
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardElevation="0dp"
+                                    android:id="@+id/emoji_container_two"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_9sdp"
+                                    app:cardBackgroundColor="@color/channelChatBackgroundColor"
+                                    app:cardCornerRadius="@dimen/_100sdp">
+
+                                    <TextView
+                                        android:id="@+id/emoji2"
+                                        android:text="\ud83d\ude00"
+                                        android:gravity="center"
+                                        android:textColor="@color/white"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardElevation="0dp"
+                                    android:id="@+id/emoji_container_three"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_18sdp"
+                                    app:cardBackgroundColor="@color/channelChatBackgroundColor"
+                                    app:cardCornerRadius="@dimen/_100sdp">
+
+                                    <TextView
+                                        android:id="@+id/emoji3"
+                                        android:text="\ud83d\ude00"
+                                        android:gravity="center_vertical"
+                                        android:textColor="@color/white"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+
+                                </com.google.android.material.card.MaterialCardView>
                             </RelativeLayout>
 
                             <TextView
@@ -514,6 +544,7 @@ more then 1000 top most trading courses+ daily or weekly"
                                 android:layout_marginEnd="@dimen/_12sdp"
                                 android:fontFamily="@font/open_sans"
                                 android:gravity="center"
+                                android:layout_marginStart="@dimen/_2sdp"
                                 android:textSize="@dimen/_8ssp"
                                 android:textColor="@color/textDashboardMessageColor"
                                 android:layout_toEndOf="@id/emoji_layout"/>

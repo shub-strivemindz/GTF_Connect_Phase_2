@@ -30,6 +30,9 @@ public interface ChannelChatListener {
 
     void commentMessage(int position, int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
+    public void editComment(int position, String oldMessage,int commentID, int chatID);
+    public void deleteComment(int position, int commentID,int chatID);
+
 
     void downloadAudio(String audioPostUrl, String groupChannelID, String groupChatID, WaveformSeekBar seekBar, LottieAnimationView progressBar, ImageView downloadPlayPic);
 
@@ -38,6 +41,8 @@ public interface ChannelChatListener {
     void viewMemberProfile(int userID,int gcMemberId, int groupChatId, int groupChannelId );
 
     void viewSelfProfile();
+
+    void forwardPost(int chatID);
 
     void forwardMultiplePost(int selectedCount,int chatID,boolean isMessageSelected);
 

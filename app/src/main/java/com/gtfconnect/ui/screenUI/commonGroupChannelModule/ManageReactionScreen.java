@@ -23,6 +23,7 @@ import com.gtfconnect.controller.ApiResponse;
 import com.gtfconnect.controller.Rest;
 import com.gtfconnect.databinding.ActivityManageReactionsBinding;
 import com.gtfconnect.interfaces.ApiResponseListener;
+import com.gtfconnect.interfaces.ManageReactionsListener;
 import com.gtfconnect.models.channelResponseModel.ChannelManageReactionModel;
 import com.gtfconnect.roomDB.dbEntities.groupChannelUserInfoEntities.InfoDbEntity;
 import com.gtfconnect.ui.adapters.channelModuleAdapter.profileAdapter.ManageReactionsListAdapter;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManageReactionScreen extends AppCompatActivity implements ApiResponseListener{
+public class ManageReactionScreen extends AppCompatActivity implements ApiResponseListener, ManageReactionsListener{
 
     ActivityManageReactionsBinding binding;
 
@@ -74,6 +75,7 @@ public class ManageReactionScreen extends AppCompatActivity implements ApiRespon
     private int totalItem;
 
     LinearLayoutManager mLayoutManager;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -272,7 +274,7 @@ public class ManageReactionScreen extends AppCompatActivity implements ApiRespon
 
                 mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-                adapter = new ManageReactionsListAdapter(this, reactionModel);
+                adapter = new ManageReactionsListAdapter(this, reactionModel,this);
                 binding.reactionsRecycler.setHasFixedSize(true);
                 binding.reactionsRecycler.setLayoutManager(mLayoutManager);
                 binding.reactionsRecycler.setAdapter(adapter);
@@ -282,6 +284,7 @@ public class ManageReactionScreen extends AppCompatActivity implements ApiRespon
                 isDataLoadedFirstTime = false;
             }
             else {
+
                 reactionModel.getData().getList().addAll(channelManageReactionModel.getData().getList());
                 adapter.updateReactionList(reactionModel);
             }
@@ -302,5 +305,10 @@ public class ManageReactionScreen extends AppCompatActivity implements ApiRespon
         else if (requestType == UPDATE_GC_REACTION_LIST) {
             Utils.showSnackMessage(this,binding.getRoot(),"List Updated Successfully!");
         }
+    }
+
+    @Override
+    public void updateReactions(ChannelManageReactionModel channelManageReactionModel) {
+        this.reactionModel = channelManageReactionModel;
     }
 }
